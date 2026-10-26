@@ -7,7 +7,7 @@
  * - `admin` (service role): jobs and the writes assigned to Edge Functions
  *   (`finalize_media`, `apply_effects`, `run_rating_period`, notifications).
  */
-import { DEFAULT_PHASE15_CONFIG, isSportId, resolvePhase15Config, type Effect, type Phase15Config, type InvitePreview, type MediaStatus, type MediaUploadRequest, type Phase15NotificationKind } from '@st/domain';
+import { DEFAULT_PHASE15_CONFIG, isSportId, resolvePhase15Config, type Effect, type Phase15Config, type Phase15Effect, type InvitePreview, type MediaStatus, type MediaUploadRequest, type Phase15NotificationKind } from '@st/domain';
 import type { MediaProcessStore, MediaRecord } from '#fn/media-process/handler';
 import type { MediaUploadStore, UploadIntentRow } from '#fn/media-upload/handler';
 import type { InvitePreviewStore } from '#fn/invite-preview/handler';
@@ -110,7 +110,7 @@ export function createPhase15Store({ admin, anon, asUser }: Phase15StoreClients)
       const s = typeof status === 'string' ? status : status && typeof status === 'object' ? (status as Row)['status'] : null;
       return (typeof s === 'string' ? s : input.status) as MediaStatus;
     },
-    async applyEffects(effects: readonly Effect[]) {
+    async applyEffects(effects: readonly (Effect | Phase15Effect)[]) {
       if (effects.length > 0) await admin.rpc('apply_effects', { p_effects: effects });
     },
 

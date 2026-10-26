@@ -39,6 +39,7 @@ import {
   type MediaModerationVerdict,
   type MediaStatus,
   type ModerationCategory,
+  type Phase15Effect,
   type ReviewKind,
   type UserId,
 } from '@st/domain';
@@ -84,7 +85,7 @@ export interface MediaProcessStore {
   /** `finalize_media` (service role). Idempotent; returns the resulting status. */
   finalizeMedia(input: FinalizeMediaInput): Promise<MediaStatus>;
   /** `apply_effects` (service role). */
-  applyEffects(effects: readonly Effect[]): Promise<void>;
+  applyEffects(effects: readonly (Effect | Phase15Effect)[]): Promise<void>;
 }
 
 export interface MediaLimits {
@@ -140,8 +141,6 @@ export interface MediaProcessResult {
  */
 export const MEDIA_CSAM_REVIEW_KIND = 'media_csam' as ReviewKind;
 
-/** CSAM restriction pending human review (temporary and reversible; a moderator decides on a ban). */
-export const CSAM_RESTRICTION_DAYS = 30;
 export const CSAM_REVIEW_SLA_HOURS = 24;
 
 export const REASON_KEYS = {
@@ -390,7 +389,8 @@ class Pipeline {
         reportIds: [],
         evidence: { reason, mediaId: item.id, ...evidence },
         dueBy: new Date(this.now + CSAM_REVIEW_SLA_HOURS * 3_600_000).toISOString(),
-        dedupeKey: `media_${reason}:${item.id}`,
+        // Same key as the domain (`vault` module) and its SQL mirror: `media_csam:<id>` for a hash match.
+        dedupeKey: reason === 'csam_hash_match' ? `media_csam:${item.id}` : `media_${reason}:${item.id}`,
       },
     };
   }
@@ -429,11 +429,12 @@ class Pipeline {
     const report = await this.vendor('report', () => deps.reporter.report(reportInput, item.id));
 
     // 3. Restrict the account pending human review (temporary, reversible) and 4. queue the review.
-    const until = new Date(this.now + CSAM_RESTRICTION_DAYS * 86_400_000).toISOString();
+    // A durable account hold (not a sanction): `apply_effects` turns it into an `account_review_holds`
+    // row that suspends joining, hosting, chat and uploads until a moderator decides, and survives
+    // account re-creation. Effects mirror the domain `vault` module.
     await deps.store.applyEffects([
-      { type: 'BanJoins', userId: item.uploaderId, until },
-      { type: 'RestrictVisibility', userId: item.uploaderId, until },
-      { type: 'MuteChat', userId: item.uploaderId, until },
+      { type: 'PreserveMediaEvidence', mediaId: item.id, uploaderId: item.uploaderId, dedupeKey: `preserve:${item.id}` },
+      { type: 'RestrictAccountPendingReview', userId: item.uploaderId, reason: 'csam_match', dedupeKey: `restrict:media_csam:${item.id}` },
       this.reviewItem('csam_hash_match', {
         matchSource: match.source,
         matchId: match.matchId,

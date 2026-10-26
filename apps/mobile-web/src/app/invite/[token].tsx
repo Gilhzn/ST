@@ -9,6 +9,7 @@ import { View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { GameCard } from '@/components/GameCard';
+import { SeriesInviteLanding } from '@/features/invite/SeriesInviteLanding';
 import { Screen } from '@/components/Screen';
 import { ErrorView, InlineError, Skeleton } from '@/components/States';
 import { useData } from '@/data/DataProvider';
@@ -18,7 +19,7 @@ import { useT } from '@/i18n';
 import { setPostAuthRedirect, useSession } from '@/state/session';
 
 export default function InviteScreen() {
-  const { token } = useLocalSearchParams<{ token: string }>();
+  const { token, join: joinParam } = useLocalSearchParams<{ token: string; join?: string }>();
   const inviteToken = String(token);
   const { t } = useT();
   const port = useData();
@@ -27,6 +28,8 @@ export default function InviteScreen() {
   const now = useNow();
   const ready = status === 'ready';
   const game = useAsync(() => port.resolveInvite(inviteToken), [port, inviteToken], ready);
+  // A token that is not a game's may be a series link shared as `/invite/<token>`.
+  const series = useAsync(() => port.resolveSeriesInvite(inviteToken), [port, inviteToken], ready && !game.loading && !game.error && game.data === null);
   const join = useAction(async () => {
     const g = game.data;
     if (!g) return null;
@@ -73,6 +76,7 @@ export default function InviteScreen() {
     );
   }
 
+  if (!g && series.data) return <SeriesInviteLanding token={inviteToken} initial={series.data} autoJoin={joinParam === '1'} />;
   const canJoin = !!g && !game.error;
   return (
     <Screen
@@ -101,7 +105,7 @@ export default function InviteScreen() {
         ) : undefined
       }
     >
-      {game.loading && !g ? (
+      {(game.loading && !g) || (!g && series.loading) ? (
         <Skeleton kind="game" rows={1} />
       ) : game.error ? (
         <ErrorView error={game.error} onRetry={() => void game.reload()} />

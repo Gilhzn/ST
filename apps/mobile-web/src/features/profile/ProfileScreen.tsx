@@ -4,7 +4,7 @@
  * (overlapping the hero), a 2 × 2 stat grid, sanctions in force, and sports with positions
  * and level. Edit opens as a sheet.
  */
-import { Avatar, BidiText, Gradient, Haptics, Icon, IconButton, radius, Row, Skeleton, spacing, SportGlyphBadge, Stack, Text, useTheme } from '@st/ui';
+import { Avatar, BidiText, Gradient, Haptics, Icon, IconButton, ListGroup, ListItem, radius, Row, Skeleton, spacing, SportGlyphBadge, Stack, StatusPill, Text, useTheme } from '@st/ui';
 import { router } from 'expo-router';
 import { useState } from 'react';
 import { Pressable, ScrollView, View } from 'react-native';
@@ -16,6 +16,7 @@ import { useAsync } from '@/hooks/useAsync';
 import { useNow } from '@/hooks/useNow';
 import { useT } from '@/i18n';
 import { formatDate } from '@/lib/format';
+import { LevelsSection } from '@/features/ratings/LevelsSection';
 import { useSession } from '@/state/session';
 
 import { EditProfile } from './EditProfile';
@@ -38,6 +39,7 @@ export function ProfileScreen() {
   const sports = useAsync(() => port.listUserSports(userId as string), [port, userId], !!userId);
   const sanctions = useAsync(() => port.listMySanctions(), [port, userId], !!userId);
   const games = useAsync(() => port.listMyGames(), [port, userId], !!userId);
+  const requests = useAsync(() => port.listConnections('requests'), [port, userId], !!userId);
 
   const inForce = sanctionsInForce(sanctions.data ?? [], now);
   const streak = games.data ? checkInStreak(games.data, now) : null;
@@ -141,6 +143,19 @@ export function ProfileScreen() {
             <>
               <ReliabilityCard reliability={profile.reliability} sanctions={sanctions.data ?? []} now={now} />
               <StatsGrid reliability={profile.reliability} streak={streak} />
+              <ListGroup>
+                <ListItem
+                  testID="profile.players"
+                  icon="UsersThree"
+                  iconTone="brand"
+                  title={t('network:entry.title')}
+                  subtitle={t('network:entry.subtitle')}
+                  trailing={requests.data?.length ? <StatusPill tone="brand" label={t('network:entry.requests', { count: requests.data.length })} /> : undefined}
+                  chevron
+                  onPress={() => router.push('/players')}
+                />
+              </ListGroup>
+              <LevelsSection userId={profile.id} reliability={profile.reliability.score} />
               {sanctions.error && !sanctions.data ? <ErrorView error={sanctions.error} onRetry={() => void sanctions.reload()} /> : null}
               <SanctionsList sanctions={inForce} />
               {sports.error && !sports.data ? <ErrorView error={sports.error} onRetry={() => void sports.reload()} /> : <SportsSection sports={sports.data ?? []} />}

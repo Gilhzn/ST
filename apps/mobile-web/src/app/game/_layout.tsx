@@ -11,6 +11,9 @@ export default function GameLayout() {
       <Stack.Screen name="[id]/teams" />
       <Stack.Screen name="[id]/result" options={{ presentation: 'modal' }} />
       <Stack.Screen name="[id]/qr" options={{ presentation: 'fullScreenModal' }} />
+      <Stack.Screen name="[id]/rate" options={{ presentation: 'modal' }} />
+      <Stack.Screen name="[id]/gallery" />
+      <Stack.Screen name="[id]/invite" options={{ presentation: 'modal' }} />
     </Stack>
   );
 }

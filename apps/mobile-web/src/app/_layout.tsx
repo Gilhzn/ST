@@ -121,9 +121,12 @@ function RootNavigator() {
           <Stack.Screen name="game" />
           <Stack.Screen name="settings" />
           <Stack.Screen name="sanctions/[id]" />
+          <Stack.Screen name="series" />
+          <Stack.Screen name="players/index" />
         </Stack.Protected>
         <Stack.Screen name="index" />
         <Stack.Screen name="invite/[token]" />
+        <Stack.Screen name="invite/series/[token]" />
         <Stack.Screen name="legal" />
         <Stack.Screen name="+not-found" />
       </Stack>
