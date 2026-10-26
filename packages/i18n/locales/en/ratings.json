@@ -1,0 +1,138 @@
+{
+  "family": {
+    "small_sided": "Small-sided",
+    "full_sided": "Full-sided",
+    "half_court": "Half court",
+    "full_court": "Full court",
+    "singles": "Singles",
+    "doubles": "Doubles",
+    "pairs": "Pairs",
+    "teams": "Teams"
+  },
+  "attribute": {
+    "speed": "Speed",
+    "ball_control": "Ball control",
+    "passing": "Passing",
+    "defence": "Defence",
+    "overall": "Overall",
+    "shooting": "Shooting",
+    "handling": "Handling",
+    "athleticism": "Athleticism",
+    "serve": "Serve",
+    "groundstrokes": "Groundstrokes",
+    "net_play": "Net play",
+    "movement": "Movement",
+    "volley": "Volley",
+    "walls": "Wall play",
+    "positioning": "Positioning",
+    "pace": "Pace",
+    "endurance": "Endurance",
+    "attack": "Attack"
+  },
+  "level": {
+    "sectionTitle": "Levels",
+    "label": "Level",
+    "a11y": "Level {level}",
+    "basedOn": "{count, plural, one {Based on # rated game} other {Based on # rated games}}",
+    "provisional": "Provisional",
+    "provisionalGames": "{count, plural, one {Provisional — play # more rated game} other {Provisional — play # more rated games}}",
+    "provisionalReliability": "Provisional — reach {percent} reliability to show your level",
+    "provisionalSettling": "Provisional — a few more games will firm it up",
+    "frozen": "Improve reliability to {percent} to earn rating",
+    "frozenPill": "Paused",
+    "confidence": "Confidence {percent}",
+    "historyA11y": "{weeks, plural, one {Level went from {from} to {to} over # week} other {Level went from {from} to {to} over # weeks}}",
+    "weeksAgo": "{count, plural, one {# week ago} other {# weeks ago}}",
+    "now": "Now",
+    "emptyTitle": "No level yet",
+    "emptyBody": "Play games with a confirmed score and teams set before kick-off. Your level appears after a few of them."
+  },
+  "peers": {
+    "title": "{count, plural, one {What # co-player says · only you see this} other {What # co-players say · only you see this}}"
+  },
+  "rate": {
+    "title": "Rate players",
+    "closes": "Open until {time}",
+    "privacy": "Ratings are private. Nobody sees who rated them, and ratings only shape levels and balanced teams, never cards.",
+    "pickTitle": "Who did you play with?",
+    "picked": "{count} of {max}",
+    "limit": "{count, plural, one {You can rate up to # player per game.} other {You can rate up to # players per game.}}",
+    "nobodyLeft": "You’ve rated everyone you can for this game.",
+    "removeA11y": "Remove {name}",
+    "submit": "Send ratings",
+    "submitCount": "{count, plural, one {Send # rating} other {Send # ratings}}",
+    "thanks": "{count, plural, one {Thanks, # rating sent} other {Thanks, # ratings sent}}"
+  },
+  "stars": {
+    "a11y": "{count, plural, one {# star} other {# stars}}",
+    "skip": "Not rated",
+    "word": {
+      "1": "Learning",
+      "2": "Getting there",
+      "3": "Solid",
+      "4": "Strong",
+      "5": "Standout"
+    }
+  },
+  "gate": {
+    "title": "You can’t rate this game",
+    "closedTitle": "Rating has closed",
+    "body": "Ratings stay fair when they come from people who played and keep showing up.",
+    "fair": "Ratings are private. They shape levels and balanced teams, never cards."
+  },
+  "gateTitle": {
+    "not_verified": "Check in to rate",
+    "low_reliability": "Build your reliability",
+    "too_few_games": "A few more games first",
+    "active_sanction": "Paused for now",
+    "window_not_open": "Not open yet",
+    "window_closed": "Rating has closed"
+  },
+  "ineligible": {
+    "not_verified": "Only players who checked in can rate. Next time, check in when you arrive.",
+    "low_reliability": "Raters need {percent} reliability. Show up to the games you join to get there.",
+    "too_few_games": "{count, plural, one {Play # more verified {sport} game to rate others. Raters need {required}.} other {Play # more verified {sport} games to rate others. Raters need {required}.}}",
+    "active_sanction": "Rating is paused while a card or restriction is active. It comes back when it ends.",
+    "window_not_open": "Rating opens when the game ends.",
+    "window_closed": "{hours, plural, one {Rating stays open # hour after a game. It closed {time}.} other {Rating stays open # hours after a game. It closed {time}.}}"
+  },
+  "notRated": {
+    "no_result": "No score yet",
+    "result_not_confirmed": "Waiting for players to confirm the score",
+    "result_disputed": "Not rated: the score is disputed",
+    "too_few_verified": "Not rated: too few verified players",
+    "teams_not_published": "Not rated: teams weren’t set before kick-off",
+    "not_two_sides": "Not rated: it needs two teams with a score each",
+    "unrated_sport": "This sport has no levels"
+  },
+  "notRatedHelp": {
+    "no_result": "Enter the final score so it can count toward levels.",
+    "result_not_confirmed": "It counts toward levels once most players who checked in confirm it.",
+    "result_disputed": "Most players disputed the score, so it doesn’t count toward stats or levels.",
+    "too_few_verified": "Levels change only when at least {percent} of players checked in.",
+    "teams_not_published": "Set teams in the app before kick-off for a game to count toward levels.",
+    "not_two_sides": "Levels compare two teams. This game didn’t have two teams with a score each.",
+    "unrated_sport": "Running games don’t affect levels."
+  },
+  "confirm": {
+    "title": "Is this the final score?",
+    "statusTitle": "Score confirmation",
+    "help": "Confirm it if it matches what happened. Most players need to agree before the game counts toward levels.",
+    "tally": "{count, plural, one {{confirms} of # verified player confirmed} other {{confirms} of # verified players confirmed}}",
+    "disputes": "{count, plural, one {# dispute} other {# disputes}}",
+    "status": {
+      "pending": "Waiting",
+      "confirmed": "Confirmed",
+      "disputed": "Disputed"
+    },
+    "confirm": "Confirm",
+    "dispute": "Dispute",
+    "youConfirmed": "You confirmed this score. You can change your answer until the window closes.",
+    "youDisputed": "You disputed this score. You can change your answer until the window closes.",
+    "thanks": "Thanks for confirming",
+    "disputed": "Dispute recorded"
+  },
+  "band": {
+    "a11y": "Level band {band} of 5"
+  }
+}

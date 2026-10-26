@@ -1,0 +1,137 @@
+{
+  "cadence": "{recurrence, select, biweekly {隔週{weekday} {time}} other {毎週{weekday} {time}}}",
+  "recurrence": {
+    "weekly": "毎週",
+    "biweekly": "隔週"
+  },
+  "chip": "{recurrence, select, biweekly {隔週シリーズの一部} other {毎週シリーズの一部}}",
+  "regularsCount": "{count, plural, =0 {レギュラーはまだいません} other {レギュラー#人}}",
+  "hostedBy": "主催：{name}",
+  "ended": "このシリーズは終了しました。過去の試合と写真は引き続き見られます。",
+  "facts": {
+    "regulars": "レギュラー",
+    "next": "次の日程",
+    "regularsFirst": "レギュラー優先"
+  },
+  "priority": {
+    "title": "レギュラー優先",
+    "banner": "{time}まではレギュラーが優先です。その後は誰でも参加できます。",
+    "bannerRegular": "あなたはレギュラーです。{time}まで優先して参加できます。",
+    "bannerHost": "{time}まではあなたのレギュラーが優先で、その後は全員に公開されます。",
+    "bannerInvited": "{time}まではレギュラーが優先です。主催者の招待を承諾すれば今すぐ参加できます。",
+    "windowTitle": "レギュラーの優先時間",
+    "windowHelp": "新しい日程が公開されると、この時間はレギュラーだけが参加できます。その後は全員に公開されます。",
+    "shorter": "優先時間を短くする",
+    "longer": "優先時間を長くする"
+  },
+  "member": {
+    "title": "あなたの枠",
+    "accept": "レギュラーになる",
+    "welcome": "レギュラーになりました",
+    "invitedTitle": "{name}さんからレギュラーに招待されました",
+    "invitedBody": "{hours, plural, other {レギュラーは各日程の最初の#時間を優先して使え、自動で参加することもできます。}}",
+    "alwaysIn": "毎回参加する",
+    "alwaysInHelp": "{hours, plural, other {新しい日程ごとに自動で枠を確保します。#時間前に参加の確認をお願いします。}}",
+    "alwaysInOn": "新しい日程すべてに参加予定です",
+    "alwaysInOff": "日程ごとに個別に参加します",
+    "askHost": "{count, plural, =0 {このシリーズに参加するには、{name}さんにレギュラー用リンクをもらってください。} other {ここでは#人のレギュラーがプレーしています。参加するには{name}さんにレギュラー用リンクをもらってください。}}",
+    "leave": "レギュラーをやめる",
+    "leaveTitle": "レギュラーをやめますか？",
+    "leaveBody": "参加済みの試合はそのまま残ります。カードやペナルティはありません。",
+    "leaveConfirm": "やめる",
+    "left": "レギュラーをやめました"
+  },
+  "migration": {
+    "title": "WhatsAppからの移行",
+    "joined": "{count, plural, other {WhatsAppグループから#人が参加}}",
+    "joinedLabel": "{count, plural, other {人がWhatsAppグループから参加}}",
+    "active": "{count, plural, =0 {まだ誰もプレーしていません} other {そのうち#人がプレー済み}}",
+    "none": "あなたのリンクはまだ使われていません"
+  },
+  "dates": {
+    "title": "今後の日程",
+    "empty": "{weeks, plural, other {新しい日程は#週間前に公開されます。}}",
+    "none": "これ以上の日程はありません。",
+    "horizon": "{weeks, plural, other {新しい日程は#週間前に自動で公開されます。}}",
+    "capacity": "{capacity, plural, other {#枠}}",
+    "skipped": "主催者が休みにしました",
+    "skippedBadge": "お休み",
+    "youreIn": "参加予定",
+    "regularsOnly": "レギュラーのみ",
+    "editA11y": "{date}を編集",
+    "skipA11y": "{date}を休みにする"
+  },
+  "roster": {
+    "title": "レギュラー",
+    "pending": "招待中",
+    "empty": "レギュラーはまだいません。グループにリンクを共有しましょう。",
+    "viaLink": "リンクから参加",
+    "viaPlayedWith": "一緒にプレーした仲間",
+    "viaHost": "主催者が追加",
+    "since": "{date}から",
+    "invited": "招待中",
+    "alwaysIn": "毎回参加",
+    "alwaysInCount": "{count, plural, other {#人が毎回参加}}",
+    "remove": "外す",
+    "removeA11y": "{name}さんをレギュラーから外す",
+    "removeTitle": "{name}さんを外しますか？",
+    "removeBody": "優先参加ができなくなり、リンクから再参加もできなくなります。参加済みの試合はそのまま残ります。"
+  },
+  "host": {
+    "title": "主催者ツール",
+    "inviteGroup": "WhatsAppグループを招待",
+    "edit": "日程を編集",
+    "editHelp": "1回分だけ、またはこの日以降をまとめて変更",
+    "end": "シリーズを終了",
+    "endHelp": "新しい日程を止め、今後の日程を中止します"
+  },
+  "skip": {
+    "title": "{date}を休みにしますか？",
+    "body": "参加者全員に通知されます。レギュラーは次回も枠を保てます。",
+    "late": "{hours, plural, other {開始まで#時間を切っているため、主催者の直前キャンセルとして扱われます。}}",
+    "confirm": "休みにする",
+    "done": "休みにしました。参加者に通知しました。"
+  },
+  "end": {
+    "title": "このシリーズを終了しますか？",
+    "body": "今後の日程は中止され、参加者全員に通知されます。過去の試合と写真は残ります。",
+    "confirm": "シリーズを終了",
+    "done": "シリーズを終了しました"
+  },
+  "edit": {
+    "title": "日程を編集",
+    "scope": "変更する範囲",
+    "scopeThis": "この日だけ",
+    "scopeFollowing": "この日以降",
+    "scopeThisHelp": "{date}だけが変更されます。",
+    "scopeFollowingHelp": "{date}とそれ以降のすべての日程が変更されます。",
+    "name": "名前",
+    "time": "開始時刻",
+    "capacityHelp": "主催者を含むプレーヤー数",
+    "save": "変更を保存",
+    "saved": "保存しました。参加者に通知しました。"
+  },
+  "card": {
+    "yourSeries": "いつもの試合",
+    "next": "次回：{date}",
+    "regular": "レギュラー",
+    "invited": "招待中"
+  },
+  "wizard": {
+    "repeats": "繰り返し",
+    "once": "1回のみ",
+    "weekly": "毎週",
+    "biweekly": "隔週",
+    "firstDate": "初回の試合",
+    "summaryHelp": "初回は{date}。新しい日程は自動で公開されます。",
+    "noRepeat": "繰り返さない",
+    "reviewValue": "{cadence} · レギュラー優先{window}",
+    "publish": "シリーズを開始"
+  },
+  "created": {
+    "title": "{recurrence, select, biweekly {隔週の試合を公開しました} other {毎週の試合を公開しました}}",
+    "body": "{hours, plural, other {WhatsAppグループにリンクを1つ共有するだけ。タップした人はレギュラーになり、各日程で#時間の優先参加ができます。}}",
+    "dates": "{count, plural, other {#件の日程を公開中}}",
+    "view": "シリーズを見る"
+  }
+}

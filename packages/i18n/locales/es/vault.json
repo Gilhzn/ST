@@ -1,0 +1,104 @@
+{
+  "gallery": {
+    "title": "Galería del partido",
+    "locksIn": "La galería se cierra en {time}",
+    "locked": "Galería cerrada",
+    "opensAt": "Las subidas se abren a las {time}",
+    "windowHelp": "{hours, plural, one {Añade fotos hasta # hora después del partido.} many {Añade fotos hasta # de horas después del partido.} other {Añade fotos hasta # horas después del partido.}}",
+    "retention": "{months, plural, one {Las fotos se guardan # mes.} many {Las fotos se guardan # de meses.} other {Las fotos se guardan # meses.}}",
+    "filterA11y": "Mostrar fotos",
+    "all": "Todas",
+    "mine": "Tuyas",
+    "emptyTitle": "Aún no hay fotos",
+    "emptyMineTitle": "No has añadido fotos",
+    "emptyBodyOpen": "Sé el primero en añadir una de este partido.",
+    "emptyBodyClosed": "Nadie añadió fotos mientras la galería estaba abierta."
+  },
+  "upload": {
+    "cta": "Añadir fotos",
+    "uploading": "Subiendo…",
+    "done": "Foto añadida",
+    "checkInFirst": "Haz check-in en el partido para añadir fotos.",
+    "nativeSoon": "Pronto podrás subir fotos desde la app. Por ahora, usa la versión web."
+  },
+  "reject": {
+    "not_verified_attendee": "Solo los jugadores que hicieron check-in pueden añadir fotos.",
+    "window_not_open": "Las subidas se abren cuando empieza el partido.",
+    "window_closed": "La galería está cerrada. Las subidas cierran 2 horas después del partido.",
+    "too_large": "El archivo es demasiado grande. Las fotos pueden pesar hasta 20 MB y los vídeos hasta 200 MB.",
+    "too_long": "Los vídeos pueden durar hasta 60 segundos.",
+    "unsupported_type": "Ese tipo de archivo no es compatible. Usa JPEG, PNG, WebP, MP4 o MOV.",
+    "user_cap_reached": "Ya añadiste el máximo de fotos permitido para un partido.",
+    "not_uploader": "Solo quien la añadió puede cambiar esto.",
+    "not_published": "Esta foto no está publicada.",
+    "tags_pending": "Todas las personas etiquetadas deben aceptar primero."
+  },
+  "badge": {
+    "public": "Galería del lugar",
+    "participants": "Solo jugadores",
+    "pending": "Esperando etiquetas"
+  },
+  "viewer": {
+    "title": "Foto",
+    "photoBy": "Foto de {name}",
+    "someone": "Un jugador",
+    "delete": "Eliminar foto",
+    "deleteTitle": "¿Eliminar esta foto?",
+    "deleteBody": "Se elimina para todos, también de la galería del lugar.",
+    "deleted": "Foto eliminada"
+  },
+  "tags": {
+    "title": "Etiquetados",
+    "none": "No hay nadie etiquetado.",
+    "add": "Etiquetar jugadores",
+    "send": "{count, plural, =0 {Enviar solicitudes} one {Enviar # solicitud} many {Enviar # de solicitudes} other {Enviar # solicitudes}}",
+    "sent": "{count, plural, one {Solicitud de etiqueta enviada} many {# de solicitudes de etiqueta enviadas} other {# solicitudes de etiqueta enviadas}}",
+    "requestHelp": "Las etiquetas son solicitudes. Solo aparecen cuando el jugador las acepta.",
+    "everyoneTagged": "Todos los que jugaron ya están etiquetados.",
+    "waiting": "{count, plural, one {Esperando a que {names} acepte} many {Esperando a que {names} acepten} other {Esperando a que {names} acepten}}",
+    "untagMe": "Quitar mi etiqueta",
+    "untagged": "Etiqueta quitada. Esta foto ya no puede ser pública.",
+    "requestTitle": "{name} te etiquetó en una foto",
+    "requestBody": "La etiqueta solo aparece cuando la aceptas.",
+    "accepted": "Etiqueta aceptada",
+    "declined": "Etiqueta rechazada"
+  },
+  "public": {
+    "label": "Hacer pública en la galería del lugar",
+    "help": "Muéstrala en la página del lugar para todos los que juegan aquí.",
+    "on": "Visible en la galería del lugar.",
+    "blocked": "{count, plural, one {# jugador etiquetado aún no ha aceptado} many {# de jugadores etiquetados aún no han aceptado} other {# jugadores etiquetados aún no han aceptado}}",
+    "why": "Una foto solo se hace pública cuando todas las personas etiquetadas están de acuerdo.",
+    "done": "Ya está en la galería del lugar",
+    "off": "De nuevo solo para jugadores"
+  },
+  "report": {
+    "cta": "Denunciar foto",
+    "title": "¿Qué problema tiene?",
+    "reason": {
+      "nudity": "Desnudos",
+      "violence": "Violencia",
+      "harassment": "Acoso",
+      "privacy": "Privacidad",
+      "copyright": "Derechos de autor",
+      "spam": "Spam",
+      "other": "Otra cosa"
+    },
+    "submit": "Denunciar",
+    "thanks": "Gracias. Un moderador la revisará."
+  },
+  "venue": {
+    "tabsA11y": "Detalles del lugar",
+    "tabGames": "Partidos",
+    "tabPhotos": "Fotos",
+    "rangeA11y": "Fotos de",
+    "week": "Esta semana",
+    "month": "Este mes",
+    "all": "Todas",
+    "emptyTitle": "Aún no hay fotos aquí",
+    "emptyBody": "Aquí aparecen las fotos que los jugadores hacen públicas después de sus partidos.",
+    "consent": "Todas las personas etiquetadas en estas fotos aceptaron mostrarlas aquí.",
+    "photoA11y": "Foto del {date}",
+    "sharedOn": "Compartida después de un partido el {date}"
+  }
+}

@@ -1,0 +1,73 @@
+{
+  "title": "Jogadores",
+  "subtitle": "{count, plural, =0 {Jogue uma partida para conhecer pessoas} one {# pessoa com quem você jogou} many {# de pessoas com quem você jogou} other {# pessoas com quem você jogou}}",
+  "entry": {
+    "title": "Jogadores",
+    "subtitle": "Amigos, pessoas com quem você jogou, pedidos",
+    "requests": "{count, plural, one {# pedido} many {# de pedidos} other {# pedidos}}"
+  },
+  "tab": {
+    "friends": "Amigos",
+    "played": "Jogaram juntos",
+    "requests": "Pedidos"
+  },
+  "action": {
+    "add": "Adicionar",
+    "accept": "Aceitar",
+    "cancel": "Cancelar",
+    "remove": "Remover"
+  },
+  "state": {
+    "outgoing": "Pedido enviado",
+    "friends": "Amigos"
+  },
+  "row": {
+    "played": "{count, plural, one {# jogo juntos · último em {date}} many {# de jogos juntos · último em {date}} other {# jogos juntos · último em {date}}}",
+    "playedNoDate": "{count, plural, one {# jogo juntos} many {# de jogos juntos} other {# jogos juntos}}",
+    "notPlayed": "Ainda não jogaram juntos"
+  },
+  "playedHelp": "Você pode adicionar pessoas com quem jogou. Elas veem seu pedido na caixa de entrada.",
+  "requests": {
+    "incoming": "Querem ser amigos",
+    "outgoing": "Enviados"
+  },
+  "empty": {
+    "friendsTitle": "Ainda sem amigos",
+    "friendsBody": "Adicione pessoas com quem você jogou para ver os jogos em que elas entram.",
+    "seePlayed": "Ver com quem você jogou",
+    "playedTitle": "Ninguém ainda",
+    "playedBody": "Todos que fazem check-in no mesmo jogo que você aparecem aqui.",
+    "requestsTitle": "Nenhum pedido",
+    "requestsBody": "Pedidos de amizade de pessoas com quem você jogou aparecem aqui."
+  },
+  "privacy": {
+    "title": "Privacidade",
+    "label": "Quem vê meus próximos jogos",
+    "help": "Seus amigos veem os jogos públicos em que você entrou, para poderem ir junto. Jogos privados nunca aparecem.",
+    "friends": "Amigos",
+    "nobody": "Ninguém",
+    "savedFriends": "Seus amigos podem ver seus próximos jogos",
+    "savedNobody": "Seus próximos jogos estão ocultos"
+  },
+  "removeA11y": "Remover {name} dos amigos",
+  "removeTitle": "Remover {name}?",
+  "removeBody": "Vocês continuam conectados como pessoas que jogaram juntas. A pessoa não é avisada.",
+  "acceptA11y": "Aceitar {name}",
+  "declineA11y": "Recusar {name}",
+  "toast": {
+    "requested": "Pedido enviado para {name}",
+    "accepted": "Você e {name} agora são amigos",
+    "acceptedShort": "Pedido de amizade aceito",
+    "declined": "Pedido recusado",
+    "removed": "Removido"
+  },
+  "request": {
+    "section": "{count, plural, one {# pedido} many {# de pedidos} other {# pedidos}}",
+    "friendTitle": "{name} quer ser seu amigo",
+    "friendBody": "{count, plural, one {Vocês jogaram # jogo juntos} many {Vocês jogaram # de jogos juntos} other {Vocês jogaram # jogos juntos}}"
+  },
+  "playing": {
+    "title": "Seus amigos vão jogar",
+    "who": "{count, plural, one {{names} vai} many {{names} vão} other {{names} vão}}"
+  }
+}

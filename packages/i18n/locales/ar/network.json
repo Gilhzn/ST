@@ -1,0 +1,73 @@
+{
+  "title": "اللاعبون",
+  "subtitle": "{count, plural, =0 {العب مباراة لتتعرّف إلى الناس} zero {العب مباراة لتتعرّف إلى الناس} one {شخص واحد لعبت معه} two {شخصان لعبت معهما} few {# أشخاص لعبت معهم} many {# شخصًا لعبت معهم} other {# شخص لعبت معهم}}",
+  "entry": {
+    "title": "اللاعبون",
+    "subtitle": "الأصدقاء ومن لعبت معهم والطلبات",
+    "requests": "{count, plural, zero {لا طلبات} one {طلب واحد} two {طلبان} few {# طلبات} many {# طلبًا} other {# طلب}}"
+  },
+  "tab": {
+    "friends": "الأصدقاء",
+    "played": "لعبنا معًا",
+    "requests": "الطلبات"
+  },
+  "action": {
+    "add": "إضافة",
+    "accept": "قبول",
+    "cancel": "إلغاء",
+    "remove": "إزالة"
+  },
+  "state": {
+    "outgoing": "أُرسل الطلب",
+    "friends": "أصدقاء"
+  },
+  "row": {
+    "played": "{count, plural, zero {لا مباريات معًا · آخرها {date}} one {مباراة واحدة معًا · آخرها {date}} two {مباراتان معًا · آخرها {date}} few {# مباريات معًا · آخرها {date}} many {# مباراة معًا · آخرها {date}} other {# مباراة معًا · آخرها {date}}}",
+    "playedNoDate": "{count, plural, zero {لا مباريات معًا} one {مباراة واحدة معًا} two {مباراتان معًا} few {# مباريات معًا} many {# مباراة معًا} other {# مباراة معًا}}",
+    "notPlayed": "لم تلعبا معًا بعد"
+  },
+  "playedHelp": "يمكنك إضافة من لعبت معهم. سيرون طلبك في صندوق الوارد.",
+  "requests": {
+    "incoming": "يريدون الصداقة",
+    "outgoing": "المُرسلة"
+  },
+  "empty": {
+    "friendsTitle": "لا أصدقاء بعد",
+    "friendsBody": "أضف من لعبت معهم لترى المباريات التي ينضمون إليها.",
+    "seePlayed": "اعرض من لعبت معهم",
+    "playedTitle": "لا أحد بعد",
+    "playedBody": "كل من يسجّل حضوره في المباراة نفسها التي تلعبها يظهر هنا.",
+    "requestsTitle": "لا طلبات",
+    "requestsBody": "تظهر هنا طلبات الصداقة ممن لعبت معهم."
+  },
+  "privacy": {
+    "title": "الخصوصية",
+    "label": "من يرى مبارياتي القادمة",
+    "help": "يرى الأصدقاء المباريات العامة التي انضممت إليها ليتمكنوا من المجيء معك. لا تظهر المباريات الخاصة أبدًا.",
+    "friends": "الأصدقاء",
+    "nobody": "لا أحد",
+    "savedFriends": "يمكن لأصدقائك رؤية مبارياتك القادمة",
+    "savedNobody": "مبارياتك القادمة مخفية"
+  },
+  "removeA11y": "إزالة {name} من الأصدقاء",
+  "removeTitle": "هل تريد إزالة {name}؟",
+  "removeBody": "تبقيان مرتبطين كشخصين لعبا معًا. لن يصله إشعار.",
+  "acceptA11y": "قبول {name}",
+  "declineA11y": "رفض {name}",
+  "toast": {
+    "requested": "أُرسل الطلب إلى {name}",
+    "accepted": "أنت و{name} صديقان الآن",
+    "acceptedShort": "قُبل طلب الصداقة",
+    "declined": "رُفض الطلب",
+    "removed": "تمت الإزالة"
+  },
+  "request": {
+    "section": "{count, plural, zero {لا طلبات} one {طلب واحد} two {طلبان} few {# طلبات} many {# طلبًا} other {# طلب}}",
+    "friendTitle": "يريد {name} أن تكونا صديقين",
+    "friendBody": "{count, plural, zero {لم تلعبا معًا بعد} one {لعبتما مباراة واحدة معًا} two {لعبتما مباراتين معًا} few {لعبتما # مباريات معًا} many {لعبتما # مباراة معًا} other {لعبتما # مباراة معًا}}"
+  },
+  "playing": {
+    "title": "أصدقاؤك يلعبون",
+    "who": "{count, plural, zero {{names} مشاركون} one {{names} مشارك} two {{names} مشاركان} few {{names} مشاركون} many {{names} مشاركون} other {{names} مشاركون}}"
+  }
+}

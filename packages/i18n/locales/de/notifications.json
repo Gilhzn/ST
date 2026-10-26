@@ -70,5 +70,57 @@
   "waitlist_offer": {
     "title": "Ein Platz wartet auf dich",
     "body": "In einem Spiel, bei dem du auf der Warteliste stehst, ist ein Platz frei geworden. Nimm ihn in der App an, bevor das Angebot abläuft."
+  },
+  "roster_added": {
+    "title": "{via, select, invite_link {Neu im Stamm von {seriesTitle}} other {Du bist in den Stamm eingeladen}}",
+    "body": "{via, select, invite_link {Jemand ist {seriesTitle} über deinen Link beigetreten.} other {Tritt dem Stamm von {seriesTitle} bei und hab bei jedem Termin Vorrang.}}"
+  },
+  "series_reconfirm": {
+    "title": "Noch dabei bei {seriesTitle}?",
+    "body": "Bestätige deinen Platz bis {deadline}, sonst geht er an die nächste Person. So oder so ohne Strafe."
+  },
+  "series_auto_released": {
+    "title": "Dein Platz wurde freigegeben",
+    "body": "Du hast für {seriesTitle} nicht bestätigt, daher ging dein Platz an die nächste Person. Ohne Strafe."
+  },
+  "roster_leave_offer": {
+    "title": "Spielst du noch bei {seriesTitle}?",
+    "body": "{misses, plural, one {Du hast # Termin in Folge verpasst. Bleib im Stamm oder steig aus, ohne Strafe.} other {Du hast # Termine in Folge verpasst. Bleib im Stamm oder steig aus, ohne Strafe.}}"
+  },
+  "occurrence_skipped": {
+    "title": "Ein Termin von {seriesTitle} fällt aus",
+    "body": "Die Organisation hat das Spiel am {startsAt} ausgesetzt. Du bleibst im Stamm."
+  },
+  "occurrence_updated": {
+    "title": "{seriesTitle} wurde geändert",
+    "body": "Die Organisation hat das Spiel am {startsAt} aktualisiert. Sieh dir die Details an."
+  },
+  "occurrence_rescheduled": {
+    "title": "{seriesTitle} hat einen neuen Zeitplan",
+    "body": "Das Spiel am {startsAt} wurde verschoben. Sieh dir die neuen Termine an."
+  },
+  "peer_rating_open": {
+    "title": "Bewerte deine Mitspieler:innen",
+    "body": "Die Bewertung ist 48 Stunden nach dem Spiel offen. Sie ist privat und sorgt für ausgeglichene Teams."
+  },
+  "friend_request": {
+    "title": "Neue Freundschaftsanfrage",
+    "body": "Jemand, mit dem du gespielt hast, möchte mit dir befreundet sein."
+  },
+  "friend_accepted": {
+    "title": "Freundschaftsanfrage angenommen",
+    "body": "Ihr seid jetzt befreundet. Du siehst die Spiele, denen die Person beitritt."
+  },
+  "media_tag_request": {
+    "title": "Du wurdest auf einem Foto markiert",
+    "body": "Die Markierung erscheint erst, wenn du sie annimmst."
+  },
+  "media_blocked": {
+    "title": "Dein Foto wurde nicht veröffentlicht",
+    "body": "Es hat unsere Inhaltsprüfung nicht bestanden. Niemand sonst kann es sehen."
+  },
+  "rating_level_changed": {
+    "title": "Dein Level hat sich geändert",
+    "body": "Dein neues Level ist {level}. Sieh dir im Profil an, wie es sich entwickelt hat."
   }
 }

@@ -1,0 +1,138 @@
+{
+  "family": {
+    "small_sided": "Kleinfeld",
+    "full_sided": "Großfeld",
+    "half_court": "Halbfeld",
+    "full_court": "Ganzes Feld",
+    "singles": "Einzel",
+    "doubles": "Doppel",
+    "pairs": "Paare",
+    "teams": "Teams"
+  },
+  "attribute": {
+    "speed": "Tempo",
+    "ball_control": "Ballkontrolle",
+    "passing": "Passspiel",
+    "defence": "Abwehr",
+    "overall": "Gesamt",
+    "shooting": "Wurf",
+    "handling": "Ballhandling",
+    "athleticism": "Athletik",
+    "serve": "Aufschlag",
+    "groundstrokes": "Grundschläge",
+    "net_play": "Netzspiel",
+    "movement": "Beinarbeit",
+    "volley": "Volley",
+    "walls": "Wandspiel",
+    "positioning": "Stellungsspiel",
+    "pace": "Laufrhythmus",
+    "endurance": "Ausdauer",
+    "attack": "Angriff"
+  },
+  "level": {
+    "sectionTitle": "Level",
+    "label": "Level",
+    "a11y": "Level {level}",
+    "basedOn": "{count, plural, one {Basierend auf # gewertetem Spiel} other {Basierend auf # gewerteten Spielen}}",
+    "provisional": "Vorläufig",
+    "provisionalGames": "{count, plural, one {Vorläufig – noch # gewertetes Spiel} other {Vorläufig – noch # gewertete Spiele}}",
+    "provisionalReliability": "Vorläufig – erreiche {percent} Zuverlässigkeit, um dein Level zu zeigen",
+    "provisionalSettling": "Vorläufig – ein paar Spiele mehr machen es stabil",
+    "frozen": "Steigere deine Zuverlässigkeit auf {percent}, um Wertung zu sammeln",
+    "frozenPill": "Pausiert",
+    "confidence": "Sicherheit {percent}",
+    "historyA11y": "{weeks, plural, one {Das Level ging in # Woche von {from} auf {to}} other {Das Level ging in # Wochen von {from} auf {to}}}",
+    "weeksAgo": "{count, plural, one {Vor # Woche} other {Vor # Wochen}}",
+    "now": "Jetzt",
+    "emptyTitle": "Noch kein Level",
+    "emptyBody": "Spiel Partien mit bestätigtem Ergebnis und Teams, die vor dem Anpfiff feststehen. Dein Level erscheint nach ein paar davon."
+  },
+  "peers": {
+    "title": "{count, plural, one {Was # Mitspieler:in sagt · nur für dich sichtbar} other {Was # Mitspieler:innen sagen · nur für dich sichtbar}}"
+  },
+  "rate": {
+    "title": "Spieler:innen bewerten",
+    "closes": "Offen bis {time}",
+    "privacy": "Bewertungen sind privat. Niemand sieht, wer bewertet hat, und sie beeinflussen nur Level und ausgeglichene Teams, nie Karten.",
+    "pickTitle": "Mit wem hast du gespielt?",
+    "picked": "{count} von {max}",
+    "limit": "{count, plural, one {Du kannst pro Spiel bis zu # Person bewerten.} other {Du kannst pro Spiel bis zu # Personen bewerten.}}",
+    "nobodyLeft": "Du hast alle bewertet, die du in diesem Spiel bewerten kannst.",
+    "removeA11y": "{name} entfernen",
+    "submit": "Bewertungen senden",
+    "submitCount": "{count, plural, one {# Bewertung senden} other {# Bewertungen senden}}",
+    "thanks": "{count, plural, one {Danke, # Bewertung gesendet} other {Danke, # Bewertungen gesendet}}"
+  },
+  "stars": {
+    "a11y": "{count, plural, one {# Stern} other {# Sterne}}",
+    "skip": "Nicht bewertet",
+    "word": {
+      "1": "Lernt noch",
+      "2": "Auf dem Weg",
+      "3": "Solide",
+      "4": "Stark",
+      "5": "Herausragend"
+    }
+  },
+  "gate": {
+    "title": "Du kannst dieses Spiel nicht bewerten",
+    "closedTitle": "Bewertung geschlossen",
+    "body": "Bewertungen bleiben fair, wenn sie von Leuten kommen, die mitgespielt haben und regelmäßig erscheinen.",
+    "fair": "Bewertungen sind privat. Sie beeinflussen Level und ausgeglichene Teams, nie Karten."
+  },
+  "gateTitle": {
+    "not_verified": "Check-in zum Bewerten",
+    "low_reliability": "Zuverlässigkeit aufbauen",
+    "too_few_games": "Erst noch ein paar Spiele",
+    "active_sanction": "Vorerst pausiert",
+    "window_not_open": "Noch nicht offen",
+    "window_closed": "Bewertung geschlossen"
+  },
+  "ineligible": {
+    "not_verified": "Nur wer eingecheckt hat, kann bewerten. Check beim nächsten Mal direkt bei der Ankunft ein.",
+    "low_reliability": "Zum Bewerten brauchst du {percent} Zuverlässigkeit. Erscheine zu den Spielen, denen du beitrittst, dann klappt das.",
+    "too_few_games": "{count, plural, one {Spiel noch # verifiziertes {sport}-Spiel, um andere zu bewerten. Nötig sind {required}.} other {Spiel noch # verifizierte {sport}-Spiele, um andere zu bewerten. Nötig sind {required}.}}",
+    "active_sanction": "Bewerten ist pausiert, solange eine Karte oder Einschränkung aktiv ist. Danach geht es wieder.",
+    "window_not_open": "Die Bewertung öffnet, wenn das Spiel vorbei ist.",
+    "window_closed": "{hours, plural, one {Die Bewertung ist # Stunde nach dem Spiel offen. Sie wurde {time} geschlossen.} other {Die Bewertung ist # Stunden nach dem Spiel offen. Sie wurde {time} geschlossen.}}"
+  },
+  "notRated": {
+    "no_result": "Noch kein Ergebnis",
+    "result_not_confirmed": "Wartet auf die Bestätigung des Ergebnisses",
+    "result_disputed": "Nicht gewertet: Ergebnis angefochten",
+    "too_few_verified": "Nicht gewertet: zu wenige verifizierte Spieler:innen",
+    "teams_not_published": "Nicht gewertet: Teams standen vor dem Anpfiff nicht fest",
+    "not_two_sides": "Nicht gewertet: Es braucht zwei Teams mit je einem Ergebnis",
+    "unrated_sport": "Diese Sportart hat keine Level"
+  },
+  "notRatedHelp": {
+    "no_result": "Trag das Endergebnis ein, damit das Spiel fürs Level zählt.",
+    "result_not_confirmed": "Es zählt fürs Level, sobald die meisten Eingecheckten es bestätigen.",
+    "result_disputed": "Die meisten haben das Ergebnis angefochten, daher zählt es weder für Statistiken noch fürs Level.",
+    "too_few_verified": "Level ändern sich nur, wenn mindestens {percent} der Spieler:innen eingecheckt haben.",
+    "teams_not_published": "Leg die Teams vor dem Anpfiff in der App fest, damit das Spiel fürs Level zählt.",
+    "not_two_sides": "Level vergleichen zwei Teams. Dieses Spiel hatte keine zwei Teams mit je einem Ergebnis.",
+    "unrated_sport": "Läufe wirken sich nicht aufs Level aus."
+  },
+  "confirm": {
+    "title": "Ist das das Endergebnis?",
+    "statusTitle": "Ergebnis bestätigen",
+    "help": "Bestätige es, wenn es stimmt. Die meisten Spieler:innen müssen zustimmen, bevor das Spiel fürs Level zählt.",
+    "tally": "{count, plural, one {{confirms} von # verifizierten Person bestätigt} other {{confirms} von # verifizierten Personen bestätigt}}",
+    "disputes": "{count, plural, one {# Einspruch} other {# Einsprüche}}",
+    "status": {
+      "pending": "Ausstehend",
+      "confirmed": "Bestätigt",
+      "disputed": "Angefochten"
+    },
+    "confirm": "Bestätigen",
+    "dispute": "Anfechten",
+    "youConfirmed": "Du hast dieses Ergebnis bestätigt. Du kannst deine Antwort ändern, bis das Zeitfenster schließt.",
+    "youDisputed": "Du hast dieses Ergebnis angefochten. Du kannst deine Antwort ändern, bis das Zeitfenster schließt.",
+    "thanks": "Danke fürs Bestätigen",
+    "disputed": "Einspruch erfasst"
+  },
+  "band": {
+    "a11y": "Levelbereich {band} von 5"
+  }
+}

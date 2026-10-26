@@ -1,0 +1,138 @@
+{
+  "family": {
+    "small_sided": "小場",
+    "full_sided": "大場",
+    "half_court": "半場",
+    "full_court": "全場",
+    "singles": "單打",
+    "doubles": "雙打",
+    "pairs": "雙人",
+    "teams": "團隊"
+  },
+  "attribute": {
+    "speed": "速度",
+    "ball_control": "控球",
+    "passing": "傳球",
+    "defence": "防守",
+    "overall": "綜合",
+    "shooting": "投籃",
+    "handling": "運球",
+    "athleticism": "身體素質",
+    "serve": "發球",
+    "groundstrokes": "底線抽球",
+    "net_play": "網前",
+    "movement": "步法",
+    "volley": "截擊",
+    "walls": "牆面球",
+    "positioning": "站位",
+    "pace": "配速",
+    "endurance": "耐力",
+    "attack": "進攻"
+  },
+  "level": {
+    "sectionTitle": "程度",
+    "label": "程度",
+    "a11y": "程度 {level}",
+    "basedOn": "{count, plural, other {根據 # 場計分比賽}}",
+    "provisional": "暫定",
+    "provisionalGames": "{count, plural, other {暫定 — 再打 # 場計分比賽}}",
+    "provisionalReliability": "暫定 — 可靠度達到 {percent} 才會顯示程度",
+    "provisionalSettling": "暫定 — 再打幾場就會穩定下來",
+    "frozen": "可靠度提升到 {percent} 才能獲得評分",
+    "frozenPill": "已暫停",
+    "confidence": "可信度 {percent}",
+    "historyA11y": "{weeks, plural, other {程度在 # 週內從 {from} 變成 {to}}}",
+    "weeksAgo": "{count, plural, other {# 週前}}",
+    "now": "現在",
+    "emptyTitle": "還沒有程度",
+    "emptyBody": "參加比分已確認、開賽前已分好隊的比賽。打幾場之後就會顯示你的程度。"
+  },
+  "peers": {
+    "title": "{count, plural, other {# 位隊友的評價 · 只有你看得到}}"
+  },
+  "rate": {
+    "title": "評價球友",
+    "closes": "開放到 {time}",
+    "privacy": "評價是私密的。沒有人知道是誰評價了自己，評價只用於程度和分隊平衡，絕不會導致黃牌。",
+    "pickTitle": "你和誰一起打球？",
+    "picked": "{count}/{max}",
+    "limit": "{count, plural, other {每場比賽最多可評價 # 位球友。}}",
+    "nobodyLeft": "這場比賽中你能評價的人都評價過了。",
+    "removeA11y": "移除{name}",
+    "submit": "送出評價",
+    "submitCount": "{count, plural, other {送出 # 則評價}}",
+    "thanks": "{count, plural, other {謝謝，已送出 # 則評價}}"
+  },
+  "stars": {
+    "a11y": "{count, plural, other {# 顆星}}",
+    "skip": "未評價",
+    "word": {
+      "1": "入門",
+      "2": "進步中",
+      "3": "穩定",
+      "4": "出色",
+      "5": "頂尖"
+    }
+  },
+  "gate": {
+    "title": "你無法評價這場比賽",
+    "closedTitle": "評價已截止",
+    "body": "只有真正上場、而且經常出席的人來評價，評分才公平。",
+    "fair": "評價是私密的，只用於程度和分隊平衡，絕不會導致黃牌。"
+  },
+  "gateTitle": {
+    "not_verified": "報到後才能評價",
+    "low_reliability": "先提升可靠度",
+    "too_few_games": "再多打幾場",
+    "active_sanction": "暫時無法評價",
+    "window_not_open": "尚未開放",
+    "window_closed": "評價已截止"
+  },
+  "ineligible": {
+    "not_verified": "只有報到的球友才能評價。下次到場後記得報到。",
+    "low_reliability": "評價需要 {percent} 的可靠度。報名的比賽準時出席就能達到。",
+    "too_few_games": "{count, plural, other {再參加 # 場已驗證的{sport}比賽才能評價別人。需要 {required} 場。}}",
+    "active_sanction": "黃牌或限制生效期間無法評價，結束後就會恢復。",
+    "window_not_open": "比賽結束後開放評價。",
+    "window_closed": "{hours, plural, other {評價在賽後開放 # 小時，已於{time}截止。}}"
+  },
+  "notRated": {
+    "no_result": "還沒有比分",
+    "result_not_confirmed": "等待球友確認比分",
+    "result_disputed": "不計分：比分有爭議",
+    "too_few_verified": "不計分：已驗證的球友太少",
+    "teams_not_published": "不計分：開賽前沒有分隊",
+    "not_two_sides": "不計分：需要兩支各有比分的隊伍",
+    "unrated_sport": "這項運動沒有程度評級"
+  },
+  "notRatedHelp": {
+    "no_result": "輸入最終比分，比賽才會計入程度。",
+    "result_not_confirmed": "多數報到的球友確認後，比賽就會計入程度。",
+    "result_disputed": "多數球友對比分有異議，因此不計入數據和程度。",
+    "too_few_verified": "至少要有 {percent} 的球友報到，程度才會變動。",
+    "teams_not_published": "開賽前在 App 裡分好隊，比賽才會計入程度。",
+    "not_two_sides": "程度需要比較兩支隊伍。這場比賽沒有兩支各有比分的隊伍。",
+    "unrated_sport": "跑步不影響程度。"
+  },
+  "confirm": {
+    "title": "這是最終比分嗎？",
+    "statusTitle": "比分確認",
+    "help": "如果和實際情況相符，請確認。多數球友同意後，比賽才會計入程度。",
+    "tally": "{count, plural, other {# 位已驗證球友中有 {confirms} 位已確認}}",
+    "disputes": "{count, plural, other {# 個異議}}",
+    "status": {
+      "pending": "等待中",
+      "confirmed": "已確認",
+      "disputed": "有爭議"
+    },
+    "confirm": "確認",
+    "dispute": "提出異議",
+    "youConfirmed": "你已確認這個比分。截止前可以更改你的選擇。",
+    "youDisputed": "你對這個比分提出了異議。截止前可以更改你的選擇。",
+    "thanks": "感謝確認",
+    "disputed": "已記錄異議"
+  },
+  "band": {
+    "a11y": "程度區間 {band}/5"
+  }
+}

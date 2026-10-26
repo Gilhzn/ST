@@ -25,5 +25,6 @@
   "payment_required": "Se necesita un depósito para unirte a este partido. Añade un método de pago para continuar.",
   "network": "No hemos podido conectar. Comprueba tu conexión a internet e inténtalo de nuevo.",
   "unavailable": "Sport Talent no está disponible temporalmente. Inténtalo de nuevo en unos minutos.",
-  "unknown": "Algo ha fallado por nuestra parte. Inténtalo de nuevo."
+  "unknown": "Algo ha fallado por nuestra parte. Inténtalo de nuevo.",
+  "roster_priority": "Por ahora los fijos tienen prioridad en esta fecha. Podrás unirte cuando se abra para todos."
 }

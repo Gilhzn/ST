@@ -126,13 +126,15 @@ export function InviteGroupScreen({ target }: { target: InviteTarget }) {
           <View aria-hidden style={{ width: 36, height: 36, borderRadius: 12, alignItems: 'center', justifyContent: 'center', backgroundColor: WA_GREEN }}>
             <Icon name="UsersThree" size={20} weight="fill" color="#FFFFFF" />
           </View>
+          {stats.data.joinedFromLink ? (
+            <Text variant="statSmall" color="successText" testID="invite.stats.count">
+              {isolate(formatNumber(stats.data.joinedFromLink, locale), 'ltr')}
+            </Text>
+          ) : null}
           <Text variant="callout" weight="semibold" color="successText" style={{ flex: 1 }}>
             {stats.data.joinedFromLink
-              ? t('series:migration.joined', { count: stats.data.joinedFromLink })
+              ? t('series:migration.joinedLabel', { count: stats.data.joinedFromLink })
               : t('invite:group.statsNone')}
-          </Text>
-          <Text variant="statSmall" color="successText">
-            {isolate(formatNumber(stats.data.joinedFromLink, locale), 'ltr')}
           </Text>
         </View>
       ) : null}
@@ -157,12 +159,12 @@ export function InviteGroupScreen({ target }: { target: InviteTarget }) {
               </BidiText>
             </View>
           </View>
-          <View style={{ flexDirection: 'row', gap: spacing.sm }}>
-            <View style={{ flex: 1 }}>
-              <Button testID="invite.qr" variant="outline" fullWidth icon="QrCode" label={showQr ? t('invite:group.hideQr') : t('invite:group.showQr')} onPress={() => setShowQr((v) => !v)} />
+          <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: spacing.sm }}>
+            <View style={{ flexGrow: 1 }}>
+              <Button testID="invite.qr" variant="outline" icon="QrCode" label={showQr ? t('invite:group.hideQr') : t('invite:group.showQr')} onPress={() => setShowQr((v) => !v)} />
             </View>
-            <View style={{ flex: 1 }}>
-              <Button testID="invite.rotate" variant="ghost" fullWidth icon="ArrowClockwise" label={t('invite:group.rotate')} onPress={() => setConfirmRotate(true)} />
+            <View style={{ flexGrow: 1 }}>
+              <Button testID="invite.rotate" variant="ghost" icon="ArrowClockwise" label={t('invite:group.rotate')} onPress={() => setConfirmRotate(true)} />
             </View>
           </View>
           {showQr ? (

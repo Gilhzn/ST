@@ -70,5 +70,57 @@
   "waitlist_offer": {
     "title": "有一个名额留给你",
     "body": "你候补的一场比赛有了空位。请在邀请过期前在应用中接受。"
+  },
+  "roster_added": {
+    "title": "{via, select, invite_link {{seriesTitle}有新的固定成员} other {你受邀成为固定成员}}",
+    "body": "{via, select, invite_link {有玩家通过你的链接加入了{seriesTitle}。} other {加入{seriesTitle}的固定成员，每场都能优先报名。}}"
+  },
+  "series_reconfirm": {
+    "title": "还来参加{seriesTitle}吗？",
+    "body": "请在{deadline}前确认你的名额，否则名额会让给下一位玩家。无论哪种情况都不会受罚。"
+  },
+  "series_auto_released": {
+    "title": "你的名额已释放",
+    "body": "你没有确认参加{seriesTitle}，名额已让给下一位玩家。不会受罚。"
+  },
+  "roster_leave_offer": {
+    "title": "还在参加{seriesTitle}吗？",
+    "body": "{misses, plural, other {你已连续缺席 # 场。可以继续做固定成员，也可以退出名单，都不会受罚。}}"
+  },
+  "occurrence_skipped": {
+    "title": "{seriesTitle}有一场取消了",
+    "body": "组织者取消了{startsAt}的比赛。你仍是固定成员。"
+  },
+  "occurrence_updated": {
+    "title": "{seriesTitle}有更新",
+    "body": "组织者更新了{startsAt}的比赛，请查看详情。"
+  },
+  "occurrence_rescheduled": {
+    "title": "{seriesTitle}的时间安排有变",
+    "body": "{startsAt}的比赛已改期，请查看新的场次。"
+  },
+  "peer_rating_open": {
+    "title": "评价一下你的队友",
+    "body": "赛后 48 小时内可以评价。评价是私密的，用于平衡分队。"
+  },
+  "friend_request": {
+    "title": "新的好友请求",
+    "body": "一位和你一起打过球的人想加你为好友。"
+  },
+  "friend_accepted": {
+    "title": "好友请求已通过",
+    "body": "你们已成为好友，你会看到对方报名的比赛。"
+  },
+  "media_tag_request": {
+    "title": "有人在照片中标记了你",
+    "body": "你同意后标记才会显示。"
+  },
+  "media_blocked": {
+    "title": "你的照片未发布",
+    "body": "照片没有通过内容审核，其他人看不到它。"
+  },
+  "rating_level_changed": {
+    "title": "你的水平有变化",
+    "body": "你的新水平是 {level}。到个人资料里看看变化过程吧。"
   }
 }

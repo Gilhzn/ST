@@ -325,7 +325,7 @@ export default function GameDetailsScreen() {
     >
       <FactsStrip game={g} now={now} live={live} depositAmount={depositAmount} />
       {sd ? <SeriesChip series={sd.series} onPress={() => router.push(`/series/${sd.series.id}`)} /> : null}
-      {inPriority && occurrence ? <PriorityBanner occurrence={occurrence} timeZone={sd?.series.timeZone} role={seriesRole} /> : null}
+      {inPriority && occurrence ? <PriorityBanner occurrence={occurrence} role={seriesRole} /> : null}
 
       {cancelled ? <Banner testID="game.banner.cancelled" tone="danger" icon="CalendarX" text={t('games:details.banner.cancelledNoReason')} /> : null}
       {ended && !cancelled ? <Banner testID="game.banner.ended" icon="Flag" text={t('games:details.banner.ended')} /> : null}

@@ -70,5 +70,57 @@
   "waitlist_offer": {
     "title": "Hay una plaza para ti",
     "body": "Se ha liberado una plaza en un partido en cuya lista de espera estás. Acéptala en la app antes de que caduque la oferta."
+  },
+  "roster_added": {
+    "title": "{via, select, invite_link {Nuevo fijo en {seriesTitle}} other {Te invitaron a los fijos}}",
+    "body": "{via, select, invite_link {Un jugador se unió a {seriesTitle} con tu enlace.} other {Únete a los fijos de {seriesTitle} para tener prioridad en cada fecha.}}"
+  },
+  "series_reconfirm": {
+    "title": "¿Sigues en {seriesTitle}?",
+    "body": "Confirma tu plaza antes de {deadline} o pasará al siguiente jugador. Sin penalización en ningún caso."
+  },
+  "series_auto_released": {
+    "title": "Liberamos tu plaza",
+    "body": "No confirmaste para {seriesTitle}, así que tu plaza pasó al siguiente jugador. Sin penalización."
+  },
+  "roster_leave_offer": {
+    "title": "¿Sigues jugando en {seriesTitle}?",
+    "body": "{misses, plural, one {Faltaste a # fecha seguida. Sigue como fijo o deja la lista, sin penalización.} many {Faltaste a # de fechas seguidas. Sigue como fijo o deja la lista, sin penalización.} other {Faltaste a # fechas seguidas. Sigue como fijo o deja la lista, sin penalización.}}"
+  },
+  "occurrence_skipped": {
+    "title": "Una fecha de {seriesTitle} se cancela",
+    "body": "El organizador canceló el partido del {startsAt}. Sigues siendo fijo."
+  },
+  "occurrence_updated": {
+    "title": "{seriesTitle} cambió",
+    "body": "El organizador actualizó el partido del {startsAt}. Revisa los detalles."
+  },
+  "occurrence_rescheduled": {
+    "title": "{seriesTitle} tiene un nuevo horario",
+    "body": "El partido del {startsAt} se movió. Revisa las nuevas fechas."
+  },
+  "peer_rating_open": {
+    "title": "Puntúa a tus compañeros",
+    "body": "La puntuación está abierta 48 horas después del partido. Es privada y ayuda a equilibrar equipos."
+  },
+  "friend_request": {
+    "title": "Nueva solicitud de amistad",
+    "body": "Alguien con quien jugaste quiere ser tu amigo."
+  },
+  "friend_accepted": {
+    "title": "Solicitud de amistad aceptada",
+    "body": "Ya son amigos. Verás los partidos a los que se une."
+  },
+  "media_tag_request": {
+    "title": "Te etiquetaron en una foto",
+    "body": "La etiqueta solo aparece cuando la aceptas."
+  },
+  "media_blocked": {
+    "title": "Tu foto no se publicó",
+    "body": "No pasó nuestros controles de contenido. Nadie más puede verla."
+  },
+  "rating_level_changed": {
+    "title": "Tu nivel cambió",
+    "body": "Tu nuevo nivel es {level}. Mira cómo ha evolucionado en tu perfil."
   }
 }

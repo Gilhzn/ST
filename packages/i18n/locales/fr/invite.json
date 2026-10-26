@@ -1,0 +1,60 @@
+{
+  "share": {
+    "game": "Rejoins ma partie de {sport} « {title} »{hasDate, select, yes { le {date} à {time}} other {}}{hasArea, select, yes { à {area}} other {}}.{hasSpots, select, yes { {spotsLeft, plural, =0 {C’est complet, mais tu peux rejoindre la liste d’attente.} one {Il reste # place.} many {Il reste # de places.} other {Il reste # places.}}} other {}} Rejoins sur Sport Talent : {url}",
+    "gameWomenOnly": "Partie de {sport} entre femmes « {title} »{hasDate, select, yes { le {date} à {time}} other {}}{hasArea, select, yes { à {area}} other {}}.{hasSpots, select, yes { {spotsLeft, plural, =0 {C’est complet, mais tu peux rejoindre la liste d’attente.} one {Il reste # place.} many {Il reste # de places.} other {Il reste # places.}}} other {}} Rejoins-nous sur Sport Talent : {url}",
+    "series": {
+      "weekly": "{sport} chaque {weekday} à {time}{hasArea, select, yes { à {area}} other {}} : « {title} ». On déménage le groupe sur Sport Talent, où les habitués sont prioritaires à chaque date{hasDate, select, yes { (prochaine : {date})} other {}}. Rejoins les habitués : {url}",
+      "biweekly": "{sport} un {weekday} sur deux à {time}{hasArea, select, yes { à {area}} other {}} : « {title} ». On déménage le groupe sur Sport Talent, où les habitués sont prioritaires à chaque date{hasDate, select, yes { (prochaine : {date})} other {}}. Rejoins les habitués : {url}"
+    },
+    "seriesWomenOnly": {
+      "weekly": "{sport} entre femmes chaque {weekday} à {time}{hasArea, select, yes { à {area}} other {}} : « {title} ». On déménage le groupe sur Sport Talent, où les habituées sont prioritaires à chaque date{hasDate, select, yes { (prochaine : {date})} other {}}. Rejoins les habituées : {url}",
+      "biweekly": "{sport} entre femmes un {weekday} sur deux à {time}{hasArea, select, yes { à {area}} other {}} : « {title} ». On déménage le groupe sur Sport Talent, où les habituées sont prioritaires à chaque date{hasDate, select, yes { (prochaine : {date})} other {}}. Rejoins les habituées : {url}"
+    }
+  },
+  "preview": {
+    "title": "{sport} : {title}",
+    "spotsLeft": "{count, plural, =0 {Complet, rejoins la liste d’attente} one {# place restante} many {# de places restantes} other {# places restantes}}",
+    "weekly": "Chaque {weekday} à {time}",
+    "biweekly": "Un {weekday} sur deux à {time}",
+    "womenOnly": "Entre femmes",
+    "siteName": "Sport Talent"
+  },
+  "group": {
+    "title": "Invite ton groupe",
+    "heading": "Amène ton groupe WhatsApp",
+    "bodySeries": "Partage un seul lien. Chaque personne qui le touche rejoint les habitués et devient prioritaire à chaque date, et tu vois qui a suivi.",
+    "bodyGame": "Partage le lien dans la discussion du groupe. Les joueurs voient la partie et demandent à la rejoindre en un geste.",
+    "previewTitle": "Ce que ton groupe verra",
+    "whatsapp": "Partager sur WhatsApp",
+    "copy": "Copier le lien",
+    "more": "Plus d’options",
+    "copied": "Lien copié",
+    "messageCopied": "Message copié",
+    "noWhatsApp": "WhatsApp n’est pas installé sur cet appareil.",
+    "linkTitle": "Ton lien d’invitation",
+    "showQr": "Afficher le QR code",
+    "hideQr": "Masquer le QR code",
+    "qrHelp": "Les joueurs peuvent le scanner sur le terrain pour rejoindre.",
+    "rotate": "Réinitialiser le lien",
+    "rotateTitle": "Réinitialiser le lien ?",
+    "rotateBody": "L’ancien lien cesse de fonctionner tout de suite. Partage le nouveau avec ton groupe.",
+    "rotateConfirm": "Réinitialiser le lien",
+    "rotated": "Nouveau lien prêt",
+    "statsNone": "Personne n’a encore rejoint avec le lien",
+    "step1": "Touche Partager sur WhatsApp et choisis la discussion de ton groupe.",
+    "step2": "Les joueurs touchent le lien et se connectent avec leur numéro de téléphone.",
+    "step3": "Tu vois tous ceux qui ont rejoint. Épingle le message pour que les retardataires le trouvent."
+  },
+  "landing": {
+    "title": "Rejoins les habitués",
+    "from": "{name} t’invite à {title}",
+    "signedOutBody": "Connecte-toi pour voir la partie et rejoindre les habitués.",
+    "signUp": "Se connecter pour rejoindre les habitués",
+    "join": "Rejoindre les habitués",
+    "open": "Ouvrir la série",
+    "joined": "Tu fais partie des habitués de {title}",
+    "perkFirstPick": "{hours, plural, one {Priorité sur chaque date pendant # heure} many {Priorité sur chaque date pendant # d’heures} other {Priorité sur chaque date pendant # heures}}",
+    "perkAlwaysIn": "Choisis « Je suis toujours là » et obtiens une place automatiquement",
+    "perkNoPolls": "Fini de courir après le sondage du groupe"
+  }
+}

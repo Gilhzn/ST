@@ -396,5 +396,16 @@
   "card": {
     "areaOnly": "Posizione esatta dopo l’approvazione",
     "pinnedSpot": "Punto d’incontro sulla mappa"
+  },
+  "after": {
+    "title": "Dopo la partita",
+    "liveTitle": "Durante la partita",
+    "score": "Punteggio finale {score}",
+    "scoreHelp": "Controlla il punteggio e confermalo",
+    "noScore": "Aggiungi il punteggio finale",
+    "noScoreHelp": "Qualsiasi giocatore può inserirlo",
+    "rate": "Valuta i giocatori",
+    "rateHelp": "Aperto fino a {time}",
+    "gallery": "{count, plural, =0 {Galleria della partita} one {Galleria della partita · # foto} many {Galleria della partita · # di foto} other {Galleria della partita · # foto}}"
   }
 }

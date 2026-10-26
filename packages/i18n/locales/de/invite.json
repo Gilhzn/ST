@@ -1,0 +1,60 @@
+{
+  "share": {
+    "game": "Komm zu meinem {sport}-Spiel „{title}“{hasDate, select, yes { am {date} um {time}} other {}}{hasArea, select, yes { in {area}} other {}}.{hasSpots, select, yes { {spotsLeft, plural, =0 {Es ist voll, aber du kannst auf die Warteliste.} one {Noch # Platz frei.} other {Noch # Plätze frei.}}} other {}} Mach mit bei Sport Talent: {url}",
+    "gameWomenOnly": "{sport}-Spiel nur für Frauen „{title}“{hasDate, select, yes { am {date} um {time}} other {}}{hasArea, select, yes { in {area}} other {}}.{hasSpots, select, yes { {spotsLeft, plural, =0 {Es ist voll, aber du kannst auf die Warteliste.} one {Noch # Platz frei.} other {Noch # Plätze frei.}}} other {}} Mach mit bei Sport Talent: {url}",
+    "series": {
+      "weekly": "Wir spielen {sport} jeden {weekday} um {time}{hasArea, select, yes { in {area}} other {}}: „{title}“. Wir ziehen mit der Gruppe zu Sport Talent um, wo der Stamm bei jedem Termin Vorrang hat{hasDate, select, yes { (nächster: {date})} other {}}. Komm in den Stamm: {url}",
+      "biweekly": "Wir spielen {sport} jeden zweiten {weekday} um {time}{hasArea, select, yes { in {area}} other {}}: „{title}“. Wir ziehen mit der Gruppe zu Sport Talent um, wo der Stamm bei jedem Termin Vorrang hat{hasDate, select, yes { (nächster: {date})} other {}}. Komm in den Stamm: {url}"
+    },
+    "seriesWomenOnly": {
+      "weekly": "{sport} nur für Frauen, jeden {weekday} um {time}{hasArea, select, yes { in {area}} other {}}: „{title}“. Wir ziehen mit der Gruppe zu Sport Talent um, wo der Stamm bei jedem Termin Vorrang hat{hasDate, select, yes { (nächster: {date})} other {}}. Komm in den Stamm: {url}",
+      "biweekly": "{sport} nur für Frauen, jeden zweiten {weekday} um {time}{hasArea, select, yes { in {area}} other {}}: „{title}“. Wir ziehen mit der Gruppe zu Sport Talent um, wo der Stamm bei jedem Termin Vorrang hat{hasDate, select, yes { (nächster: {date})} other {}}. Komm in den Stamm: {url}"
+    }
+  },
+  "preview": {
+    "title": "{sport}: {title}",
+    "spotsLeft": "{count, plural, =0 {Voll, ab auf die Warteliste} one {Noch # Platz frei} other {Noch # Plätze frei}}",
+    "weekly": "Jeden {weekday} um {time}",
+    "biweekly": "Jeden zweiten {weekday} um {time}",
+    "womenOnly": "Nur für Frauen",
+    "siteName": "Sport Talent"
+  },
+  "group": {
+    "title": "Gruppe einladen",
+    "heading": "Hol deine WhatsApp-Gruppe her",
+    "bodySeries": "Teile einen einzigen Link. Wer darauf tippt, kommt in den Stamm und hat bei jedem Termin Vorrang – und du siehst, wer umgezogen ist.",
+    "bodyGame": "Teile den Link im Gruppenchat. Alle sehen das Spiel und fragen mit einem Tipp an.",
+    "previewTitle": "Das sieht deine Gruppe",
+    "whatsapp": "Per WhatsApp teilen",
+    "copy": "Link kopieren",
+    "more": "Weitere Optionen",
+    "copied": "Link kopiert",
+    "messageCopied": "Nachricht kopiert",
+    "noWhatsApp": "WhatsApp ist auf diesem Gerät nicht installiert.",
+    "linkTitle": "Dein Einladungslink",
+    "showQr": "QR-Code zeigen",
+    "hideQr": "QR-Code ausblenden",
+    "qrHelp": "Andere können ihn am Platz scannen, um beizutreten.",
+    "rotate": "Link zurücksetzen",
+    "rotateTitle": "Link zurücksetzen?",
+    "rotateBody": "Der alte Link funktioniert sofort nicht mehr. Teile den neuen mit deiner Gruppe.",
+    "rotateConfirm": "Link zurücksetzen",
+    "rotated": "Neuer Link bereit",
+    "statsNone": "Über den Link ist noch niemand beigetreten",
+    "step1": "Tippe auf „Per WhatsApp teilen“ und wähle deinen Gruppenchat.",
+    "step2": "Alle tippen auf den Link und melden sich mit ihrer Telefonnummer an.",
+    "step3": "Du siehst alle, die beigetreten sind. Pinne die Nachricht an, damit sie auch Nachzügler finden."
+  },
+  "landing": {
+    "title": "Komm in den Stamm",
+    "from": "{name} hat dich zu {title} eingeladen",
+    "signedOutBody": "Melde dich an, um das Spiel zu sehen und dem Stamm beizutreten.",
+    "signUp": "Anmelden und dem Stamm beitreten",
+    "join": "Dem Stamm beitreten",
+    "open": "Serie öffnen",
+    "joined": "Du gehörst jetzt zum Stamm von {title}",
+    "perkFirstPick": "{hours, plural, one {Vorrang bei jedem Termin für # Stunde} other {Vorrang bei jedem Termin für # Stunden}}",
+    "perkAlwaysIn": "Sag „Ich bin immer dabei“ und bekomm automatisch einen Platz",
+    "perkNoPolls": "Nie wieder der Gruppenumfrage hinterherlaufen"
+  }
+}

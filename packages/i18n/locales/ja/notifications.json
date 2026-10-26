@@ -70,5 +70,57 @@
   "waitlist_offer": {
     "title": "あなたの枠があります",
     "body": "キャンセル待ちをしている試合に空きが出ました。オファーの期限が切れる前に、アプリで受け取ってください。"
+  },
+  "roster_added": {
+    "title": "{via, select, invite_link {{seriesTitle}に新しいレギュラー} other {レギュラーに招待されました}}",
+    "body": "{via, select, invite_link {あなたのリンクからプレーヤーが{seriesTitle}に参加しました。} other {{seriesTitle}のレギュラーになると、毎回優先して参加できます。}}"
+  },
+  "series_reconfirm": {
+    "title": "{seriesTitle}に参加しますか？",
+    "body": "{deadline}までに枠を確認してください。確認がないと次の人に枠が移ります。どちらの場合もペナルティはありません。"
+  },
+  "series_auto_released": {
+    "title": "あなたの枠を解放しました",
+    "body": "{seriesTitle}の参加確認がなかったため、枠は次の人に移りました。ペナルティはありません。"
+  },
+  "roster_leave_offer": {
+    "title": "{seriesTitle}は続けますか？",
+    "body": "{misses, plural, other {#回続けて欠席しています。レギュラーを続けるかやめるかを選べます。ペナルティはありません。}}"
+  },
+  "occurrence_skipped": {
+    "title": "{seriesTitle}の日程がお休みになりました",
+    "body": "主催者が{startsAt}の試合を休みにしました。レギュラーの枠はそのままです。"
+  },
+  "occurrence_updated": {
+    "title": "{seriesTitle}が変更されました",
+    "body": "主催者が{startsAt}の試合を更新しました。詳細を確認してください。"
+  },
+  "occurrence_rescheduled": {
+    "title": "{seriesTitle}のスケジュールが変わりました",
+    "body": "{startsAt}の試合が移動しました。新しい日程を確認してください。"
+  },
+  "peer_rating_open": {
+    "title": "チームメイトを評価しましょう",
+    "body": "評価は試合後48時間受け付けています。非公開で、チームバランスの調整に使われます。"
+  },
+  "friend_request": {
+    "title": "新しい友達リクエスト",
+    "body": "一緒にプレーした人から友達リクエストが届きました。"
+  },
+  "friend_accepted": {
+    "title": "友達リクエストが承認されました",
+    "body": "友達になりました。相手が参加する試合が見られるようになります。"
+  },
+  "media_tag_request": {
+    "title": "写真にタグ付けされました",
+    "body": "タグはあなたが承諾して初めて表示されます。"
+  },
+  "media_blocked": {
+    "title": "写真は公開されませんでした",
+    "body": "コンテンツの審査を通過しませんでした。他の人には表示されません。"
+  },
+  "rating_level_changed": {
+    "title": "レベルが変わりました",
+    "body": "新しいレベルは{level}です。プロフィールで推移を確認できます。"
   }
 }

@@ -1,0 +1,104 @@
+{
+  "gallery": {
+    "title": "比賽相簿",
+    "locksIn": "相簿將在 {time} 後關閉",
+    "locked": "相簿已關閉",
+    "opensAt": "{time}開放上傳",
+    "windowHelp": "{hours, plural, other {賽後 # 小時內都可以新增照片。}}",
+    "retention": "{months, plural, other {照片保留 # 個月。}}",
+    "filterA11y": "顯示照片",
+    "all": "全部",
+    "mine": "我的",
+    "emptyTitle": "還沒有照片",
+    "emptyMineTitle": "你還沒有新增照片",
+    "emptyBodyOpen": "來上傳這場比賽的第一張照片吧。",
+    "emptyBodyClosed": "相簿開放期間沒有人新增照片。"
+  },
+  "upload": {
+    "cta": "新增照片",
+    "uploading": "上傳中…",
+    "done": "已新增照片",
+    "checkInFirst": "在比賽中報到後才能新增照片。",
+    "nativeSoon": "App 內上傳照片即將推出，目前請使用網頁版。"
+  },
+  "reject": {
+    "not_verified_attendee": "只有報到的球友才能新增照片。",
+    "window_not_open": "比賽開始後開放上傳。",
+    "window_closed": "相簿已關閉。上傳在賽後 2 小時截止。",
+    "too_large": "檔案太大。照片最大 20 MB，影片最大 200 MB。",
+    "too_long": "影片最長 60 秒。",
+    "unsupported_type": "不支援這種檔案類型。請使用 JPEG、PNG、WebP、MP4 或 MOV。",
+    "user_cap_reached": "你在這場比賽新增的照片已達上限。",
+    "not_uploader": "只有上傳者可以更改這項設定。",
+    "not_published": "這張照片尚未發布。",
+    "tags_pending": "需要所有被標記的人先同意。"
+  },
+  "badge": {
+    "public": "場地相簿",
+    "participants": "僅限參賽球友",
+    "pending": "等待標記確認"
+  },
+  "viewer": {
+    "title": "照片",
+    "photoBy": "拍攝：{name}",
+    "someone": "一位球友",
+    "delete": "刪除照片",
+    "deleteTitle": "要刪除這張照片嗎？",
+    "deleteBody": "所有人都會看不到它，包括場地相簿。",
+    "deleted": "照片已刪除"
+  },
+  "tags": {
+    "title": "已標記",
+    "none": "還沒有標記任何人。",
+    "add": "標記球友",
+    "send": "{count, plural, =0 {送出請求} other {送出 # 個請求}}",
+    "sent": "{count, plural, other {已送出 # 個標記請求}}",
+    "requestHelp": "標記是一種請求，對方同意後才會顯示。",
+    "everyoneTagged": "上場的人都已被標記。",
+    "waiting": "{count, plural, other {等待{names}同意}}",
+    "untagMe": "移除對我的標記",
+    "untagged": "已移除標記，這張照片現在無法公開。",
+    "requestTitle": "{name}在照片中標記了你",
+    "requestBody": "你同意後標記才會顯示。",
+    "accepted": "已接受標記",
+    "declined": "已拒絕標記"
+  },
+  "public": {
+    "label": "在場地相簿中公開",
+    "help": "在場地頁面向所有在這裡打球的人展示。",
+    "on": "已在場地相簿中展示。",
+    "blocked": "{count, plural, other {還有 # 位被標記的球友尚未同意}}",
+    "why": "只有所有被標記的人都同意，照片才會公開。",
+    "done": "已加入場地相簿",
+    "off": "已改回僅限參賽球友"
+  },
+  "report": {
+    "cta": "檢舉照片",
+    "title": "這張照片有什麼問題？",
+    "reason": {
+      "nudity": "裸露",
+      "violence": "暴力",
+      "harassment": "騷擾",
+      "privacy": "隱私",
+      "copyright": "著作權",
+      "spam": "垃圾訊息",
+      "other": "其他問題"
+    },
+    "submit": "檢舉",
+    "thanks": "謝謝，審核人員會處理。"
+  },
+  "venue": {
+    "tabsA11y": "場地詳細資訊",
+    "tabGames": "比賽",
+    "tabPhotos": "照片",
+    "rangeA11y": "照片時間範圍",
+    "week": "本週",
+    "month": "本月",
+    "all": "全部",
+    "emptyTitle": "這裡還沒有照片",
+    "emptyBody": "球友在賽後公開的照片會顯示在這裡。",
+    "consent": "這些照片中被標記的所有人都同意在這裡展示。",
+    "photoA11y": "{date}的照片",
+    "sharedOn": "於{date}的比賽後分享"
+  }
+}

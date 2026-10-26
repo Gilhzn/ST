@@ -1,0 +1,60 @@
+{
+  "share": {
+    "game": "{sport}の試合「{title}」に参加しませんか{hasDate, select, yes { · {date} {time}} other {}}{hasArea, select, yes { · {area}} other {}}。{hasSpots, select, yes {{spotsLeft, plural, =0 {満員ですが、キャンセル待ちに登録できます。} other {残り#枠です。}}} other {}}Sport Talentで参加：{url}",
+    "gameWomenOnly": "女性限定の{sport}の試合「{title}」{hasDate, select, yes { · {date} {time}} other {}}{hasArea, select, yes { · {area}} other {}}。{hasSpots, select, yes {{spotsLeft, plural, =0 {満員ですが、キャンセル待ちに登録できます。} other {残り#枠です。}}} other {}}Sport Talentで参加：{url}",
+    "series": {
+      "weekly": "毎週{weekday} {time}{hasArea, select, yes {に{area}で} other {に}}{sport}をしています：「{title}」。グループをSport Talentに移します。レギュラーは毎回優先して参加できます{hasDate, select, yes {（次回：{date}）} other {}}。レギュラーに参加：{url}",
+      "biweekly": "隔週{weekday} {time}{hasArea, select, yes {に{area}で} other {に}}{sport}をしています：「{title}」。グループをSport Talentに移します。レギュラーは毎回優先して参加できます{hasDate, select, yes {（次回：{date}）} other {}}。レギュラーに参加：{url}"
+    },
+    "seriesWomenOnly": {
+      "weekly": "女性限定の{sport}を毎週{weekday} {time}{hasArea, select, yes {に{area}で} other {に}}開催しています：「{title}」。グループをSport Talentに移します。レギュラーは毎回優先して参加できます{hasDate, select, yes {（次回：{date}）} other {}}。レギュラーに参加：{url}",
+      "biweekly": "女性限定の{sport}を隔週{weekday} {time}{hasArea, select, yes {に{area}で} other {に}}開催しています：「{title}」。グループをSport Talentに移します。レギュラーは毎回優先して参加できます{hasDate, select, yes {（次回：{date}）} other {}}。レギュラーに参加：{url}"
+    }
+  },
+  "preview": {
+    "title": "{sport}：{title}",
+    "spotsLeft": "{count, plural, =0 {満員・キャンセル待ち受付中} other {残り#枠}}",
+    "weekly": "毎週{weekday} {time}",
+    "biweekly": "隔週{weekday} {time}",
+    "womenOnly": "女性限定",
+    "siteName": "Sport Talent"
+  },
+  "group": {
+    "title": "グループを招待",
+    "heading": "WhatsAppグループを連れてこよう",
+    "bodySeries": "リンクを1つ共有するだけ。タップした人はレギュラーになり毎回優先して参加でき、誰が移ってきたかも確認できます。",
+    "bodyGame": "グループチャットにリンクを共有しましょう。プレーヤーは試合を見て、ワンタップで参加をリクエストできます。",
+    "previewTitle": "グループに表示される内容",
+    "whatsapp": "WhatsAppで共有",
+    "copy": "リンクをコピー",
+    "more": "その他の方法",
+    "copied": "リンクをコピーしました",
+    "messageCopied": "メッセージをコピーしました",
+    "noWhatsApp": "この端末にはWhatsAppがインストールされていません。",
+    "linkTitle": "あなたの招待リンク",
+    "showQr": "QRコードを表示",
+    "hideQr": "QRコードを隠す",
+    "qrHelp": "会場でスキャンすれば参加できます。",
+    "rotate": "リンクをリセット",
+    "rotateTitle": "リンクをリセットしますか？",
+    "rotateBody": "古いリンクはすぐに使えなくなります。新しいリンクをグループに共有してください。",
+    "rotateConfirm": "リンクをリセット",
+    "rotated": "新しいリンクができました",
+    "statsNone": "まだリンクから参加した人はいません",
+    "step1": "「WhatsAppで共有」をタップして、グループチャットを選びます。",
+    "step2": "プレーヤーはリンクをタップし、電話番号でログインします。",
+    "step3": "参加した人を確認できます。後から来た人も見つけられるよう、メッセージをピン留めしましょう。"
+  },
+  "landing": {
+    "title": "レギュラーになろう",
+    "from": "{name}さんから{title}への招待",
+    "signedOutBody": "ログインすると試合を確認してレギュラーになれます。",
+    "signUp": "ログインしてレギュラーになる",
+    "join": "レギュラーになる",
+    "open": "シリーズを開く",
+    "joined": "{title}のレギュラーになりました",
+    "perkFirstPick": "{hours, plural, other {毎回#時間の優先参加}}",
+    "perkAlwaysIn": "「毎回参加する」にすれば自動で枠を確保",
+    "perkNoPolls": "グループの出欠アンケートはもう不要"
+  }
+}

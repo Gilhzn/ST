@@ -395,6 +395,149 @@ const FLOWS = [
       },
     ],
   },
+  // Phase 1.5 (contract v3): series, WhatsApp invites, ratings, Media Vault, network.
+  {
+    id: 'p15-dana',
+    steps: [
+      { run: async (p) => { await signIn(p, DANA); await click(p, 'nav.tab.games'); await visible(p, 'games.series', 15000); await settle(p, 900); } },
+      { name: 'games-p15', run: async () => {} },
+      { run: async (p) => { await click(p, 'games.series.s-tlv-weekly'); await visible(p, 'series.facts'); await settle(p, 900); } },
+      { name: 'series', scroll: true, run: async () => {} },
+      { run: async (p) => { await p.evaluate(() => { const el = document.querySelector('[data-shot-scroller]'); if (el) el.scrollTop = 0; }); } },
+      { name: 'series-skip', run: async (p) => { await click(p, 'series.occurrence.0.skip'); await visible(p, 'series.skipDialog'); await settle(p, 400); } },
+      { run: async (p) => { await click(p, 'series.skipDialog.cancel'); await settle(p, 300); } },
+      { name: 'series-edit', run: async (p) => { await click(p, 'series.host.edit'); await visible(p, 'series.edit'); await settle(p, 500); } },
+      { run: async (p) => { await p.keyboard.press('Escape'); await settle(p, 300); if (await isVisible(p, 'series.edit')) await p.getByRole('button', { name: /cancel|ביטול/i }).first().click(); await settle(p, 300); } },
+      { name: 'invite-group', scroll: true, run: async (p) => { await click(p, 'series.invite'); await visible(p, 'invite.preview'); await settle(p, 700); } },
+      { name: 'invite-qr', run: async (p) => { await click(p, 'invite.qr'); await visible(p, 'invite.qr.code'); await tid(p, 'invite.qr.code').scrollIntoViewIfNeeded(); await settle(p, 500); } },
+      { run: async (p) => { await back(p); await back(p); await backToTabs(p); await click(p, 'nav.tab.games'); await visible(p, 'games.series.s-lon-5s'); await click(p, 'games.series.s-lon-5s'); await visible(p, 'series.facts'); await settle(p, 800); } },
+      { name: 'series-invited', run: async () => {} },
+      { name: 'game-priority', run: async (p) => { await click(p, 'series.occurrence.0.open'); await visible(p, 'game.priority.banner'); await settle(p, 700); } },
+      {
+        run: async (p) => {
+          await backToTabs(p);
+          await click(p, 'nav.tab.games');
+          await click(p, 'games.segment.past');
+          await click(p, 'games.card.g-tlv-9');
+          await visible(p, 'game.after');
+          await tid(p, 'game.after').scrollIntoViewIfNeeded();
+          await settle(p, 600);
+        },
+      },
+      { name: 'game-after', run: async () => {} },
+      { name: 'gallery', run: async (p) => { await click(p, 'game.after.gallery'); await visible(p, 'gallery.grid'); await settle(p, 900); } },
+      { name: 'gallery-viewer', scroll: true, run: async (p) => { await click(p, 'gallery.item.0'); await visible(p, 'gallery.viewer'); await settle(p, 700); } },
+      { run: async (p) => { await click(p, 'gallery.viewer.close'); await settle(p, 300); await back(p); await click(p, 'game.after.result'); await visible(p, 'result.window'); await click(p, 'result.inc.0'); await click(p, 'result.submit'); await settle(p, 900); await click(p, 'game.after.result'); await visible(p, 'result.confirm'); await settle(p, 700); } },
+      { name: 'result-confirm', scroll: true, run: async () => {} },
+      { name: 'rate-gate', run: async (p) => { await back(p); await click(p, 'game.after.rate'); await visible(p, 'rate.gate'); await settle(p, 600); } },
+      { run: async (p) => { await backToTabs(p); await click(p, 'nav.tab.inbox'); await visible(p, 'inbox.requests'); await settle(p, 700); } },
+      { name: 'inbox-requests', run: async () => {} },
+      { run: async (p) => { await click(p, 'nav.tab.profile'); await visible(p, 'profile.levels'); await settle(p, 900); } },
+      { name: 'profile-p15', scroll: true, run: async () => {} },
+      { name: 'players', run: async (p) => { await tid(p, 'profile.players').scrollIntoViewIfNeeded(); await click(p, 'profile.players'); await visible(p, 'players.friends'); await settle(p, 600); } },
+      { name: 'players-played', run: async (p) => { await click(p, 'players.tab.played'); await visible(p, 'players.played'); await settle(p, 500); } },
+      { name: 'players-requests', run: async (p) => { await click(p, 'players.tab.requests'); await visible(p, 'players.requests'); await settle(p, 500); } },
+      {
+        run: async (p) => {
+          await backToTabs(p);
+          await click(p, 'nav.tab.map');
+          await dismissLocation(p);
+          await showListView(p);
+          // The list is virtualised: wheel down until the venue section renders.
+          const venue = p.locator('[data-testid="map.venueCard.v-tlv-clore"]').first();
+          for (let i = 0; i < 20 && !(await venue.isVisible().catch(() => false)); i++) {
+            await p.mouse.move(200, 700);
+            await p.mouse.wheel(0, 1200);
+            await settle(p, 250);
+          }
+          await venue.scrollIntoViewIfNeeded();
+          await venue.click();
+          await visible(p, 'map.venue.sheet');
+          await click(p, 'map.venue.tab.photos');
+          await visible(p, 'venue.photos.grid');
+          await tid(p, 'venue.photos').scrollIntoViewIfNeeded();
+          await settle(p, 700);
+        },
+      },
+      { name: 'venue-photos', run: async () => {} },
+      {
+        run: async (p) => {
+          if (await isVisible(p, 'map.venue.close')) await click(p, 'map.venue.close');
+          await backToTabs(p);
+          await click(p, 'nav.tab.map');
+          await dismissLocation(p);
+          if (await isVisible(p, 'map.fab.create')) await click(p, 'map.fab.create');
+          else await click(p, 'nav.rail.create');
+          await visible(p, 'game.create.step');
+          await click(p, 'game.create.sport.football');
+          await click(p, 'game.create.next');
+          const v = p.locator('[data-testid^="game.create.venue."]').first();
+          await v.click();
+          await click(p, 'game.create.next');
+          await click(p, 'game.create.repeat.weekly');
+          await settle(p, 400);
+        },
+      },
+      { name: 'create-repeat', scroll: true, run: async () => {} },
+      { run: async (p) => { for (let i = 0; i < 3; i++) { await click(p, 'game.create.next'); await settle(p, 300); } await visible(p, 'game.create.review'); } },
+      { name: 'create-series-review', run: async () => {} },
+      { name: 'create-series-published', run: async (p) => { await click(p, 'game.create.publish'); await visible(p, 'game.create.series.card'); await settle(p, 900); } },
+    ],
+  },
+  {
+    id: 'p15-yossi',
+    steps: [
+      { run: async (p) => { await signIn(p, YOSSI); await click(p, 'nav.tab.games'); await click(p, 'games.segment.past'); await click(p, 'games.card.g-tlv-wk-1'); await visible(p, 'game.after'); await tid(p, 'game.after').scrollIntoViewIfNeeded(); await settle(p, 700); } },
+      { name: 'game-series-past', run: async () => {} },
+      { name: 'result-confirm-player', run: async (p) => { await click(p, 'game.after.result'); await visible(p, 'result.confirm'); await tid(p, 'result.confirm').scrollIntoViewIfNeeded(); await settle(p, 700); } },
+      { run: async (p) => { await back(p); await click(p, 'game.after.rate'); await visible(p, 'screen.game.rate'); await settle(p, 500); } },
+      { name: 'rate', run: async () => {} },
+      {
+        name: 'rate-filled',
+        scroll: true,
+        run: async (p) => {
+          const picks = p.locator('[data-testid^="rate.pick."]');
+          await picks.nth(0).click();
+          await picks.nth(1).click();
+          const id = ((await picks.nth(0).getAttribute('data-testid')) ?? '').replace('rate.pick.', '');
+          await click(p, `rate.${id}.speed.4`);
+          await click(p, `rate.${id}.passing.5`);
+          await click(p, `rate.${id}.overall.4`);
+          await settle(p, 400);
+        },
+      },
+      { run: async (p) => { await backToTabs(p); await click(p, 'nav.tab.games'); await click(p, 'games.segment.upcoming'); await click(p, 'games.card.g-tlv-1'); await visible(p, 'game.title'); await click(p, 'game.players.toggle'); await tid(p, 'game.players').scrollIntoViewIfNeeded(); await settle(p, 700); } },
+      { name: 'game-host-bands', run: async () => {} },
+    ],
+  },
+  {
+    id: 'p15-new',
+    steps: [
+      { run: async (p) => { await p.goto('/invite/series/tlv-weekly-football-regulars'); await visible(p, 'screen.invite.series', 20000); await settle(p, 900); } },
+      { name: 'invite-series-signedout', run: async () => {} },
+      {
+        run: async (p) => {
+          await click(p, 'invite.series.signup');
+          await visible(p, 'auth.phone.input');
+          await tid(p, 'auth.phone.input').fill(newPhone());
+          await click(p, 'auth.phone.submit');
+          await visible(p, 'auth.otp.input');
+          await tid(p, 'auth.otp.input').fill('123456');
+          await p.waitForURL(/\/age-gate$/);
+          await tid(p, 'auth.age.month').selectOption('5');
+          await tid(p, 'auth.age.year').selectOption(String(new Date().getFullYear() - 25));
+          await click(p, 'auth.age.submit');
+          await visible(p, 'auth.onboarding.name');
+          await tid(p, 'auth.onboarding.name').fill('Alex Runner');
+          await click(p, 'auth.onboarding.sport.football');
+          await click(p, 'auth.onboarding.submit');
+          await visible(p, 'screen.series', 20000);
+          await settle(p, 900);
+        },
+      },
+      { name: 'invite-series-joined', run: async () => {} },
+    ],
+  },
   {
     id: 'design',
     steps: [
@@ -459,6 +602,7 @@ async function runFlow(browser, flow, locale, scheme, base) {
     timezoneId: 'Asia/Jerusalem',
   });
   const page = await context.newPage();
+  if (process.env.SCREENS_DEBUG) page.on("framenavigated", (f) => { if (f === page.mainFrame()) console.warn(`    nav: ${f.url()}`); });
   const errors = [];
   page.on('pageerror', (e) => errors.push(e.message));
   const consoleMsgs = new Set();
@@ -479,6 +623,11 @@ async function runFlow(browser, flow, locale, scheme, base) {
       } catch (e) {
         failures++;
         console.warn(`  ! ${flow.id}[${step.name ?? i}] ${locale}/${scheme}: ${String(e.message ?? e).split('\n')[0]}`);
+        if (process.env.SCREENS_DEBUG) {
+          await page.screenshot({ path: resolve(OUT, `FAIL-${flow.id}-${step.name ?? i}.${locale}.${scheme}.png`) }).catch(() => {});
+          const ids = await page.evaluate(() => [...document.querySelectorAll('[data-testid]')].map((n) => n.getAttribute('data-testid'))).catch(() => []);
+          console.warn(`    testids: ${ids.slice(0, 120).join(' ')}`);
+        }
         if (!step.name) navOk = false;
       }
       if (step.name && !navOk) {

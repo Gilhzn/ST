@@ -396,5 +396,16 @@
   "card": {
     "areaOnly": "Local exato após a aprovação",
     "pinnedSpot": "Ponto de encontro no mapa"
+  },
+  "after": {
+    "title": "Depois do jogo",
+    "liveTitle": "Durante o jogo",
+    "score": "Placar final {score}",
+    "scoreHelp": "Confira o placar e confirme",
+    "noScore": "Registre o placar final",
+    "noScoreHelp": "Qualquer jogador pode registrar",
+    "rate": "Avaliar jogadores",
+    "rateHelp": "Aberto até {time}",
+    "gallery": "{count, plural, =0 {Galeria do jogo} one {Galeria do jogo · # foto} many {Galeria do jogo · # de fotos} other {Galeria do jogo · # fotos}}"
   }
 }

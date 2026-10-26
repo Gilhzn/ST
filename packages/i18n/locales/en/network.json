@@ -1,0 +1,73 @@
+{
+  "title": "Players",
+  "subtitle": "{count, plural, =0 {Play a game to meet people} one {# person you played with} other {# people you played with}}",
+  "entry": {
+    "title": "Players",
+    "subtitle": "Friends, people you played with, requests",
+    "requests": "{count, plural, one {# request} other {# requests}}"
+  },
+  "tab": {
+    "friends": "Friends",
+    "played": "Played with",
+    "requests": "Requests"
+  },
+  "action": {
+    "add": "Add",
+    "accept": "Accept",
+    "cancel": "Cancel",
+    "remove": "Remove"
+  },
+  "state": {
+    "outgoing": "Requested",
+    "friends": "Friends"
+  },
+  "row": {
+    "played": "{count, plural, one {# game together · last {date}} other {# games together · last {date}}}",
+    "playedNoDate": "{count, plural, one {# game together} other {# games together}}",
+    "notPlayed": "Not played together yet"
+  },
+  "playedHelp": "You can add people you’ve played with. They see your request in their inbox.",
+  "requests": {
+    "incoming": "Want to be friends",
+    "outgoing": "Sent"
+  },
+  "empty": {
+    "friendsTitle": "No friends yet",
+    "friendsBody": "Add people you’ve played with to see the games they join.",
+    "seePlayed": "See who you played with",
+    "playedTitle": "No one yet",
+    "playedBody": "Everyone who checks in at the same game as you shows up here.",
+    "requestsTitle": "No requests",
+    "requestsBody": "Friend requests from people you played with show up here."
+  },
+  "privacy": {
+    "title": "Privacy",
+    "label": "Who sees my upcoming games",
+    "help": "Friends see the public games you’ve joined, so they can come along. Private games are never shown.",
+    "friends": "Friends",
+    "nobody": "Nobody",
+    "savedFriends": "Friends can see your upcoming games",
+    "savedNobody": "Your upcoming games are hidden"
+  },
+  "removeA11y": "Remove {name} from friends",
+  "removeTitle": "Remove {name}?",
+  "removeBody": "You stay connected as people who played together. They’re not told.",
+  "acceptA11y": "Accept {name}",
+  "declineA11y": "Decline {name}",
+  "toast": {
+    "requested": "Request sent to {name}",
+    "accepted": "You and {name} are friends",
+    "acceptedShort": "Friend request accepted",
+    "declined": "Request declined",
+    "removed": "Removed"
+  },
+  "request": {
+    "section": "{count, plural, one {# request} other {# requests}}",
+    "friendTitle": "{name} wants to be friends",
+    "friendBody": "{count, plural, one {You played # game together} other {You played # games together}}"
+  },
+  "playing": {
+    "title": "Friends are playing",
+    "who": "{count, plural, one {{names} is in} other {{names} are in}}"
+  }
+}

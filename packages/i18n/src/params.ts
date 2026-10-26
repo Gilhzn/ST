@@ -1,4 +1,4 @@
-import type { NotificationKind, SanctionReasonCode } from '@st/domain';
+import type { NotificationKind, Phase15NotificationKind, SanctionReasonCode } from '@st/domain';
 
 /**
  * ICU parameters each statement of reasons may use. The server puts them in
@@ -45,3 +45,24 @@ export const NOTIFICATION_PARAMS = {
   venue_hidden: ['venueName'],
   deposit_action_required: ['gameTitle', 'amount'],
 } as const satisfies Record<NotificationKind, readonly string[]>;
+
+/**
+ * ICU parameters of the Phase 1.5 notifications (contract v3 `Phase15NotificationKind`), rendered
+ * from the same `notifications:<kind>.title|body` keys. Params the server sends but the copy does
+ * not use (ids such as `seriesId`, `mediaId`, `userId`) are left out on purpose.
+ */
+export const PHASE15_NOTIFICATION_PARAMS = {
+  roster_added: ['seriesTitle', 'via'],
+  series_reconfirm: ['seriesTitle', 'deadline'],
+  series_auto_released: ['seriesTitle'],
+  roster_leave_offer: ['seriesTitle', 'misses'],
+  occurrence_skipped: ['seriesTitle', 'startsAt'],
+  occurrence_updated: ['seriesTitle', 'startsAt'],
+  occurrence_rescheduled: ['seriesTitle', 'startsAt'],
+  peer_rating_open: [],
+  friend_request: [],
+  friend_accepted: [],
+  media_tag_request: [],
+  media_blocked: [],
+  rating_level_changed: ['level'],
+} as const satisfies Record<Phase15NotificationKind, readonly string[]>;

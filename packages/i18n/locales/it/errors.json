@@ -25,5 +25,6 @@
   "payment_required": "Per partecipare a questa partita serve una cauzione. Aggiungi un metodo di pagamento per continuare.",
   "network": "Impossibile connettersi. Controlla la connessione a internet e riprova.",
   "unavailable": "Sport Talent è temporaneamente non disponibile. Riprova tra qualche minuto.",
-  "unknown": "Qualcosa è andato storto da parte nostra. Riprova."
+  "unknown": "Qualcosa è andato storto da parte nostra. Riprova.",
+  "roster_priority": "Per ora i fissi hanno la priorità su questa data. Potrai unirti quando si aprirà a tutti."
 }

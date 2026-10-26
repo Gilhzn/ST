@@ -8,7 +8,7 @@ import { existsSync, readdirSync, readFileSync, statSync } from 'node:fs';
 import { join } from 'node:path';
 import { parse, TYPE } from '@formatjs/icu-messageformat-parser';
 import type { MessageFormatElement } from '@formatjs/icu-messageformat-parser';
-import { NOTIFICATION_PARAMS, STATEMENT_PARAMS } from '../src/params.ts';
+import { NOTIFICATION_PARAMS, PHASE15_NOTIFICATION_PARAMS, STATEMENT_PARAMS } from '../src/params.ts';
 
 export type Level = 'error' | 'warn';
 
@@ -218,6 +218,8 @@ const sameSet = (a: Iterable<string>, b: Iterable<string>): boolean => {
 // ---------------------------------------------------------------------------
 
 function unionMembers(src: string, typeName: string): string[] {
+  // Doc comments inside a union may contain ';' (e.g. Phase15NotificationKind); drop them first.
+  src = src.replace(/\/\*[\s\S]*?\*\//g, '');
   const m = new RegExp(`export type ${typeName}\\s*=([^;]+);`).exec(src);
   if (!m) throw new Error(`type ${typeName} not found in domain types`);
   return [...(m[1] ?? '').matchAll(/'([a-z_0-9]+)'/g)].map((x) => x[1] ?? '');
@@ -265,7 +267,8 @@ export function readDomainSets(typesPath: string): DomainSets {
     attributeKeys: uniq([...attrBlock.matchAll(/^ {4}([a-z_]+):/gm)].map((x) => x[1] ?? '')),
     attributeValues: uniq([...attrBlock.matchAll(/'([a-z_]+)'/g)].map((x) => x[1] ?? '')).filter((v) => v !== 'score'),
     errorCodes: unionMembers(src, 'ErrorCode'),
-    notificationKinds: unionMembers(src, 'NotificationKind'),
+    // Phase 1.5 kinds share the `notifications:<kind>.title|body` keys (contract v3).
+    notificationKinds: [...unionMembers(src, 'NotificationKind'), ...(src.includes('export type Phase15NotificationKind') ? unionMembers(src, 'Phase15NotificationKind') : [])],
     sanctionReasons: unionMembers(src, 'SanctionReasonCode'),
     sanctionKinds: unionMembers(src, 'SanctionKind'),
     checkInRejectReasons: unionMembers(src, 'CheckInRejectReason'),
@@ -533,7 +536,7 @@ function checkDomainCoverage(enFlat: Record<string, Map<string, string>>, d: Dom
     paramCheck('trust', `sanctions.reason.${code}`, [`sanctions.reason.${code}`, `sanctions.fix.${code}`], declared);
   }
   for (const kind of d.notificationKinds) {
-    const declared = (NOTIFICATION_PARAMS as Record<string, readonly string[]>)[kind];
+    const declared = ({ ...NOTIFICATION_PARAMS, ...PHASE15_NOTIFICATION_PARAMS } as Record<string, readonly string[]>)[kind];
     if (!declared) {
       push('error', SOURCE_LOCALE, 'notifications', kind, 'missing from NOTIFICATION_PARAMS in src/params.ts');
       continue;

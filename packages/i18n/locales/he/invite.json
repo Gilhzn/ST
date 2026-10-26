@@ -1,0 +1,60 @@
+{
+  "share": {
+    "game": "בואו למשחק {sport} שלי ”{title}“{hasDate, select, yes { ב-{date} בשעה {time}} other {}}{hasArea, select, yes { ב{area}} other {}}.{hasSpots, select, yes { {spotsLeft, plural, =0 {המשחק מלא, אבל אפשר להיכנס לרשימת ההמתנה.} one {נשאר מקום אחד.} two {נשארו שני מקומות.} other {נשארו # מקומות.}}} other {}} מצטרפים ב-Sport Talent: {url}",
+    "gameWomenOnly": "משחק {sport} לנשים בלבד ”{title}“{hasDate, select, yes { ב-{date} בשעה {time}} other {}}{hasArea, select, yes { ב{area}} other {}}.{hasSpots, select, yes { {spotsLeft, plural, =0 {המשחק מלא, אבל אפשר להיכנס לרשימת ההמתנה.} one {נשאר מקום אחד.} two {נשארו שני מקומות.} other {נשארו # מקומות.}}} other {}} מצטרפות ב-Sport Talent: {url}",
+    "series": {
+      "weekly": "אנחנו משחקים {sport} כל {weekday} ב-{time}{hasArea, select, yes { ב{area}} other {}}: ”{title}“. אנחנו עוברים עם הקבוצה ל-Sport Talent, שם לקבועים יש קדימות בכל תאריך{hasDate, select, yes { (הבא: {date})} other {}}. מצטרפים לקבועים: {url}",
+      "biweekly": "אנחנו משחקים {sport} אחת לשבועיים, {weekday} ב-{time}{hasArea, select, yes { ב{area}} other {}}: ”{title}“. אנחנו עוברים עם הקבוצה ל-Sport Talent, שם לקבועים יש קדימות בכל תאריך{hasDate, select, yes { (הבא: {date})} other {}}. מצטרפים לקבועים: {url}"
+    },
+    "seriesWomenOnly": {
+      "weekly": "{sport} לנשים בלבד כל {weekday} ב-{time}{hasArea, select, yes { ב{area}} other {}}: ”{title}“. אנחנו עוברות עם הקבוצה ל-Sport Talent, שם לקבועות יש קדימות בכל תאריך{hasDate, select, yes { (הבא: {date})} other {}}. מצטרפות לקבועות: {url}",
+      "biweekly": "{sport} לנשים בלבד אחת לשבועיים, {weekday} ב-{time}{hasArea, select, yes { ב{area}} other {}}: ”{title}“. אנחנו עוברות עם הקבוצה ל-Sport Talent, שם לקבועות יש קדימות בכל תאריך{hasDate, select, yes { (הבא: {date})} other {}}. מצטרפות לקבועות: {url}"
+    }
+  },
+  "preview": {
+    "title": "{sport}: {title}",
+    "spotsLeft": "{count, plural, =0 {מלא, אפשר להיכנס להמתנה} one {נשאר מקום אחד} two {נשארו שני מקומות} other {נשארו # מקומות}}",
+    "weekly": "כל {weekday} ב-{time}",
+    "biweekly": "{weekday}, אחת לשבועיים, ב-{time}",
+    "womenOnly": "לנשים בלבד",
+    "siteName": "Sport Talent"
+  },
+  "group": {
+    "title": "הזמנת הקבוצה",
+    "heading": "מביאים את קבוצת הוואטסאפ",
+    "bodySeries": "משתפים קישור אחד. כל מי שלוחץ עליו מצטרף לקבועים ומקבל קדימות בכל תאריך, ואפשר לראות מי עבר.",
+    "bodyGame": "משתפים את הקישור בצ׳אט הקבוצתי. השחקנים רואים את המשחק ומבקשים להצטרף בלחיצה אחת.",
+    "previewTitle": "מה הקבוצה תראה",
+    "whatsapp": "שיתוף בוואטסאפ",
+    "copy": "העתקת הקישור",
+    "more": "שיתוף אחר",
+    "copied": "הקישור הועתק",
+    "messageCopied": "ההודעה הועתקה",
+    "noWhatsApp": "וואטסאפ לא מותקן במכשיר הזה.",
+    "linkTitle": "קישור ההזמנה שלך",
+    "showQr": "הצגת קוד QR",
+    "hideQr": "הסתרת קוד QR",
+    "qrHelp": "שחקנים יכולים לסרוק אותו במגרש כדי להצטרף.",
+    "rotate": "איפוס הקישור",
+    "rotateTitle": "לאפס את הקישור?",
+    "rotateBody": "הקישור הישן יפסיק לעבוד מיד. צריך לשתף את החדש עם הקבוצה.",
+    "rotateConfirm": "איפוס הקישור",
+    "rotated": "קישור חדש מוכן",
+    "statsNone": "עוד אף אחד לא הצטרף דרך הקישור",
+    "step1": "לוחצים על ”שיתוף בוואטסאפ“ ובוחרים את הצ׳אט הקבוצתי.",
+    "step2": "השחקנים לוחצים על הקישור ונכנסים עם מספר הטלפון.",
+    "step3": "רואים את כל מי שהצטרף. כדאי לנעוץ את ההודעה כדי שגם מי שמגיע מאוחר ימצא אותה."
+  },
+  "landing": {
+    "title": "הצטרפות לקבועים",
+    "from": "{name} הזמין/ה אותך ל{title}",
+    "signedOutBody": "נכנסים כדי לראות את המשחק ולהצטרף לקבועים.",
+    "signUp": "כניסה והצטרפות לקבועים",
+    "join": "הצטרפות לקבועים",
+    "open": "לסדרה",
+    "joined": "מעכשיו המקום שלך בין הקבועים של {title}",
+    "perkFirstPick": "{hours, plural, one {קדימות של שעה בכל תאריך} two {קדימות של שעתיים בכל תאריך} other {קדימות של # שעות בכל תאריך}}",
+    "perkAlwaysIn": "בוחרים ”תמיד בפנים“ ומקבלים מקום אוטומטית",
+    "perkNoPolls": "בלי לרדוף אחרי הסקר בקבוצה"
+  }
+}

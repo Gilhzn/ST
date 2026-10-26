@@ -1,0 +1,60 @@
+{
+  "share": {
+    "game": "Venha para o meu jogo de {sport} “{title}”{hasDate, select, yes { em {date} às {time}} other {}}{hasArea, select, yes { em {area}} other {}}.{hasSpots, select, yes { {spotsLeft, plural, =0 {Está lotado, mas dá para entrar na lista de espera.} one {Resta # vaga.} many {Restam # de vagas.} other {Restam # vagas.}}} other {}} Entre pelo Sport Talent: {url}",
+    "gameWomenOnly": "Jogo de {sport} só para mulheres “{title}”{hasDate, select, yes { em {date} às {time}} other {}}{hasArea, select, yes { em {area}} other {}}.{hasSpots, select, yes { {spotsLeft, plural, =0 {Está lotado, mas dá para entrar na lista de espera.} one {Resta # vaga.} many {Restam # de vagas.} other {Restam # vagas.}}} other {}} Entre pelo Sport Talent: {url}",
+    "series": {
+      "weekly": "{sport} toda semana: {weekday}, às {time}{hasArea, select, yes { em {area}} other {}}: “{title}”. Estamos levando o grupo para o Sport Talent, onde os fixos têm prioridade em cada data{hasDate, select, yes { (a próxima: {date})} other {}}. Entre para os fixos: {url}",
+      "biweekly": "{sport} a cada 2 semanas: {weekday}, às {time}{hasArea, select, yes { em {area}} other {}}: “{title}”. Estamos levando o grupo para o Sport Talent, onde os fixos têm prioridade em cada data{hasDate, select, yes { (a próxima: {date})} other {}}. Entre para os fixos: {url}"
+    },
+    "seriesWomenOnly": {
+      "weekly": "{sport} só para mulheres toda semana: {weekday}, às {time}{hasArea, select, yes { em {area}} other {}}: “{title}”. Estamos levando o grupo para o Sport Talent, onde as fixas têm prioridade em cada data{hasDate, select, yes { (a próxima: {date})} other {}}. Entre para as fixas: {url}",
+      "biweekly": "{sport} só para mulheres a cada 2 semanas: {weekday}, às {time}{hasArea, select, yes { em {area}} other {}}: “{title}”. Estamos levando o grupo para o Sport Talent, onde as fixas têm prioridade em cada data{hasDate, select, yes { (a próxima: {date})} other {}}. Entre para as fixas: {url}"
+    }
+  },
+  "preview": {
+    "title": "{sport}: {title}",
+    "spotsLeft": "{count, plural, =0 {Lotado, entre na lista de espera} one {Resta # vaga} many {Restam # de vagas} other {Restam # vagas}}",
+    "weekly": "Toda semana: {weekday}, às {time}",
+    "biweekly": "A cada 2 semanas: {weekday}, às {time}",
+    "womenOnly": "Só mulheres",
+    "siteName": "Sport Talent"
+  },
+  "group": {
+    "title": "Convide seu grupo",
+    "heading": "Traga seu grupo do WhatsApp",
+    "bodySeries": "Compartilhe um único link. Quem tocar nele entra para os fixos e ganha prioridade em cada data, e você vê quem veio.",
+    "bodyGame": "Compartilhe o link no chat do grupo. Os jogadores veem o jogo e pedem para entrar com um toque.",
+    "previewTitle": "O que seu grupo vai ver",
+    "whatsapp": "Compartilhar no WhatsApp",
+    "copy": "Copiar link",
+    "more": "Mais opções",
+    "copied": "Link copiado",
+    "messageCopied": "Mensagem copiada",
+    "noWhatsApp": "O WhatsApp não está instalado neste aparelho.",
+    "linkTitle": "Seu link de convite",
+    "showQr": "Mostrar QR code",
+    "hideQr": "Esconder QR code",
+    "qrHelp": "Os jogadores podem escanear no local para entrar.",
+    "rotate": "Redefinir link",
+    "rotateTitle": "Redefinir o link?",
+    "rotateBody": "O link antigo para de funcionar na hora. Compartilhe o novo com seu grupo.",
+    "rotateConfirm": "Redefinir link",
+    "rotated": "Novo link pronto",
+    "statsNone": "Ninguém entrou pelo link ainda",
+    "step1": "Toque em Compartilhar no WhatsApp e escolha o chat do grupo.",
+    "step2": "Os jogadores tocam no link e entram com o número de telefone.",
+    "step3": "Você vê todos que entraram. Fixe a mensagem para quem chegar depois encontrar."
+  },
+  "landing": {
+    "title": "Entre para os fixos",
+    "from": "{name} convidou você para {title}",
+    "signedOutBody": "Entre na sua conta para ver o jogo e fazer parte dos fixos.",
+    "signUp": "Entrar para fazer parte dos fixos",
+    "join": "Entrar para os fixos",
+    "open": "Abrir série",
+    "joined": "Agora você é fixo de {title}",
+    "perkFirstPick": "{hours, plural, one {Prioridade em cada data por # hora} many {Prioridade em cada data por # de horas} other {Prioridade em cada data por # horas}}",
+    "perkAlwaysIn": "Escolha “Estou sempre dentro” e garanta vaga automaticamente",
+    "perkNoPolls": "Chega de correr atrás da enquete do grupo"
+  }
+}

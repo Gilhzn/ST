@@ -172,17 +172,17 @@ export function SeriesChip({ series, onPress }: { series: GameSeries; onPress: (
 /** Regulars-first window notice (GAME-010): who may join now and until when. */
 export function PriorityBanner({
   occurrence,
-  timeZone,
   role,
   testID = 'game.priority.banner',
 }: {
   occurrence: Pick<SeriesOccurrence, 'priorityUntil'>;
+  /** Unused: deadlines are absolute moments, shown on the viewer's own clock. */
   timeZone?: string;
   role: 'host' | 'regular' | 'invited' | 'other';
   testID?: string;
 }) {
   const { t, locale } = useT();
-  const time = isolate(shortDayTime(occurrence.priorityUntil, locale, timeZone), 'ltr');
+  const time = isolate(shortDayTime(occurrence.priorityUntil, locale), 'ltr');
   const text =
     role === 'regular'
       ? t('series:priority.bannerRegular', { time })

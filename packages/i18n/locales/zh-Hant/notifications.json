@@ -70,5 +70,57 @@
   "waitlist_offer": {
     "title": "有一個名額留給你",
     "body": "你候補的一場比賽有了空位。請在邀請過期前到 App 中接受。"
+  },
+  "roster_added": {
+    "title": "{via, select, invite_link {{seriesTitle}有新的固定班底} other {你受邀加入固定班底}}",
+    "body": "{via, select, invite_link {有球友透過你的連結加入了{seriesTitle}。} other {加入{seriesTitle}的固定班底，每場都能優先報名。}}"
+  },
+  "series_reconfirm": {
+    "title": "還會參加{seriesTitle}嗎？",
+    "body": "請在{deadline}前確認你的名額，否則名額會讓給下一位球友。不管哪種情況都不會受罰。"
+  },
+  "series_auto_released": {
+    "title": "你的名額已釋出",
+    "body": "你沒有確認參加{seriesTitle}，名額已讓給下一位球友。不會受罰。"
+  },
+  "roster_leave_offer": {
+    "title": "還在參加{seriesTitle}嗎？",
+    "body": "{misses, plural, other {你已連續缺席 # 場。可以繼續當固定班底，也可以退出名單，都不會受罰。}}"
+  },
+  "occurrence_skipped": {
+    "title": "{seriesTitle}有一場取消了",
+    "body": "主辦人取消了{startsAt}的比賽。你仍是固定班底。"
+  },
+  "occurrence_updated": {
+    "title": "{seriesTitle}有更新",
+    "body": "主辦人更新了{startsAt}的比賽，請查看詳細資訊。"
+  },
+  "occurrence_rescheduled": {
+    "title": "{seriesTitle}的時間有變動",
+    "body": "{startsAt}的比賽已改期，請查看新的場次。"
+  },
+  "peer_rating_open": {
+    "title": "評價一下你的隊友",
+    "body": "賽後 48 小時內可以評價。評價是私密的，用來讓分隊更平衡。"
+  },
+  "friend_request": {
+    "title": "新的好友請求",
+    "body": "一位和你一起打過球的人想加你為好友。"
+  },
+  "friend_accepted": {
+    "title": "好友請求已通過",
+    "body": "你們已成為好友，你會看到對方報名的比賽。"
+  },
+  "media_tag_request": {
+    "title": "有人在照片中標記了你",
+    "body": "你同意後標記才會顯示。"
+  },
+  "media_blocked": {
+    "title": "你的照片未發布",
+    "body": "照片沒有通過內容審核，其他人看不到。"
+  },
+  "rating_level_changed": {
+    "title": "你的程度有變化",
+    "body": "你的新程度是 {level}。到個人檔案看看變化過程吧。"
   }
 }

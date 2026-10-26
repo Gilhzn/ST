@@ -1,0 +1,104 @@
+{
+  "gallery": {
+    "title": "比赛相册",
+    "locksIn": "相册将在 {time} 后关闭",
+    "locked": "相册已关闭",
+    "opensAt": "{time}开放上传",
+    "windowHelp": "{hours, plural, other {赛后 # 小时内都可以添加照片。}}",
+    "retention": "{months, plural, other {照片保留 # 个月。}}",
+    "filterA11y": "显示照片",
+    "all": "全部",
+    "mine": "我的",
+    "emptyTitle": "还没有照片",
+    "emptyMineTitle": "你还没有添加照片",
+    "emptyBodyOpen": "来上传这场比赛的第一张照片吧。",
+    "emptyBodyClosed": "相册开放期间没有人添加照片。"
+  },
+  "upload": {
+    "cta": "添加照片",
+    "uploading": "正在上传…",
+    "done": "照片已添加",
+    "checkInFirst": "在比赛中签到后才能添加照片。",
+    "nativeSoon": "应用内上传照片即将推出，目前请使用网页版。"
+  },
+  "reject": {
+    "not_verified_attendee": "只有签到的玩家才能添加照片。",
+    "window_not_open": "比赛开始后开放上传。",
+    "window_closed": "相册已关闭。上传在赛后 2 小时截止。",
+    "too_large": "文件太大。照片最大 20 MB，视频最大 200 MB。",
+    "too_long": "视频最长 60 秒。",
+    "unsupported_type": "不支持这种文件类型。请使用 JPEG、PNG、WebP、MP4 或 MOV。",
+    "user_cap_reached": "你在这场比赛中添加的照片已达上限。",
+    "not_uploader": "只有上传者才能修改此项。",
+    "not_published": "这张照片尚未发布。",
+    "tags_pending": "需要所有被标记的人先同意。"
+  },
+  "badge": {
+    "public": "场地相册",
+    "participants": "仅限参赛玩家",
+    "pending": "等待标记确认"
+  },
+  "viewer": {
+    "title": "照片",
+    "photoBy": "拍摄：{name}",
+    "someone": "一位玩家",
+    "delete": "删除照片",
+    "deleteTitle": "要删除这张照片吗？",
+    "deleteBody": "所有人都将看不到它，包括场地相册。",
+    "deleted": "照片已删除"
+  },
+  "tags": {
+    "title": "已标记",
+    "none": "还没有标记任何人。",
+    "add": "标记玩家",
+    "send": "{count, plural, =0 {发送请求} other {发送 # 个请求}}",
+    "sent": "{count, plural, other {已发送 # 个标记请求}}",
+    "requestHelp": "标记是一种请求，对方同意后才会显示。",
+    "everyoneTagged": "参赛的人都已被标记。",
+    "waiting": "{count, plural, other {等待{names}同意}}",
+    "untagMe": "移除对我的标记",
+    "untagged": "标记已移除，这张照片现在无法公开。",
+    "requestTitle": "{name}在照片中标记了你",
+    "requestBody": "你同意后标记才会显示。",
+    "accepted": "已接受标记",
+    "declined": "已拒绝标记"
+  },
+  "public": {
+    "label": "在场地相册中公开",
+    "help": "在场地页面向所有在这里打球的人展示。",
+    "on": "已在场地相册中展示。",
+    "blocked": "{count, plural, other {还有 # 位被标记的玩家尚未同意}}",
+    "why": "只有所有被标记的人都同意，照片才会公开。",
+    "done": "已加入场地相册",
+    "off": "已改回仅限参赛玩家"
+  },
+  "report": {
+    "cta": "举报照片",
+    "title": "这张照片有什么问题？",
+    "reason": {
+      "nudity": "裸露",
+      "violence": "暴力",
+      "harassment": "骚扰",
+      "privacy": "隐私",
+      "copyright": "版权",
+      "spam": "垃圾信息",
+      "other": "其他问题"
+    },
+    "submit": "举报",
+    "thanks": "谢谢，审核人员会进行处理。"
+  },
+  "venue": {
+    "tabsA11y": "场地详情",
+    "tabGames": "比赛",
+    "tabPhotos": "照片",
+    "rangeA11y": "照片时间范围",
+    "week": "本周",
+    "month": "本月",
+    "all": "全部",
+    "emptyTitle": "这里还没有照片",
+    "emptyBody": "玩家在赛后公开的照片会显示在这里。",
+    "consent": "这些照片中被标记的所有人都同意在这里展示。",
+    "photoA11y": "{date}的照片",
+    "sharedOn": "于{date}的比赛后分享"
+  }
+}

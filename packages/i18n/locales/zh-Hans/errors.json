@@ -25,5 +25,6 @@
   "payment_required": "加入这场比赛需要缴纳押金。请添加支付方式后继续。",
   "network": "无法连接。请检查网络连接后重试。",
   "unavailable": "Sport Talent 暂时不可用，请几分钟后再试。",
-  "unknown": "我们这边出了点问题，请重试。"
+  "unknown": "我们这边出了点问题，请重试。",
+  "roster_priority": "目前这一场仍由固定成员优先报名。向所有人开放后你就可以加入。"
 }

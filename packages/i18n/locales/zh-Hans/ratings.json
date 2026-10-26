@@ -1,0 +1,138 @@
+{
+  "family": {
+    "small_sided": "小场",
+    "full_sided": "大场",
+    "half_court": "半场",
+    "full_court": "全场",
+    "singles": "单打",
+    "doubles": "双打",
+    "pairs": "双人",
+    "teams": "团队"
+  },
+  "attribute": {
+    "speed": "速度",
+    "ball_control": "控球",
+    "passing": "传球",
+    "defence": "防守",
+    "overall": "综合",
+    "shooting": "投篮",
+    "handling": "运球",
+    "athleticism": "身体素质",
+    "serve": "发球",
+    "groundstrokes": "底线击球",
+    "net_play": "网前",
+    "movement": "步伐",
+    "volley": "截击",
+    "walls": "借墙球",
+    "positioning": "站位",
+    "pace": "配速",
+    "endurance": "耐力",
+    "attack": "进攻"
+  },
+  "level": {
+    "sectionTitle": "水平",
+    "label": "水平",
+    "a11y": "水平 {level}",
+    "basedOn": "{count, plural, other {基于 # 场计分比赛}}",
+    "provisional": "暂定",
+    "provisionalGames": "{count, plural, other {暂定 — 再打 # 场计分比赛}}",
+    "provisionalReliability": "暂定 — 可靠度达到 {percent} 才会显示水平",
+    "provisionalSettling": "暂定 — 再打几场就会稳定下来",
+    "frozen": "可靠度提升到 {percent} 才能获得评分",
+    "frozenPill": "已暂停",
+    "confidence": "可信度 {percent}",
+    "historyA11y": "{weeks, plural, other {水平在 # 周内从 {from} 变为 {to}}}",
+    "weeksAgo": "{count, plural, other {# 周前}}",
+    "now": "现在",
+    "emptyTitle": "还没有水平",
+    "emptyBody": "参加比分已确认、开赛前已分好队的比赛。打几场之后就会显示你的水平。"
+  },
+  "peers": {
+    "title": "{count, plural, other {# 位队友的评价 · 仅你可见}}"
+  },
+  "rate": {
+    "title": "评价玩家",
+    "closes": "开放至 {time}",
+    "privacy": "评价是私密的。没有人知道是谁评价了自己，评价只用于水平和分队平衡，绝不会导致黄牌。",
+    "pickTitle": "你和谁一起打了？",
+    "picked": "{count}/{max}",
+    "limit": "{count, plural, other {每场比赛最多可以评价 # 位玩家。}}",
+    "nobodyLeft": "这场比赛中你能评价的人都已评价过了。",
+    "removeA11y": "移除{name}",
+    "submit": "提交评价",
+    "submitCount": "{count, plural, other {提交 # 条评价}}",
+    "thanks": "{count, plural, other {谢谢，已提交 # 条评价}}"
+  },
+  "stars": {
+    "a11y": "{count, plural, other {# 星}}",
+    "skip": "未评价",
+    "word": {
+      "1": "入门",
+      "2": "进步中",
+      "3": "稳定",
+      "4": "出色",
+      "5": "顶尖"
+    }
+  },
+  "gate": {
+    "title": "你无法评价这场比赛",
+    "closedTitle": "评价已截止",
+    "body": "只有真正上场并且经常到场的人来评价，评分才公平。",
+    "fair": "评价是私密的，只用于水平和分队平衡，绝不会导致黄牌。"
+  },
+  "gateTitle": {
+    "not_verified": "签到后才能评价",
+    "low_reliability": "先提升可靠度",
+    "too_few_games": "再多打几场",
+    "active_sanction": "暂时无法评价",
+    "window_not_open": "尚未开放",
+    "window_closed": "评价已截止"
+  },
+  "ineligible": {
+    "not_verified": "只有签到的玩家才能评价。下次到场后记得签到。",
+    "low_reliability": "评价需要 {percent} 的可靠度。报名的比赛按时到场就能达到。",
+    "too_few_games": "{count, plural, other {再参加 # 场已验证的{sport}比赛才能评价别人。需要 {required} 场。}}",
+    "active_sanction": "在黄牌或限制生效期间无法评价，结束后即可恢复。",
+    "window_not_open": "比赛结束后开放评价。",
+    "window_closed": "{hours, plural, other {评价在赛后开放 # 小时，已于{time}截止。}}"
+  },
+  "notRated": {
+    "no_result": "还没有比分",
+    "result_not_confirmed": "等待玩家确认比分",
+    "result_disputed": "不计分：比分有争议",
+    "too_few_verified": "不计分：已验证的玩家太少",
+    "teams_not_published": "不计分：开赛前没有分队",
+    "not_two_sides": "不计分：需要两支各有比分的队伍",
+    "unrated_sport": "这项运动没有水平评级"
+  },
+  "notRatedHelp": {
+    "no_result": "录入最终比分，比赛才会计入水平。",
+    "result_not_confirmed": "大多数签到的玩家确认后，比赛就会计入水平。",
+    "result_disputed": "大多数玩家对比分有异议，因此不计入数据和水平。",
+    "too_few_verified": "只有至少 {percent} 的玩家签到，水平才会变化。",
+    "teams_not_published": "开赛前在应用里分好队，比赛才会计入水平。",
+    "not_two_sides": "水平需要比较两支队伍。这场比赛没有两支各有比分的队伍。",
+    "unrated_sport": "跑步不影响水平。"
+  },
+  "confirm": {
+    "title": "这是最终比分吗？",
+    "statusTitle": "比分确认",
+    "help": "如果和实际情况一致，请确认。大多数玩家同意后，比赛才会计入水平。",
+    "tally": "{count, plural, other {# 位已验证玩家中有 {confirms} 位已确认}}",
+    "disputes": "{count, plural, other {# 个异议}}",
+    "status": {
+      "pending": "等待中",
+      "confirmed": "已确认",
+      "disputed": "有争议"
+    },
+    "confirm": "确认",
+    "dispute": "提出异议",
+    "youConfirmed": "你已确认这个比分。截止前可以修改你的选择。",
+    "youDisputed": "你对这个比分提出了异议。截止前可以修改你的选择。",
+    "thanks": "感谢确认",
+    "disputed": "已记录异议"
+  },
+  "band": {
+    "a11y": "水平段 {band}/5"
+  }
+}

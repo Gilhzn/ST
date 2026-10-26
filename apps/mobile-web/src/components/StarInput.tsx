@@ -75,7 +75,7 @@ export function StarInput({
                   borderRadius: 14,
                   alignItems: 'center',
                   justifyContent: 'center',
-                  backgroundColor: on ? c.warningSubtle : pressed ? c.surfaceSunken : 'transparent',
+                  backgroundColor: on ? c.warningSubtle : pressed ? c.border : c.surfaceSunken,
                   transform: [{ scale: pressed ? 0.92 : 1 }],
                   ...(focusVisible(focused) ? ({ outlineColor: c.focusRing, outlineWidth: 3, outlineStyle: 'solid', outlineOffset: 1 } as object) : null),
                 };

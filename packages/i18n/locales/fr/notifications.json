@@ -70,5 +70,57 @@
   "waitlist_offer": {
     "title": "Une place t’attend",
     "body": "Une place s’est libérée dans une partie où tu es sur liste d’attente. Accepte-la dans l’appli avant la fin de l’offre."
+  },
+  "roster_added": {
+    "title": "{via, select, invite_link {Nouvel habitué pour {seriesTitle}} other {Tu es invité chez les habitués}}",
+    "body": "{via, select, invite_link {Un joueur a rejoint {seriesTitle} grâce à ton lien.} other {Rejoins les habitués de {seriesTitle} pour être prioritaire à chaque date.}}"
+  },
+  "series_reconfirm": {
+    "title": "Toujours partant pour {seriesTitle} ?",
+    "body": "Confirme ta place avant {deadline}, sinon elle passe au joueur suivant. Aucune pénalité dans les deux cas."
+  },
+  "series_auto_released": {
+    "title": "Ta place a été libérée",
+    "body": "Tu n’as pas confirmé pour {seriesTitle}, ta place est donc passée au joueur suivant. Aucune pénalité."
+  },
+  "roster_leave_offer": {
+    "title": "Tu joues toujours à {seriesTitle} ?",
+    "body": "{misses, plural, one {Tu as manqué # date d’affilée. Reste habitué ou quitte la liste, sans pénalité.} many {Tu as manqué # de dates d’affilée. Reste habitué ou quitte la liste, sans pénalité.} other {Tu as manqué # dates d’affilée. Reste habitué ou quitte la liste, sans pénalité.}}"
+  },
+  "occurrence_skipped": {
+    "title": "Une date de {seriesTitle} est annulée",
+    "body": "L’organisateur a annulé la partie du {startsAt}. Tu restes habitué."
+  },
+  "occurrence_updated": {
+    "title": "{seriesTitle} a changé",
+    "body": "L’organisateur a modifié la partie du {startsAt}. Vérifie les détails."
+  },
+  "occurrence_rescheduled": {
+    "title": "{seriesTitle} a un nouveau calendrier",
+    "body": "La partie du {startsAt} a été déplacée. Vérifie les nouvelles dates."
+  },
+  "peer_rating_open": {
+    "title": "Note tes coéquipiers",
+    "body": "La notation est ouverte 48 heures après la partie. Elle est privée et aide à équilibrer les équipes."
+  },
+  "friend_request": {
+    "title": "Nouvelle demande d’ami",
+    "body": "Quelqu’un avec qui tu as joué veut devenir ton ami."
+  },
+  "friend_accepted": {
+    "title": "Demande d’ami acceptée",
+    "body": "Vous êtes amis. Tu verras les parties que cette personne rejoint."
+  },
+  "media_tag_request": {
+    "title": "Tu as été identifié sur une photo",
+    "body": "L’identification n’apparaît qu’après ton accord."
+  },
+  "media_blocked": {
+    "title": "Ta photo n’a pas été publiée",
+    "body": "Elle n’a pas passé nos contrôles de contenu. Personne d’autre ne peut la voir."
+  },
+  "rating_level_changed": {
+    "title": "Ton niveau a changé",
+    "body": "Ton nouveau niveau est {level}. Regarde son évolution sur ton profil."
   }
 }

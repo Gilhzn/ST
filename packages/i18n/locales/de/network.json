@@ -1,0 +1,73 @@
+{
+  "title": "Spieler:innen",
+  "subtitle": "{count, plural, =0 {Spiel mit, um Leute kennenzulernen} one {# Person, mit der du gespielt hast} other {# Personen, mit denen du gespielt hast}}",
+  "entry": {
+    "title": "Spieler:innen",
+    "subtitle": "Freund:innen, gemeinsame Spiele, Anfragen",
+    "requests": "{count, plural, one {# Anfrage} other {# Anfragen}}"
+  },
+  "tab": {
+    "friends": "Freund:innen",
+    "played": "Gespielt mit",
+    "requests": "Anfragen"
+  },
+  "action": {
+    "add": "Hinzufügen",
+    "accept": "Annehmen",
+    "cancel": "Zurückziehen",
+    "remove": "Entfernen"
+  },
+  "state": {
+    "outgoing": "Angefragt",
+    "friends": "Befreundet"
+  },
+  "row": {
+    "played": "{count, plural, one {# gemeinsames Spiel · zuletzt {date}} other {# gemeinsame Spiele · zuletzt {date}}}",
+    "playedNoDate": "{count, plural, one {# gemeinsames Spiel} other {# gemeinsame Spiele}}",
+    "notPlayed": "Noch nicht zusammen gespielt"
+  },
+  "playedHelp": "Du kannst Leute hinzufügen, mit denen du gespielt hast. Sie sehen deine Anfrage im Posteingang.",
+  "requests": {
+    "incoming": "Möchten befreundet sein",
+    "outgoing": "Gesendet"
+  },
+  "empty": {
+    "friendsTitle": "Noch keine Freund:innen",
+    "friendsBody": "Füge Leute hinzu, mit denen du gespielt hast, um zu sehen, welchen Spielen sie beitreten.",
+    "seePlayed": "Ansehen, mit wem du gespielt hast",
+    "playedTitle": "Noch niemand",
+    "playedBody": "Hier erscheinen alle, die beim selben Spiel wie du einchecken.",
+    "requestsTitle": "Keine Anfragen",
+    "requestsBody": "Freundschaftsanfragen von Leuten, mit denen du gespielt hast, erscheinen hier."
+  },
+  "privacy": {
+    "title": "Privatsphäre",
+    "label": "Wer meine kommenden Spiele sieht",
+    "help": "Freund:innen sehen die öffentlichen Spiele, denen du beigetreten bist, damit sie mitkommen können. Private Spiele werden nie angezeigt.",
+    "friends": "Freund:innen",
+    "nobody": "Niemand",
+    "savedFriends": "Freund:innen sehen deine kommenden Spiele",
+    "savedNobody": "Deine kommenden Spiele sind verborgen"
+  },
+  "removeA11y": "{name} aus Freund:innen entfernen",
+  "removeTitle": "{name} entfernen?",
+  "removeBody": "Ihr bleibt als gemeinsame Mitspielende verbunden. Die Person wird nicht benachrichtigt.",
+  "acceptA11y": "{name} annehmen",
+  "declineA11y": "{name} ablehnen",
+  "toast": {
+    "requested": "Anfrage an {name} gesendet",
+    "accepted": "Du und {name} seid jetzt befreundet",
+    "acceptedShort": "Freundschaftsanfrage angenommen",
+    "declined": "Anfrage abgelehnt",
+    "removed": "Entfernt"
+  },
+  "request": {
+    "section": "{count, plural, one {# Anfrage} other {# Anfragen}}",
+    "friendTitle": "{name} möchte mit dir befreundet sein",
+    "friendBody": "{count, plural, one {Ihr habt # Spiel zusammen gespielt} other {Ihr habt # Spiele zusammen gespielt}}"
+  },
+  "playing": {
+    "title": "Freund:innen spielen",
+    "who": "{count, plural, one {{names} ist dabei} other {{names} sind dabei}}"
+  }
+}

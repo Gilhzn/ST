@@ -111,6 +111,11 @@ function defaultTime(): string {
   return `${String(h).padStart(2, '0')}:${String(m).padStart(2, '0')}`;
 }
 
+/** Today, unless the default start (now + 90 min) already falls after midnight. */
+function defaultDay(): number {
+  return Date.parse(startIso(0, defaultTime())) <= Date.now() ? 1 : 0;
+}
+
 function startIso(day: number, time: string): string {
   const [h, m] = time.split(':').map(Number);
   const d = new Date();
@@ -127,7 +132,7 @@ const EMPTY: Draft = {
   usePin: false,
   pinName: '',
   hideExact: false,
-  day: 0,
+  day: defaultDay(),
   time: defaultTime(),
   duration: 90,
   capacity: 10,

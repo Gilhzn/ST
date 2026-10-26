@@ -396,5 +396,16 @@
   "card": {
     "areaOnly": "核准後顯示確切位置",
     "pinnedSpot": "地圖上的集合點"
+  },
+  "after": {
+    "title": "賽後",
+    "liveTitle": "比賽中",
+    "score": "最終比分 {score}",
+    "scoreHelp": "核對比分並確認",
+    "noScore": "輸入最終比分",
+    "noScoreHelp": "任何球友都可以輸入",
+    "rate": "評價球友",
+    "rateHelp": "開放到 {time}",
+    "gallery": "{count, plural, =0 {比賽相簿} other {比賽相簿 · # 張照片}}"
   }
 }

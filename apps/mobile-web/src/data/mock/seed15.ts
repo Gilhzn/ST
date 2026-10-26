@@ -224,6 +224,8 @@ export function seedPhase15(state: MockState, now: EpochMs, base: EpochMs): void
   const tlvRoster = [...state.roster.values()].filter((m) => m.seriesId === tlv.id);
   const tlvPlan = planSeriesOccurrences({ series: { ...tlv, inviteToken: tlv.inviteToken }, existing: pastOccurrences, roster: tlvRoster }, DEFAULT_DOMAIN_CONFIG, genAt);
   applyPhase15Effects(state, tlvPlan.effects, { ...ctx, now: genAt });
+  // Dates open as they enter the four-week horizon, so only the furthest one is still regulars-only.
+  retimeOpenings(state, tlvPlan.occurrences.slice(0, -1).map((o) => o.gameId), tlv.horizonWeeks, tlv.rosterPriorityHours);
   const nextTlv = tlvPlan.occurrences[0];
   if (nextTlv) {
     for (const u of ['u-tlv-6', 'u-tlv-7', 'u-tlv-8']) {
@@ -285,6 +287,8 @@ export function seedPhase15(state: MockState, now: EpochMs, base: EpochMs): void
     const lonGen = start1 - 72 * HOUR;
     const lonPlan = planSeriesOccurrences({ series: lon, existing: [], roster: [...state.roster.values()].filter((m) => m.seriesId === lon.id) }, DEFAULT_DOMAIN_CONFIG, lonGen);
     applyPhase15Effects(state, lonPlan.effects, { ...ctx, now: lonGen });
+    // The first date just opened (regulars-only for 48h); the later ones opened weeks ago.
+    retimeOpenings(state, lonPlan.occurrences.slice(1).map((o) => o.gameId), lon.horizonWeeks, lon.rosterPriorityHours);
     const first = lonPlan.occurrences[0];
     if (first) {
       for (const u of ['u-lon-4', 'u-lon-5']) state.participants.set(`${first.gameId}|${u}`, participantRow(first.gameId, u, 'approved', toIso(lonGen + 2 * HOUR)));
@@ -386,9 +390,9 @@ export function seedPhase15(state: MockState, now: EpochMs, base: EpochMs): void
     addMedia('m-tlv9-1', lunch.id, 'u-tlv-1', 'duskPitch', end - 50 * 60 * 1000, { tags: [[DANA, 'requested']] });
     addMedia('m-tlv9-2', lunch.id, DANA, 'huddle', end - 5 * 60 * 1000, { tags: [['u-tlv-0', 'accepted'], ['u-tlv-1', 'requested']] });
     addMedia('m-tlv9-3', lunch.id, DANA, 'ballMacro', end - 30 * 60 * 1000, { publicOptIn: true, tags: [['u-tlv-0', 'accepted']] });
-    addMedia('m-tlv9-4', lunch.id, 'u-tlv-2', 'floodlights', end - 40 * 60 * 1000);
+    addMedia('m-tlv9-4', lunch.id, 'u-tlv-2', 'floodlights', end - 40 * 60 * 1000, { publicOptIn: true });
     addMedia('m-tlv9-5', lunch.id, 'u-tlv-0', 'huddle', end - 12 * 60 * 1000, { publicOptIn: true, tags: [[DANA, 'accepted']] });
-    addMedia('m-tlv9-6', lunch.id, 'u-tlv-3', 'ballMacro', end - 20 * 60 * 1000);
+    addMedia('m-tlv9-6', lunch.id, 'u-tlv-3', 'duskPitch', end - 20 * 60 * 1000, { publicOptIn: true });
   }
   const wk = (k: number) => Date.parse(state.games.get(`g-tlv-wk-${k}`)?.endsAt ?? toIso(now));
   addMedia('m-wk1-1', 'g-tlv-wk-1', 'u-tlv-3', 'floodlights', wk(1) - 30 * 60 * 1000, { tags: [[DANA, 'requested']] });
@@ -422,3 +426,12 @@ export function seedPhase15(state: MockState, now: EpochMs, base: EpochMs): void
   state.networkPrivacy.set(DANA, { userId: DANA, upcomingGamesVisibleTo: 'friends', updatedAt: toIso(now - 60 * DAY) });
 }
 
+/** Re-date occurrences as if each opened when it entered the horizon (seed realism, not domain logic). */
+function retimeOpenings(state: MockState, gameIds: string[], horizonWeeks: number, priorityHours: number): void {
+  const ids = new Set(gameIds);
+  for (const [key, occ] of state.occurrences) {
+    if (!occ.gameId || !ids.has(occ.gameId)) continue;
+    const opens = Date.parse(occ.startsAt) - horizonWeeks * 7 * DAY;
+    state.occurrences.set(key, { ...occ, opensAt: toIso(opens), priorityUntil: toIso(Math.min(opens + priorityHours * HOUR, Date.parse(occ.startsAt))) });
+  }
+}

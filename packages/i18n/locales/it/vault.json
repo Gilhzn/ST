@@ -1,0 +1,104 @@
+{
+  "gallery": {
+    "title": "Galleria della partita",
+    "locksIn": "La galleria si chiude tra {time}",
+    "locked": "Galleria chiusa",
+    "opensAt": "I caricamenti si aprono alle {time}",
+    "windowHelp": "{hours, plural, one {Aggiungi foto fino a # ora dopo la partita.} many {Aggiungi foto fino a # di ore dopo la partita.} other {Aggiungi foto fino a # ore dopo la partita.}}",
+    "retention": "{months, plural, one {Le foto restano per # mese.} many {Le foto restano per # di mesi.} other {Le foto restano per # mesi.}}",
+    "filterA11y": "Mostra foto",
+    "all": "Tutte",
+    "mine": "Tue",
+    "emptyTitle": "Ancora nessuna foto",
+    "emptyMineTitle": "Non hai aggiunto foto",
+    "emptyBodyOpen": "Aggiungi per primo una foto di questa partita.",
+    "emptyBodyClosed": "Nessuno ha aggiunto foto mentre la galleria era aperta."
+  },
+  "upload": {
+    "cta": "Aggiungi foto",
+    "uploading": "Caricamento…",
+    "done": "Foto aggiunta",
+    "checkInFirst": "Fai il check-in alla partita per aggiungere foto.",
+    "nativeSoon": "Il caricamento di foto arriverà presto nell’app. Per ora usa la versione web."
+  },
+  "reject": {
+    "not_verified_attendee": "Solo i giocatori che hanno fatto il check-in possono aggiungere foto.",
+    "window_not_open": "I caricamenti si aprono quando inizia la partita.",
+    "window_closed": "La galleria è chiusa. I caricamenti si chiudono 2 ore dopo la partita.",
+    "too_large": "Il file è troppo grande. Le foto possono arrivare a 20 MB e i video a 200 MB.",
+    "too_long": "I video possono durare fino a 60 secondi.",
+    "unsupported_type": "Questo tipo di file non è supportato. Usa JPEG, PNG, WebP, MP4 o MOV.",
+    "user_cap_reached": "Hai aggiunto il numero massimo di foto consentito per una partita.",
+    "not_uploader": "Solo chi l’ha aggiunta può modificarlo.",
+    "not_published": "Questa foto non è pubblicata.",
+    "tags_pending": "Tutte le persone taggate devono prima accettare."
+  },
+  "badge": {
+    "public": "Galleria del campo",
+    "participants": "Solo giocatori",
+    "pending": "Tag in attesa"
+  },
+  "viewer": {
+    "title": "Foto",
+    "photoBy": "Foto di {name}",
+    "someone": "Un giocatore",
+    "delete": "Elimina foto",
+    "deleteTitle": "Eliminare questa foto?",
+    "deleteBody": "Viene rimossa per tutti, anche dalla galleria del campo.",
+    "deleted": "Foto eliminata"
+  },
+  "tags": {
+    "title": "Taggati",
+    "none": "Nessuno è taggato.",
+    "add": "Tagga giocatori",
+    "send": "{count, plural, =0 {Invia richieste} one {Invia # richiesta} many {Invia # di richieste} other {Invia # richieste}}",
+    "sent": "{count, plural, one {Richiesta di tag inviata} many {# di richieste di tag inviate} other {# richieste di tag inviate}}",
+    "requestHelp": "I tag sono richieste. Un tag compare solo dopo che il giocatore accetta.",
+    "everyoneTagged": "Tutti quelli che hanno giocato sono già taggati.",
+    "waiting": "{count, plural, one {In attesa che {names} accetti} many {In attesa che {names} accettino} other {In attesa che {names} accettino}}",
+    "untagMe": "Rimuovi il mio tag",
+    "untagged": "Tag rimosso. Questa foto ora non può diventare pubblica.",
+    "requestTitle": "{name} ti ha taggato in una foto",
+    "requestBody": "Il tag compare solo dopo che accetti.",
+    "accepted": "Tag accettato",
+    "declined": "Tag rifiutato"
+  },
+  "public": {
+    "label": "Rendi pubblica nella galleria del campo",
+    "help": "Mostrala sulla pagina del campo a tutti quelli che giocano qui.",
+    "on": "Visibile nella galleria del campo.",
+    "blocked": "{count, plural, one {# giocatore taggato non ha ancora accettato} many {# di giocatori taggati non hanno ancora accettato} other {# giocatori taggati non hanno ancora accettato}}",
+    "why": "Una foto diventa pubblica solo quando tutte le persone taggate sono d’accordo.",
+    "done": "Ora è nella galleria del campo",
+    "off": "Di nuovo solo per i giocatori"
+  },
+  "report": {
+    "cta": "Segnala foto",
+    "title": "Qual è il problema?",
+    "reason": {
+      "nudity": "Nudità",
+      "violence": "Violenza",
+      "harassment": "Molestie",
+      "privacy": "Privacy",
+      "copyright": "Copyright",
+      "spam": "Spam",
+      "other": "Altro"
+    },
+    "submit": "Segnala",
+    "thanks": "Grazie. Un moderatore la esaminerà."
+  },
+  "venue": {
+    "tabsA11y": "Dettagli del campo",
+    "tabGames": "Partite",
+    "tabPhotos": "Foto",
+    "rangeA11y": "Foto di",
+    "week": "Questa settimana",
+    "month": "Questo mese",
+    "all": "Tutte",
+    "emptyTitle": "Ancora nessuna foto qui",
+    "emptyBody": "Qui compaiono le foto che i giocatori rendono pubbliche dopo le partite.",
+    "consent": "Tutte le persone taggate in queste foto hanno accettato di mostrarle qui.",
+    "photoA11y": "Foto del {date}",
+    "sharedOn": "Condivisa dopo una partita il {date}"
+  }
+}

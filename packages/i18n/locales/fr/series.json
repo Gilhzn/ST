@@ -1,0 +1,137 @@
+{
+  "cadence": "{recurrence, select, biweekly {Un {weekday} sur deux à {time}} other {Chaque {weekday} à {time}}}",
+  "recurrence": {
+    "weekly": "Hebdo",
+    "biweekly": "Toutes les 2 semaines"
+  },
+  "chip": "{recurrence, select, biweekly {Fait partie d’une série toutes les 2 semaines} other {Fait partie d’une série hebdomadaire}}",
+  "regularsCount": "{count, plural, =0 {Pas encore d’habitués} one {# habitué} many {# d’habitués} other {# habitués}}",
+  "hostedBy": "Organisé par {name}",
+  "ended": "Cette série est terminée. Les parties passées et les photos restent disponibles.",
+  "facts": {
+    "regulars": "Habitués",
+    "next": "Prochaine date",
+    "regularsFirst": "Priorité habitués"
+  },
+  "priority": {
+    "title": "Priorité aux habitués",
+    "banner": "Les habitués sont prioritaires jusqu’à {time}. Ensuite, tout le monde peut rejoindre.",
+    "bannerRegular": "Tu es un habitué : tu es prioritaire jusqu’à {time}.",
+    "bannerHost": "Tes habitués sont prioritaires jusqu’à {time}, puis la partie s’ouvre à tous.",
+    "bannerInvited": "Les habitués sont prioritaires jusqu’à {time}. Accepte l’invitation de l’organisateur pour rejoindre dès maintenant.",
+    "windowTitle": "Avance des habitués",
+    "windowHelp": "Quand une nouvelle date s’ouvre, seuls les habitués peuvent la rejoindre pendant ce temps. Ensuite, elle s’ouvre à tous.",
+    "shorter": "Avance plus courte",
+    "longer": "Avance plus longue"
+  },
+  "member": {
+    "title": "Ta place",
+    "accept": "Rejoindre les habitués",
+    "welcome": "Tu fais désormais partie des habitués",
+    "invitedTitle": "{name} t’a invité chez les habitués",
+    "invitedBody": "{hours, plural, one {Les habitués ont la première heure de chaque date pour eux et peuvent être inscrits automatiquement.} many {Les habitués ont les # premières heures de chaque date pour eux et peuvent être inscrits automatiquement.} other {Les habitués ont les # premières heures de chaque date pour eux et peuvent être inscrits automatiquement.}}",
+    "alwaysIn": "Je suis toujours là",
+    "alwaysInHelp": "{hours, plural, one {Obtiens une place à chaque nouvelle date automatiquement. On te demandera de confirmer # heure avant.} many {Obtiens une place à chaque nouvelle date automatiquement. On te demandera de confirmer # d’heures avant.} other {Obtiens une place à chaque nouvelle date automatiquement. On te demandera de confirmer # heures avant.}}",
+    "alwaysInOn": "Tu es inscrit à chaque nouvelle date",
+    "alwaysInOff": "Tu rejoindras les dates une par une",
+    "askHost": "{count, plural, =0 {Demande à {name} le lien des habitués pour rejoindre cette série.} one {# habitué joue ici. Demande à {name} le lien des habitués pour le rejoindre.} many {# d’habitués jouent ici. Demande à {name} le lien des habitués pour les rejoindre.} other {# habitués jouent ici. Demande à {name} le lien des habitués pour les rejoindre.}}",
+    "leave": "Quitter les habitués",
+    "leaveTitle": "Quitter les habitués ?",
+    "leaveBody": "Tu gardes les parties que tu as déjà rejointes. Pas de carton, pas de pénalité.",
+    "leaveConfirm": "Quitter",
+    "left": "Tu as quitté les habitués"
+  },
+  "migration": {
+    "title": "Quitter WhatsApp",
+    "joined": "{count, plural, one {# membre du groupe WhatsApp a rejoint} many {# de membres du groupe WhatsApp ont rejoint} other {# membres du groupe WhatsApp ont rejoint}}",
+    "joinedLabel": "{count, plural, one {joueur venu de ton groupe WhatsApp} many {de joueurs venus de ton groupe WhatsApp} other {joueurs venus de ton groupe WhatsApp}}",
+    "active": "{count, plural, =0 {Aucun n’a encore joué} one {# a joué depuis} many {# d’entre eux ont joué depuis} other {# ont joué depuis}}",
+    "none": "Personne n’a encore utilisé ton lien"
+  },
+  "dates": {
+    "title": "Prochaines dates",
+    "empty": "{weeks, plural, one {Les nouvelles dates s’ouvrent # semaine à l’avance.} many {Les nouvelles dates s’ouvrent # de semaines à l’avance.} other {Les nouvelles dates s’ouvrent # semaines à l’avance.}}",
+    "none": "Plus aucune date.",
+    "horizon": "{weeks, plural, one {Les nouvelles dates s’ouvrent automatiquement, # semaine à l’avance.} many {Les nouvelles dates s’ouvrent automatiquement, # de semaines à l’avance.} other {Les nouvelles dates s’ouvrent automatiquement, # semaines à l’avance.}}",
+    "capacity": "{capacity, plural, one {# place} many {# de places} other {# places}}",
+    "skipped": "Annulée par l’organisateur",
+    "skippedBadge": "Annulée",
+    "youreIn": "Tu es inscrit",
+    "regularsOnly": "Habitués seulement",
+    "editA11y": "Modifier le {date}",
+    "skipA11y": "Annuler le {date}"
+  },
+  "roster": {
+    "title": "Habitués",
+    "pending": "Invités",
+    "empty": "Pas encore d’habitués. Partage le lien avec ton groupe.",
+    "viaLink": "Venu par le lien",
+    "viaPlayedWith": "Vous avez joué ensemble",
+    "viaHost": "Ajouté par l’organisateur",
+    "since": "depuis le {date}",
+    "invited": "Invité",
+    "alwaysIn": "Toujours là",
+    "alwaysInCount": "{count, plural, one {# toujours là} many {# de toujours là} other {# toujours là}}",
+    "remove": "Retirer",
+    "removeA11y": "Retirer {name} des habitués",
+    "removeTitle": "Retirer {name} ?",
+    "removeBody": "Cette personne perd la priorité et ne pourra plus revenir avec le lien. Les parties déjà rejointes restent."
+  },
+  "host": {
+    "title": "Outils de l’organisateur",
+    "inviteGroup": "Invite ton groupe WhatsApp",
+    "edit": "Modifier les dates",
+    "editHelp": "Change une date, ou celle-ci et toutes les suivantes",
+    "end": "Terminer la série",
+    "endHelp": "Arrête les nouvelles dates et annule les prochaines"
+  },
+  "skip": {
+    "title": "Annuler le {date} ?",
+    "body": "Tous les inscrits sont prévenus. Les habitués gardent leur place pour la date suivante.",
+    "late": "{hours, plural, one {Il reste moins de # heure avant le début : cela compte comme une annulation tardive de l’organisateur.} many {Il reste moins de # d’heures avant le début : cela compte comme une annulation tardive de l’organisateur.} other {Il reste moins de # heures avant le début : cela compte comme une annulation tardive de l’organisateur.}}",
+    "confirm": "Annuler la date",
+    "done": "Date annulée. Les joueurs ont été prévenus."
+  },
+  "end": {
+    "title": "Terminer cette série ?",
+    "body": "Les prochaines dates sont annulées et tous les inscrits sont prévenus. Les parties passées et les photos restent.",
+    "confirm": "Terminer la série",
+    "done": "Série terminée"
+  },
+  "edit": {
+    "title": "Modifier les dates",
+    "scope": "Que modifier",
+    "scopeThis": "Cette date",
+    "scopeFollowing": "Celle-ci et les suivantes",
+    "scopeThisHelp": "Seul le {date} change.",
+    "scopeFollowingHelp": "Le {date} et toutes les dates suivantes changent.",
+    "name": "Nom",
+    "time": "Heure de début",
+    "capacityHelp": "Joueurs, organisateur compris",
+    "save": "Enregistrer",
+    "saved": "Enregistré. Les joueurs ont été prévenus."
+  },
+  "card": {
+    "yourSeries": "Tes parties régulières",
+    "next": "Prochaine : {date}",
+    "regular": "Habitué",
+    "invited": "Invité"
+  },
+  "wizard": {
+    "repeats": "Répétition",
+    "once": "Une fois",
+    "weekly": "Chaque semaine",
+    "biweekly": "Toutes les 2 semaines",
+    "firstDate": "Première partie",
+    "summaryHelp": "Première partie le {date}. Les nouvelles dates s’ouvrent automatiquement.",
+    "noRepeat": "Pas de répétition",
+    "reviewValue": "{cadence} · priorité aux habitués {window}",
+    "publish": "Lancer la série"
+  },
+  "created": {
+    "title": "{recurrence, select, biweekly {Ta partie toutes les 2 semaines est en ligne} other {Ta partie hebdo est en ligne}}",
+    "body": "{hours, plural, one {Partage un seul lien avec ton groupe WhatsApp. Chaque personne qui le touche rejoint les habitués et obtient # heure de priorité à chaque date.} many {Partage un seul lien avec ton groupe WhatsApp. Chaque personne qui le touche rejoint les habitués et obtient # d’heures de priorité à chaque date.} other {Partage un seul lien avec ton groupe WhatsApp. Chaque personne qui le touche rejoint les habitués et obtient # heures de priorité à chaque date.}}",
+    "dates": "{count, plural, one {# date ouverte} many {# de dates ouvertes} other {# dates ouvertes}}",
+    "view": "Voir la série"
+  }
+}

@@ -25,5 +25,6 @@
   "payment_required": "É preciso um depósito para entrar neste jogo. Adicione uma forma de pagamento para continuar.",
   "network": "Não foi possível conectar. Verifique sua conexão com a internet e tente de novo.",
   "unavailable": "O Sport Talent está temporariamente indisponível. Tente de novo em alguns minutos.",
-  "unknown": "Algo deu errado do nosso lado. Tente de novo."
+  "unknown": "Algo deu errado do nosso lado. Tente de novo.",
+  "roster_priority": "Por enquanto, os fixos têm prioridade nesta data. Você poderá entrar quando ela abrir para todos."
 }

@@ -1,0 +1,137 @@
+{
+  "cadence": "{recurrence, select, biweekly {Every other {weekday} at {time}} other {Every {weekday} at {time}}}",
+  "recurrence": {
+    "weekly": "Weekly",
+    "biweekly": "Every 2 weeks"
+  },
+  "chip": "{recurrence, select, biweekly {Part of a series every 2 weeks} other {Part of a weekly series}}",
+  "regularsCount": "{count, plural, =0 {No regulars yet} one {# regular} other {# regulars}}",
+  "hostedBy": "Hosted by {name}",
+  "ended": "This series has ended. Past games and photos stay available.",
+  "facts": {
+    "regulars": "Regulars",
+    "next": "Next date",
+    "regularsFirst": "Regulars first"
+  },
+  "priority": {
+    "title": "Regulars first",
+    "banner": "Regulars get first pick until {time}. After that, anyone can join.",
+    "bannerRegular": "You’re a regular: you get first pick until {time}.",
+    "bannerHost": "Your regulars get first pick until {time}, then it opens to everyone.",
+    "bannerInvited": "Regulars get first pick until {time}. Accept the host’s invite to join now.",
+    "windowTitle": "Regulars’ head start",
+    "windowHelp": "When a new date opens, only regulars can join for this long. Then it opens to everyone.",
+    "shorter": "Shorter head start",
+    "longer": "Longer head start"
+  },
+  "member": {
+    "title": "Your spot",
+    "accept": "Join the regulars",
+    "welcome": "You’re a regular now",
+    "invitedTitle": "{name} invited you to the regulars",
+    "invitedBody": "{hours, plural, one {Regulars get the first # hour of every date to themselves and can be in automatically.} other {Regulars get the first # hours of every date to themselves and can be in automatically.}}",
+    "alwaysIn": "I’m always in",
+    "alwaysInHelp": "{hours, plural, one {Get a spot in every new date automatically. We’ll ask you to confirm # hour before.} other {Get a spot in every new date automatically. We’ll ask you to confirm # hours before.}}",
+    "alwaysInOn": "You’re in for every new date",
+    "alwaysInOff": "You’ll join dates one by one",
+    "askHost": "{count, plural, =0 {Ask {name} for the regulars link to join this series.} one {# regular plays here. Ask {name} for the regulars link to join them.} other {# regulars play here. Ask {name} for the regulars link to join them.}}",
+    "leave": "Leave the regulars",
+    "leaveTitle": "Leave the regulars?",
+    "leaveBody": "You keep the games you already joined. No card, no penalty.",
+    "leaveConfirm": "Leave",
+    "left": "You left the regulars"
+  },
+  "migration": {
+    "title": "Moving from WhatsApp",
+    "joined": "{count, plural, one {# from the WhatsApp group joined} other {# from the WhatsApp group joined}}",
+    "joinedLabel": "{count, plural, one {player joined from your WhatsApp group} other {players joined from your WhatsApp group}}",
+    "active": "{count, plural, =0 {None have played yet} one {# has played since} other {# have played since}}",
+    "none": "Nobody has used your link yet"
+  },
+  "dates": {
+    "title": "Next dates",
+    "empty": "{weeks, plural, one {New dates open # week ahead.} other {New dates open # weeks ahead.}}",
+    "none": "No more dates.",
+    "horizon": "{weeks, plural, one {New dates open automatically, # week ahead.} other {New dates open automatically, # weeks ahead.}}",
+    "capacity": "{capacity, plural, one {# spot} other {# spots}}",
+    "skipped": "Skipped by the host",
+    "skippedBadge": "Skipped",
+    "youreIn": "You’re in",
+    "regularsOnly": "Regulars only",
+    "editA11y": "Edit {date}",
+    "skipA11y": "Skip {date}"
+  },
+  "roster": {
+    "title": "Regulars",
+    "pending": "Invited",
+    "empty": "No regulars yet. Share the link with your group.",
+    "viaLink": "Joined with the link",
+    "viaPlayedWith": "Played together",
+    "viaHost": "Added by the host",
+    "since": "since {date}",
+    "invited": "Invited",
+    "alwaysIn": "Always in",
+    "alwaysInCount": "{count, plural, one {# always in} other {# always in}}",
+    "remove": "Remove",
+    "removeA11y": "Remove {name} from the regulars",
+    "removeTitle": "Remove {name}?",
+    "removeBody": "They stop getting first pick and can’t rejoin with the link. Games they already joined stay."
+  },
+  "host": {
+    "title": "Host tools",
+    "inviteGroup": "Invite your WhatsApp group",
+    "edit": "Edit dates",
+    "editHelp": "Change one date, or this one and all later ones",
+    "end": "End series",
+    "endHelp": "Stops new dates and cancels upcoming ones"
+  },
+  "skip": {
+    "title": "Skip {date}?",
+    "body": "Everyone who joined gets a notice. Regulars keep their place for the next date.",
+    "late": "{hours, plural, one {It’s less than # hour before kick-off, so this counts as a late cancellation by the host.} other {It’s less than # hours before kick-off, so this counts as a late cancellation by the host.}}",
+    "confirm": "Skip date",
+    "done": "Date skipped. Players were told."
+  },
+  "end": {
+    "title": "End this series?",
+    "body": "Upcoming dates are cancelled and everyone who joined is told. Past games and photos stay.",
+    "confirm": "End series",
+    "done": "Series ended"
+  },
+  "edit": {
+    "title": "Edit dates",
+    "scope": "What to change",
+    "scopeThis": "This date",
+    "scopeFollowing": "This and later",
+    "scopeThisHelp": "Only {date} changes.",
+    "scopeFollowingHelp": "{date} and every date after it change.",
+    "name": "Name",
+    "time": "Start time",
+    "capacityHelp": "Players, host included",
+    "save": "Save changes",
+    "saved": "Saved. Players were told."
+  },
+  "card": {
+    "yourSeries": "Your regular games",
+    "next": "Next: {date}",
+    "regular": "Regular",
+    "invited": "Invited"
+  },
+  "wizard": {
+    "repeats": "Repeats",
+    "once": "Once",
+    "weekly": "Weekly",
+    "biweekly": "Every 2 weeks",
+    "firstDate": "First game",
+    "summaryHelp": "First game {date}. New dates open automatically.",
+    "noRepeat": "Doesn’t repeat",
+    "reviewValue": "{cadence} · regulars first {window}",
+    "publish": "Start series"
+  },
+  "created": {
+    "title": "{recurrence, select, biweekly {Your game every 2 weeks is live} other {Your weekly game is live}}",
+    "body": "{hours, plural, one {Share one link with your WhatsApp group. Everyone who taps it joins the regulars and gets # hour of first pick on every date.} other {Share one link with your WhatsApp group. Everyone who taps it joins the regulars and gets # hours of first pick on every date.}}",
+    "dates": "{count, plural, one {# date open} other {# dates open}}",
+    "view": "View series"
+  }
+}

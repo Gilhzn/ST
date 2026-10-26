@@ -77,7 +77,7 @@ export function PlayersScreen() {
           onChange={setTab}
           options={[
             { value: 'friends', label: t('network:tab.friends'), count: all.data ? friends.length : undefined, testID: 'players.tab.friends' },
-            { value: 'played', label: t('network:tab.played'), count: all.data ? played.length : undefined, testID: 'players.tab.played' },
+            { value: 'played', label: t('network:tab.played'), testID: 'players.tab.played' },
             { value: 'requests', label: t('network:tab.requests'), count: incoming.length || undefined, testID: 'players.tab.requests' },
           ]}
         />
@@ -252,7 +252,7 @@ function PersonRow({ c, trailing, divider }: { c: ConnectionView; trailing?: Rea
         <BidiText variant="body" weight="medium" numberOfLines={1}>
           {c.user.displayName}
         </BidiText>
-        <Text variant="footnote" color="textSecondary" numberOfLines={1}>
+        <Text variant="footnote" color="textSecondary" numberOfLines={2}>
           {sub}
         </Text>
       </View>

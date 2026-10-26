@@ -1,0 +1,60 @@
+{
+  "share": {
+    "game": "來參加我主辦的{sport}比賽「{title}」{hasDate, select, yes {，{date} {time}} other {}}{hasArea, select, yes {，地點在{area}} other {}}。{hasSpots, select, yes {{spotsLeft, plural, =0 {已額滿，但可以排候補。} other {還剩 # 個名額。}}} other {}}在 Sport Talent 報名：{url}",
+    "gameWomenOnly": "女子{sport}比賽「{title}」{hasDate, select, yes {，{date} {time}} other {}}{hasArea, select, yes {，地點在{area}} other {}}。{hasSpots, select, yes {{spotsLeft, plural, =0 {已額滿，但可以排候補。} other {還剩 # 個名額。}}} other {}}在 Sport Talent 報名：{url}",
+    "series": {
+      "weekly": "我們每{weekday} {time}{hasArea, select, yes {在{area}} other {}}打{sport}：「{title}」。我們把群組搬到 Sport Talent 了，固定班底每場都能優先報名{hasDate, select, yes {（下一場：{date}）} other {}}。加入固定班底：{url}",
+      "biweekly": "我們隔週{weekday} {time}{hasArea, select, yes {在{area}} other {}}打{sport}：「{title}」。我們把群組搬到 Sport Talent 了，固定班底每場都能優先報名{hasDate, select, yes {（下一場：{date}）} other {}}。加入固定班底：{url}"
+    },
+    "seriesWomenOnly": {
+      "weekly": "女子{sport}，每{weekday} {time}{hasArea, select, yes {在{area}} other {}}：「{title}」。我們把群組搬到 Sport Talent 了，固定班底每場都能優先報名{hasDate, select, yes {（下一場：{date}）} other {}}。加入固定班底：{url}",
+      "biweekly": "女子{sport}，隔週{weekday} {time}{hasArea, select, yes {在{area}} other {}}：「{title}」。我們把群組搬到 Sport Talent 了，固定班底每場都能優先報名{hasDate, select, yes {（下一場：{date}）} other {}}。加入固定班底：{url}"
+    }
+  },
+  "preview": {
+    "title": "{sport}：{title}",
+    "spotsLeft": "{count, plural, =0 {已額滿，可排候補} other {還剩 # 個名額}}",
+    "weekly": "每{weekday} {time}",
+    "biweekly": "隔週{weekday} {time}",
+    "womenOnly": "僅限女性",
+    "siteName": "Sport Talent"
+  },
+  "group": {
+    "title": "邀請你的群組",
+    "heading": "把你的 WhatsApp 群組帶過來",
+    "bodySeries": "只要分享一個連結。點開的人會成為固定班底，每場都能優先報名，你也能看到誰已經搬過來。",
+    "bodyGame": "把連結分享到群組聊天。球友可以查看比賽，一鍵申請加入。",
+    "previewTitle": "群組成員會看到的內容",
+    "whatsapp": "分享到 WhatsApp",
+    "copy": "複製連結",
+    "more": "更多選項",
+    "copied": "已複製連結",
+    "messageCopied": "已複製訊息",
+    "noWhatsApp": "這台裝置沒有安裝 WhatsApp。",
+    "linkTitle": "你的邀請連結",
+    "showQr": "顯示 QR 碼",
+    "hideQr": "隱藏 QR 碼",
+    "qrHelp": "球友可以在場地掃描加入。",
+    "rotate": "重設連結",
+    "rotateTitle": "要重設連結嗎？",
+    "rotateBody": "舊連結會立即失效。請把新連結分享到你的群組。",
+    "rotateConfirm": "重設連結",
+    "rotated": "新連結已建立",
+    "statsNone": "還沒有人透過連結加入",
+    "step1": "點選「分享到 WhatsApp」，選擇你的群組聊天。",
+    "step2": "球友點開連結，用手機號碼登入。",
+    "step3": "你可以看到所有加入的人。把訊息置頂，讓晚來的人也找得到。"
+  },
+  "landing": {
+    "title": "加入固定班底",
+    "from": "{name}邀請你加入{title}",
+    "signedOutBody": "登入後即可查看比賽並加入固定班底。",
+    "signUp": "登入並加入固定班底",
+    "join": "加入固定班底",
+    "open": "開啟系列",
+    "joined": "你已成為{title}的固定班底",
+    "perkFirstPick": "{hours, plural, other {每個場次優先報名 # 小時}}",
+    "perkAlwaysIn": "選擇「每場都到」，自動取得名額",
+    "perkNoPolls": "不用再在群組裡追著投票"
+  }
+}

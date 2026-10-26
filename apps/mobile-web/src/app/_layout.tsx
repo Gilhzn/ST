@@ -69,6 +69,8 @@ function ThemedRoot() {
   );
 }
 
+const AUTH_PATHS = ['/phone', '/otp', '/age-gate', '/onboarding'];
+
 function RootNavigator() {
   const { status } = useSession();
   const { t } = useT();
@@ -87,8 +89,10 @@ function RootNavigator() {
     if (prev === status || status === 'loading') return;
     if (status === 'ready' && (prev === 'needsProfile' || prev === 'signedOut' || prev === 'loading')) {
       const next = takePostAuthRedirect();
-      if (next) router.replace(next);
-      else if (pathname === '/' || ['/phone', '/otp', '/age-gate', '/onboarding'].includes(pathname)) router.replace('/map');
+      if (next) {
+        // After the auth stack's guards have redirected (to /map) on this same transition.
+        setTimeout(() => router.replace(next), 0);
+      } else if (pathname === '/' || AUTH_PATHS.includes(pathname)) router.replace('/map');
     } else if (status === 'needsProfile' && prev !== 'loading') {
       router.replace('/age-gate');
     } else if (status === 'signedOut' && prev === 'ready') {

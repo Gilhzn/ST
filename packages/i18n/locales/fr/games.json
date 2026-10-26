@@ -396,5 +396,16 @@
   "card": {
     "areaOnly": "Lieu exact après validation",
     "pinnedSpot": "Point de rendez-vous sur la carte"
+  },
+  "after": {
+    "title": "Après la partie",
+    "liveTitle": "Pendant la partie",
+    "score": "Score final {score}",
+    "scoreHelp": "Vérifie le score et confirme-le",
+    "noScore": "Ajoute le score final",
+    "noScoreHelp": "N’importe quel joueur peut le saisir",
+    "rate": "Noter les joueurs",
+    "rateHelp": "Ouvert jusqu’à {time}",
+    "gallery": "{count, plural, =0 {Galerie de la partie} one {Galerie de la partie · # photo} many {Galerie de la partie · # de photos} other {Galerie de la partie · # photos}}"
   }
 }

@@ -1,0 +1,60 @@
+{
+  "share": {
+    "game": "انضم إلى مباراة {sport} التي أنظمها «{title}»{hasDate, select, yes { يوم {date} الساعة {time}} other {}}{hasArea, select, yes { في {area}} other {}}.{hasSpots, select, yes { {spotsLeft, plural, =0 {المباراة مكتملة، لكن يمكنك الانضمام إلى قائمة الانتظار.} zero {المباراة مكتملة، لكن يمكنك الانضمام إلى قائمة الانتظار.} one {بقي مكان واحد.} two {بقي مكانان.} few {بقيت # أماكن.} many {بقي # مكانًا.} other {بقي # مكان.}}} other {}} انضم عبر Sport Talent: {url}",
+    "gameWomenOnly": "مباراة {sport} للنساء فقط «{title}»{hasDate, select, yes { يوم {date} الساعة {time}} other {}}{hasArea, select, yes { في {area}} other {}}.{hasSpots, select, yes { {spotsLeft, plural, =0 {المباراة مكتملة، لكن يمكنكِ الانضمام إلى قائمة الانتظار.} zero {المباراة مكتملة، لكن يمكنكِ الانضمام إلى قائمة الانتظار.} one {بقي مكان واحد.} two {بقي مكانان.} few {بقيت # أماكن.} many {بقي # مكانًا.} other {بقي # مكان.}}} other {}} انضمي عبر Sport Talent: {url}",
+    "series": {
+      "weekly": "نلعب {sport} كل {weekday} الساعة {time}{hasArea, select, yes { في {area}} other {}}: «{title}». ننقل المجموعة إلى Sport Talent، حيث للاعبين الدائمين الأولوية في كل موعد{hasDate, select, yes { (الموعد التالي: {date})} other {}}. انضم إلى الدائمين: {url}",
+      "biweekly": "نلعب {sport} يوم {weekday} كل أسبوعين الساعة {time}{hasArea, select, yes { في {area}} other {}}: «{title}». ننقل المجموعة إلى Sport Talent، حيث للاعبين الدائمين الأولوية في كل موعد{hasDate, select, yes { (الموعد التالي: {date})} other {}}. انضم إلى الدائمين: {url}"
+    },
+    "seriesWomenOnly": {
+      "weekly": "{sport} للنساء فقط كل {weekday} الساعة {time}{hasArea, select, yes { في {area}} other {}}: «{title}». ننقل المجموعة إلى Sport Talent، حيث للاعبات الدائمات الأولوية في كل موعد{hasDate, select, yes { (الموعد التالي: {date})} other {}}. انضمي إلى الدائمات: {url}",
+      "biweekly": "{sport} للنساء فقط يوم {weekday} كل أسبوعين الساعة {time}{hasArea, select, yes { في {area}} other {}}: «{title}». ننقل المجموعة إلى Sport Talent، حيث للاعبات الدائمات الأولوية في كل موعد{hasDate, select, yes { (الموعد التالي: {date})} other {}}. انضمي إلى الدائمات: {url}"
+    }
+  },
+  "preview": {
+    "title": "{sport}: {title}",
+    "spotsLeft": "{count, plural, =0 {مكتملة، انضم إلى قائمة الانتظار} zero {مكتملة، انضم إلى قائمة الانتظار} one {بقي مكان واحد} two {بقي مكانان} few {بقيت # أماكن} many {بقي # مكانًا} other {بقي # مكان}}",
+    "weekly": "كل {weekday} الساعة {time}",
+    "biweekly": "{weekday} كل أسبوعين الساعة {time}",
+    "womenOnly": "للنساء فقط",
+    "siteName": "Sport Talent"
+  },
+  "group": {
+    "title": "ادعُ مجموعتك",
+    "heading": "أحضر مجموعة واتساب",
+    "bodySeries": "شارك رابطًا واحدًا. كل من يضغط عليه ينضم إلى الدائمين ويحصل على الأولوية في كل موعد، وترى أنت من انتقل.",
+    "bodyGame": "شارك الرابط في دردشة مجموعتك. يرى اللاعبون المباراة ويطلبون الانضمام بضغطة واحدة.",
+    "previewTitle": "ما ستراه مجموعتك",
+    "whatsapp": "المشاركة عبر واتساب",
+    "copy": "نسخ الرابط",
+    "more": "خيارات أخرى",
+    "copied": "نُسخ الرابط",
+    "messageCopied": "نُسخت الرسالة",
+    "noWhatsApp": "واتساب غير مثبّت على هذا الجهاز.",
+    "linkTitle": "رابط دعوتك",
+    "showQr": "عرض رمز QR",
+    "hideQr": "إخفاء رمز QR",
+    "qrHelp": "يمكن للاعبين مسحه في الملعب للانضمام.",
+    "rotate": "إعادة تعيين الرابط",
+    "rotateTitle": "هل تريد إعادة تعيين الرابط؟",
+    "rotateBody": "سيتوقف الرابط القديم فورًا. شارك الرابط الجديد مع مجموعتك.",
+    "rotateConfirm": "إعادة تعيين الرابط",
+    "rotated": "الرابط الجديد جاهز",
+    "statsNone": "لم ينضم أحد عبر الرابط بعد",
+    "step1": "اضغط «المشاركة عبر واتساب» واختر دردشة المجموعة.",
+    "step2": "يضغط اللاعبون على الرابط ويسجّلون الدخول برقم هاتفهم.",
+    "step3": "ترى كل من انضم. ثبّت الرسالة ليجدها من ينضم متأخرًا."
+  },
+  "landing": {
+    "title": "انضم إلى الدائمين",
+    "from": "دعاك {name} إلى {title}",
+    "signedOutBody": "سجّل الدخول لترى المباراة وتنضم إلى الدائمين.",
+    "signUp": "سجّل الدخول للانضمام إلى الدائمين",
+    "join": "انضم إلى الدائمين",
+    "open": "فتح السلسلة",
+    "joined": "أصبحت لاعبًا دائمًا في {title}",
+    "perkFirstPick": "{hours, plural, zero {أولوية في كل موعد} one {أولوية لمدة ساعة في كل موعد} two {أولوية لمدة ساعتين في كل موعد} few {أولوية لمدة # ساعات في كل موعد} many {أولوية لمدة # ساعة في كل موعد} other {أولوية لمدة # ساعة في كل موعد}}",
+    "perkAlwaysIn": "اختر «أنا مشارك دائمًا» واحصل على مكان تلقائيًا",
+    "perkNoPolls": "لا مزيد من ملاحقة استطلاع المجموعة"
+  }
+}

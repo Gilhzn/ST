@@ -25,5 +25,6 @@
   "payment_required": "Für dieses Spiel ist eine Kaution nötig. Füge eine Zahlungsmethode hinzu, um fortzufahren.",
   "network": "Keine Verbindung. Prüfe deine Internetverbindung und versuche es noch einmal.",
   "unavailable": "Sport Talent ist vorübergehend nicht verfügbar. Versuche es in ein paar Minuten noch einmal.",
-  "unknown": "Bei uns ist etwas schiefgelaufen. Versuche es noch einmal."
+  "unknown": "Bei uns ist etwas schiefgelaufen. Versuche es noch einmal.",
+  "roster_priority": "Bei diesem Termin hat gerade noch der Stamm Vorrang. Du kannst beitreten, sobald er für alle offen ist."
 }

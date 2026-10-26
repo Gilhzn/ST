@@ -70,5 +70,57 @@
   "waitlist_offer": {
     "title": "Há uma vaga para você",
     "body": "Abriu uma vaga em um jogo em que você está na lista de espera. Aceite no app antes que a oferta expire."
+  },
+  "roster_added": {
+    "title": "{via, select, invite_link {Novo fixo em {seriesTitle}} other {Você foi convidado para os fixos}}",
+    "body": "{via, select, invite_link {Um jogador entrou em {seriesTitle} pelo seu link.} other {Entre para os fixos de {seriesTitle} e tenha prioridade em cada data.}}"
+  },
+  "series_reconfirm": {
+    "title": "Ainda está dentro de {seriesTitle}?",
+    "body": "Confirme sua vaga até {deadline}, ou ela passa para o próximo jogador. Sem penalidade em nenhum caso."
+  },
+  "series_auto_released": {
+    "title": "Sua vaga foi liberada",
+    "body": "Você não confirmou em {seriesTitle}, então sua vaga foi para o próximo jogador. Sem penalidade."
+  },
+  "roster_leave_offer": {
+    "title": "Ainda joga em {seriesTitle}?",
+    "body": "{misses, plural, one {Você faltou a # data seguida. Continue como fixo ou saia da lista, sem penalidade.} many {Você faltou a # de datas seguidas. Continue como fixo ou saia da lista, sem penalidade.} other {Você faltou a # datas seguidas. Continue como fixo ou saia da lista, sem penalidade.}}"
+  },
+  "occurrence_skipped": {
+    "title": "Uma data de {seriesTitle} foi cancelada",
+    "body": "O organizador cancelou o jogo de {startsAt}. Você continua fixo."
+  },
+  "occurrence_updated": {
+    "title": "{seriesTitle} mudou",
+    "body": "O organizador atualizou o jogo de {startsAt}. Confira os detalhes."
+  },
+  "occurrence_rescheduled": {
+    "title": "{seriesTitle} tem uma nova agenda",
+    "body": "O jogo de {startsAt} mudou. Confira as novas datas."
+  },
+  "peer_rating_open": {
+    "title": "Avalie seus colegas",
+    "body": "A avaliação fica aberta por 48 horas depois do jogo. Ela é privada e ajuda a equilibrar os times."
+  },
+  "friend_request": {
+    "title": "Novo pedido de amizade",
+    "body": "Alguém com quem você jogou quer ser seu amigo."
+  },
+  "friend_accepted": {
+    "title": "Pedido de amizade aceito",
+    "body": "Agora vocês são amigos. Você verá os jogos em que essa pessoa entra."
+  },
+  "media_tag_request": {
+    "title": "Você foi marcado em uma foto",
+    "body": "A marcação só aparece depois que você aceitar."
+  },
+  "media_blocked": {
+    "title": "Sua foto não foi publicada",
+    "body": "Ela não passou nas nossas verificações de conteúdo. Ninguém mais pode vê-la."
+  },
+  "rating_level_changed": {
+    "title": "Seu nível mudou",
+    "body": "Seu novo nível é {level}. Veja como ele mudou no seu perfil."
   }
 }

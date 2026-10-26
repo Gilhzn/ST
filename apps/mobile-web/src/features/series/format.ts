@@ -1,7 +1,8 @@
 /**
  * Locale-aware labels for recurring series (weekday names, wall-clock times, cadence,
- * the roster-only deadline). Times are formatted in the series' own time zone so a
- * Tel Aviv game reads "20:00" wherever the viewer is.
+ * the roster-only deadline). The cadence is a wall-clock rule in the series' own zone (with the
+ * zone appended when it differs from the device's); concrete dates and deadlines are instants,
+ * shown on the viewer's own clock like every other game time in the app.
  */
 import type { GameSeries, LocalTime, Weekday } from '@st/domain';
 import { isolate } from '@st/ui';
@@ -37,13 +38,29 @@ export function localTimeLabel(time: LocalTime, locale: string): string {
   }
 }
 
-/** "Every Thursday at 20:00" / "Every other Thursday at 20:00". */
-export function cadenceLabel(series: Pick<GameSeries, 'recurrence' | 'weekday' | 'startTime'>, t: TFunction, locale: string): string {
+/**
+ * "Every Thursday at 20:00" / "Every other Thursday at 20:00". When the series runs in another
+ * zone than the device ("8:00 PM" in London seen from Tel Aviv), the zone is appended ("8:00 PM GMT")
+ * so the cadence never contradicts the game times shown in the viewer's own zone.
+ */
+export function cadenceLabel(series: Pick<GameSeries, 'recurrence' | 'weekday' | 'startTime'> & { timeZone?: string }, t: TFunction, locale: string): string {
+  const zone = series.timeZone && series.timeZone !== deviceTimeZone() ? zoneAbbreviation(series.timeZone, locale) : null;
+  const time = localTimeLabel(series.startTime, locale);
   return t('series:cadence', {
     recurrence: series.recurrence,
     weekday: weekdayName(series.weekday, locale),
-    time: isolate(localTimeLabel(series.startTime, locale), 'ltr'),
+    time: isolate(zone ? `${time} ${zone}` : time, 'ltr'),
   });
+}
+
+/** "GMT", "GMT+2", "BST" as the locale names the zone today. */
+export function zoneAbbreviation(timeZone: string, locale: string): string | null {
+  try {
+    const parts = new Intl.DateTimeFormat(locale, { timeZone, timeZoneName: 'short', hour: 'numeric' }).formatToParts(new Date());
+    return parts.find((p) => p.type === 'timeZoneName')?.value ?? null;
+  } catch {
+    return null;
+  }
 }
 
 /** "Thu 20:00" in a given time zone (deadlines such as the regulars-only window). */
@@ -61,6 +78,15 @@ export function dayLabel(iso: string, locale: string, timeZone?: string): string
     return new Intl.DateTimeFormat(locale, { weekday: 'short', day: 'numeric', month: 'short', ...(timeZone ? { timeZone } : null) }).format(new Date(iso));
   } catch {
     return iso.slice(0, 10);
+  }
+}
+
+/** "Oct 30" in the series' zone (the weekday sits on the date tile). */
+export function monthDay(iso: string, locale: string, timeZone?: string): string {
+  try {
+    return new Intl.DateTimeFormat(locale, { day: 'numeric', month: 'short', ...(timeZone ? { timeZone } : null) }).format(new Date(iso));
+  } catch {
+    return iso.slice(5, 10);
   }
 }
 

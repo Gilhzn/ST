@@ -9,6 +9,7 @@ import {
   Avatar,
   AvatarStack,
   BidiText,
+  borderWidth,
   Button,
   Card,
   Gradient,
@@ -23,6 +24,7 @@ import {
   Segmented,
   spacing,
   SportGlyphBadge,
+  showFocusRing,
   sportColors,
   StatusPill,
   Text,
@@ -32,7 +34,7 @@ import {
 } from '@st/ui';
 import { router } from 'expo-router';
 import { useState, type ReactNode } from 'react';
-import { View } from 'react-native';
+import { Pressable, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { ConfirmDialog } from '@/components/ConfirmDialog';
@@ -50,7 +52,7 @@ import { useNow } from '@/hooks/useNow';
 import { useT } from '@/i18n';
 import { formatNumber, formatRelative } from '@/lib/format';
 
-import { cadenceLabel, dayLabel, localTimeLabel, shortDayTime, timeIn } from './format';
+import { cadenceLabel, dayLabel, localTimeLabel, monthDay, shortDayTime, timeIn } from './format';
 import { DateTile } from './SeriesParts';
 
 const LATE_HOURS = 24;
@@ -169,10 +171,10 @@ export function SeriesScreen({ seriesId }: { seriesId: string }) {
           title={t('series:priority.title')}
           text={
             d.isHost
-              ? t('series:priority.bannerHost', { time: isolate(shortDayTime(next.priorityUntil, locale, s.timeZone), 'ltr') })
+              ? t('series:priority.bannerHost', { time: isolate(shortDayTime(next.priorityUntil, locale), 'ltr') })
               : d.myRoster?.status === 'regular'
-                ? t('series:priority.bannerRegular', { time: isolate(shortDayTime(next.priorityUntil, locale, s.timeZone), 'ltr') })
-                : t('series:priority.banner', { time: isolate(shortDayTime(next.priorityUntil, locale, s.timeZone), 'ltr') })
+                ? t('series:priority.bannerRegular', { time: isolate(shortDayTime(next.priorityUntil, locale), 'ltr') })
+                : t('series:priority.banner', { time: isolate(shortDayTime(next.priorityUntil, locale), 'ltr') })
           }
         />
       ) : null}
@@ -200,7 +202,7 @@ export function SeriesScreen({ seriesId }: { seriesId: string }) {
         </View>
       ) : null}
 
-      {d.isHost ? <MigrationCard stats={stats.data ?? null} loading={stats.loading && !stats.data} rosterCount={d.rosterCount} onInvite={ended ? undefined : () => router.push(`/series/${s.id}/invite`)} /> : null}
+      {d.isHost ? <MigrationCard stats={stats.data ?? null} loading={stats.loading && !stats.data} rosterCount={d.rosterCount} /> : null}
 
       <View style={{ gap: spacing.sm }} testID="series.dates">
         <SectionHeader title={t('series:dates.title')} />
@@ -284,7 +286,7 @@ export function SeriesScreen({ seriesId }: { seriesId: string }) {
         testID="series.skipDialog"
         visible={!!skip}
         icon="SkipForward"
-        title={skip ? t('series:skip.title', { date: dayLabel(skip.startsAt, locale, s.timeZone) }) : ''}
+        title={skip ? t('series:skip.title', { date: dayLabel(skip.startsAt, locale) }) : ''}
         body={
           skip
             ? Date.parse(skip.startsAt) - now < LATE_HOURS * 3_600_000 && (games.data?.get(skip.gameId)?.approvedCount ?? 1) > 1
@@ -464,8 +466,8 @@ function SeriesFacts({
         </Fact>
         {divider}
         <Fact
-          label={next ? dayLabel(next.startsAt, locale, series.timeZone) : t('series:facts.next')}
-          value={next ? formatRelative(next.startsAt, locale, now) || timeIn(next.startsAt, locale, series.timeZone) : '—'}
+          label={next ? dayLabel(next.startsAt, locale) : t('series:facts.next')}
+          value={next ? formatRelative(next.startsAt, locale, now) || timeIn(next.startsAt, locale) : '—'}
         >
           <ProgressRing progress={ratio} size={40} thickness={4} color={ratio >= 0.75 ? sportColors[series.sport].gradient[0] : 'primary'} animated={false}>
             <Icon name="CalendarCheck" size={16} weight="fill" color="primary" />
@@ -519,12 +521,10 @@ function MigrationCard({
   stats,
   loading,
   rosterCount,
-  onInvite,
 }: {
   stats: { joinedFromLink: number; activeFromLink: number; lastJoinAt: string | null } | null;
   loading: boolean;
   rosterCount: number;
-  onInvite?: () => void;
 }) {
   const { t, locale } = useT();
   const theme = useTheme();
@@ -549,7 +549,7 @@ function MigrationCard({
               {isolate(formatNumber(joined, locale), 'ltr')}
             </Text>
             <Text variant="callout" weight="medium" color="textOnMedia" testID="series.migration.text">
-              {joined > 0 ? t('series:migration.joined', { count: joined }) : t('series:migration.none')}
+              {joined > 0 ? t('series:migration.joinedLabel', { count: joined }) : t('series:migration.none')}
             </Text>
           </View>
           <ProgressRing
@@ -569,9 +569,6 @@ function MigrationCard({
         <Text variant="footnote" color="textOnMedia" style={{ opacity: 0.8 }}>
           {t('series:migration.active', { count: active })} · {t('series:regularsCount', { count: rosterCount })}
         </Text>
-        {onInvite ? (
-          <Button testID="series.migration.invite" variant="accent" icon="WhatsappLogo" label={t('series:host.inviteGroup')} onPress={onInvite} />
-        ) : null}
       </Gradient>
     </View>
   );
@@ -605,7 +602,8 @@ function OccurrenceRow({
   const skipped = o.status === 'skipped';
   const priority = !skipped && Date.parse(o.priorityUntil) > now;
   const mine = game?.myParticipation?.status === 'approved' && !isHost;
-  const title = `${dayLabel(o.startsAt, locale, series.timeZone)} · ${timeIn(o.startsAt, locale, series.timeZone)}`;
+  const title = `${dayLabel(o.startsAt, locale)} · ${timeIn(o.startsAt, locale)}`;
+  const time = `${monthDay(o.startsAt, locale)} · ${timeIn(o.startsAt, locale)}`;
   const subtitle = skipped
     ? t('series:dates.skipped')
     : game
@@ -619,20 +617,51 @@ function OccurrenceRow({
         ? { label: t('series:dates.regularsOnly'), tone: 'brand', icon: 'Hourglass' }
         : null;
   return (
-    <View testID={`series.occurrence.${index}`} style={{ flexDirection: 'row', alignItems: 'center', borderTopWidth: index ? 1 : 0, borderTopColor: theme.colors.border }}>
-      <View style={{ flex: 1 }}>
-        <ListItem
-          testID={`series.occurrence.${index}.open`}
-          leading={<DateTile iso={o.startsAt} sport={series.sport} timeZone={series.timeZone} muted={skipped} />}
-          title={title}
-          subtitle={subtitle}
-          onPress={skipped ? undefined : onOpen}
-          disabled={skipped}
-          trailing={badge ? <StatusPill label={badge.label} tone={badge.tone} icon={badge.icon} /> : undefined}
-          chevron={!skipped && !isHost}
-          divider={false}
-        />
-      </View>
+    <View testID={`series.occurrence.${index}`} style={{ flexDirection: 'row', alignItems: 'center' }}>
+      <Pressable
+        testID={`series.occurrence.${index}.open`}
+        role="button"
+        aria-label={`${title}, ${subtitle}${badge ? `, ${badge.label}` : ''}`}
+        aria-disabled={skipped}
+        disabled={skipped}
+        onPress={onOpen}
+        style={{ flex: 1 }}
+      >
+        {(st) => (
+          <View
+            style={{
+              flexDirection: 'row',
+              alignItems: 'center',
+              gap: spacing.md,
+              paddingStart: spacing.lg,
+              paddingEnd: isHost ? spacing.sm : spacing.md,
+              paddingTop: spacing.md,
+              paddingBottom: spacing.md,
+              backgroundColor: st.pressed ? theme.colors.surfaceSunken : 'transparent',
+              opacity: skipped ? 0.6 : 1,
+              ...(showFocusRing((st as { focused?: boolean }).focused)
+                ? { outlineColor: theme.colors.focusRing, outlineWidth: borderWidth.focus, outlineStyle: 'solid', outlineOffset: -3 }
+                : null),
+            }}
+          >
+            <DateTile iso={o.startsAt} sport={series.sport} muted={skipped} />
+            <View style={{ flex: 1, gap: 2, alignItems: 'flex-start' }}>
+              <Text variant="headline" numberOfLines={1} style={skipped ? { textDecorationLine: 'line-through' } : undefined}>
+                {time}
+              </Text>
+              <Text variant="footnote" color="textSecondary" numberOfLines={1}>
+                {subtitle}
+              </Text>
+              {badge ? (
+                <View style={{ marginTop: spacing.xs }}>
+                  <StatusPill label={badge.label} tone={badge.tone} icon={badge.icon} />
+                </View>
+              ) : null}
+            </View>
+            {!skipped && !isHost ? <Icon name="CaretRight" size={18} weight="bold" color="textTertiary" /> : null}
+          </View>
+        )}
+      </Pressable>
       {isHost && !skipped ? (
         <View style={{ flexDirection: 'row', gap: spacing.xs, paddingEnd: spacing.md }}>
           <IconButton testID={`series.occurrence.${index}.edit`} icon="PencilSimple" variant="tonal" size="sm" label={t('series:dates.editA11y', { date: title })} onPress={onEdit} />
@@ -647,6 +676,7 @@ function OccurrenceRow({
 
 function RosterSection({ members, isHost, onRemove }: { members: RosterMemberView[] | null; isHost: boolean; onRemove: (m: RosterMemberView) => void }) {
   const { t, locale } = useT();
+  const theme = useTheme();
   if (!members) return <Skeleton kind="row" rows={3} />;
   const regulars = members.filter((m) => m.status === 'regular');
   const invited = members.filter((m) => m.status === 'invited');
@@ -657,22 +687,47 @@ function RosterSection({ members, isHost, onRemove }: { members: RosterMemberVie
       t('series:roster.since', { date: new Intl.DateTimeFormat(locale, { month: 'short', day: 'numeric' }).format(new Date(m.joinedAt)) }),
     ];
     return (
-      <ListItem
+      <View
         key={m.userId}
         testID={`series.roster.${m.userId}`}
-        leading={<Avatar name={m.profile.displayName} uri={m.profile.avatarUrl} size="md" decorative />}
-        title={m.profile.displayName}
-        subtitle={parts.join(' · ')}
-        trailing={
-          <View style={{ flexDirection: 'row', alignItems: 'center', gap: spacing.xs }}>
-            {m.status === 'invited' ? <StatusPill label={t('series:roster.invited')} icon="Hourglass" /> : null}
-            {m.alwaysIn ? <StatusPill tone="brand" icon="Lightning" label={t('series:roster.alwaysIn')} /> : null}
-            {isHost ? (
-              <IconButton testID={`series.roster.${m.userId}.remove`} icon="UserMinus" variant="plain" size="sm" color="textTertiary" label={t('series:roster.removeA11y', { name: m.profile.displayName })} onPress={() => onRemove(m)} />
+        style={{ flexDirection: 'row', alignItems: 'center', gap: spacing.md, minHeight: 64, paddingStart: spacing.lg, paddingEnd: spacing.sm, paddingTop: spacing.sm, paddingBottom: spacing.sm }}
+      >
+        <Avatar name={m.profile.displayName} uri={m.profile.avatarUrl} size="md" decorative />
+        <View style={{ flex: 1, gap: 2 }}>
+          <View style={{ flexDirection: 'row', alignItems: 'center', gap: spacing.xs, flexWrap: 'wrap' }}>
+            <BidiText variant="body" numberOfLines={1} style={{ flexShrink: 1 }}>
+              {m.profile.displayName}
+            </BidiText>
+            {m.status === 'invited' ? (
+              <View style={{ flexDirection: 'row', alignItems: 'center', gap: 3, paddingStart: 6, paddingEnd: 8, paddingTop: 2, paddingBottom: 2, borderRadius: radius.pill, backgroundColor: theme.colors.surfaceSunken }}>
+                <Icon name="Hourglass" size={12} weight="bold" color="textSecondary" />
+                <Text variant="caption" weight="semibold" color="textSecondary">
+                  {t('series:roster.invited')}
+                </Text>
+              </View>
+            ) : null}
+            {m.alwaysIn ? (
+              <View
+                testID={`series.roster.${m.userId}.alwaysIn`}
+                role="img"
+                aria-label={t('series:roster.alwaysIn')}
+                style={{ flexDirection: 'row', alignItems: 'center', gap: 3, paddingStart: 6, paddingEnd: 8, paddingTop: 2, paddingBottom: 2, borderRadius: radius.pill, backgroundColor: theme.colors.primarySubtle }}
+              >
+                <Icon name="Lightning" size={12} weight="fill" color="onPrimarySubtle" />
+                <Text variant="caption" weight="semibold" color="onPrimarySubtle" aria-hidden>
+                  {t('series:roster.alwaysIn')}
+                </Text>
+              </View>
             ) : null}
           </View>
-        }
-      />
+          <Text variant="footnote" color="textSecondary" numberOfLines={1}>
+            {parts.join(' · ')}
+          </Text>
+        </View>
+        {isHost ? (
+          <IconButton testID={`series.roster.${m.userId}.remove`} icon="UserMinus" variant="plain" size="sm" color="textTertiary" label={t('series:roster.removeA11y', { name: m.profile.displayName })} onPress={() => onRemove(m)} />
+        ) : null}
+      </View>
     );
   };
   return (

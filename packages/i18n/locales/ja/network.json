@@ -1,0 +1,73 @@
+{
+  "title": "プレーヤー",
+  "subtitle": "{count, plural, =0 {試合に参加して仲間を見つけましょう} other {一緒にプレーした人：#人}}",
+  "entry": {
+    "title": "プレーヤー",
+    "subtitle": "友達、一緒にプレーした人、リクエスト",
+    "requests": "{count, plural, other {リクエスト#件}}"
+  },
+  "tab": {
+    "friends": "友達",
+    "played": "プレー仲間",
+    "requests": "リクエスト"
+  },
+  "action": {
+    "add": "追加",
+    "accept": "承認",
+    "cancel": "取り消す",
+    "remove": "削除"
+  },
+  "state": {
+    "outgoing": "リクエスト済み",
+    "friends": "友達"
+  },
+  "row": {
+    "played": "{count, plural, other {一緒に#試合 · 最後は{date}}}",
+    "playedNoDate": "{count, plural, other {一緒に#試合}}",
+    "notPlayed": "まだ一緒にプレーしていません"
+  },
+  "playedHelp": "一緒にプレーした人を友達に追加できます。相手の受信トレイにリクエストが届きます。",
+  "requests": {
+    "incoming": "友達リクエスト",
+    "outgoing": "送信済み"
+  },
+  "empty": {
+    "friendsTitle": "まだ友達がいません",
+    "friendsBody": "一緒にプレーした人を追加すると、その人が参加する試合がわかります。",
+    "seePlayed": "一緒にプレーした人を見る",
+    "playedTitle": "まだいません",
+    "playedBody": "同じ試合でチェックインした人がここに表示されます。",
+    "requestsTitle": "リクエストはありません",
+    "requestsBody": "一緒にプレーした人からの友達リクエストがここに表示されます。"
+  },
+  "privacy": {
+    "title": "プライバシー",
+    "label": "今後の参加試合を見られる人",
+    "help": "友達はあなたが参加した公開試合を見て、一緒に参加できます。非公開の試合は表示されません。",
+    "friends": "友達",
+    "nobody": "誰にも見せない",
+    "savedFriends": "友達があなたの今後の試合を見られます",
+    "savedNobody": "今後の試合は非表示になりました"
+  },
+  "removeA11y": "{name}さんを友達から削除",
+  "removeTitle": "{name}さんを削除しますか？",
+  "removeBody": "一緒にプレーした仲間としてのつながりは残ります。相手には通知されません。",
+  "acceptA11y": "{name}さんを承認",
+  "declineA11y": "{name}さんを辞退",
+  "toast": {
+    "requested": "{name}さんにリクエストを送りました",
+    "accepted": "{name}さんと友達になりました",
+    "acceptedShort": "友達リクエストを承認しました",
+    "declined": "リクエストを辞退しました",
+    "removed": "削除しました"
+  },
+  "request": {
+    "section": "{count, plural, other {リクエスト#件}}",
+    "friendTitle": "{name}さんから友達リクエスト",
+    "friendBody": "{count, plural, other {一緒に#試合プレーしました}}"
+  },
+  "playing": {
+    "title": "友達がプレーします",
+    "who": "{count, plural, other {{names}さんが参加}}"
+  }
+}

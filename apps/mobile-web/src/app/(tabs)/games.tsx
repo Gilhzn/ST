@@ -13,7 +13,7 @@ import { ErrorView, Skeleton } from '@/components/States';
 import { useData } from '@/data/DataProvider';
 import { GamesFeed } from '@/features/games/GamesFeed';
 import { FriendsPlaying, groupFriendGames } from '@/features/network/FriendsPlaying';
-import { dayLabel, timeIn } from '@/features/series/format';
+import { dayLabel } from '@/features/series/format';
 import { SeriesCard } from '@/features/series/SeriesParts';
 import { splitMyGames, type GamesSegment } from '@/features/profile/myGames';
 import { useAsync } from '@/hooks/useAsync';
@@ -93,7 +93,7 @@ export default function GamesScreen() {
               <Text variant="overline" color="textSecondary" role="heading" aria-level={2}>
                 {t('series:card.yourSeries')}
               </Text>
-              <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{ gap: spacing.md, paddingEnd: spacing.lg, paddingBottom: spacing.sm, paddingTop: 2 }} style={{ marginEnd: -spacing.lg }}>
+              <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{ gap: spacing.md, paddingStart: spacing.lg, paddingEnd: spacing.lg, paddingTop: spacing.sm, paddingBottom: spacing.lg }} style={{ marginStart: -spacing.lg, marginEnd: -spacing.lg, marginTop: -spacing.sm, marginBottom: -spacing.md }}>
                 {series.data.map((d) => {
                   const next = d.upcoming.find((o) => o.status === 'scheduled' && Date.parse(o.startsAt) > now);
                   return (
@@ -103,7 +103,7 @@ export default function GamesScreen() {
                       width={280}
                       series={d.series}
                       regulars={d.rosterCount}
-                      nextLabel={next ? t('series:card.next', { date: `${dayLabel(next.startsAt, locale, d.series.timeZone)} · ${timeIn(next.startsAt, locale, d.series.timeZone)}` }) : null}
+                      nextLabel={next ? t('series:card.next', { date: dayLabel(next.startsAt, locale) }) : null}
                       status={
                         d.isHost
                           ? { label: t('games:my.state.hosting'), tone: 'brand', icon: 'Strategy' }

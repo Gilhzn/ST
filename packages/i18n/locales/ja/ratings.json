@@ -1,0 +1,138 @@
+{
+  "family": {
+    "small_sided": "少人数制",
+    "full_sided": "フルコート制",
+    "half_court": "ハーフコート",
+    "full_court": "フルコート",
+    "singles": "シングルス",
+    "doubles": "ダブルス",
+    "pairs": "ペア",
+    "teams": "チーム"
+  },
+  "attribute": {
+    "speed": "スピード",
+    "ball_control": "ボールコントロール",
+    "passing": "パス",
+    "defence": "守備",
+    "overall": "総合",
+    "shooting": "シュート",
+    "handling": "ハンドリング",
+    "athleticism": "運動能力",
+    "serve": "サーブ",
+    "groundstrokes": "グラウンドストローク",
+    "net_play": "ネットプレー",
+    "movement": "フットワーク",
+    "volley": "ボレー",
+    "walls": "壁の使い方",
+    "positioning": "ポジショニング",
+    "pace": "ペース",
+    "endurance": "持久力",
+    "attack": "攻撃"
+  },
+  "level": {
+    "sectionTitle": "レベル",
+    "label": "レベル",
+    "a11y": "レベル{level}",
+    "basedOn": "{count, plural, other {評価対象の#試合にもとづく}}",
+    "provisional": "暫定",
+    "provisionalGames": "{count, plural, other {暫定 — 評価対象の試合があと#試合必要}}",
+    "provisionalReliability": "暫定 — レベルを表示するには信頼度{percent}が必要です",
+    "provisionalSettling": "暫定 — あと数試合で安定します",
+    "frozen": "評価を得るには信頼度を{percent}まで上げてください",
+    "frozenPill": "一時停止中",
+    "confidence": "確度{percent}",
+    "historyA11y": "{weeks, plural, other {レベルは#週間で{from}から{to}になりました}}",
+    "weeksAgo": "{count, plural, other {#週間前}}",
+    "now": "現在",
+    "emptyTitle": "まだレベルがありません",
+    "emptyBody": "スコアが確定し、開始前にチーム分けされた試合をプレーしましょう。何試合かでレベルが表示されます。"
+  },
+  "peers": {
+    "title": "{count, plural, other {#人のチームメイトの評価 · あなただけに表示}}"
+  },
+  "rate": {
+    "title": "プレーヤーを評価",
+    "closes": "{time}まで受付中",
+    "privacy": "評価は非公開です。誰が評価したかは誰にもわかりません。評価はレベルとチームバランスにだけ使われ、カードには影響しません。",
+    "pickTitle": "誰と一緒にプレーしましたか？",
+    "picked": "{count}/{max}",
+    "limit": "{count, plural, other {1試合につき最大#人まで評価できます。}}",
+    "nobodyLeft": "この試合で評価できる人はすべて評価しました。",
+    "removeA11y": "{name}さんを外す",
+    "submit": "評価を送信",
+    "submitCount": "{count, plural, other {#件の評価を送信}}",
+    "thanks": "{count, plural, other {ありがとうございます。#件の評価を送信しました}}"
+  },
+  "stars": {
+    "a11y": "{count, plural, other {星#つ}}",
+    "skip": "未評価",
+    "word": {
+      "1": "練習中",
+      "2": "成長中",
+      "3": "安定",
+      "4": "上手",
+      "5": "抜群"
+    }
+  },
+  "gate": {
+    "title": "この試合は評価できません",
+    "closedTitle": "評価は締め切られました",
+    "body": "評価は、実際にプレーして参加を続けている人によるものだから公平に保たれます。",
+    "fair": "評価は非公開です。レベルとチームバランスに使われ、カードには影響しません。"
+  },
+  "gateTitle": {
+    "not_verified": "チェックインすると評価できます",
+    "low_reliability": "信頼度を上げましょう",
+    "too_few_games": "あと数試合が必要です",
+    "active_sanction": "一時停止中",
+    "window_not_open": "まだ受付前です",
+    "window_closed": "評価は締め切られました"
+  },
+  "ineligible": {
+    "not_verified": "評価できるのはチェックインした人だけです。次回は到着したらチェックインしましょう。",
+    "low_reliability": "評価には信頼度{percent}が必要です。参加した試合にきちんと来れば達成できます。",
+    "too_few_games": "{count, plural, other {他の人を評価するには、確認済みの{sport}の試合があと#試合必要です（必要数：{required}）。}}",
+    "active_sanction": "カードや制限が有効な間は評価が一時停止されます。終了すると再開します。",
+    "window_not_open": "評価は試合終了後に始まります。",
+    "window_closed": "{hours, plural, other {評価は試合後#時間受け付けています。{time}に締め切られました。}}"
+  },
+  "notRated": {
+    "no_result": "スコアはまだありません",
+    "result_not_confirmed": "プレーヤーのスコア確認待ち",
+    "result_disputed": "評価対象外：スコアに異議があります",
+    "too_few_verified": "評価対象外：確認済みのプレーヤーが少なすぎます",
+    "teams_not_published": "評価対象外：開始前にチームが決まっていませんでした",
+    "not_two_sides": "評価対象外：それぞれスコアのある2チームが必要です",
+    "unrated_sport": "このスポーツにはレベルがありません"
+  },
+  "notRatedHelp": {
+    "no_result": "最終スコアを入力すると、レベルに反映されます。",
+    "result_not_confirmed": "チェックインした人の過半数が確認すると、レベルに反映されます。",
+    "result_disputed": "過半数のプレーヤーがスコアに異議を出したため、記録にもレベルにも反映されません。",
+    "too_few_verified": "レベルが変わるのは、プレーヤーの{percent}以上がチェックインした場合だけです。",
+    "teams_not_published": "レベルに反映させるには、開始前にアプリでチームを決めてください。",
+    "not_two_sides": "レベルは2チームを比べて決まります。この試合にはスコアのある2チームがありませんでした。",
+    "unrated_sport": "ランニングはレベルに影響しません。"
+  },
+  "confirm": {
+    "title": "これが最終スコアですか？",
+    "statusTitle": "スコアの確認",
+    "help": "実際の結果と合っていれば確認してください。過半数のプレーヤーが同意すると、試合がレベルに反映されます。",
+    "tally": "{count, plural, other {確認済みプレーヤー#人中{confirms}人が確認}}",
+    "disputes": "{count, plural, other {異議#件}}",
+    "status": {
+      "pending": "確認待ち",
+      "confirmed": "確定",
+      "disputed": "異議あり"
+    },
+    "confirm": "確認する",
+    "dispute": "異議を出す",
+    "youConfirmed": "このスコアを確認しました。受付終了までは回答を変更できます。",
+    "youDisputed": "このスコアに異議を出しました。受付終了までは回答を変更できます。",
+    "thanks": "確認ありがとうございます",
+    "disputed": "異議を記録しました"
+  },
+  "band": {
+    "a11y": "レベル帯 {band}/5"
+  }
+}

@@ -70,5 +70,57 @@
   "deposit_action_required": {
     "title": "Action needed for your deposit",
     "body": "We need you to confirm the {amount} deposit hold for {gameTitle}. Open the app to continue."
+  },
+  "roster_added": {
+    "title": "{via, select, invite_link {New regular for {seriesTitle}} other {You’re invited to the regulars}}",
+    "body": "{via, select, invite_link {A player joined {seriesTitle} through your link.} other {Join the regulars of {seriesTitle} to get first pick of every date.}}"
+  },
+  "series_reconfirm": {
+    "title": "Still in for {seriesTitle}?",
+    "body": "Confirm your spot by {deadline}, or it goes to the next player. No penalty either way."
+  },
+  "series_auto_released": {
+    "title": "Your spot was released",
+    "body": "You didn’t confirm for {seriesTitle}, so your spot went to the next player. No penalty."
+  },
+  "roster_leave_offer": {
+    "title": "Still playing {seriesTitle}?",
+    "body": "{misses, plural, one {You missed # date in a row. Stay a regular or leave the roster, no penalty.} other {You missed # dates in a row. Stay a regular or leave the roster, no penalty.}}"
+  },
+  "occurrence_skipped": {
+    "title": "A date of {seriesTitle} is off",
+    "body": "The host skipped the game on {startsAt}. You’re still a regular."
+  },
+  "occurrence_updated": {
+    "title": "{seriesTitle} changed",
+    "body": "The host updated the game on {startsAt}. Check the details."
+  },
+  "occurrence_rescheduled": {
+    "title": "{seriesTitle} has a new schedule",
+    "body": "The game on {startsAt} moved. Check the new dates."
+  },
+  "peer_rating_open": {
+    "title": "Rate your co-players",
+    "body": "Rating is open for 48 hours after the game. It’s private and keeps teams balanced."
+  },
+  "friend_request": {
+    "title": "New friend request",
+    "body": "Someone you played with wants to be friends."
+  },
+  "friend_accepted": {
+    "title": "Friend request accepted",
+    "body": "You’re friends now. You’ll see the games they join."
+  },
+  "media_tag_request": {
+    "title": "You were tagged in a photo",
+    "body": "The tag shows only after you accept it."
+  },
+  "media_blocked": {
+    "title": "Your photo wasn’t published",
+    "body": "It didn’t pass our content checks. Nobody else can see it."
+  },
+  "rating_level_changed": {
+    "title": "Your level changed",
+    "body": "Your new level is {level}. See how it moved on your profile."
   }
 }

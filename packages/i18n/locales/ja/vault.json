@@ -1,0 +1,104 @@
+{
+  "gallery": {
+    "title": "試合ギャラリー",
+    "locksIn": "ギャラリーはあと{time}で締め切り",
+    "locked": "ギャラリーは締め切られました",
+    "opensAt": "{time}からアップロードできます",
+    "windowHelp": "{hours, plural, other {試合後#時間まで写真を追加できます。}}",
+    "retention": "{months, plural, other {写真は#か月間保存されます。}}",
+    "filterA11y": "写真を表示",
+    "all": "すべて",
+    "mine": "あなたの写真",
+    "emptyTitle": "まだ写真がありません",
+    "emptyMineTitle": "まだ写真を追加していません",
+    "emptyBodyOpen": "この試合の写真を最初に追加しましょう。",
+    "emptyBodyClosed": "ギャラリーの受付中に写真は追加されませんでした。"
+  },
+  "upload": {
+    "cta": "写真を追加",
+    "uploading": "アップロード中…",
+    "done": "写真を追加しました",
+    "checkInFirst": "写真を追加するには試合でチェックインしてください。",
+    "nativeSoon": "アプリからの写真アップロードはまもなく対応します。今はウェブ版をご利用ください。"
+  },
+  "reject": {
+    "not_verified_attendee": "写真を追加できるのはチェックインしたプレーヤーだけです。",
+    "window_not_open": "アップロードは試合開始とともに始まります。",
+    "window_closed": "ギャラリーは締め切られました。アップロードは試合の2時間後までです。",
+    "too_large": "ファイルが大きすぎます。写真は20 MB、動画は200 MBまでです。",
+    "too_long": "動画は60秒までです。",
+    "unsupported_type": "このファイル形式には対応していません。JPEG、PNG、WebP、MP4、MOVを使ってください。",
+    "user_cap_reached": "1試合で追加できる写真の上限に達しました。",
+    "not_uploader": "これを変更できるのは追加した人だけです。",
+    "not_published": "この写真は公開されていません。",
+    "tags_pending": "先にタグ付けされた全員の承諾が必要です。"
+  },
+  "badge": {
+    "public": "会場ギャラリー",
+    "participants": "参加者のみ",
+    "pending": "タグの承諾待ち"
+  },
+  "viewer": {
+    "title": "写真",
+    "photoBy": "撮影：{name}",
+    "someone": "プレーヤー",
+    "delete": "写真を削除",
+    "deleteTitle": "この写真を削除しますか？",
+    "deleteBody": "会場ギャラリーも含め、全員の画面から削除されます。",
+    "deleted": "写真を削除しました"
+  },
+  "tags": {
+    "title": "タグ付けされた人",
+    "none": "誰もタグ付けされていません。",
+    "add": "プレーヤーをタグ付け",
+    "send": "{count, plural, =0 {リクエストを送信} other {#件のリクエストを送信}}",
+    "sent": "{count, plural, other {タグのリクエストを#件送信しました}}",
+    "requestHelp": "タグはリクエストです。相手が承諾して初めて表示されます。",
+    "everyoneTagged": "プレーした全員がすでにタグ付けされています。",
+    "waiting": "{count, plural, other {{names}さんの承諾待ち}}",
+    "untagMe": "自分のタグを外す",
+    "untagged": "タグを外しました。この写真は公開できなくなりました。",
+    "requestTitle": "{name}さんが写真にあなたをタグ付けしました",
+    "requestBody": "タグはあなたが承諾して初めて表示されます。",
+    "accepted": "タグを承諾しました",
+    "declined": "タグを辞退しました"
+  },
+  "public": {
+    "label": "会場ギャラリーで公開",
+    "help": "この会場でプレーするすべての人に、会場ページで表示します。",
+    "on": "会場ギャラリーで公開中です。",
+    "blocked": "{count, plural, other {タグ付けされた#人がまだ承諾していません}}",
+    "why": "写真が公開されるのは、タグ付けされた全員が同意したときだけです。",
+    "done": "会場ギャラリーに公開しました",
+    "off": "参加者のみに戻しました"
+  },
+  "report": {
+    "cta": "写真を報告",
+    "title": "どんな問題がありますか？",
+    "reason": {
+      "nudity": "ヌード",
+      "violence": "暴力",
+      "harassment": "嫌がらせ",
+      "privacy": "プライバシー",
+      "copyright": "著作権",
+      "spam": "スパム",
+      "other": "その他"
+    },
+    "submit": "報告する",
+    "thanks": "ありがとうございます。モデレーターが確認します。"
+  },
+  "venue": {
+    "tabsA11y": "会場の詳細",
+    "tabGames": "試合",
+    "tabPhotos": "写真",
+    "rangeA11y": "表示期間",
+    "week": "今週",
+    "month": "今月",
+    "all": "すべて",
+    "emptyTitle": "まだ写真がありません",
+    "emptyBody": "プレーヤーが試合後に公開した写真がここに表示されます。",
+    "consent": "これらの写真にタグ付けされた全員が、ここでの公開に同意しています。",
+    "photoA11y": "{date}の写真",
+    "sharedOn": "{date}の試合後に共有"
+  }
+}

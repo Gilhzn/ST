@@ -1,0 +1,137 @@
+{
+  "cadence": "{recurrence, select, biweekly {A cada 2 semanas: {weekday}, às {time}} other {Toda semana: {weekday}, às {time}}}",
+  "recurrence": {
+    "weekly": "Semanal",
+    "biweekly": "A cada 2 semanas"
+  },
+  "chip": "{recurrence, select, biweekly {Parte de uma série a cada 2 semanas} other {Parte de uma série semanal}}",
+  "regularsCount": "{count, plural, =0 {Ainda sem fixos} one {# fixo} many {# de fixos} other {# fixos}}",
+  "hostedBy": "Organizado por {name}",
+  "ended": "Esta série terminou. Os jogos anteriores e as fotos continuam disponíveis.",
+  "facts": {
+    "regulars": "Fixos",
+    "next": "Próxima data",
+    "regularsFirst": "Prioridade dos fixos"
+  },
+  "priority": {
+    "title": "Prioridade para os fixos",
+    "banner": "Os fixos têm prioridade até {time}. Depois, qualquer pessoa pode entrar.",
+    "bannerRegular": "Você é fixo: tem prioridade até {time}.",
+    "bannerHost": "Seus fixos têm prioridade até {time}; depois o jogo abre para todos.",
+    "bannerInvited": "Os fixos têm prioridade até {time}. Aceite o convite do organizador para entrar agora.",
+    "windowTitle": "Vantagem dos fixos",
+    "windowHelp": "Quando uma nova data abre, só os fixos podem entrar durante esse tempo. Depois ela abre para todos.",
+    "shorter": "Vantagem mais curta",
+    "longer": "Vantagem mais longa"
+  },
+  "member": {
+    "title": "Sua vaga",
+    "accept": "Entrar para os fixos",
+    "welcome": "Agora você é fixo",
+    "invitedTitle": "{name} convidou você para os fixos",
+    "invitedBody": "{hours, plural, one {Os fixos têm a primeira hora de cada data só para eles e podem entrar automaticamente.} many {Os fixos têm as primeiras # de horas de cada data só para eles e podem entrar automaticamente.} other {Os fixos têm as primeiras # horas de cada data só para eles e podem entrar automaticamente.}}",
+    "alwaysIn": "Estou sempre dentro",
+    "alwaysInHelp": "{hours, plural, one {Garanta uma vaga em cada nova data automaticamente. Vamos pedir sua confirmação # hora antes.} many {Garanta uma vaga em cada nova data automaticamente. Vamos pedir sua confirmação # de horas antes.} other {Garanta uma vaga em cada nova data automaticamente. Vamos pedir sua confirmação # horas antes.}}",
+    "alwaysInOn": "Você está dentro em cada nova data",
+    "alwaysInOff": "Você vai entrar nas datas uma a uma",
+    "askHost": "{count, plural, =0 {Peça a {name} o link dos fixos para entrar nesta série.} one {# fixo joga aqui. Peça a {name} o link dos fixos para entrar.} many {# de fixos jogam aqui. Peça a {name} o link dos fixos para entrar.} other {# fixos jogam aqui. Peça a {name} o link dos fixos para entrar.}}",
+    "leave": "Sair dos fixos",
+    "leaveTitle": "Sair dos fixos?",
+    "leaveBody": "Você continua nos jogos em que já entrou. Sem cartão, sem penalidade.",
+    "leaveConfirm": "Sair",
+    "left": "Você saiu dos fixos"
+  },
+  "migration": {
+    "title": "Saindo do WhatsApp",
+    "joined": "{count, plural, one {# pessoa do grupo do WhatsApp entrou} many {# de pessoas do grupo do WhatsApp entraram} other {# pessoas do grupo do WhatsApp entraram}}",
+    "joinedLabel": "{count, plural, one {jogador veio do seu grupo do WhatsApp} many {de jogadores vieram do seu grupo do WhatsApp} other {jogadores vieram do seu grupo do WhatsApp}}",
+    "active": "{count, plural, =0 {Ninguém jogou ainda} one {# já jogou desde então} many {# deles já jogaram desde então} other {# já jogaram desde então}}",
+    "none": "Ninguém usou seu link ainda"
+  },
+  "dates": {
+    "title": "Próximas datas",
+    "empty": "{weeks, plural, one {Novas datas abrem com # semana de antecedência.} many {Novas datas abrem com # de semanas de antecedência.} other {Novas datas abrem com # semanas de antecedência.}}",
+    "none": "Não há mais datas.",
+    "horizon": "{weeks, plural, one {Novas datas abrem automaticamente, com # semana de antecedência.} many {Novas datas abrem automaticamente, com # de semanas de antecedência.} other {Novas datas abrem automaticamente, com # semanas de antecedência.}}",
+    "capacity": "{capacity, plural, one {# vaga} many {# de vagas} other {# vagas}}",
+    "skipped": "Cancelada pelo organizador",
+    "skippedBadge": "Cancelada",
+    "youreIn": "Você está dentro",
+    "regularsOnly": "Só fixos",
+    "editA11y": "Editar {date}",
+    "skipA11y": "Cancelar {date}"
+  },
+  "roster": {
+    "title": "Fixos",
+    "pending": "Convidados",
+    "empty": "Ainda sem fixos. Compartilhe o link com seu grupo.",
+    "viaLink": "Entrou pelo link",
+    "viaPlayedWith": "Vocês jogaram juntos",
+    "viaHost": "Adicionado pelo organizador",
+    "since": "desde {date}",
+    "invited": "Convidado",
+    "alwaysIn": "Sempre dentro",
+    "alwaysInCount": "{count, plural, one {# sempre dentro} many {# de sempre dentro} other {# sempre dentro}}",
+    "remove": "Remover",
+    "removeA11y": "Remover {name} dos fixos",
+    "removeTitle": "Remover {name}?",
+    "removeBody": "A pessoa perde a prioridade e não poderá voltar pelo link. Os jogos em que já entrou continuam."
+  },
+  "host": {
+    "title": "Ferramentas do organizador",
+    "inviteGroup": "Convide seu grupo do WhatsApp",
+    "edit": "Editar datas",
+    "editHelp": "Mude uma data, ou esta e todas as seguintes",
+    "end": "Encerrar série",
+    "endHelp": "Para as novas datas e cancela as próximas"
+  },
+  "skip": {
+    "title": "Cancelar {date}?",
+    "body": "Todos que entraram recebem um aviso. Os fixos mantêm a vaga na próxima data.",
+    "late": "{hours, plural, one {Falta menos de # hora para começar, então conta como cancelamento tardio do organizador.} many {Faltam menos de # de horas para começar, então conta como cancelamento tardio do organizador.} other {Faltam menos de # horas para começar, então conta como cancelamento tardio do organizador.}}",
+    "confirm": "Cancelar data",
+    "done": "Data cancelada. Os jogadores foram avisados."
+  },
+  "end": {
+    "title": "Encerrar esta série?",
+    "body": "As próximas datas são canceladas e todos que entraram são avisados. Os jogos anteriores e as fotos continuam.",
+    "confirm": "Encerrar série",
+    "done": "Série encerrada"
+  },
+  "edit": {
+    "title": "Editar datas",
+    "scope": "O que mudar",
+    "scopeThis": "Esta data",
+    "scopeFollowing": "Esta e as seguintes",
+    "scopeThisHelp": "Só {date} muda.",
+    "scopeFollowingHelp": "{date} e todas as datas seguintes mudam.",
+    "name": "Nome",
+    "time": "Horário de início",
+    "capacityHelp": "Jogadores, incluindo o organizador",
+    "save": "Salvar alterações",
+    "saved": "Salvo. Os jogadores foram avisados."
+  },
+  "card": {
+    "yourSeries": "Seus jogos fixos",
+    "next": "Próximo: {date}",
+    "regular": "Fixo",
+    "invited": "Convidado"
+  },
+  "wizard": {
+    "repeats": "Repetição",
+    "once": "Uma vez",
+    "weekly": "Toda semana",
+    "biweekly": "A cada 2 semanas",
+    "firstDate": "Primeiro jogo",
+    "summaryHelp": "Primeiro jogo: {date}. Novas datas abrem automaticamente.",
+    "noRepeat": "Não se repete",
+    "reviewValue": "{cadence} · prioridade dos fixos {window}",
+    "publish": "Começar série"
+  },
+  "created": {
+    "title": "{recurrence, select, biweekly {Seu jogo a cada 2 semanas está no ar} other {Seu jogo semanal está no ar}}",
+    "body": "{hours, plural, one {Compartilhe um único link com seu grupo do WhatsApp. Quem tocar nele entra para os fixos e ganha # hora de prioridade em cada data.} many {Compartilhe um único link com seu grupo do WhatsApp. Quem tocar nele entra para os fixos e ganha # de horas de prioridade em cada data.} other {Compartilhe um único link com seu grupo do WhatsApp. Quem tocar nele entra para os fixos e ganha # horas de prioridade em cada data.}}",
+    "dates": "{count, plural, one {# data aberta} many {# de datas abertas} other {# datas abertas}}",
+    "view": "Ver série"
+  }
+}

@@ -1,0 +1,138 @@
+{
+  "family": {
+    "small_sided": "Calcetto",
+    "full_sided": "Campo intero",
+    "half_court": "Metà campo",
+    "full_court": "Campo intero",
+    "singles": "Singolo",
+    "doubles": "Doppio",
+    "pairs": "Coppie",
+    "teams": "Squadre"
+  },
+  "attribute": {
+    "speed": "Velocità",
+    "ball_control": "Controllo palla",
+    "passing": "Passaggi",
+    "defence": "Difesa",
+    "overall": "Complessivo",
+    "shooting": "Tiro",
+    "handling": "Palleggio",
+    "athleticism": "Atletismo",
+    "serve": "Servizio",
+    "groundstrokes": "Colpi da fondo",
+    "net_play": "Gioco a rete",
+    "movement": "Movimento",
+    "volley": "Volée",
+    "walls": "Gioco di sponda",
+    "positioning": "Posizionamento",
+    "pace": "Ritmo",
+    "endurance": "Resistenza",
+    "attack": "Attacco"
+  },
+  "level": {
+    "sectionTitle": "Livelli",
+    "label": "Livello",
+    "a11y": "Livello {level}",
+    "basedOn": "{count, plural, one {Basato su # partita valutata} many {Basato su # di partite valutate} other {Basato su # partite valutate}}",
+    "provisional": "Provvisorio",
+    "provisionalGames": "{count, plural, one {Provvisorio — gioca ancora # partita valutata} many {Provvisorio — gioca ancora # di partite valutate} other {Provvisorio — gioca ancora # partite valutate}}",
+    "provisionalReliability": "Provvisorio — raggiungi il {percent} di affidabilità per mostrare il tuo livello",
+    "provisionalSettling": "Provvisorio — qualche altra partita lo renderà stabile",
+    "frozen": "Porta l’affidabilità al {percent} per guadagnare punteggio",
+    "frozenPill": "In pausa",
+    "confidence": "Affidabilità del dato {percent}",
+    "historyA11y": "{weeks, plural, one {Il livello è passato da {from} a {to} in # settimana} many {Il livello è passato da {from} a {to} in # di settimane} other {Il livello è passato da {from} a {to} in # settimane}}",
+    "weeksAgo": "{count, plural, one {# settimana fa} many {# di settimane fa} other {# settimane fa}}",
+    "now": "Ora",
+    "emptyTitle": "Ancora nessun livello",
+    "emptyBody": "Gioca partite con il punteggio confermato e le squadre fatte prima del calcio d’inizio. Il tuo livello appare dopo qualcuna."
+  },
+  "peers": {
+    "title": "{count, plural, one {Cosa dice # compagno · lo vedi solo tu} many {Cosa dicono # di compagni · lo vedi solo tu} other {Cosa dicono # compagni · lo vedi solo tu}}"
+  },
+  "rate": {
+    "title": "Valuta i giocatori",
+    "closes": "Aperto fino a {time}",
+    "privacy": "Le valutazioni sono private. Nessuno vede chi l’ha valutato, e servono solo per i livelli e per bilanciare le squadre, mai per i cartellini.",
+    "pickTitle": "Con chi hai giocato?",
+    "picked": "{count} di {max}",
+    "limit": "{count, plural, one {Puoi valutare fino a # giocatore per partita.} many {Puoi valutare fino a # di giocatori per partita.} other {Puoi valutare fino a # giocatori per partita.}}",
+    "nobodyLeft": "Hai valutato tutti quelli che potevi per questa partita.",
+    "removeA11y": "Rimuovi {name}",
+    "submit": "Invia valutazioni",
+    "submitCount": "{count, plural, one {Invia # valutazione} many {Invia # di valutazioni} other {Invia # valutazioni}}",
+    "thanks": "{count, plural, one {Grazie, # valutazione inviata} many {Grazie, # di valutazioni inviate} other {Grazie, # valutazioni inviate}}"
+  },
+  "stars": {
+    "a11y": "{count, plural, one {# stella} many {# di stelle} other {# stelle}}",
+    "skip": "Non valutato",
+    "word": {
+      "1": "Principiante",
+      "2": "In crescita",
+      "3": "Solido",
+      "4": "Forte",
+      "5": "Eccezionale"
+    }
+  },
+  "gate": {
+    "title": "Non puoi valutare questa partita",
+    "closedTitle": "Le valutazioni sono chiuse",
+    "body": "Le valutazioni restano giuste quando arrivano da chi ha giocato e continua a presentarsi.",
+    "fair": "Le valutazioni sono private. Servono per i livelli e per bilanciare le squadre, mai per i cartellini."
+  },
+  "gateTitle": {
+    "not_verified": "Fai il check-in per valutare",
+    "low_reliability": "Costruisci la tua affidabilità",
+    "too_few_games": "Prima qualche altra partita",
+    "active_sanction": "In pausa per ora",
+    "window_not_open": "Non ancora aperto",
+    "window_closed": "Le valutazioni sono chiuse"
+  },
+  "ineligible": {
+    "not_verified": "Possono valutare solo i giocatori che hanno fatto il check-in. La prossima volta fallo quando arrivi.",
+    "low_reliability": "Per valutare serve il {percent} di affidabilità. Presentati alle partite a cui ti unisci per arrivarci.",
+    "too_few_games": "{count, plural, one {Gioca ancora # partita di {sport} verificata per valutare gli altri. Ne servono {required}.} many {Gioca ancora # di partite di {sport} verificate per valutare gli altri. Ne servono {required}.} other {Gioca ancora # partite di {sport} verificate per valutare gli altri. Ne servono {required}.}}",
+    "active_sanction": "Le valutazioni sono in pausa finché c’è un cartellino o una restrizione attiva. Tornano quando finisce.",
+    "window_not_open": "Le valutazioni si aprono alla fine della partita.",
+    "window_closed": "{hours, plural, one {Le valutazioni restano aperte # ora dopo la partita. Si sono chiuse {time}.} many {Le valutazioni restano aperte # di ore dopo la partita. Si sono chiuse {time}.} other {Le valutazioni restano aperte # ore dopo la partita. Si sono chiuse {time}.}}"
+  },
+  "notRated": {
+    "no_result": "Ancora nessun punteggio",
+    "result_not_confirmed": "In attesa che i giocatori confermino il punteggio",
+    "result_disputed": "Non valutata: punteggio contestato",
+    "too_few_verified": "Non valutata: troppo pochi giocatori verificati",
+    "teams_not_published": "Non valutata: squadre non fatte prima del calcio d’inizio",
+    "not_two_sides": "Non valutata: servono due squadre con un punteggio ciascuna",
+    "unrated_sport": "Questo sport non ha livelli"
+  },
+  "notRatedHelp": {
+    "no_result": "Inserisci il punteggio finale perché conti per i livelli.",
+    "result_not_confirmed": "Conta per i livelli quando la maggior parte di chi ha fatto il check-in lo conferma.",
+    "result_disputed": "La maggior parte dei giocatori ha contestato il punteggio, quindi non conta per statistiche e livelli.",
+    "too_few_verified": "I livelli cambiano solo se almeno il {percent} dei giocatori ha fatto il check-in.",
+    "teams_not_published": "Fai le squadre nell’app prima del calcio d’inizio perché la partita conti per i livelli.",
+    "not_two_sides": "I livelli confrontano due squadre. Questa partita non aveva due squadre con un punteggio ciascuna.",
+    "unrated_sport": "Le corse non influiscono sui livelli."
+  },
+  "confirm": {
+    "title": "È questo il punteggio finale?",
+    "statusTitle": "Conferma del punteggio",
+    "help": "Confermalo se corrisponde a quello che è successo. La maggior parte dei giocatori deve essere d’accordo perché la partita conti per i livelli.",
+    "tally": "{count, plural, one {{confirms} su # giocatore verificato ha confermato} many {{confirms} su # di giocatori verificati hanno confermato} other {{confirms} su # giocatori verificati hanno confermato}}",
+    "disputes": "{count, plural, one {# contestazione} many {# di contestazioni} other {# contestazioni}}",
+    "status": {
+      "pending": "In attesa",
+      "confirmed": "Confermato",
+      "disputed": "Contestato"
+    },
+    "confirm": "Conferma",
+    "dispute": "Contesta",
+    "youConfirmed": "Hai confermato questo punteggio. Puoi cambiare risposta fino alla chiusura.",
+    "youDisputed": "Hai contestato questo punteggio. Puoi cambiare risposta fino alla chiusura.",
+    "thanks": "Grazie per la conferma",
+    "disputed": "Contestazione registrata"
+  },
+  "band": {
+    "a11y": "Fascia di livello {band} su 5"
+  }
+}

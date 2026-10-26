@@ -1,0 +1,60 @@
+{
+  "share": {
+    "game": "Join my {sport} game “{title}”{hasDate, select, yes { on {date} at {time}} other {}}{hasArea, select, yes { at {area}} other {}}.{hasSpots, select, yes { {spotsLeft, plural, =0 {It’s full, but you can join the waitlist.} one {# spot left.} other {# spots left.}}} other {}} Join on Sport Talent: {url}",
+    "gameWomenOnly": "Women-only {sport} game “{title}”{hasDate, select, yes { on {date} at {time}} other {}}{hasArea, select, yes { at {area}} other {}}.{hasSpots, select, yes { {spotsLeft, plural, =0 {It’s full, but you can join the waitlist.} one {# spot left.} other {# spots left.}}} other {}} Join on Sport Talent: {url}",
+    "series": {
+      "weekly": "We play {sport} every {weekday} at {time}{hasArea, select, yes { at {area}} other {}}: “{title}”. We’re moving the group to Sport Talent, where regulars get first pick of every date{hasDate, select, yes { (next one: {date})} other {}}. Join the regulars: {url}",
+      "biweekly": "We play {sport} every other {weekday} at {time}{hasArea, select, yes { at {area}} other {}}: “{title}”. We’re moving the group to Sport Talent, where regulars get first pick of every date{hasDate, select, yes { (next one: {date})} other {}}. Join the regulars: {url}"
+    },
+    "seriesWomenOnly": {
+      "weekly": "Women-only {sport} every {weekday} at {time}{hasArea, select, yes { at {area}} other {}}: “{title}”. We’re moving the group to Sport Talent, where regulars get first pick of every date{hasDate, select, yes { (next one: {date})} other {}}. Join the regulars: {url}",
+      "biweekly": "Women-only {sport} every other {weekday} at {time}{hasArea, select, yes { at {area}} other {}}: “{title}”. We’re moving the group to Sport Talent, where regulars get first pick of every date{hasDate, select, yes { (next one: {date})} other {}}. Join the regulars: {url}"
+    }
+  },
+  "preview": {
+    "title": "{sport}: {title}",
+    "spotsLeft": "{count, plural, =0 {Full, join the waitlist} one {# spot left} other {# spots left}}",
+    "weekly": "Every {weekday} at {time}",
+    "biweekly": "Every other {weekday} at {time}",
+    "womenOnly": "Women only",
+    "siteName": "Sport Talent"
+  },
+  "group": {
+    "title": "Invite your group",
+    "heading": "Bring your WhatsApp group",
+    "bodySeries": "Share one link. Everyone who taps it joins the regulars and gets first pick of every date, and you can see who moved.",
+    "bodyGame": "Share the link in your group chat. Players see the game and ask to join in one tap.",
+    "previewTitle": "What your group will see",
+    "whatsapp": "Share to WhatsApp",
+    "copy": "Copy link",
+    "more": "More options",
+    "copied": "Link copied",
+    "messageCopied": "Message copied",
+    "noWhatsApp": "WhatsApp isn’t installed on this device.",
+    "linkTitle": "Your invite link",
+    "showQr": "Show QR code",
+    "hideQr": "Hide QR code",
+    "qrHelp": "Players can scan this at the pitch to join.",
+    "rotate": "Reset link",
+    "rotateTitle": "Reset the link?",
+    "rotateBody": "The old link stops working right away. Share the new one with your group.",
+    "rotateConfirm": "Reset link",
+    "rotated": "New link ready",
+    "statsNone": "Nobody has joined through the link yet",
+    "step1": "Tap Share to WhatsApp and pick your group chat.",
+    "step2": "Players tap the link and sign in with their phone number.",
+    "step3": "You see everyone who joined. Pin the message so late joiners find it."
+  },
+  "landing": {
+    "title": "Join the regulars",
+    "from": "{name} invited you to {title}",
+    "signedOutBody": "Sign in to see the game and join the regulars.",
+    "signUp": "Sign in to join the regulars",
+    "join": "Join the regulars",
+    "open": "Open series",
+    "joined": "You’re a regular of {title}",
+    "perkFirstPick": "{hours, plural, one {First pick of every date for # hour} other {First pick of every date for # hours}}",
+    "perkAlwaysIn": "Say “I’m always in” and get a spot automatically",
+    "perkNoPolls": "No more chasing the group poll"
+  }
+}

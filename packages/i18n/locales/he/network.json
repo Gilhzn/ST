@@ -1,0 +1,73 @@
+{
+  "title": "שחקנים",
+  "subtitle": "{count, plural, =0 {משחקים כדי להכיר אנשים} one {אדם אחד ששיחקת איתו} two {שני אנשים ששיחקת איתם} other {# אנשים ששיחקת איתם}}",
+  "entry": {
+    "title": "שחקנים",
+    "subtitle": "חברים, אנשים ששיחקת איתם, בקשות",
+    "requests": "{count, plural, one {בקשה אחת} two {שתי בקשות} other {# בקשות}}"
+  },
+  "tab": {
+    "friends": "חברים",
+    "played": "שיחקנו יחד",
+    "requests": "בקשות"
+  },
+  "action": {
+    "add": "הוספה",
+    "accept": "אישור",
+    "cancel": "ביטול",
+    "remove": "הסרה"
+  },
+  "state": {
+    "outgoing": "נשלחה בקשה",
+    "friends": "חברים"
+  },
+  "row": {
+    "played": "{count, plural, one {משחק אחד יחד · לאחרונה {date}} two {שני משחקים יחד · לאחרונה {date}} other {# משחקים יחד · לאחרונה {date}}}",
+    "playedNoDate": "{count, plural, one {משחק אחד יחד} two {שני משחקים יחד} other {# משחקים יחד}}",
+    "notPlayed": "עוד לא שיחקתם יחד"
+  },
+  "playedHelp": "אפשר להוסיף אנשים ששיחקת איתם. הם יראו את הבקשה בתיבת ההודעות.",
+  "requests": {
+    "incoming": "רוצים להיות חברים",
+    "outgoing": "נשלחו"
+  },
+  "empty": {
+    "friendsTitle": "עדיין אין חברים",
+    "friendsBody": "אפשר להוסיף אנשים ששיחקת איתם ולראות לאילו משחקים הם מצטרפים.",
+    "seePlayed": "למי ששיחקת איתם",
+    "playedTitle": "עדיין אף אחד",
+    "playedBody": "כל מי שעושה צ׳ק-אין באותו משחק כמוך יופיע כאן.",
+    "requestsTitle": "אין בקשות",
+    "requestsBody": "בקשות חברות מאנשים ששיחקת איתם יופיעו כאן."
+  },
+  "privacy": {
+    "title": "פרטיות",
+    "label": "מי רואה את המשחקים הקרובים שלי",
+    "help": "חברים רואים את המשחקים הציבוריים שהצטרפת אליהם, כדי שיוכלו לבוא גם. משחקים פרטיים אף פעם לא מוצגים.",
+    "friends": "חברים",
+    "nobody": "אף אחד",
+    "savedFriends": "חברים יכולים לראות את המשחקים הקרובים שלך",
+    "savedNobody": "המשחקים הקרובים שלך מוסתרים"
+  },
+  "removeA11y": "הסרת {name} מהחברים",
+  "removeTitle": "להסיר את {name}?",
+  "removeBody": "תישארו מחוברים כמי ששיחקו יחד. לא תישלח להם הודעה.",
+  "acceptA11y": "אישור {name}",
+  "declineA11y": "דחיית {name}",
+  "toast": {
+    "requested": "הבקשה נשלחה אל {name}",
+    "accepted": "את/ה ו{name} חברים עכשיו",
+    "acceptedShort": "בקשת החברות אושרה",
+    "declined": "הבקשה נדחתה",
+    "removed": "הוסר"
+  },
+  "request": {
+    "section": "{count, plural, one {בקשה אחת} two {שתי בקשות} other {# בקשות}}",
+    "friendTitle": "{name} רוצה להיות חברים",
+    "friendBody": "{count, plural, one {שיחקתם משחק אחד יחד} two {שיחקתם שני משחקים יחד} other {שיחקתם # משחקים יחד}}"
+  },
+  "playing": {
+    "title": "חברים משחקים",
+    "who": "{count, plural, one {{names} בפנים} two {{names} בפנים} other {{names} בפנים}}"
+  }
+}

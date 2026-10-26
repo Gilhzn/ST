@@ -1,0 +1,73 @@
+{
+  "title": "玩家",
+  "subtitle": "{count, plural, =0 {参加一场比赛来认识新朋友} other {和你一起打过球的 # 人}}",
+  "entry": {
+    "title": "玩家",
+    "subtitle": "好友、一起打过球的人、请求",
+    "requests": "{count, plural, other {# 个请求}}"
+  },
+  "tab": {
+    "friends": "好友",
+    "played": "球友",
+    "requests": "请求"
+  },
+  "action": {
+    "add": "添加",
+    "accept": "接受",
+    "cancel": "撤回",
+    "remove": "移除"
+  },
+  "state": {
+    "outgoing": "已发送请求",
+    "friends": "好友"
+  },
+  "row": {
+    "played": "{count, plural, other {一起打过 # 场 · 最近一次 {date}}}",
+    "playedNoDate": "{count, plural, other {一起打过 # 场}}",
+    "notPlayed": "还没一起打过球"
+  },
+  "playedHelp": "你可以添加一起打过球的人，对方会在收件箱看到你的请求。",
+  "requests": {
+    "incoming": "想加你为好友",
+    "outgoing": "已发送"
+  },
+  "empty": {
+    "friendsTitle": "还没有好友",
+    "friendsBody": "添加一起打过球的人，就能看到他们报名的比赛。",
+    "seePlayed": "查看一起打过球的人",
+    "playedTitle": "还没有人",
+    "playedBody": "和你在同一场比赛签到的人都会显示在这里。",
+    "requestsTitle": "没有请求",
+    "requestsBody": "一起打过球的人发来的好友请求会显示在这里。"
+  },
+  "privacy": {
+    "title": "隐私",
+    "label": "谁能看到我接下来的比赛",
+    "help": "好友可以看到你报名的公开比赛，方便一起参加。私密比赛永远不会显示。",
+    "friends": "好友",
+    "nobody": "所有人都不可见",
+    "savedFriends": "好友可以看到你接下来的比赛",
+    "savedNobody": "你接下来的比赛已隐藏"
+  },
+  "removeA11y": "从好友中移除{name}",
+  "removeTitle": "要移除{name}吗？",
+  "removeBody": "你们仍会作为一起打过球的人保持关联，对方不会收到通知。",
+  "acceptA11y": "接受{name}",
+  "declineA11y": "拒绝{name}",
+  "toast": {
+    "requested": "已向{name}发送请求",
+    "accepted": "你和{name}已成为好友",
+    "acceptedShort": "已接受好友请求",
+    "declined": "已拒绝请求",
+    "removed": "已移除"
+  },
+  "request": {
+    "section": "{count, plural, other {# 个请求}}",
+    "friendTitle": "{name}想加你为好友",
+    "friendBody": "{count, plural, other {你们一起打过 # 场}}"
+  },
+  "playing": {
+    "title": "好友在打球",
+    "who": "{count, plural, other {{names}已报名}}"
+  }
+}

@@ -1,0 +1,137 @@
+{
+  "cadence": "{recurrence, select, biweekly {Jeden zweiten {weekday} um {time}} other {Jeden {weekday} um {time}}}",
+  "recurrence": {
+    "weekly": "Wöchentlich",
+    "biweekly": "Alle 2 Wochen"
+  },
+  "chip": "{recurrence, select, biweekly {Teil einer Serie alle 2 Wochen} other {Teil einer wöchentlichen Serie}}",
+  "regularsCount": "{count, plural, =0 {Noch keine Stammspieler:innen} one {# Stammspieler:in} other {# Stammspieler:innen}}",
+  "hostedBy": "Organisiert von {name}",
+  "ended": "Diese Serie ist beendet. Vergangene Spiele und Fotos bleiben verfügbar.",
+  "facts": {
+    "regulars": "Stammspieler:innen",
+    "next": "Nächster Termin",
+    "regularsFirst": "Vorrang Stamm"
+  },
+  "priority": {
+    "title": "Vorrang für den Stamm",
+    "banner": "Bis {time} haben Stammspieler:innen Vorrang. Danach kann jede:r beitreten.",
+    "bannerRegular": "Du gehörst zum Stamm: Du hast bis {time} Vorrang.",
+    "bannerHost": "Deine Stammspieler:innen haben bis {time} Vorrang, danach ist das Spiel für alle offen.",
+    "bannerInvited": "Bis {time} hat der Stamm Vorrang. Nimm die Einladung der Organisation an, um jetzt beizutreten.",
+    "windowTitle": "Vorsprung für den Stamm",
+    "windowHelp": "Wenn ein neuer Termin öffnet, können in dieser Zeit nur Stammspieler:innen beitreten. Danach ist er für alle offen.",
+    "shorter": "Kürzerer Vorsprung",
+    "longer": "Längerer Vorsprung"
+  },
+  "member": {
+    "title": "Dein Platz",
+    "accept": "Dem Stamm beitreten",
+    "welcome": "Du gehörst jetzt zum Stamm",
+    "invitedTitle": "{name} hat dich in den Stamm eingeladen",
+    "invitedBody": "{hours, plural, one {Der Stamm hat die erste Stunde jedes Termins für sich und kann automatisch dabei sein.} other {Der Stamm hat die ersten # Stunden jedes Termins für sich und kann automatisch dabei sein.}}",
+    "alwaysIn": "Ich bin immer dabei",
+    "alwaysInHelp": "{hours, plural, one {Automatisch einen Platz bei jedem neuen Termin. Wir bitten dich # Stunde vorher um Bestätigung.} other {Automatisch einen Platz bei jedem neuen Termin. Wir bitten dich # Stunden vorher um Bestätigung.}}",
+    "alwaysInOn": "Du bist bei jedem neuen Termin dabei",
+    "alwaysInOff": "Du trittst den Terminen einzeln bei",
+    "askHost": "{count, plural, =0 {Frag {name} nach dem Stamm-Link, um dieser Serie beizutreten.} one {Hier spielt # Stammspieler:in. Frag {name} nach dem Stamm-Link, um mitzumachen.} other {Hier spielen # Stammspieler:innen. Frag {name} nach dem Stamm-Link, um mitzumachen.}}",
+    "leave": "Stamm verlassen",
+    "leaveTitle": "Stamm verlassen?",
+    "leaveBody": "Spiele, denen du schon beigetreten bist, bleiben. Keine Karte, keine Strafe.",
+    "leaveConfirm": "Verlassen",
+    "left": "Du hast den Stamm verlassen"
+  },
+  "migration": {
+    "title": "Umzug von WhatsApp",
+    "joined": "{count, plural, one {# aus der WhatsApp-Gruppe ist beigetreten} other {# aus der WhatsApp-Gruppe sind beigetreten}}",
+    "joinedLabel": "{count, plural, one {Person aus deiner WhatsApp-Gruppe ist dabei} other {Leute aus deiner WhatsApp-Gruppe sind dabei}}",
+    "active": "{count, plural, =0 {Noch niemand hat gespielt} one {# hat seitdem gespielt} other {# haben seitdem gespielt}}",
+    "none": "Dein Link wurde noch nicht genutzt"
+  },
+  "dates": {
+    "title": "Nächste Termine",
+    "empty": "{weeks, plural, one {Neue Termine öffnen # Woche im Voraus.} other {Neue Termine öffnen # Wochen im Voraus.}}",
+    "none": "Keine weiteren Termine.",
+    "horizon": "{weeks, plural, one {Neue Termine öffnen automatisch, # Woche im Voraus.} other {Neue Termine öffnen automatisch, # Wochen im Voraus.}}",
+    "capacity": "{capacity, plural, one {# Platz} other {# Plätze}}",
+    "skipped": "Von der Organisation ausgesetzt",
+    "skippedBadge": "Ausgesetzt",
+    "youreIn": "Du bist dabei",
+    "regularsOnly": "Nur Stamm",
+    "editA11y": "{date} bearbeiten",
+    "skipA11y": "{date} aussetzen"
+  },
+  "roster": {
+    "title": "Stammspieler:innen",
+    "pending": "Eingeladen",
+    "empty": "Noch keine Stammspieler:innen. Teile den Link mit deiner Gruppe.",
+    "viaLink": "Über den Link beigetreten",
+    "viaPlayedWith": "Habt zusammen gespielt",
+    "viaHost": "Von der Organisation hinzugefügt",
+    "since": "seit {date}",
+    "invited": "Eingeladen",
+    "alwaysIn": "Immer dabei",
+    "alwaysInCount": "{count, plural, one {# immer dabei} other {# immer dabei}}",
+    "remove": "Entfernen",
+    "removeA11y": "{name} aus dem Stamm entfernen",
+    "removeTitle": "{name} entfernen?",
+    "removeBody": "Der Vorrang entfällt und ein erneuter Beitritt über den Link ist nicht möglich. Bereits gebuchte Spiele bleiben."
+  },
+  "host": {
+    "title": "Werkzeuge für die Organisation",
+    "inviteGroup": "WhatsApp-Gruppe einladen",
+    "edit": "Termine bearbeiten",
+    "editHelp": "Einen Termin ändern oder diesen und alle späteren",
+    "end": "Serie beenden",
+    "endHelp": "Stoppt neue Termine und sagt kommende ab"
+  },
+  "skip": {
+    "title": "{date} aussetzen?",
+    "body": "Alle, die beigetreten sind, werden benachrichtigt. Der Stamm behält seinen Platz für den nächsten Termin.",
+    "late": "{hours, plural, one {Es ist weniger als # Stunde bis zum Anpfiff, daher zählt das als späte Absage der Organisation.} other {Es sind weniger als # Stunden bis zum Anpfiff, daher zählt das als späte Absage der Organisation.}}",
+    "confirm": "Termin aussetzen",
+    "done": "Termin ausgesetzt. Alle wurden benachrichtigt."
+  },
+  "end": {
+    "title": "Diese Serie beenden?",
+    "body": "Kommende Termine werden abgesagt und alle Beigetretenen benachrichtigt. Vergangene Spiele und Fotos bleiben.",
+    "confirm": "Serie beenden",
+    "done": "Serie beendet"
+  },
+  "edit": {
+    "title": "Termine bearbeiten",
+    "scope": "Was ändern",
+    "scopeThis": "Diesen Termin",
+    "scopeFollowing": "Diesen und spätere",
+    "scopeThisHelp": "Nur {date} ändert sich.",
+    "scopeFollowingHelp": "{date} und alle späteren Termine ändern sich.",
+    "name": "Name",
+    "time": "Startzeit",
+    "capacityHelp": "Spieler:innen, Organisation eingeschlossen",
+    "save": "Änderungen speichern",
+    "saved": "Gespeichert. Alle wurden benachrichtigt."
+  },
+  "card": {
+    "yourSeries": "Deine festen Spiele",
+    "next": "Nächstes: {date}",
+    "regular": "Stamm",
+    "invited": "Eingeladen"
+  },
+  "wizard": {
+    "repeats": "Wiederholung",
+    "once": "Einmalig",
+    "weekly": "Wöchentlich",
+    "biweekly": "Alle 2 Wochen",
+    "firstDate": "Erstes Spiel",
+    "summaryHelp": "Erstes Spiel am {date}. Neue Termine öffnen automatisch.",
+    "noRepeat": "Keine Wiederholung",
+    "reviewValue": "{cadence} · Vorrang für den Stamm {window}",
+    "publish": "Serie starten"
+  },
+  "created": {
+    "title": "{recurrence, select, biweekly {Dein Spiel alle 2 Wochen ist online} other {Dein wöchentliches Spiel ist online}}",
+    "body": "{hours, plural, one {Teile einen einzigen Link mit deiner WhatsApp-Gruppe. Wer darauf tippt, kommt in den Stamm und hat bei jedem Termin # Stunde Vorrang.} other {Teile einen einzigen Link mit deiner WhatsApp-Gruppe. Wer darauf tippt, kommt in den Stamm und hat bei jedem Termin # Stunden Vorrang.}}",
+    "dates": "{count, plural, one {# Termin offen} other {# Termine offen}}",
+    "view": "Serie ansehen"
+  }
+}

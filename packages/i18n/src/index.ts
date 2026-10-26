@@ -34,5 +34,5 @@ export {
 export type { DateInput, FormatDistanceOptions } from './format';
 export { NAMESPACES, DEFAULT_NAMESPACE, resources, sourceResources } from './resources';
 export type { Namespace, Catalog } from './resources';
-export { STATEMENT_PARAMS, NOTIFICATION_PARAMS } from './params';
+export { STATEMENT_PARAMS, NOTIFICATION_PARAMS, PHASE15_NOTIFICATION_PARAMS } from './params';
 export * from './keys';

@@ -1,0 +1,137 @@
+{
+  "cadence": "{recurrence, select, biweekly {隔週{weekday} {time}} other {每{weekday} {time}}}",
+  "recurrence": {
+    "weekly": "每週",
+    "biweekly": "每兩週"
+  },
+  "chip": "{recurrence, select, biweekly {屬於每兩週一次的系列} other {屬於每週系列}}",
+  "regularsCount": "{count, plural, =0 {還沒有固定班底} other {# 位固定班底}}",
+  "hostedBy": "主辦人：{name}",
+  "ended": "這個系列已結束。過去的比賽和照片仍可查看。",
+  "facts": {
+    "regulars": "固定班底",
+    "next": "下一場",
+    "regularsFirst": "班底優先"
+  },
+  "priority": {
+    "title": "固定班底優先",
+    "banner": "{time}前只有固定班底可以報名，之後所有人都能加入。",
+    "bannerRegular": "你是固定班底：{time}前可以優先報名。",
+    "bannerHost": "{time}前由你的固定班底優先報名，之後開放給所有人。",
+    "bannerInvited": "{time}前只有固定班底可以報名。接受主辦人的邀請就能立即加入。",
+    "windowTitle": "班底優先時段",
+    "windowHelp": "每個新場次開放後，在這段時間內只有固定班底可以加入，之後開放給所有人。",
+    "shorter": "縮短優先時段",
+    "longer": "延長優先時段"
+  },
+  "member": {
+    "title": "你的名額",
+    "accept": "加入固定班底",
+    "welcome": "你已成為固定班底",
+    "invitedTitle": "{name}邀請你加入固定班底",
+    "invitedBody": "{hours, plural, other {每個場次的前 # 小時只開放給固定班底，班底也可以自動報名。}}",
+    "alwaysIn": "每場都到",
+    "alwaysInHelp": "{hours, plural, other {每個新場次自動幫你保留名額。開賽前 # 小時會請你確認。}}",
+    "alwaysInOn": "每個新場次都已幫你報名",
+    "alwaysInOff": "你會逐場報名",
+    "askHost": "{count, plural, =0 {向{name}索取班底連結，就能加入這個系列。} other {這裡有 # 位固定班底。向{name}索取班底連結就能加入。}}",
+    "leave": "退出固定班底",
+    "leaveTitle": "要退出固定班底嗎？",
+    "leaveBody": "已報名的比賽會保留。不會有黃牌，也沒有處罰。",
+    "leaveConfirm": "退出",
+    "left": "你已退出固定班底"
+  },
+  "migration": {
+    "title": "從 WhatsApp 搬家",
+    "joined": "{count, plural, other {WhatsApp 群組已有 # 人加入}}",
+    "joinedLabel": "{count, plural, other {位球友從你的 WhatsApp 群組加入}}",
+    "active": "{count, plural, =0 {還沒有人上場過} other {其中 # 人已經上場過}}",
+    "none": "還沒有人使用你的連結"
+  },
+  "dates": {
+    "title": "接下來的場次",
+    "empty": "{weeks, plural, other {新場次會提前 # 週開放。}}",
+    "none": "沒有更多場次了。",
+    "horizon": "{weeks, plural, other {新場次會自動提前 # 週開放。}}",
+    "capacity": "{capacity, plural, other {# 個名額}}",
+    "skipped": "主辦人已取消這場",
+    "skippedBadge": "已取消",
+    "youreIn": "你已報名",
+    "regularsOnly": "僅限班底",
+    "editA11y": "編輯{date}",
+    "skipA11y": "取消{date}"
+  },
+  "roster": {
+    "title": "固定班底",
+    "pending": "已邀請",
+    "empty": "還沒有固定班底。把連結分享到你的群組吧。",
+    "viaLink": "透過連結加入",
+    "viaPlayedWith": "一起打過球",
+    "viaHost": "由主辦人加入",
+    "since": "自{date}起",
+    "invited": "已邀請",
+    "alwaysIn": "每場都到",
+    "alwaysInCount": "{count, plural, other {# 人每場都到}}",
+    "remove": "移除",
+    "removeA11y": "將{name}移出固定班底",
+    "removeTitle": "要移除{name}嗎？",
+    "removeBody": "對方會失去優先報名資格，也無法再透過連結重新加入。已報名的比賽會保留。"
+  },
+  "host": {
+    "title": "主辦人工具",
+    "inviteGroup": "邀請你的 WhatsApp 群組",
+    "edit": "編輯場次",
+    "editHelp": "修改單一場次，或修改這場及之後所有場次",
+    "end": "結束系列",
+    "endHelp": "停止新增場次，並取消接下來的場次"
+  },
+  "skip": {
+    "title": "取消{date}？",
+    "body": "所有已報名的人都會收到通知。固定班底會保留下一場的名額。",
+    "late": "{hours, plural, other {距離開賽已不到 # 小時，這會算是主辦人臨時取消。}}",
+    "confirm": "取消這場",
+    "done": "這場已取消，已通知所有球友。"
+  },
+  "end": {
+    "title": "要結束這個系列嗎？",
+    "body": "接下來的場次會被取消，所有已報名的人都會收到通知。過去的比賽和照片會保留。",
+    "confirm": "結束系列",
+    "done": "系列已結束"
+  },
+  "edit": {
+    "title": "編輯場次",
+    "scope": "修改範圍",
+    "scopeThis": "僅這場",
+    "scopeFollowing": "這場及之後",
+    "scopeThisHelp": "只修改{date}。",
+    "scopeFollowingHelp": "{date}及之後的所有場次都會修改。",
+    "name": "名稱",
+    "time": "開始時間",
+    "capacityHelp": "球友人數，含主辦人",
+    "save": "儲存變更",
+    "saved": "已儲存，已通知所有球友。"
+  },
+  "card": {
+    "yourSeries": "你的固定比賽",
+    "next": "下一場：{date}",
+    "regular": "固定班底",
+    "invited": "已受邀"
+  },
+  "wizard": {
+    "repeats": "重複",
+    "once": "僅一次",
+    "weekly": "每週",
+    "biweekly": "每兩週",
+    "firstDate": "第一場",
+    "summaryHelp": "第一場在{date}。新場次會自動開放。",
+    "noRepeat": "不重複",
+    "reviewValue": "{cadence} · 班底優先 {window}",
+    "publish": "開始系列"
+  },
+  "created": {
+    "title": "{recurrence, select, biweekly {你的雙週比賽已發布} other {你的每週比賽已發布}}",
+    "body": "{hours, plural, other {把一個連結分享到你的 WhatsApp 群組。點開連結的人會成為固定班底，每個場次享有 # 小時優先報名。}}",
+    "dates": "{count, plural, other {已開放 # 個場次}}",
+    "view": "查看系列"
+  }
+}

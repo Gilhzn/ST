@@ -1,0 +1,104 @@
+{
+  "gallery": {
+    "title": "Game gallery",
+    "locksIn": "Gallery locks in {time}",
+    "locked": "Gallery locked",
+    "opensAt": "Uploads open at {time}",
+    "windowHelp": "{hours, plural, one {Add photos until # hour after the game.} other {Add photos until # hours after the game.}}",
+    "retention": "{months, plural, one {Photos stay for # month.} other {Photos stay for # months.}}",
+    "filterA11y": "Show photos",
+    "all": "All",
+    "mine": "Yours",
+    "emptyTitle": "No photos yet",
+    "emptyMineTitle": "You haven’t added photos",
+    "emptyBodyOpen": "Be the first to add one from this game.",
+    "emptyBodyClosed": "Nobody added photos while the gallery was open."
+  },
+  "upload": {
+    "cta": "Add photos",
+    "uploading": "Uploading…",
+    "done": "Photo added",
+    "checkInFirst": "Check in at the game to add photos.",
+    "nativeSoon": "Photo uploads are coming to the app soon. Use the web app for now."
+  },
+  "reject": {
+    "not_verified_attendee": "Only players who checked in can add photos.",
+    "window_not_open": "Uploads open when the game starts.",
+    "window_closed": "The gallery is locked. Uploads close 2 hours after the game.",
+    "too_large": "That file is too big. Photos can be up to 20 MB and videos up to 200 MB.",
+    "too_long": "Videos can be up to 60 seconds.",
+    "unsupported_type": "That file type isn’t supported. Use JPEG, PNG, WebP, MP4 or MOV.",
+    "user_cap_reached": "You’ve added the most photos allowed for one game.",
+    "not_uploader": "Only the person who added it can change this.",
+    "not_published": "This photo isn’t published.",
+    "tags_pending": "Everyone tagged needs to accept first."
+  },
+  "badge": {
+    "public": "Venue vault",
+    "participants": "Players only",
+    "pending": "Waiting for tags"
+  },
+  "viewer": {
+    "title": "Photo",
+    "photoBy": "Photo by {name}",
+    "someone": "A player",
+    "delete": "Delete photo",
+    "deleteTitle": "Delete this photo?",
+    "deleteBody": "It’s removed for everyone, including the venue vault.",
+    "deleted": "Photo deleted"
+  },
+  "tags": {
+    "title": "Tagged",
+    "none": "Nobody is tagged.",
+    "add": "Tag players",
+    "send": "{count, plural, =0 {Send requests} one {Send # request} other {Send # requests}}",
+    "sent": "{count, plural, one {Tag request sent} other {# tag requests sent}}",
+    "requestHelp": "Tags are requests. A tag shows only after the player accepts.",
+    "everyoneTagged": "Everyone who played is already tagged.",
+    "waiting": "{count, plural, one {Waiting for {names} to accept} other {Waiting for {names} to accept}}",
+    "untagMe": "Remove my tag",
+    "untagged": "Tag removed. This photo can’t go public now.",
+    "requestTitle": "{name} tagged you in a photo",
+    "requestBody": "The tag shows only after you accept.",
+    "accepted": "Tag accepted",
+    "declined": "Tag declined"
+  },
+  "public": {
+    "label": "Make public in venue vault",
+    "help": "Show it on the venue page for everyone who plays here.",
+    "on": "Visible in the venue vault.",
+    "blocked": "{count, plural, one {# tagged player hasn’t accepted yet} other {# tagged players haven’t accepted yet}}",
+    "why": "A photo goes public only when everyone tagged in it agrees.",
+    "done": "Now in the venue vault",
+    "off": "Back to players only"
+  },
+  "report": {
+    "cta": "Report photo",
+    "title": "What’s wrong with it?",
+    "reason": {
+      "nudity": "Nudity",
+      "violence": "Violence",
+      "harassment": "Harassment",
+      "privacy": "Privacy",
+      "copyright": "Copyright",
+      "spam": "Spam",
+      "other": "Something else"
+    },
+    "submit": "Report",
+    "thanks": "Thanks. A moderator will review it."
+  },
+  "venue": {
+    "tabsA11y": "Venue details",
+    "tabGames": "Games",
+    "tabPhotos": "Photos",
+    "rangeA11y": "Photos from",
+    "week": "This week",
+    "month": "This month",
+    "all": "All",
+    "emptyTitle": "No photos here yet",
+    "emptyBody": "Photos players make public after their games show up here.",
+    "consent": "Everyone tagged in these photos agreed to show them here.",
+    "photoA11y": "Photo from {date}",
+    "sharedOn": "Shared after a game on {date}"
+  }
+}

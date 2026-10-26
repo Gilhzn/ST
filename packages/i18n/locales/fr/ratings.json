@@ -1,0 +1,138 @@
+{
+  "family": {
+    "small_sided": "Petit terrain",
+    "full_sided": "Grand terrain",
+    "half_court": "Demi-terrain",
+    "full_court": "Terrain entier",
+    "singles": "Simple",
+    "doubles": "Double",
+    "pairs": "Paires",
+    "teams": "Équipes"
+  },
+  "attribute": {
+    "speed": "Vitesse",
+    "ball_control": "Contrôle du ballon",
+    "passing": "Passes",
+    "defence": "Défense",
+    "overall": "Global",
+    "shooting": "Tir",
+    "handling": "Dribble",
+    "athleticism": "Physique",
+    "serve": "Service",
+    "groundstrokes": "Coups de fond",
+    "net_play": "Jeu au filet",
+    "movement": "Déplacement",
+    "volley": "Volée",
+    "walls": "Jeu de vitres",
+    "positioning": "Placement",
+    "pace": "Allure",
+    "endurance": "Endurance",
+    "attack": "Attaque"
+  },
+  "level": {
+    "sectionTitle": "Niveaux",
+    "label": "Niveau",
+    "a11y": "Niveau {level}",
+    "basedOn": "{count, plural, one {Basé sur # partie notée} many {Basé sur # de parties notées} other {Basé sur # parties notées}}",
+    "provisional": "Provisoire",
+    "provisionalGames": "{count, plural, one {Provisoire — joue encore # partie notée} many {Provisoire — joue encore # de parties notées} other {Provisoire — joue encore # parties notées}}",
+    "provisionalReliability": "Provisoire — atteins {percent} de fiabilité pour afficher ton niveau",
+    "provisionalSettling": "Provisoire — quelques parties de plus le stabiliseront",
+    "frozen": "Fais passer ta fiabilité à {percent} pour gagner des points",
+    "frozenPill": "En pause",
+    "confidence": "Confiance {percent}",
+    "historyA11y": "{weeks, plural, one {Le niveau est passé de {from} à {to} en # semaine} many {Le niveau est passé de {from} à {to} en # de semaines} other {Le niveau est passé de {from} à {to} en # semaines}}",
+    "weeksAgo": "{count, plural, one {Il y a # semaine} many {Il y a # de semaines} other {Il y a # semaines}}",
+    "now": "Maintenant",
+    "emptyTitle": "Pas encore de niveau",
+    "emptyBody": "Joue des parties avec un score confirmé et des équipes faites avant le coup d’envoi. Ton niveau apparaît après quelques-unes."
+  },
+  "peers": {
+    "title": "{count, plural, one {L’avis de # coéquipier · visible par toi seul} many {L’avis de # de coéquipiers · visible par toi seul} other {L’avis de # coéquipiers · visible par toi seul}}"
+  },
+  "rate": {
+    "title": "Noter les joueurs",
+    "closes": "Ouvert jusqu’à {time}",
+    "privacy": "Les notes sont privées. Personne ne voit qui l’a noté, et les notes servent seulement aux niveaux et à l’équilibre des équipes, jamais aux cartons.",
+    "pickTitle": "Avec qui as-tu joué ?",
+    "picked": "{count} sur {max}",
+    "limit": "{count, plural, one {Tu peux noter jusqu’à # joueur par partie.} many {Tu peux noter jusqu’à # de joueurs par partie.} other {Tu peux noter jusqu’à # joueurs par partie.}}",
+    "nobodyLeft": "Tu as noté tous ceux que tu pouvais pour cette partie.",
+    "removeA11y": "Retirer {name}",
+    "submit": "Envoyer les notes",
+    "submitCount": "{count, plural, one {Envoyer # note} many {Envoyer # de notes} other {Envoyer # notes}}",
+    "thanks": "{count, plural, one {Merci, # note envoyée} many {Merci, # de notes envoyées} other {Merci, # notes envoyées}}"
+  },
+  "stars": {
+    "a11y": "{count, plural, one {# étoile} many {# d’étoiles} other {# étoiles}}",
+    "skip": "Non noté",
+    "word": {
+      "1": "Débutant",
+      "2": "En progrès",
+      "3": "Solide",
+      "4": "Fort",
+      "5": "Remarquable"
+    }
+  },
+  "gate": {
+    "title": "Tu ne peux pas noter cette partie",
+    "closedTitle": "La notation est fermée",
+    "body": "Les notes restent justes quand elles viennent de ceux qui ont joué et qui reviennent.",
+    "fair": "Les notes sont privées. Elles servent aux niveaux et à l’équilibre des équipes, jamais aux cartons."
+  },
+  "gateTitle": {
+    "not_verified": "Fais ton check-in pour noter",
+    "low_reliability": "Améliore ta fiabilité",
+    "too_few_games": "Encore quelques parties d’abord",
+    "active_sanction": "En pause pour l’instant",
+    "window_not_open": "Pas encore ouvert",
+    "window_closed": "La notation est fermée"
+  },
+  "ineligible": {
+    "not_verified": "Seuls les joueurs qui ont fait leur check-in peuvent noter. La prochaine fois, fais ton check-in en arrivant.",
+    "low_reliability": "Pour noter, il faut {percent} de fiabilité. Viens aux parties que tu rejoins pour y arriver.",
+    "too_few_games": "{count, plural, one {Joue encore # partie de {sport} vérifiée pour noter les autres. Il en faut {required}.} many {Joue encore # de parties de {sport} vérifiées pour noter les autres. Il en faut {required}.} other {Joue encore # parties de {sport} vérifiées pour noter les autres. Il en faut {required}.}}",
+    "active_sanction": "La notation est en pause tant qu’un carton ou une restriction est en cours. Elle revient ensuite.",
+    "window_not_open": "La notation s’ouvre à la fin de la partie.",
+    "window_closed": "{hours, plural, one {La notation reste ouverte # heure après la partie. Elle a fermé {time}.} many {La notation reste ouverte # d’heures après la partie. Elle a fermé {time}.} other {La notation reste ouverte # heures après la partie. Elle a fermé {time}.}}"
+  },
+  "notRated": {
+    "no_result": "Pas encore de score",
+    "result_not_confirmed": "En attente de la confirmation du score par les joueurs",
+    "result_disputed": "Non classée : le score est contesté",
+    "too_few_verified": "Non classée : trop peu de joueurs vérifiés",
+    "teams_not_published": "Non classée : équipes non faites avant le coup d’envoi",
+    "not_two_sides": "Non classée : il faut deux équipes avec chacune un score",
+    "unrated_sport": "Ce sport n’a pas de niveaux"
+  },
+  "notRatedHelp": {
+    "no_result": "Saisis le score final pour que la partie compte pour les niveaux.",
+    "result_not_confirmed": "Elle compte pour les niveaux dès que la plupart des joueurs qui ont fait leur check-in la confirment.",
+    "result_disputed": "La plupart des joueurs ont contesté le score, donc il ne compte ni pour les stats ni pour les niveaux.",
+    "too_few_verified": "Les niveaux ne changent que si au moins {percent} des joueurs ont fait leur check-in.",
+    "teams_not_published": "Fais les équipes dans l’appli avant le coup d’envoi pour que la partie compte pour les niveaux.",
+    "not_two_sides": "Les niveaux comparent deux équipes. Cette partie n’avait pas deux équipes avec chacune un score.",
+    "unrated_sport": "Les courses n’influencent pas les niveaux."
+  },
+  "confirm": {
+    "title": "Est-ce le score final ?",
+    "statusTitle": "Confirmation du score",
+    "help": "Confirme-le s’il correspond à ce qui s’est passé. La plupart des joueurs doivent être d’accord pour que la partie compte pour les niveaux.",
+    "tally": "{count, plural, one {{confirms} sur # joueur vérifié a confirmé} many {{confirms} sur # de joueurs vérifiés ont confirmé} other {{confirms} sur # joueurs vérifiés ont confirmé}}",
+    "disputes": "{count, plural, one {# contestation} many {# de contestations} other {# contestations}}",
+    "status": {
+      "pending": "En attente",
+      "confirmed": "Confirmé",
+      "disputed": "Contesté"
+    },
+    "confirm": "Confirmer",
+    "dispute": "Contester",
+    "youConfirmed": "Tu as confirmé ce score. Tu peux changer ta réponse jusqu’à la fermeture.",
+    "youDisputed": "Tu as contesté ce score. Tu peux changer ta réponse jusqu’à la fermeture.",
+    "thanks": "Merci pour ta confirmation",
+    "disputed": "Contestation enregistrée"
+  },
+  "band": {
+    "a11y": "Tranche de niveau {band} sur 5"
+  }
+}

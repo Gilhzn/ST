@@ -1,0 +1,73 @@
+{
+  "title": "Giocatori",
+  "subtitle": "{count, plural, =0 {Gioca una partita per conoscere gente} one {# persona con cui hai giocato} many {# di persone con cui hai giocato} other {# persone con cui hai giocato}}",
+  "entry": {
+    "title": "Giocatori",
+    "subtitle": "Amici, persone con cui hai giocato, richieste",
+    "requests": "{count, plural, one {# richiesta} many {# di richieste} other {# richieste}}"
+  },
+  "tab": {
+    "friends": "Amici",
+    "played": "Giocato insieme",
+    "requests": "Richieste"
+  },
+  "action": {
+    "add": "Aggiungi",
+    "accept": "Accetta",
+    "cancel": "Annulla",
+    "remove": "Rimuovi"
+  },
+  "state": {
+    "outgoing": "Richiesta inviata",
+    "friends": "Amici"
+  },
+  "row": {
+    "played": "{count, plural, one {# partita insieme · ultima il {date}} many {# di partite insieme · ultima il {date}} other {# partite insieme · ultima il {date}}}",
+    "playedNoDate": "{count, plural, one {# partita insieme} many {# di partite insieme} other {# partite insieme}}",
+    "notPlayed": "Non avete ancora giocato insieme"
+  },
+  "playedHelp": "Puoi aggiungere le persone con cui hai giocato. Vedranno la richiesta nella loro posta.",
+  "requests": {
+    "incoming": "Vogliono essere amici",
+    "outgoing": "Inviate"
+  },
+  "empty": {
+    "friendsTitle": "Ancora nessun amico",
+    "friendsBody": "Aggiungi le persone con cui hai giocato per vedere le partite a cui si uniscono.",
+    "seePlayed": "Vedi con chi hai giocato",
+    "playedTitle": "Ancora nessuno",
+    "playedBody": "Qui compare chiunque faccia il check-in alla tua stessa partita.",
+    "requestsTitle": "Nessuna richiesta",
+    "requestsBody": "Qui compaiono le richieste di amicizia di chi ha giocato con te."
+  },
+  "privacy": {
+    "title": "Privacy",
+    "label": "Chi vede le mie prossime partite",
+    "help": "Gli amici vedono le partite pubbliche a cui ti sei unito, così possono venire anche loro. Le partite private non vengono mai mostrate.",
+    "friends": "Amici",
+    "nobody": "Nessuno",
+    "savedFriends": "Gli amici possono vedere le tue prossime partite",
+    "savedNobody": "Le tue prossime partite sono nascoste"
+  },
+  "removeA11y": "Rimuovi {name} dagli amici",
+  "removeTitle": "Rimuovere {name}?",
+  "removeBody": "Restate collegati come persone che hanno giocato insieme. Non riceve nessun avviso.",
+  "acceptA11y": "Accetta {name}",
+  "declineA11y": "Rifiuta {name}",
+  "toast": {
+    "requested": "Richiesta inviata a {name}",
+    "accepted": "Tu e {name} ora siete amici",
+    "acceptedShort": "Richiesta di amicizia accettata",
+    "declined": "Richiesta rifiutata",
+    "removed": "Rimosso"
+  },
+  "request": {
+    "section": "{count, plural, one {# richiesta} many {# di richieste} other {# richieste}}",
+    "friendTitle": "{name} vuole essere tuo amico",
+    "friendBody": "{count, plural, one {Avete giocato # partita insieme} many {Avete giocato # di partite insieme} other {Avete giocato # partite insieme}}"
+  },
+  "playing": {
+    "title": "I tuoi amici giocano",
+    "who": "{count, plural, one {{names} c’è} many {{names} ci sono} other {{names} ci sono}}"
+  }
+}

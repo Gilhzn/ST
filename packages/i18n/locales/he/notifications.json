@@ -70,5 +70,57 @@
   "deposit_action_required": {
     "title": "נדרשת פעולה בנוגע לפיקדון",
     "body": "צריך לאשר את הקפאת הפיקדון של {amount} עבור {gameTitle}. אפשר לפתוח את האפליקציה כדי להמשיך."
+  },
+  "roster_added": {
+    "title": "{via, select, invite_link {קבוע חדש ב{seriesTitle}} other {הוזמנת להצטרף לקבועים}}",
+    "body": "{via, select, invite_link {שחקן הצטרף ל{seriesTitle} דרך הקישור שלך.} other {מצטרפים לקבועים של {seriesTitle} ומקבלים קדימות בכל תאריך.}}"
+  },
+  "series_reconfirm": {
+    "title": "עדיין בפנים ב{seriesTitle}?",
+    "body": "צריך לאשר את המקום עד {deadline}, אחרת הוא יעבור לשחקן הבא. בלי קנס בשום מקרה."
+  },
+  "series_auto_released": {
+    "title": "המקום שלך שוחרר",
+    "body": "לא אישרת את {seriesTitle}, אז המקום עבר לשחקן הבא. בלי קנס."
+  },
+  "roster_leave_offer": {
+    "title": "עדיין משחק/ת ב{seriesTitle}?",
+    "body": "{misses, plural, one {פספסת תאריך אחד ברצף. אפשר להישאר בקבועים או לצאת, בלי קנס.} two {פספסת שני תאריכים ברצף. אפשר להישאר בקבועים או לצאת, בלי קנס.} other {פספסת # תאריכים ברצף. אפשר להישאר בקבועים או לצאת, בלי קנס.}}"
+  },
+  "occurrence_skipped": {
+    "title": "תאריך של {seriesTitle} בוטל",
+    "body": "המארח ביטל את המשחק של {startsAt}. המקום שלך בין הקבועים נשמר."
+  },
+  "occurrence_updated": {
+    "title": "{seriesTitle} השתנה",
+    "body": "המארח עדכן את המשחק של {startsAt}. כדאי לבדוק את הפרטים."
+  },
+  "occurrence_rescheduled": {
+    "title": "ל{seriesTitle} יש לוח זמנים חדש",
+    "body": "המשחק של {startsAt} זז. כדאי לבדוק את התאריכים החדשים."
+  },
+  "peer_rating_open": {
+    "title": "דירוג השחקנים ששיחקו איתך",
+    "body": "הדירוג פתוח 48 שעות אחרי המשחק. הוא פרטי ועוזר לאזן קבוצות."
+  },
+  "friend_request": {
+    "title": "בקשת חברות חדשה",
+    "body": "מישהו ששיחקת איתו רוצה להיות חברים."
+  },
+  "friend_accepted": {
+    "title": "בקשת החברות אושרה",
+    "body": "אתם חברים עכשיו. המשחקים שהם מצטרפים אליהם יופיעו אצלך."
+  },
+  "media_tag_request": {
+    "title": "תייגו אותך בתמונה",
+    "body": "התיוג יופיע רק אחרי שתאשר/י אותו."
+  },
+  "media_blocked": {
+    "title": "התמונה שלך לא פורסמה",
+    "body": "היא לא עברה את בדיקות התוכן שלנו. אף אחד אחר לא יכול לראות אותה."
+  },
+  "rating_level_changed": {
+    "title": "הרמה שלך השתנתה",
+    "body": "הרמה החדשה שלך היא {level}. אפשר לראות איך היא השתנתה בפרופיל."
   }
 }

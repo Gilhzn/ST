@@ -1,0 +1,137 @@
+{
+  "cadence": "{recurrence, select, biweekly {隔周{weekday} {time}} other {每{weekday} {time}}}",
+  "recurrence": {
+    "weekly": "每周",
+    "biweekly": "每两周"
+  },
+  "chip": "{recurrence, select, biweekly {属于每两周一次的系列} other {属于每周系列}}",
+  "regularsCount": "{count, plural, =0 {还没有固定成员} other {# 位固定成员}}",
+  "hostedBy": "组织者：{name}",
+  "ended": "这个系列已结束。往期比赛和照片仍可查看。",
+  "facts": {
+    "regulars": "固定成员",
+    "next": "下一场",
+    "regularsFirst": "固定成员优先"
+  },
+  "priority": {
+    "title": "固定成员优先",
+    "banner": "{time}前仅限固定成员报名，之后所有人都可以加入。",
+    "bannerRegular": "你是固定成员：{time}前你可以优先报名。",
+    "bannerHost": "{time}前由你的固定成员优先报名，之后向所有人开放。",
+    "bannerInvited": "{time}前仅限固定成员报名。接受组织者的邀请即可立即加入。",
+    "windowTitle": "固定成员优先时段",
+    "windowHelp": "每个新场次开放后，在这段时间内只有固定成员可以加入，之后向所有人开放。",
+    "shorter": "缩短优先时段",
+    "longer": "延长优先时段"
+  },
+  "member": {
+    "title": "你的名额",
+    "accept": "加入固定成员",
+    "welcome": "你已成为固定成员",
+    "invitedTitle": "{name}邀请你成为固定成员",
+    "invitedBody": "{hours, plural, other {每个场次的前 # 小时只对固定成员开放，固定成员还可以自动报名。}}",
+    "alwaysIn": "每场都来",
+    "alwaysInHelp": "{hours, plural, other {每个新场次自动为你保留名额。开赛前 # 小时会请你确认。}}",
+    "alwaysInOn": "每个新场次都已为你报名",
+    "alwaysInOff": "你将逐场报名",
+    "askHost": "{count, plural, =0 {向{name}索取固定成员链接即可加入这个系列。} other {这里有 # 位固定成员。向{name}索取固定成员链接即可加入。}}",
+    "leave": "退出固定成员",
+    "leaveTitle": "要退出固定成员吗？",
+    "leaveBody": "已报名的比赛会保留。不会有黄牌，也没有处罚。",
+    "leaveConfirm": "退出",
+    "left": "你已退出固定成员"
+  },
+  "migration": {
+    "title": "从 WhatsApp 迁移",
+    "joined": "{count, plural, other {WhatsApp 群里已有 # 人加入}}",
+    "joinedLabel": "{count, plural, other {位成员从你的 WhatsApp 群加入}}",
+    "active": "{count, plural, =0 {还没有人参加过比赛} other {其中 # 人已参加过比赛}}",
+    "none": "还没有人使用你的链接"
+  },
+  "dates": {
+    "title": "接下来的场次",
+    "empty": "{weeks, plural, other {新场次会提前 # 周开放。}}",
+    "none": "没有更多场次了。",
+    "horizon": "{weeks, plural, other {新场次会自动提前 # 周开放。}}",
+    "capacity": "{capacity, plural, other {# 个名额}}",
+    "skipped": "组织者已取消本场",
+    "skippedBadge": "已取消",
+    "youreIn": "你已报名",
+    "regularsOnly": "仅限固定成员",
+    "editA11y": "编辑{date}",
+    "skipA11y": "取消{date}"
+  },
+  "roster": {
+    "title": "固定成员",
+    "pending": "已邀请",
+    "empty": "还没有固定成员。把链接分享到你的群里吧。",
+    "viaLink": "通过链接加入",
+    "viaPlayedWith": "一起打过球",
+    "viaHost": "由组织者添加",
+    "since": "自{date}起",
+    "invited": "已邀请",
+    "alwaysIn": "每场都来",
+    "alwaysInCount": "{count, plural, other {# 人每场都来}}",
+    "remove": "移除",
+    "removeA11y": "将{name}移出固定成员",
+    "removeTitle": "要移除{name}吗？",
+    "removeBody": "对方将失去优先报名资格，也不能再通过链接重新加入。已报名的比赛会保留。"
+  },
+  "host": {
+    "title": "组织者工具",
+    "inviteGroup": "邀请你的 WhatsApp 群",
+    "edit": "编辑场次",
+    "editHelp": "修改单个场次，或修改本场及之后所有场次",
+    "end": "结束系列",
+    "endHelp": "停止新增场次，并取消接下来的场次"
+  },
+  "skip": {
+    "title": "取消{date}？",
+    "body": "所有已报名的人都会收到通知。固定成员会保留下一场的名额。",
+    "late": "{hours, plural, other {距离开赛已不足 # 小时，这将计为组织者临时取消。}}",
+    "confirm": "取消本场",
+    "done": "本场已取消，已通知所有玩家。"
+  },
+  "end": {
+    "title": "要结束这个系列吗？",
+    "body": "接下来的场次将被取消，所有已报名的人都会收到通知。往期比赛和照片会保留。",
+    "confirm": "结束系列",
+    "done": "系列已结束"
+  },
+  "edit": {
+    "title": "编辑场次",
+    "scope": "修改范围",
+    "scopeThis": "仅本场",
+    "scopeFollowing": "本场及之后",
+    "scopeThisHelp": "只修改{date}。",
+    "scopeFollowingHelp": "{date}及之后的所有场次都会修改。",
+    "name": "名称",
+    "time": "开始时间",
+    "capacityHelp": "玩家人数，含组织者",
+    "save": "保存更改",
+    "saved": "已保存，已通知所有玩家。"
+  },
+  "card": {
+    "yourSeries": "你的固定比赛",
+    "next": "下一场：{date}",
+    "regular": "固定成员",
+    "invited": "已受邀"
+  },
+  "wizard": {
+    "repeats": "重复",
+    "once": "仅一次",
+    "weekly": "每周",
+    "biweekly": "每两周",
+    "firstDate": "第一场",
+    "summaryHelp": "第一场在{date}。新场次会自动开放。",
+    "noRepeat": "不重复",
+    "reviewValue": "{cadence} · 固定成员优先 {window}",
+    "publish": "开始系列"
+  },
+  "created": {
+    "title": "{recurrence, select, biweekly {你的双周比赛已发布} other {你的每周比赛已发布}}",
+    "body": "{hours, plural, other {把一个链接分享到你的 WhatsApp 群。点开链接的人会成为固定成员，并在每个场次享有 # 小时优先报名。}}",
+    "dates": "{count, plural, other {已开放 # 个场次}}",
+    "view": "查看系列"
+  }
+}

@@ -1,0 +1,60 @@
+{
+  "share": {
+    "game": "Únete a mi partido de {sport} «{title}»{hasDate, select, yes { el {date} a las {time}} other {}}{hasArea, select, yes { en {area}} other {}}.{hasSpots, select, yes { {spotsLeft, plural, =0 {Está lleno, pero puedes entrar en la lista de espera.} one {Queda # plaza.} many {Quedan # de plazas.} other {Quedan # plazas.}}} other {}} Únete en Sport Talent: {url}",
+    "gameWomenOnly": "Partido de {sport} solo para mujeres «{title}»{hasDate, select, yes { el {date} a las {time}} other {}}{hasArea, select, yes { en {area}} other {}}.{hasSpots, select, yes { {spotsLeft, plural, =0 {Está lleno, pero puedes entrar en la lista de espera.} one {Queda # plaza.} many {Quedan # de plazas.} other {Quedan # plazas.}}} other {}} Únete en Sport Talent: {url}",
+    "series": {
+      "weekly": "Jugamos {sport} cada {weekday} a las {time}{hasArea, select, yes { en {area}} other {}}: «{title}». Nos mudamos con el grupo a Sport Talent, donde los fijos tienen prioridad en cada fecha{hasDate, select, yes { (la próxima: {date})} other {}}. Únete a los fijos: {url}",
+      "biweekly": "Jugamos {sport} cada dos semanas, el {weekday} a las {time}{hasArea, select, yes { en {area}} other {}}: «{title}». Nos mudamos con el grupo a Sport Talent, donde los fijos tienen prioridad en cada fecha{hasDate, select, yes { (la próxima: {date})} other {}}. Únete a los fijos: {url}"
+    },
+    "seriesWomenOnly": {
+      "weekly": "{sport} solo para mujeres cada {weekday} a las {time}{hasArea, select, yes { en {area}} other {}}: «{title}». Nos mudamos con el grupo a Sport Talent, donde las fijas tienen prioridad en cada fecha{hasDate, select, yes { (la próxima: {date})} other {}}. Únete a las fijas: {url}",
+      "biweekly": "{sport} solo para mujeres cada dos semanas, el {weekday} a las {time}{hasArea, select, yes { en {area}} other {}}: «{title}». Nos mudamos con el grupo a Sport Talent, donde las fijas tienen prioridad en cada fecha{hasDate, select, yes { (la próxima: {date})} other {}}. Únete a las fijas: {url}"
+    }
+  },
+  "preview": {
+    "title": "{sport}: {title}",
+    "spotsLeft": "{count, plural, =0 {Lleno, entra en la lista de espera} one {Queda # plaza} many {Quedan # de plazas} other {Quedan # plazas}}",
+    "weekly": "Cada {weekday} a las {time}",
+    "biweekly": "Cada dos semanas, el {weekday} a las {time}",
+    "womenOnly": "Solo mujeres",
+    "siteName": "Sport Talent"
+  },
+  "group": {
+    "title": "Invita a tu grupo",
+    "heading": "Trae a tu grupo de WhatsApp",
+    "bodySeries": "Comparte un solo enlace. Quien lo toque se une a los fijos y tiene prioridad en cada fecha, y tú ves quién se mudó.",
+    "bodyGame": "Comparte el enlace en el chat del grupo. Los jugadores ven el partido y piden unirse con un toque.",
+    "previewTitle": "Lo que verá tu grupo",
+    "whatsapp": "Compartir en WhatsApp",
+    "copy": "Copiar enlace",
+    "more": "Más opciones",
+    "copied": "Enlace copiado",
+    "messageCopied": "Mensaje copiado",
+    "noWhatsApp": "WhatsApp no está instalado en este dispositivo.",
+    "linkTitle": "Tu enlace de invitación",
+    "showQr": "Mostrar código QR",
+    "hideQr": "Ocultar código QR",
+    "qrHelp": "Los jugadores pueden escanearlo en la cancha para unirse.",
+    "rotate": "Restablecer enlace",
+    "rotateTitle": "¿Restablecer el enlace?",
+    "rotateBody": "El enlace anterior deja de funcionar al momento. Comparte el nuevo con tu grupo.",
+    "rotateConfirm": "Restablecer enlace",
+    "rotated": "Nuevo enlace listo",
+    "statsNone": "Nadie se ha unido con el enlace todavía",
+    "step1": "Toca Compartir en WhatsApp y elige el chat de tu grupo.",
+    "step2": "Los jugadores tocan el enlace e inician sesión con su número de teléfono.",
+    "step3": "Ves a todos los que se unieron. Fija el mensaje para que lo encuentren los que lleguen tarde."
+  },
+  "landing": {
+    "title": "Únete a los fijos",
+    "from": "{name} te invitó a {title}",
+    "signedOutBody": "Inicia sesión para ver el partido y unirte a los fijos.",
+    "signUp": "Inicia sesión para unirte a los fijos",
+    "join": "Unirme a los fijos",
+    "open": "Abrir serie",
+    "joined": "Ya eres fijo de {title}",
+    "perkFirstPick": "{hours, plural, one {Prioridad en cada fecha durante # hora} many {Prioridad en cada fecha durante # de horas} other {Prioridad en cada fecha durante # horas}}",
+    "perkAlwaysIn": "Elige «Siempre me apunto» y consigue plaza automáticamente",
+    "perkNoPolls": "Se acabó perseguir la encuesta del grupo"
+  }
+}

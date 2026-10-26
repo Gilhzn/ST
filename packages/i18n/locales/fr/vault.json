@@ -1,0 +1,104 @@
+{
+  "gallery": {
+    "title": "Galerie de la partie",
+    "locksIn": "La galerie se ferme dans {time}",
+    "locked": "Galerie fermée",
+    "opensAt": "Ajouts possibles à partir de {time}",
+    "windowHelp": "{hours, plural, one {Ajoute des photos jusqu’à # heure après la partie.} many {Ajoute des photos jusqu’à # d’heures après la partie.} other {Ajoute des photos jusqu’à # heures après la partie.}}",
+    "retention": "{months, plural, one {Les photos restent # mois.} many {Les photos restent # de mois.} other {Les photos restent # mois.}}",
+    "filterA11y": "Afficher les photos",
+    "all": "Toutes",
+    "mine": "Les tiennes",
+    "emptyTitle": "Pas encore de photos",
+    "emptyMineTitle": "Tu n’as pas ajouté de photos",
+    "emptyBodyOpen": "Sois le premier à en ajouter une de cette partie.",
+    "emptyBodyClosed": "Personne n’a ajouté de photos pendant que la galerie était ouverte."
+  },
+  "upload": {
+    "cta": "Ajouter des photos",
+    "uploading": "Envoi…",
+    "done": "Photo ajoutée",
+    "checkInFirst": "Fais ton check-in à la partie pour ajouter des photos.",
+    "nativeSoon": "L’ajout de photos arrive bientôt dans l’appli. En attendant, utilise la version web."
+  },
+  "reject": {
+    "not_verified_attendee": "Seuls les joueurs qui ont fait leur check-in peuvent ajouter des photos.",
+    "window_not_open": "Les ajouts s’ouvrent quand la partie commence.",
+    "window_closed": "La galerie est fermée. Les ajouts s’arrêtent 2 heures après la partie.",
+    "too_large": "Ce fichier est trop lourd. Les photos peuvent faire jusqu’à 20 Mo et les vidéos jusqu’à 200 Mo.",
+    "too_long": "Les vidéos peuvent durer jusqu’à 60 secondes.",
+    "unsupported_type": "Ce type de fichier n’est pas pris en charge. Utilise JPEG, PNG, WebP, MP4 ou MOV.",
+    "user_cap_reached": "Tu as ajouté le maximum de photos autorisé pour une partie.",
+    "not_uploader": "Seule la personne qui l’a ajoutée peut modifier ce réglage.",
+    "not_published": "Cette photo n’est pas publiée.",
+    "tags_pending": "Toutes les personnes identifiées doivent d’abord accepter."
+  },
+  "badge": {
+    "public": "Galerie du lieu",
+    "participants": "Joueurs seulement",
+    "pending": "Identifications en attente"
+  },
+  "viewer": {
+    "title": "Photo",
+    "photoBy": "Photo de {name}",
+    "someone": "Un joueur",
+    "delete": "Supprimer la photo",
+    "deleteTitle": "Supprimer cette photo ?",
+    "deleteBody": "Elle est supprimée pour tout le monde, galerie du lieu comprise.",
+    "deleted": "Photo supprimée"
+  },
+  "tags": {
+    "title": "Identifiés",
+    "none": "Personne n’est identifié.",
+    "add": "Identifier des joueurs",
+    "send": "{count, plural, =0 {Envoyer les demandes} one {Envoyer # demande} many {Envoyer # de demandes} other {Envoyer # demandes}}",
+    "sent": "{count, plural, one {Demande d’identification envoyée} many {# de demandes d’identification envoyées} other {# demandes d’identification envoyées}}",
+    "requestHelp": "Les identifications sont des demandes. Elles n’apparaissent qu’après l’accord du joueur.",
+    "everyoneTagged": "Tous ceux qui ont joué sont déjà identifiés.",
+    "waiting": "{count, plural, one {En attente de l’accord de {names}} many {En attente de l’accord de {names}} other {En attente de l’accord de {names}}}",
+    "untagMe": "Retirer mon identification",
+    "untagged": "Identification retirée. Cette photo ne peut plus être publique.",
+    "requestTitle": "{name} t’a identifié sur une photo",
+    "requestBody": "L’identification n’apparaît qu’après ton accord.",
+    "accepted": "Identification acceptée",
+    "declined": "Identification refusée"
+  },
+  "public": {
+    "label": "Rendre publique dans la galerie du lieu",
+    "help": "Affiche-la sur la page du lieu pour tous ceux qui jouent ici.",
+    "on": "Visible dans la galerie du lieu.",
+    "blocked": "{count, plural, one {# joueur identifié n’a pas encore accepté} many {# de joueurs identifiés n’ont pas encore accepté} other {# joueurs identifiés n’ont pas encore accepté}}",
+    "why": "Une photo ne devient publique que si toutes les personnes identifiées sont d’accord.",
+    "done": "Maintenant dans la galerie du lieu",
+    "off": "De nouveau réservée aux joueurs"
+  },
+  "report": {
+    "cta": "Signaler la photo",
+    "title": "Quel est le problème ?",
+    "reason": {
+      "nudity": "Nudité",
+      "violence": "Violence",
+      "harassment": "Harcèlement",
+      "privacy": "Vie privée",
+      "copyright": "Droits d’auteur",
+      "spam": "Spam",
+      "other": "Autre chose"
+    },
+    "submit": "Signaler",
+    "thanks": "Merci. Un modérateur va l’examiner."
+  },
+  "venue": {
+    "tabsA11y": "Détails du lieu",
+    "tabGames": "Parties",
+    "tabPhotos": "Photos",
+    "rangeA11y": "Photos de",
+    "week": "Cette semaine",
+    "month": "Ce mois-ci",
+    "all": "Toutes",
+    "emptyTitle": "Pas encore de photos ici",
+    "emptyBody": "Les photos que les joueurs rendent publiques après leurs parties apparaissent ici.",
+    "consent": "Toutes les personnes identifiées sur ces photos ont accepté qu’elles soient affichées ici.",
+    "photoA11y": "Photo du {date}",
+    "sharedOn": "Partagée après une partie le {date}"
+  }
+}

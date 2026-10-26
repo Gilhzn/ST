@@ -1,0 +1,104 @@
+{
+  "gallery": {
+    "title": "Galeria do jogo",
+    "locksIn": "A galeria fecha em {time}",
+    "locked": "Galeria fechada",
+    "opensAt": "Os envios abrem às {time}",
+    "windowHelp": "{hours, plural, one {Adicione fotos até # hora depois do jogo.} many {Adicione fotos até # de horas depois do jogo.} other {Adicione fotos até # horas depois do jogo.}}",
+    "retention": "{months, plural, one {As fotos ficam por # mês.} many {As fotos ficam por # de meses.} other {As fotos ficam por # meses.}}",
+    "filterA11y": "Mostrar fotos",
+    "all": "Todas",
+    "mine": "Suas",
+    "emptyTitle": "Ainda sem fotos",
+    "emptyMineTitle": "Você não adicionou fotos",
+    "emptyBodyOpen": "Seja o primeiro a adicionar uma foto deste jogo.",
+    "emptyBodyClosed": "Ninguém adicionou fotos enquanto a galeria estava aberta."
+  },
+  "upload": {
+    "cta": "Adicionar fotos",
+    "uploading": "Enviando…",
+    "done": "Foto adicionada",
+    "checkInFirst": "Faça check-in no jogo para adicionar fotos.",
+    "nativeSoon": "O envio de fotos chega ao app em breve. Por enquanto, use a versão web."
+  },
+  "reject": {
+    "not_verified_attendee": "Só jogadores que fizeram check-in podem adicionar fotos.",
+    "window_not_open": "Os envios abrem quando o jogo começa.",
+    "window_closed": "A galeria está fechada. Os envios fecham 2 horas depois do jogo.",
+    "too_large": "O arquivo é grande demais. Fotos podem ter até 20 MB e vídeos até 200 MB.",
+    "too_long": "Os vídeos podem ter até 60 segundos.",
+    "unsupported_type": "Esse tipo de arquivo não é aceito. Use JPEG, PNG, WebP, MP4 ou MOV.",
+    "user_cap_reached": "Você já adicionou o máximo de fotos permitido para um jogo.",
+    "not_uploader": "Só quem adicionou pode mudar isso.",
+    "not_published": "Esta foto não está publicada.",
+    "tags_pending": "Todos os marcados precisam aceitar antes."
+  },
+  "badge": {
+    "public": "Galeria do local",
+    "participants": "Só jogadores",
+    "pending": "Aguardando marcações"
+  },
+  "viewer": {
+    "title": "Foto",
+    "photoBy": "Foto de {name}",
+    "someone": "Um jogador",
+    "delete": "Excluir foto",
+    "deleteTitle": "Excluir esta foto?",
+    "deleteBody": "Ela é removida para todos, inclusive da galeria do local.",
+    "deleted": "Foto excluída"
+  },
+  "tags": {
+    "title": "Marcados",
+    "none": "Ninguém foi marcado.",
+    "add": "Marcar jogadores",
+    "send": "{count, plural, =0 {Enviar pedidos} one {Enviar # pedido} many {Enviar # de pedidos} other {Enviar # pedidos}}",
+    "sent": "{count, plural, one {Pedido de marcação enviado} many {# de pedidos de marcação enviados} other {# pedidos de marcação enviados}}",
+    "requestHelp": "Marcações são pedidos. Uma marcação só aparece depois que o jogador aceita.",
+    "everyoneTagged": "Todos que jogaram já foram marcados.",
+    "waiting": "{count, plural, one {Aguardando {names} aceitar} many {Aguardando {names} aceitarem} other {Aguardando {names} aceitarem}}",
+    "untagMe": "Remover minha marcação",
+    "untagged": "Marcação removida. Esta foto não pode ficar pública agora.",
+    "requestTitle": "{name} marcou você em uma foto",
+    "requestBody": "A marcação só aparece depois que você aceitar.",
+    "accepted": "Marcação aceita",
+    "declined": "Marcação recusada"
+  },
+  "public": {
+    "label": "Tornar pública na galeria do local",
+    "help": "Mostre na página do local para todos que jogam aqui.",
+    "on": "Visível na galeria do local.",
+    "blocked": "{count, plural, one {# jogador marcado ainda não aceitou} many {# de jogadores marcados ainda não aceitaram} other {# jogadores marcados ainda não aceitaram}}",
+    "why": "Uma foto só fica pública quando todos os marcados concordam.",
+    "done": "Agora na galeria do local",
+    "off": "De volta a só jogadores"
+  },
+  "report": {
+    "cta": "Denunciar foto",
+    "title": "Qual é o problema?",
+    "reason": {
+      "nudity": "Nudez",
+      "violence": "Violência",
+      "harassment": "Assédio",
+      "privacy": "Privacidade",
+      "copyright": "Direitos autorais",
+      "spam": "Spam",
+      "other": "Outro motivo"
+    },
+    "submit": "Denunciar",
+    "thanks": "Obrigado. Um moderador vai analisar."
+  },
+  "venue": {
+    "tabsA11y": "Detalhes do local",
+    "tabGames": "Jogos",
+    "tabPhotos": "Fotos",
+    "rangeA11y": "Fotos de",
+    "week": "Esta semana",
+    "month": "Este mês",
+    "all": "Todas",
+    "emptyTitle": "Ainda sem fotos aqui",
+    "emptyBody": "As fotos que os jogadores tornam públicas depois dos jogos aparecem aqui.",
+    "consent": "Todos os marcados nestas fotos concordaram em mostrá-las aqui.",
+    "photoA11y": "Foto de {date}",
+    "sharedOn": "Compartilhada depois de um jogo em {date}"
+  }
+}

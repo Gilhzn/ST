@@ -25,5 +25,6 @@
   "payment_required": "A deposit is needed to join this game. Add a payment method to continue.",
   "network": "Couldn’t connect. Check your internet connection and try again.",
   "unavailable": "Sport Talent is temporarily unavailable. Please try again in a few minutes.",
-  "unknown": "Something went wrong on our side. Please try again."
+  "unknown": "Something went wrong on our side. Please try again.",
+  "roster_priority": "Regulars get first pick of this date for now. You can join once it opens to everyone."
 }

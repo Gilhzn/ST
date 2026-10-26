@@ -25,5 +25,6 @@
   "payment_required": "Une caution est nécessaire pour rejoindre cette partie. Ajoute un moyen de paiement pour continuer.",
   "network": "Connexion impossible. Vérifie ta connexion internet et réessaie.",
   "unavailable": "Sport Talent est momentanément indisponible. Réessaie dans quelques minutes.",
-  "unknown": "Un problème est survenu de notre côté. Réessaie."
+  "unknown": "Un problème est survenu de notre côté. Réessaie.",
+  "roster_priority": "Pour l’instant, les habitués sont prioritaires sur cette date. Tu pourras rejoindre dès qu’elle s’ouvrira à tous."
 }

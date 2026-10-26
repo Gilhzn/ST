@@ -1,0 +1,138 @@
+{
+  "family": {
+    "small_sided": "Society",
+    "full_sided": "Campo",
+    "half_court": "Meia quadra",
+    "full_court": "Quadra inteira",
+    "singles": "Simples",
+    "doubles": "Duplas",
+    "pairs": "Duplas",
+    "teams": "Times"
+  },
+  "attribute": {
+    "speed": "Velocidade",
+    "ball_control": "Controle de bola",
+    "passing": "Passe",
+    "defence": "Defesa",
+    "overall": "Geral",
+    "shooting": "Arremesso",
+    "handling": "Drible",
+    "athleticism": "Condição física",
+    "serve": "Saque",
+    "groundstrokes": "Golpes de fundo",
+    "net_play": "Jogo de rede",
+    "movement": "Movimentação",
+    "volley": "Voleio",
+    "walls": "Jogo de paredes",
+    "positioning": "Posicionamento",
+    "pace": "Ritmo",
+    "endurance": "Resistência",
+    "attack": "Ataque"
+  },
+  "level": {
+    "sectionTitle": "Níveis",
+    "label": "Nível",
+    "a11y": "Nível {level}",
+    "basedOn": "{count, plural, one {Com base em # jogo avaliado} many {Com base em # de jogos avaliados} other {Com base em # jogos avaliados}}",
+    "provisional": "Provisório",
+    "provisionalGames": "{count, plural, one {Provisório — jogue mais # jogo avaliado} many {Provisório — jogue mais # de jogos avaliados} other {Provisório — jogue mais # jogos avaliados}}",
+    "provisionalReliability": "Provisório — chegue a {percent} de confiabilidade para mostrar seu nível",
+    "provisionalSettling": "Provisório — mais alguns jogos vão firmar seu nível",
+    "frozen": "Aumente sua confiabilidade para {percent} para ganhar pontuação",
+    "frozenPill": "Pausado",
+    "confidence": "Precisão {percent}",
+    "historyA11y": "{weeks, plural, one {O nível foi de {from} para {to} em # semana} many {O nível foi de {from} para {to} em # de semanas} other {O nível foi de {from} para {to} em # semanas}}",
+    "weeksAgo": "{count, plural, one {Há # semana} many {Há # de semanas} other {Há # semanas}}",
+    "now": "Agora",
+    "emptyTitle": "Ainda sem nível",
+    "emptyBody": "Jogue partidas com placar confirmado e times definidos antes do início. Seu nível aparece depois de algumas."
+  },
+  "peers": {
+    "title": "{count, plural, one {O que # colega diz · só você vê} many {O que # de colegas dizem · só você vê} other {O que # colegas dizem · só você vê}}"
+  },
+  "rate": {
+    "title": "Avaliar jogadores",
+    "closes": "Aberto até {time}",
+    "privacy": "As avaliações são privadas. Ninguém vê quem avaliou, e elas só influenciam níveis e o equilíbrio dos times, nunca cartões.",
+    "pickTitle": "Com quem você jogou?",
+    "picked": "{count} de {max}",
+    "limit": "{count, plural, one {Você pode avaliar até # jogador por jogo.} many {Você pode avaliar até # de jogadores por jogo.} other {Você pode avaliar até # jogadores por jogo.}}",
+    "nobodyLeft": "Você já avaliou todos que podia neste jogo.",
+    "removeA11y": "Remover {name}",
+    "submit": "Enviar avaliações",
+    "submitCount": "{count, plural, one {Enviar # avaliação} many {Enviar # de avaliações} other {Enviar # avaliações}}",
+    "thanks": "{count, plural, one {Valeu, # avaliação enviada} many {Valeu, # de avaliações enviadas} other {Valeu, # avaliações enviadas}}"
+  },
+  "stars": {
+    "a11y": "{count, plural, one {# estrela} many {# de estrelas} other {# estrelas}}",
+    "skip": "Sem avaliação",
+    "word": {
+      "1": "Aprendendo",
+      "2": "Evoluindo",
+      "3": "Consistente",
+      "4": "Forte",
+      "5": "Destaque"
+    }
+  },
+  "gate": {
+    "title": "Você não pode avaliar este jogo",
+    "closedTitle": "A avaliação foi encerrada",
+    "body": "As avaliações são justas quando vêm de quem jogou e continua aparecendo.",
+    "fair": "As avaliações são privadas. Elas influenciam níveis e o equilíbrio dos times, nunca cartões."
+  },
+  "gateTitle": {
+    "not_verified": "Faça check-in para avaliar",
+    "low_reliability": "Aumente sua confiabilidade",
+    "too_few_games": "Mais alguns jogos antes",
+    "active_sanction": "Pausado por enquanto",
+    "window_not_open": "Ainda não abriu",
+    "window_closed": "A avaliação foi encerrada"
+  },
+  "ineligible": {
+    "not_verified": "Só quem fez check-in pode avaliar. Da próxima vez, faça check-in ao chegar.",
+    "low_reliability": "Para avaliar, é preciso {percent} de confiabilidade. Compareça aos jogos em que você entra para chegar lá.",
+    "too_few_games": "{count, plural, one {Jogue mais # jogo de {sport} verificado para avaliar outros. São necessários {required}.} many {Jogue mais # de jogos de {sport} verificados para avaliar outros. São necessários {required}.} other {Jogue mais # jogos de {sport} verificados para avaliar outros. São necessários {required}.}}",
+    "active_sanction": "A avaliação fica pausada enquanto houver um cartão ou restrição ativa. Ela volta quando terminar.",
+    "window_not_open": "A avaliação abre quando o jogo termina.",
+    "window_closed": "{hours, plural, one {A avaliação fica aberta # hora depois do jogo. Ela fechou {time}.} many {A avaliação fica aberta # de horas depois do jogo. Ela fechou {time}.} other {A avaliação fica aberta # horas depois do jogo. Ela fechou {time}.}}"
+  },
+  "notRated": {
+    "no_result": "Ainda sem placar",
+    "result_not_confirmed": "Aguardando os jogadores confirmarem o placar",
+    "result_disputed": "Sem avaliação: o placar foi contestado",
+    "too_few_verified": "Sem avaliação: poucos jogadores verificados",
+    "teams_not_published": "Sem avaliação: os times não foram definidos antes do início",
+    "not_two_sides": "Sem avaliação: são necessários dois times com placar",
+    "unrated_sport": "Este esporte não tem níveis"
+  },
+  "notRatedHelp": {
+    "no_result": "Registre o placar final para que o jogo conte para os níveis.",
+    "result_not_confirmed": "Conta para os níveis quando a maioria de quem fez check-in confirma.",
+    "result_disputed": "A maioria dos jogadores contestou o placar, então ele não conta para estatísticas nem níveis.",
+    "too_few_verified": "Os níveis só mudam quando pelo menos {percent} dos jogadores fizeram check-in.",
+    "teams_not_published": "Defina os times no app antes do início para que o jogo conte para os níveis.",
+    "not_two_sides": "Os níveis comparam dois times. Este jogo não teve dois times com placar.",
+    "unrated_sport": "Corridas não afetam os níveis."
+  },
+  "confirm": {
+    "title": "Este é o placar final?",
+    "statusTitle": "Confirmação do placar",
+    "help": "Confirme se ele bate com o que aconteceu. A maioria dos jogadores precisa concordar para o jogo contar para os níveis.",
+    "tally": "{count, plural, one {{confirms} de # jogador verificado confirmou} many {{confirms} de # de jogadores verificados confirmaram} other {{confirms} de # jogadores verificados confirmaram}}",
+    "disputes": "{count, plural, one {# contestação} many {# de contestações} other {# contestações}}",
+    "status": {
+      "pending": "Aguardando",
+      "confirmed": "Confirmado",
+      "disputed": "Contestado"
+    },
+    "confirm": "Confirmar",
+    "dispute": "Contestar",
+    "youConfirmed": "Você confirmou este placar. Pode mudar sua resposta até o prazo fechar.",
+    "youDisputed": "Você contestou este placar. Pode mudar sua resposta até o prazo fechar.",
+    "thanks": "Obrigado por confirmar",
+    "disputed": "Contestação registrada"
+  },
+  "band": {
+    "a11y": "Faixa de nível {band} de 5"
+  }
+}

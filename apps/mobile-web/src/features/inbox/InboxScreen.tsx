@@ -76,6 +76,7 @@ const KIND15: Record<string, { icon: IconName; tone: NoticeTone }> = {
   friend_accepted: { icon: 'UserCheck', tone: 'success' },
   media_tag_request: { icon: 'Tag', tone: 'brand' },
   media_blocked: { icon: 'ShieldWarning', tone: 'warning' },
+  rating_level_changed: { icon: 'ChartLineUp', tone: 'success' },
 };
 
 /** Requests are acted on in the Requests section above the list. */
@@ -165,6 +166,7 @@ export function InboxScreen() {
     if (kind === 'peer_rating_open' && n.gameId) return router.push(`/game/${n.gameId}/rate`);
     if ((kind === 'media_blocked' || kind === 'media_tag_request') && n.gameId) return router.push(`/game/${n.gameId}/gallery`);
     if (kind === 'friend_accepted') return router.push('/players');
+    if (kind === 'rating_level_changed') return router.push('/profile');
     if (n.sanctionId) router.push(`/sanctions/${n.sanctionId}`);
     else if (n.gameId) router.push(n.kind === 'result_requested' ? `/game/${n.gameId}/result` : n.kind === 'checkin_open' ? `/game/${n.gameId}/checkin` : `/game/${n.gameId}`);
   };

@@ -1,0 +1,60 @@
+{
+  "share": {
+    "game": "来参加我组织的{sport}比赛「{title}」{hasDate, select, yes {，{date} {time}} other {}}{hasArea, select, yes {，地点在{area}} other {}}。{hasSpots, select, yes {{spotsLeft, plural, =0 {已满员，但可以加入候补名单。} other {还剩 # 个名额。}}} other {}}在 Sport Talent 报名：{url}",
+    "gameWomenOnly": "女子{sport}比赛「{title}」{hasDate, select, yes {，{date} {time}} other {}}{hasArea, select, yes {，地点在{area}} other {}}。{hasSpots, select, yes {{spotsLeft, plural, =0 {已满员，但可以加入候补名单。} other {还剩 # 个名额。}}} other {}}在 Sport Talent 报名：{url}",
+    "series": {
+      "weekly": "我们每{weekday} {time}{hasArea, select, yes {在{area}} other {}}打{sport}：「{title}」。我们把群搬到 Sport Talent 了，固定成员每场都能优先报名{hasDate, select, yes {（下一场：{date}）} other {}}。加入固定成员：{url}",
+      "biweekly": "我们隔周{weekday} {time}{hasArea, select, yes {在{area}} other {}}打{sport}：「{title}」。我们把群搬到 Sport Talent 了，固定成员每场都能优先报名{hasDate, select, yes {（下一场：{date}）} other {}}。加入固定成员：{url}"
+    },
+    "seriesWomenOnly": {
+      "weekly": "女子{sport}，每{weekday} {time}{hasArea, select, yes {在{area}} other {}}：「{title}」。我们把群搬到 Sport Talent 了，固定成员每场都能优先报名{hasDate, select, yes {（下一场：{date}）} other {}}。加入固定成员：{url}",
+      "biweekly": "女子{sport}，隔周{weekday} {time}{hasArea, select, yes {在{area}} other {}}：「{title}」。我们把群搬到 Sport Talent 了，固定成员每场都能优先报名{hasDate, select, yes {（下一场：{date}）} other {}}。加入固定成员：{url}"
+    }
+  },
+  "preview": {
+    "title": "{sport}：{title}",
+    "spotsLeft": "{count, plural, =0 {已满员，可加入候补} other {还剩 # 个名额}}",
+    "weekly": "每{weekday} {time}",
+    "biweekly": "隔周{weekday} {time}",
+    "womenOnly": "仅限女性",
+    "siteName": "Sport Talent"
+  },
+  "group": {
+    "title": "邀请你的群",
+    "heading": "把你的 WhatsApp 群带过来",
+    "bodySeries": "只需分享一个链接。点开的人会成为固定成员，每场都能优先报名，你还能看到谁已经搬过来。",
+    "bodyGame": "把链接分享到群聊。玩家可以查看比赛，一键申请加入。",
+    "previewTitle": "群成员会看到的内容",
+    "whatsapp": "分享到 WhatsApp",
+    "copy": "复制链接",
+    "more": "更多选项",
+    "copied": "链接已复制",
+    "messageCopied": "消息已复制",
+    "noWhatsApp": "这台设备没有安装 WhatsApp。",
+    "linkTitle": "你的邀请链接",
+    "showQr": "显示二维码",
+    "hideQr": "隐藏二维码",
+    "qrHelp": "玩家可以在场地扫码加入。",
+    "rotate": "重置链接",
+    "rotateTitle": "要重置链接吗？",
+    "rotateBody": "旧链接会立即失效。请把新链接分享给你的群。",
+    "rotateConfirm": "重置链接",
+    "rotated": "新链接已生成",
+    "statsNone": "还没有人通过链接加入",
+    "step1": "点按“分享到 WhatsApp”，选择你的群聊。",
+    "step2": "玩家点开链接，用手机号登录。",
+    "step3": "你可以看到所有加入的人。把消息置顶，方便后来的人找到。"
+  },
+  "landing": {
+    "title": "加入固定成员",
+    "from": "{name}邀请你加入{title}",
+    "signedOutBody": "登录后即可查看比赛并加入固定成员。",
+    "signUp": "登录并加入固定成员",
+    "join": "加入固定成员",
+    "open": "打开系列",
+    "joined": "你已成为{title}的固定成员",
+    "perkFirstPick": "{hours, plural, other {每个场次优先报名 # 小时}}",
+    "perkAlwaysIn": "选择“每场都来”，自动获得名额",
+    "perkNoPolls": "不用再在群里追着接龙"
+  }
+}

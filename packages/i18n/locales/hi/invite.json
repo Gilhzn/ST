@@ -1,0 +1,60 @@
+{
+  "share": {
+    "game": "मेरे {sport} मैच “{title}” में आइए{hasDate, select, yes { — {date}, {time}} other {}}{hasArea, select, yes {, {area}} other {}}।{hasSpots, select, yes { {spotsLeft, plural, =0 {मैच भर गया है, पर आप वेटलिस्ट में जुड़ सकते हैं।} one {# जगह बची है।} other {# जगहें बची हैं।}}} other {}} Sport Talent पर जुड़ें: {url}",
+    "gameWomenOnly": "सिर्फ़ महिलाओं के लिए {sport} मैच “{title}”{hasDate, select, yes { — {date}, {time}} other {}}{hasArea, select, yes {, {area}} other {}}।{hasSpots, select, yes { {spotsLeft, plural, =0 {मैच भर गया है, पर आप वेटलिस्ट में जुड़ सकती हैं।} one {# जगह बची है।} other {# जगहें बची हैं।}}} other {}} Sport Talent पर जुड़ें: {url}",
+    "series": {
+      "weekly": "हम हर {weekday}, {time}{hasArea, select, yes {, {area} में} other {}} {sport} खेलते हैं: “{title}”। हम ग्रुप को Sport Talent पर ला रहे हैं, जहाँ रेगुलर को हर तारीख में पहले मौका मिलता है{hasDate, select, yes { (अगली: {date})} other {}}। रेगुलर बनें: {url}",
+      "biweekly": "हम हर दूसरे {weekday}, {time}{hasArea, select, yes {, {area} में} other {}} {sport} खेलते हैं: “{title}”। हम ग्रुप को Sport Talent पर ला रहे हैं, जहाँ रेगुलर को हर तारीख में पहले मौका मिलता है{hasDate, select, yes { (अगली: {date})} other {}}। रेगुलर बनें: {url}"
+    },
+    "seriesWomenOnly": {
+      "weekly": "सिर्फ़ महिलाओं के लिए {sport}, हर {weekday}, {time}{hasArea, select, yes {, {area} में} other {}}: “{title}”। हम ग्रुप को Sport Talent पर ला रहे हैं, जहाँ रेगुलर को हर तारीख में पहले मौका मिलता है{hasDate, select, yes { (अगली: {date})} other {}}। रेगुलर बनें: {url}",
+      "biweekly": "सिर्फ़ महिलाओं के लिए {sport}, हर दूसरे {weekday}, {time}{hasArea, select, yes {, {area} में} other {}}: “{title}”। हम ग्रुप को Sport Talent पर ला रहे हैं, जहाँ रेगुलर को हर तारीख में पहले मौका मिलता है{hasDate, select, yes { (अगली: {date})} other {}}। रेगुलर बनें: {url}"
+    }
+  },
+  "preview": {
+    "title": "{sport}: {title}",
+    "spotsLeft": "{count, plural, =0 {भर गया, वेटलिस्ट में जुड़ें} one {# जगह बची} other {# जगहें बचीं}}",
+    "weekly": "हर {weekday}, {time}",
+    "biweekly": "हर दूसरे {weekday}, {time}",
+    "womenOnly": "सिर्फ़ महिलाएँ",
+    "siteName": "Sport Talent"
+  },
+  "group": {
+    "title": "अपने ग्रुप को बुलाएँ",
+    "heading": "अपना WhatsApp ग्रुप लाएँ",
+    "bodySeries": "एक ही लिंक शेयर करें। जो भी उस पर टैप करेगा, वह रेगुलर बनेगा और हर तारीख में पहले मौका पाएगा, और आप देख सकेंगे कि कौन आया।",
+    "bodyGame": "ग्रुप चैट में लिंक शेयर करें। खिलाड़ी मैच देखकर एक टैप में जुड़ने का अनुरोध करते हैं।",
+    "previewTitle": "आपके ग्रुप को क्या दिखेगा",
+    "whatsapp": "WhatsApp पर शेयर करें",
+    "copy": "लिंक कॉपी करें",
+    "more": "और विकल्प",
+    "copied": "लिंक कॉपी हो गया",
+    "messageCopied": "मैसेज कॉपी हो गया",
+    "noWhatsApp": "इस डिवाइस पर WhatsApp इंस्टॉल नहीं है।",
+    "linkTitle": "आपका न्योता लिंक",
+    "showQr": "QR कोड दिखाएँ",
+    "hideQr": "QR कोड छिपाएँ",
+    "qrHelp": "खिलाड़ी मैदान पर इसे स्कैन करके जुड़ सकते हैं।",
+    "rotate": "लिंक रीसेट करें",
+    "rotateTitle": "लिंक रीसेट करें?",
+    "rotateBody": "पुराना लिंक तुरंत काम करना बंद कर देगा। नया लिंक अपने ग्रुप में शेयर करें।",
+    "rotateConfirm": "लिंक रीसेट करें",
+    "rotated": "नया लिंक तैयार है",
+    "statsNone": "अभी तक कोई लिंक से नहीं जुड़ा",
+    "step1": "“WhatsApp पर शेयर करें” पर टैप करें और अपनी ग्रुप चैट चुनें।",
+    "step2": "खिलाड़ी लिंक पर टैप करके अपने फ़ोन नंबर से साइन इन करते हैं।",
+    "step3": "आप जुड़ने वाले सभी लोगों को देख सकते हैं। मैसेज पिन करें ताकि देर से आने वाले भी उसे ढूँढ लें।"
+  },
+  "landing": {
+    "title": "रेगुलर बनें",
+    "from": "{name} ने आपको {title} में बुलाया है",
+    "signedOutBody": "मैच देखने और रेगुलर बनने के लिए साइन इन करें।",
+    "signUp": "रेगुलर बनने के लिए साइन इन करें",
+    "join": "रेगुलर बनें",
+    "open": "सीरीज़ खोलें",
+    "joined": "अब आप {title} के रेगुलर हैं",
+    "perkFirstPick": "{hours, plural, one {हर तारीख में # घंटा पहले मौका} other {हर तारीख में # घंटे पहले मौका}}",
+    "perkAlwaysIn": "“मैं हर बार आऊँगा/आऊँगी” चुनें और अपने-आप जगह पाएँ",
+    "perkNoPolls": "ग्रुप पोल के पीछे भागना खत्म"
+  }
+}
