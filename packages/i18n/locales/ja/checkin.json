@@ -7,7 +7,9 @@
     "title": "現在地を確認しています",
     "progress": "現在地を確認中… {done}/{total}",
     "accuracy": "精度：{accuracy}",
-    "retry": "もう一度試す"
+    "retry": "もう一度試す",
+    "intro": "その場にとどまってください。数秒おきに、位置を3回取得します。",
+    "start": "現在地を確認"
   },
   "success": {
     "title": "チェックインしました",
@@ -42,13 +44,22 @@
     "hint": "主催者の画面に表示されているコードにカメラを向けてください。",
     "enterCode": "代わりにコードを入力",
     "codeLabel": "6桁のコード",
-    "scanInstead": "代わりにQRコードを読み取る"
+    "scanInstead": "代わりにQRコードを読み取る",
+    "submit": "コードでチェックイン",
+    "tokenHint": "主催者のQRコードの下に表示されているコードを入力してください。",
+    "tokenLabel": "チェックインコード"
   },
   "peer": {
     "ask": "チームメイトに頼む",
     "hint": "すでにチェックインしているプレイヤーに、あなたが会場にいることの確認をお願いします。",
     "waiting": "{needed, plural, other {#件の確認}}を待っています · 受信済み{received}件",
-    "sent": "チームメイトにリクエストを送信しました。"
+    "sent": "チームメイトにリクエストを送信しました。",
+    "confirm": "確認",
+    "confirmA11y": "{name}が来ていることを確認",
+    "confirmHint": "今、会場で見かけているプレイヤーだけを確認してください。",
+    "confirmTitle": "チームメイトを確認",
+    "confirmed": "{count, plural, other {ありがとうございます。これまでに#件の確認がありました。}}",
+    "waitingNeeded": "チェックイン済みのチームメイト{needed, plural, other {#人}}の確認を待っています。"
   },
   "permission": {
     "location": {
@@ -82,6 +93,13 @@
     "manualTitle": "プレイヤーをマーク",
     "markPresent": "{name}を出席にする",
     "present": "出席",
-    "notHere": "未到着"
-  }
+    "notHere": "未到着",
+    "newCode": "新しいコード",
+    "qrA11y": "プレイヤーが読み取るチェックイン用QRコード"
+  },
+  "geofence": {
+    "title": "Sport Talent",
+    "body": "試合の会場の近くです。タップしてチェックインしましょう。"
+  },
+  "fallbacks": "{count, plural, other {下のほかの方法をお試しください。}}"
 }

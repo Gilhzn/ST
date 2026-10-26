@@ -19,7 +19,10 @@
     "sortSoonest": "最早开始",
     "sortNearest": "距离最近",
     "showList": "列表",
-    "showMap": "地图"
+    "showMap": "地图",
+    "sortA11y": "排序方式：{sort}",
+    "expand": "显示更多比赛",
+    "collapse": "收起"
   },
   "card": {
     "distanceAway": "距你 {distance}",
@@ -51,7 +54,8 @@
   "empty": {
     "title": "{distance}内没有{sports}比赛。",
     "widen": "扩大到 {distance}",
-    "create": "创建比赛"
+    "create": "创建比赛",
+    "allSports": "任何运动"
   },
   "locationDenied": {
     "title": "位置服务已关闭",
@@ -64,5 +68,9 @@
   },
   "offline": {
     "cachedNote": "正在显示已保存的比赛。"
+  },
+  "zoom": {
+    "in": "放大",
+    "out": "缩小"
   }
 }

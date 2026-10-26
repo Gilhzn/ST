@@ -7,7 +7,9 @@
     "title": "正在確認你的位置",
     "progress": "正在確認你的位置… {done}/{total}",
     "accuracy": "精確度：{accuracy}",
-    "retry": "再試一次"
+    "retry": "再試一次",
+    "intro": "請留在原地。我們會間隔幾秒讀取三次位置。",
+    "start": "檢查我的位置"
   },
   "success": {
     "title": "報到成功",
@@ -42,13 +44,22 @@
     "hint": "請將相機對準主辦人螢幕上的 QR 碼。",
     "enterCode": "改為輸入驗證碼",
     "codeLabel": "6 位數代碼",
-    "scanInstead": "改為掃描 QR 碼"
+    "scanInstead": "改為掃描 QR 碼",
+    "submit": "用代碼報到",
+    "tokenHint": "請輸入主辦人 QR 碼下方顯示的代碼。",
+    "tokenLabel": "報到代碼"
   },
   "peer": {
     "ask": "請隊友確認",
     "hint": "我們會請已報到的球友確認你已到場。",
     "waiting": "等待{needed, plural, other {# 個確認}} · 已收到 {received} 個",
-    "sent": "已向你的隊友送出請求。"
+    "sent": "已向你的隊友送出請求。",
+    "confirm": "確認",
+    "confirmA11y": "確認 {name} 已到場",
+    "confirmHint": "只確認你此刻在場地上看到的球友。",
+    "confirmTitle": "確認隊友",
+    "confirmed": "{count, plural, other {謝謝，目前已有 # 個確認。}}",
+    "waitingNeeded": "正在等待{needed, plural, other {# 位}}已報到的隊友確認你。"
   },
   "permission": {
     "location": {
@@ -82,6 +93,13 @@
     "manualTitle": "標記球友",
     "markPresent": "將 {name} 標記為已到場",
     "present": "已到場",
-    "notHere": "未到場"
-  }
+    "notHere": "未到場",
+    "newCode": "新代碼",
+    "qrA11y": "供球友掃描的報到 QR 碼"
+  },
+  "geofence": {
+    "title": "Sport Talent",
+    "body": "你已在比賽附近，點選即可報到。"
+  },
+  "fallbacks": "{count, plural, other {請試試下方的其他方式。}}"
 }

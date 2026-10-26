@@ -66,5 +66,9 @@
   "deposit_action_required": {
     "title": "Aktion für deine Kaution nötig",
     "body": "Bitte bestätige die Reservierung von {amount} als Kaution für „{gameTitle}“. Öffne die App, um fortzufahren."
+  },
+  "waitlist_offer": {
+    "title": "Ein Platz wartet auf dich",
+    "body": "In einem Spiel, bei dem du auf der Warteliste stehst, ist ein Platz frei geworden. Nimm ihn in der App an, bevor das Angebot abläuft."
   }
 }

@@ -184,21 +184,17 @@ export type Namespace = (typeof NAMESPACES)[number];
 /** Namespace used when a key has no `ns:` prefix. */
 export const DEFAULT_NAMESPACE = 'common' satisfies Namespace;
 
-/** The English source catalog; every other locale must have the same shape. */
-export type Catalog = {
-  common: typeof en_common;
-  auth: typeof en_auth;
-  map: typeof en_map;
-  games: typeof en_games;
-  checkin: typeof en_checkin;
-  chat: typeof en_chat;
-  trust: typeof en_trust;
-  profile: typeof en_profile;
-  settings: typeof en_settings;
-  legal: typeof en_legal;
-  errors: typeof en_errors;
-  notifications: typeof en_notifications;
-};
+/** A (possibly nested) catalog file: messages are strings, groups are objects. */
+export interface MessageTree {
+  [key: string]: string | MessageTree;
+}
+
+/**
+ * One locale's catalogs, one tree per namespace. Deliberately loose: adding a key to
+ * `locales/en` must not break `tsc`. Other locales are held to the same keys by
+ * `npm run i18n:check` and the catalog test, not by the type system.
+ */
+export type Catalog = Record<Namespace, MessageTree>;
 
 /** All catalogs, keyed by locale. English is the source of truth. */
 export const resources: Record<Locale, Catalog> = {

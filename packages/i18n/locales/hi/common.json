@@ -113,5 +113,24 @@
     "withPercent": "{status} · {percent}",
     "a11y": "विश्वसनीयता: {status}, {percent}",
     "a11yNew": "विश्वसनीयता: नया खिलाड़ी"
+  },
+  "nav": {
+    "map": "नक्शा",
+    "games": "मैच",
+    "inbox": "इनबॉक्स",
+    "profile": "प्रोफ़ाइल",
+    "settings": "सेटिंग"
+  },
+  "datetime": {
+    "dayTime": "{day}, {time}"
+  },
+  "notFound": {
+    "title": "यह पेज नहीं मिला",
+    "body": "हो सकता है लिंक पुराना हो या उसमें गलती हो।",
+    "home": "नक्शे पर जाएँ"
+  },
+  "placeholder": {
+    "title": "जल्द आ रहा है",
+    "body": "Sport Talent का यह हिस्सा अगले अपडेट में आएगा।"
   }
 }

@@ -2,6 +2,10 @@
 
 `en` is the source of truth. **Every other locale (he, ar, es, zh-Hans, zh-Hant, ja, pt, ru, fr, it, de, hi) was produced by an LLM translator and has not been reviewed by a native speaker.** All of them carry the "requires native review" flag until a reviewer signs off below.
 
+## Latest additions needing review
+
+The final localization round (app-wave strings: navigation, 404 and placeholder pages, gender and skill pickers, create-game steps, "My games", waitlist offers, check-in confirmations, account deletion details, and `waitlist_offer`) was translated in the same way and is in the files listed above, so the same review applies. Reviewers should pay particular attention to `settings:delete.*` (what is deleted and kept), `games:details.cancel.*` (late-cancel consequences) and `trust:sanctions.*` lines.
+
 ## Review order
 
 1. **`legal`** (all locales): privacy, terms, community rules, contact. The English text is itself a placeholder that legal counsel must replace before launch; translate again after that, do not just review.

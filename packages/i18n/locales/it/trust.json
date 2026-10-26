@@ -72,7 +72,8 @@
       "human": "Questa decisione è stata presa da un moderatore.",
       "askPerson": "Puoi chiedere che una persona esamini qualsiasi decisione.",
       "affectsTitle": "Cosa comporta",
-      "stillAllowedTitle": "Cosa puoi ancora fare"
+      "stillAllowedTitle": "Cosa puoi ancora fare",
+      "ruleLine": "Regola: {rule}"
     },
     "rule": {
       "late_cancel": "Regola sulle cancellazioni tardive",
@@ -113,7 +114,8 @@
     "dispute": {
       "cta": "Contesta questo cartellino",
       "window": "Puoi contestare questo cartellino fino al {date}.",
-      "windowClosed": "Il termine per contestare è scaduto, ma puoi ancora presentare ricorso."
+      "windowClosed": "Il termine per contestare è scaduto, ma puoi ancora presentare ricorso.",
+      "windowLeft": "Puoi contestare questo cartellino fino al {date} (restano {duration})."
     },
     "appeal": {
       "cta": "Presenta ricorso contro la decisione",
@@ -144,7 +146,8 @@
         "upheld": "La decisione è confermata.",
         "overturned": "La decisione è stata annullata."
       },
-      "reviewerNote": "Nota di chi ha esaminato"
+      "reviewerNote": "Nota di chi ha esaminato",
+      "reviewerNoteLine": "Nota di chi ha esaminato: {note}"
     }
   },
   "hostRestriction": {

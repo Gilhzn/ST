@@ -113,5 +113,24 @@
     "withPercent": "{status} · {percent}",
     "a11y": "Zuverlässigkeit: {status}, {percent}",
     "a11yNew": "Zuverlässigkeit: neu dabei"
+  },
+  "nav": {
+    "map": "Karte",
+    "games": "Spiele",
+    "inbox": "Posteingang",
+    "profile": "Profil",
+    "settings": "Einstellungen"
+  },
+  "datetime": {
+    "dayTime": "{day}, {time}"
+  },
+  "notFound": {
+    "title": "Diese Seite gibt es nicht",
+    "body": "Der Link ist vielleicht veraltet oder falsch eingegeben.",
+    "home": "Zur Karte"
+  },
+  "placeholder": {
+    "title": "Demnächst",
+    "body": "Dieser Teil von Sport Talent kommt mit dem nächsten Update."
   }
 }

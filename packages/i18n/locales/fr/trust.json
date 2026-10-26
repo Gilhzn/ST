@@ -72,7 +72,8 @@
       "human": "Un modérateur a pris cette décision.",
       "askPerson": "Tu peux demander qu’une personne examine n’importe quelle décision.",
       "affectsTitle": "Ce que cela change",
-      "stillAllowedTitle": "Ce que tu peux toujours faire"
+      "stillAllowedTitle": "Ce que tu peux toujours faire",
+      "ruleLine": "Règle : {rule}"
     },
     "rule": {
       "late_cancel": "Règle sur les annulations tardives",
@@ -113,7 +114,8 @@
     "dispute": {
       "cta": "Contester ce carton",
       "window": "Tu peux contester ce carton jusqu’au {date}.",
-      "windowClosed": "Le délai de contestation est terminé, mais tu peux toujours faire appel."
+      "windowClosed": "Le délai de contestation est terminé, mais tu peux toujours faire appel.",
+      "windowLeft": "Tu peux contester ce carton jusqu’au {date} ({duration} restant)."
     },
     "appeal": {
       "cta": "Faire appel de cette décision",
@@ -144,7 +146,8 @@
         "upheld": "La décision est maintenue.",
         "overturned": "La décision a été annulée."
       },
-      "reviewerNote": "Note de la personne en charge de l’examen"
+      "reviewerNote": "Note de la personne en charge de l’examen",
+      "reviewerNoteLine": "Note de la personne en charge de l’examen : {note}"
     }
   },
   "hostRestriction": {

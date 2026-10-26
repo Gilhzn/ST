@@ -7,7 +7,9 @@
     "title": "Vérification de ta position",
     "progress": "Vérification de ta position… {done} sur {total}",
     "accuracy": "Précision : {accuracy}",
-    "retry": "Réessayer"
+    "retry": "Réessayer",
+    "intro": "Reste où tu es. Nous faisons trois relevés de position à quelques secondes d’intervalle.",
+    "start": "Vérifier ma position"
   },
   "success": {
     "title": "Check-in effectué",
@@ -42,13 +44,22 @@
     "hint": "Oriente l’appareil photo vers le code affiché sur l’écran de l’organisateur.",
     "enterCode": "Saisir le code à la place",
     "codeLabel": "Code à 6 chiffres",
-    "scanInstead": "Scanner le QR code à la place"
+    "scanInstead": "Scanner le QR code à la place",
+    "submit": "Faire le check-in avec le code",
+    "tokenHint": "Saisis le code affiché sous le QR code de l’organisateur.",
+    "tokenLabel": "Code de check-in"
   },
   "peer": {
     "ask": "Demander à un coéquipier",
     "hint": "Nous demanderons aux joueurs déjà enregistrés de confirmer que tu es là.",
     "waiting": "En attente de {needed, plural, one {# confirmation} many {# de confirmations} other {# confirmations}} · reçues : {received}",
-    "sent": "Demande envoyée à tes coéquipiers."
+    "sent": "Demande envoyée à tes coéquipiers.",
+    "confirm": "Confirmer",
+    "confirmA11y": "Confirmer que {name} est là",
+    "confirmHint": "Ne confirme que les joueurs que tu vois sur le lieu en ce moment.",
+    "confirmTitle": "Confirmer des coéquipiers",
+    "confirmed": "{count, plural, one {Merci. # confirmation pour l’instant.} many {Merci. # de confirmations pour l’instant.} other {Merci. # confirmations pour l’instant.}}",
+    "waitingNeeded": "En attente de la confirmation de {needed, plural, one {# coéquipier qui a déjà fait son check-in.} many {# de coéquipiers qui ont déjà fait leur check-in.} other {# coéquipiers qui ont déjà fait leur check-in.}}"
   },
   "permission": {
     "location": {
@@ -82,6 +93,13 @@
     "manualTitle": "Marquer les joueurs",
     "markPresent": "Marquer {name} comme présent",
     "present": "Présent",
-    "notHere": "Absent"
-  }
+    "notHere": "Absent",
+    "newCode": "Nouveau code",
+    "qrA11y": "QR code de check-in à scanner par les joueurs"
+  },
+  "geofence": {
+    "title": "Sport Talent",
+    "body": "Tu es près de la partie. Appuie pour faire ton check-in."
+  },
+  "fallbacks": "{count, plural, one {Essaie l’autre méthode ci-dessous.} many {Essaie l’une des autres méthodes ci-dessous.} other {Essaie l’une des autres méthodes ci-dessous.}}"
 }

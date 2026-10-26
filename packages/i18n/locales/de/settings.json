@@ -45,7 +45,9 @@
     "safety": "Konto und Sicherheit",
     "safetyLocked": "Immer aktiv. Wir sind verpflichtet, dich über Entscheidungen zu deinem Konto zu informieren.",
     "osOff": "Mitteilungen sind in den Geräteeinstellungen ausgeschaltet.",
-    "osOffAction": "Geräteeinstellungen öffnen"
+    "osOffAction": "Geräteeinstellungen öffnen",
+    "deviceNote": "Diese Einstellungen werden auf diesem Gerät gespeichert.",
+    "unavailable": "Push-Mitteilungen sind hier nicht verfügbar. Neuigkeiten siehst du trotzdem in deinem Posteingang."
   },
   "privacy": {
     "title": "Datenschutz und Sicherheit",
@@ -67,11 +69,16 @@
     "blocked": {
       "title": "Blockierte Spieler:innen",
       "empty": "Du hast niemanden blockiert.",
-      "unblockConfirm": "Blockierung von {name} aufheben?"
+      "unblockConfirm": "Blockierung von {name} aufheben?",
+      "unnamed": "Blockierte:r Spieler:in {number}",
+      "since": "Blockiert am {date}",
+      "unblocked": "Blockierung aufgehoben."
     },
     "data": {
       "download": "Meine Daten herunterladen",
-      "help": "Fordere eine Kopie deiner Daten an. Wir sagen dir Bescheid, wenn sie bereit ist."
+      "help": "Fordere eine Kopie deiner Daten an. Wir sagen dir Bescheid, wenn sie bereit ist.",
+      "title": "Deine Daten",
+      "contact": "Melde dich bei uns, dann schicken wir dir eine Kopie."
     }
   },
   "delete": {
@@ -87,7 +94,15 @@
     "button": "Mein Konto löschen",
     "deleting": "Dein Konto wird gelöscht …",
     "done": "Dein Konto wurde gelöscht.",
-    "webLink": "Du kannst dein Konto auch im Web löschen: {url}"
+    "webLink": "Du kannst dein Konto auch im Web löschen: {url}",
+    "confirmIntro": "Das ist der letzte Schritt. Dein Konto wird sofort gelöscht und du wirst abgemeldet.",
+    "gamesTitle": "Deine Spiele",
+    "games": "Du wirst aus Spielen, denen du beigetreten bist, entfernt – ohne Gelbe Karte –, und Kautionsreservierungen werden aufgehoben. Spiele, die du organisierst und die noch nicht begonnen haben, gehen an eine Co-Organisation, falls es eine gibt. Sonst werden sie abgesagt und die Spieler:innen benachrichtigt.",
+    "keptMore": "Zahlungsbelege bewahren wir bis zu 7 Jahre in einer Form auf, die dich nicht identifiziert, weil das Steuerrecht es verlangt. Backups werden innerhalb von 30 Tagen gelöscht.",
+    "timingTitle": "Wann es passiert",
+    "timing": "Dein Profil verschwindet sofort aus der App. Die übrigen personenbezogenen Daten werden innerhalb von 24 Stunden gelöscht.",
+    "reregister": "Du kannst dich später mit derselben Nummer neu registrieren. Läuft noch eine Sperre oder Verwarnung, gilt die Restzeit wieder.",
+    "keep": "Konto behalten"
   },
   "about": {
     "version": "Version {version}",

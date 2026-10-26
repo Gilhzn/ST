@@ -113,5 +113,24 @@
     "withPercent": "{status} · {percent}",
     "a11y": "可靠度：{status}，{percent}",
     "a11yNew": "可靠度：新球友"
+  },
+  "nav": {
+    "map": "地圖",
+    "games": "比賽",
+    "inbox": "收件匣",
+    "profile": "我的",
+    "settings": "設定"
+  },
+  "datetime": {
+    "dayTime": "{day} {time}"
+  },
+  "notFound": {
+    "title": "找不到這個頁面",
+    "body": "連結可能已過期，或輸入有誤。",
+    "home": "前往地圖"
+  },
+  "placeholder": {
+    "title": "即將推出",
+    "body": "Sport Talent 的這個部分將在下次更新中上線。"
   }
 }

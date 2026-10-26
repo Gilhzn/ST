@@ -19,7 +19,10 @@
     "sortSoonest": "सबसे जल्दी शुरू होने वाले",
     "sortNearest": "सबसे नज़दीक",
     "showList": "सूची",
-    "showMap": "नक्शा"
+    "showMap": "नक्शा",
+    "sortA11y": "इसके अनुसार क्रमबद्ध करें: {sort}",
+    "expand": "और मैच दिखाएँ",
+    "collapse": "कम दिखाएँ"
   },
   "card": {
     "distanceAway": "{distance} दूर",
@@ -51,7 +54,8 @@
   "empty": {
     "title": "{distance} के भीतर {sports} का कोई मैच नहीं है।",
     "widen": "{distance} तक बढ़ाएँ",
-    "create": "मैच बनाएँ"
+    "create": "मैच बनाएँ",
+    "allSports": "किसी भी खेल"
   },
   "locationDenied": {
     "title": "लोकेशन बंद है",
@@ -64,5 +68,9 @@
   },
   "offline": {
     "cachedNote": "सहेजे हुए मैच दिखाए जा रहे हैं।"
+  },
+  "zoom": {
+    "in": "ज़ूम इन",
+    "out": "ज़ूम आउट"
   }
 }

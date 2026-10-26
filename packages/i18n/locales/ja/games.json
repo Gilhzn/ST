@@ -95,7 +95,8 @@
       "venueNameLabel": "会場名",
       "venueNameHint": "プレイヤーが見つけやすいように、場所の名前を付けてください。",
       "hideExactLabel": "参加を承認するまで正確な場所を非表示にする",
-      "hideExactHelp": "プレイヤーにはまずエリアだけが表示されます。承認した人にだけ正確な場所を共有します。"
+      "hideExactHelp": "プレイヤーにはまずエリアだけが表示されます。承認した人にだけ正確な場所を共有します。",
+      "pinHere": "現在の地図の範囲を集合場所にする"
     },
     "when": {
       "title": "いつですか？",
@@ -122,7 +123,13 @@
       "minReliable": "信頼できる人のみ",
       "approval": "参加方法",
       "approvalAuto": "自動で承認する",
-      "approvalManual": "一人ずつ承認する"
+      "approvalManual": "一人ずつ承認する",
+      "fewer": "人数を減らす",
+      "more": "人数を増やす",
+      "minPlayers": "最少催行人数",
+      "minPlayersHelp": "{count, plural, other {#人以上集まれば、試合は開催されます。}}",
+      "fewerMin": "最少人数を減らす",
+      "moreMin": "最少人数を増やす"
     },
     "deposit": {
       "title": "デポジット（任意）",
@@ -136,7 +143,11 @@
       "edit": "編集",
       "publish": "試合を公開",
       "publishing": "公開中…",
-      "offlineHint": "オンラインに戻ってから公開してください。"
+      "offlineHint": "オンラインに戻ってから公開してください。",
+      "whenValue": "{start} · {duration}",
+      "whoValue": "{capacity, plural, other {#人のプレイヤー}}（最少{min}人）· {visibility}",
+      "noDeposit": "デポジットなし",
+      "editA11y": "{section}を編集"
     },
     "published": {
       "title": "試合を公開しました",
@@ -144,7 +155,8 @@
       "whatsapp": "WhatsAppで共有",
       "copyLink": "リンクをコピー",
       "linkCopied": "リンクをコピーしました。",
-      "showQr": "QRコードを表示"
+      "showQr": "QRコードを表示",
+      "viewGame": "試合を見る"
     },
     "discard": {
       "title": "下書きを破棄しますか？",
@@ -164,7 +176,8 @@
       "title": "現在は主催できません",
       "body": "アカウントの主催機能が一時停止されています。理由と終了日をご確認ください。",
       "action": "詳細を見る"
-    }
+    },
+    "defaultTitle": "{sport}の試合"
   },
   "details": {
     "hiddenLocation": "正確な場所は、主催者が承認したあとに共有されます",
@@ -187,7 +200,11 @@
       "cancelConfirm": "この試合を中止する",
       "showQr": "チェックインQRを表示",
       "teams": "チーム",
-      "enterResult": "結果を入力"
+      "enterResult": "結果を入力",
+      "badge": "主催者",
+      "approved": "プレイヤーを承認しました。",
+      "waitlisted": "試合が満員のため、プレイヤーはキャンセル待ちになりました。",
+      "rejected": "リクエストを辞退しました。"
     },
     "facts": {
       "players": "{capacity}人中{joined}人",
@@ -215,7 +232,8 @@
       "directions": "経路",
       "cantMakeIt": "参加できなくなった",
       "leaveWaitlist": "キャンセル待ちをやめる",
-      "waitlistPosition": "キャンセル待ちの{position}番目です。"
+      "waitlistPosition": "キャンセル待ちの{position}番目です。",
+      "requestHint": "主催者にリクエストを送信します"
     },
     "outcome": {
       "joined": "参加が決まりました。当日お会いしましょう。",
@@ -227,7 +245,10 @@
       "lateWarning": "開始の{hours, plural, other {#時間}}未満前に取り消すと直前キャンセルとなり、イエローカードが付きます。",
       "freeUntil": "{time}までなら、ペナルティなしで取り消せます。",
       "confirm": "参加を取り消す",
-      "keep": "参加を続ける"
+      "keep": "参加を続ける",
+      "done": "参加を取り消しました。",
+      "cardIssued": "参加を取り消しました。直前のキャンセルのため、イエローカードが付きました。",
+      "lateRecorded": "参加を取り消しました。直前のキャンセルのため、キャンセル待ちの人があなたの枠に入らなかった場合は、試合後にイエローカードが付くことがあります。"
     },
     "deposit": {
       "disclosure": "{amount}を仮押さえ · チェックイン後に解除",
@@ -239,20 +260,33 @@
         "released": "解除済み",
         "forfeited": "没収",
         "failed": "仮押さえに失敗"
-      }
+      },
+      "saved": "支払い方法を保存しました。仮押さえは試合の前日に行われます。"
     },
     "banner": {
       "cancelled": "この試合は中止されました。理由：{reason}",
       "cancelledNoReason": "この試合は中止されました。",
       "ended": "この試合は終了しました。",
       "rateHost": "主催者を評価"
+    },
+    "when": "{relative} · {absolute}",
+    "playersAfterJoin": "主催者が承認すると、誰が参加するか確認できます。",
+    "checkedIn": "チェックイン済み",
+    "offer": {
+      "title": "空きが出ました",
+      "body": "キャンセル待ちの次はあなたです。枠を受け取ると試合に参加できます。",
+      "flash": "試合がまもなく始まるため、キャンセル待ちの全員にこのオファーが届いています。最初に受け取った人が枠を得ます。",
+      "acceptWithin": "{duration}以内に受け取ってください（{time}まで）。",
+      "accept": "枠を受け取る",
+      "accepted": "参加が決まりました。当日お会いしましょう。"
     }
   },
   "invite": {
     "title": "招待が届いています",
     "join": "参加する",
     "signUpToJoin": "登録して参加",
-    "expired": "この招待は期限切れです。主催者に新しいリンクをお願いしてください。"
+    "expired": "この招待は期限切れです。主催者に新しいリンクをお願いしてください。",
+    "signedOutBody": "この試合を見て参加するには、ログインまたはアカウント作成をしてください。"
   },
   "teams": {
     "title": "チーム",
@@ -264,7 +298,10 @@
     "movePlayer": "プレイヤーを移動",
     "moveTo": "{team}へ移動",
     "lock": "チームを確定",
-    "locked": "チームを確定しました。プレイヤーに通知しました。"
+    "locked": "チームを確定しました。プレイヤーに通知しました。",
+    "coverageTeam": "{team}：{roles}",
+    "notLocked": "主催者はまだチームを決めていません。",
+    "reshuffled": "チームをシャッフルしました。"
   },
   "result": {
     "title": "結果を入力",
@@ -276,6 +313,41 @@
     "didntPlay": "試合は行わなかった",
     "submit": "結果を保存",
     "saved": "結果を保存しました。プレイヤーは{hours, plural, other {#時間}}以内に異議を申し立てられます。",
-    "closed": "結果の入力期間は{time}に終了しました。"
+    "closed": "結果の入力期間は{time}に終了しました。",
+    "notYet": "試合が{time}に終了すると、結果を入力できます。"
+  },
+  "my": {
+    "refresh": "更新",
+    "segmentsA11y": "試合を表示",
+    "segment": {
+      "upcoming": "予定",
+      "hosting": "主催",
+      "past": "過去"
+    },
+    "findGame": "試合を探す",
+    "hostGame": "試合を主催する",
+    "empty": {
+      "upcoming": {
+        "title": "予定されている試合はありません",
+        "body": "参加または主催する試合がここに表示されます。地図で探してみましょう。"
+      },
+      "hosting": {
+        "title": "主催している試合はありません",
+        "body": "試合を主催すると、参加者がここに表示されます。"
+      },
+      "past": {
+        "title": "過去の試合はまだありません",
+        "body": "プレーした試合や主催した試合がここに表示されます。"
+      }
+    },
+    "state": {
+      "hosting": "主催中",
+      "going": "参加確定",
+      "waitlisted": "キャンセル待ち",
+      "requested": "リクエスト送信済み",
+      "cancelled": "中止",
+      "checkedIn": "チェックイン済み",
+      "noShow": "無断欠席"
+    }
   }
 }

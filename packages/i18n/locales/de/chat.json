@@ -17,7 +17,8 @@
     "moreOptions": "Nachrichtenoptionen",
     "checking": "Wird geprüft …",
     "notSent": "Nicht gesendet. Tippen, um es erneut zu versuchen",
-    "queued": "Wartet auf Senden"
+    "queued": "Wartet auf Senden",
+    "retracted": "Diese Nachricht wurde entfernt."
   },
   "translate": {
     "translatedFrom": "Übersetzt aus: {language}",

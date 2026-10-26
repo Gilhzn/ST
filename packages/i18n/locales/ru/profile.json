@@ -10,7 +10,10 @@
     "gamesHosted": "Организовано игр",
     "checkInRate": "Доля чек-инов",
     "favoriteVenue": "Любимая площадка",
-    "none": "Пока нет"
+    "none": "Пока нет",
+    "verifiedAttendance": "Подтверждённое присутствие",
+    "noShows": "Неявки",
+    "lateCancels": "Поздние отмены"
   },
   "positions": {
     "title": "Позиции",
@@ -54,5 +57,8 @@
     "changePhoto": "Изменить фото",
     "removePhoto": "Удалить фото",
     "saved": "Профиль сохранён."
+  },
+  "sanctions": {
+    "openHint": "Показывает, почему это применяется и что можно сделать"
   }
 }

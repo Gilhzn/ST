@@ -15,8 +15,6 @@ import { I18nManager, Platform } from 'react-native';
 import { restartApp } from '@/platform/restart';
 import { getPref, PrefKeys, setPref } from '@/state/prefs';
 
-import pendingEn from './pending.en.json';
-
 export type TFunction = (key: string, values?: Record<string, unknown>) => string;
 
 interface I18nValue {
@@ -64,11 +62,7 @@ export function I18nProvider({ children }: { children: ReactNode }) {
     (async () => {
       const saved = await getPref<string>(PrefKeys.locale);
       const locale = isLocale(saved) ? saved : device;
-      const i18n = initI18n({ locale, debug: false });
-      // English copy added by the app this wave and not yet in packages/i18n (whose catalogs are
-      // type-locked to identical shapes across locales). Never overrides package strings; other
-      // locales fall back to it until the localization owner moves and translates these keys.
-      for (const [ns, bundle] of Object.entries(pendingEn)) i18n.addResourceBundle('en', ns, bundle, true, false);
+      initI18n({ locale, debug: false });
       if (await alignNativeDirection(locale)) return;
       if (alive) setState({ locale, followsDevice: !isLocale(saved) });
     })();

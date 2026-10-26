@@ -58,7 +58,7 @@ describe('keys used by apps/mobile-web exist in en', () => {
       } else if (TEMPLATE_KEY.test(key)) {
         checked++;
         const pattern = new RegExp(
-          '^' + key.replace(/[.*+?^()|[\]\\]/g, '\\$&').replace(/\$\{[^}]*\}/g, '[A-Za-z0-9_]+').replace(/\{/g, '\\{') + '$',
+          '^' + key.replace(/[.*+?^()|[\]\\]/g, '\\$&').replace(/\$\{[^}]*\}/g, '[A-Za-z0-9_.]+').replace(/\{/g, '\\{') + '$',
         );
         if (![...keys].some((k) => pattern.test(k))) unmatched.push(`${rel}: ${key}`);
       }

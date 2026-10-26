@@ -19,7 +19,10 @@
     "sortSoonest": "Più imminenti",
     "sortNearest": "Più vicine",
     "showList": "Elenco",
-    "showMap": "Mappa"
+    "showMap": "Mappa",
+    "sortA11y": "Ordina per: {sort}",
+    "expand": "Mostra più partite",
+    "collapse": "Mostra meno"
   },
   "card": {
     "distanceAway": "A {distance}",
@@ -51,7 +54,8 @@
   "empty": {
     "title": "Nessuna partita entro {distance} per {sports}.",
     "widen": "Amplia a {distance}",
-    "create": "Crea una partita"
+    "create": "Crea una partita",
+    "allSports": "qualsiasi sport"
   },
   "locationDenied": {
     "title": "La posizione è disattivata",
@@ -64,5 +68,9 @@
   },
   "offline": {
     "cachedNote": "Vengono mostrate le partite salvate."
+  },
+  "zoom": {
+    "in": "Ingrandisci",
+    "out": "Riduci"
   }
 }

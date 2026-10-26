@@ -66,5 +66,9 @@
   "deposit_action_required": {
     "title": "押金需要你处理",
     "body": "我们需要你确认《{gameTitle}》的 {amount} 押金预授权。请打开应用继续。"
+  },
+  "waitlist_offer": {
+    "title": "有一个名额留给你",
+    "body": "你候补的一场比赛有了空位。请在邀请过期前在应用中接受。"
   }
 }

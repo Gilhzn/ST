@@ -10,7 +10,10 @@
     "gamesHosted": "आयोजित मैच",
     "checkInRate": "चेक-इन दर",
     "favoriteVenue": "पसंदीदा मैदान",
-    "none": "अभी कोई नहीं"
+    "none": "अभी कोई नहीं",
+    "verifiedAttendance": "सत्यापित उपस्थिति",
+    "noShows": "न पहुँचना",
+    "lateCancels": "देर से रद्द"
   },
   "positions": {
     "title": "पोज़ीशन",
@@ -54,5 +57,8 @@
     "changePhoto": "फ़ोटो बदलें",
     "removePhoto": "फ़ोटो हटाएँ",
     "saved": "प्रोफ़ाइल सहेज ली गई।"
+  },
+  "sanctions": {
+    "openHint": "दिखाता है कि यह क्यों लागू है और आप क्या कर सकते हैं"
   }
 }

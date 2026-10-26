@@ -19,7 +19,10 @@
     "sortSoonest": "Plus proches dans le temps",
     "sortNearest": "Plus proches",
     "showList": "Liste",
-    "showMap": "Carte"
+    "showMap": "Carte",
+    "sortA11y": "Trier par : {sort}",
+    "expand": "Afficher plus de parties",
+    "collapse": "Afficher moins"
   },
   "card": {
     "distanceAway": "À {distance}",
@@ -51,7 +54,8 @@
   "empty": {
     "title": "Aucune partie dans un rayon de {distance} pour {sports}.",
     "widen": "Élargir à {distance}",
-    "create": "Créer une partie"
+    "create": "Créer une partie",
+    "allSports": "aucun sport en particulier"
   },
   "locationDenied": {
     "title": "La localisation est désactivée",
@@ -64,5 +68,9 @@
   },
   "offline": {
     "cachedNote": "Affichage des parties enregistrées."
+  },
+  "zoom": {
+    "in": "Zoom avant",
+    "out": "Zoom arrière"
   }
 }

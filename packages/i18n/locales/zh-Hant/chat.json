@@ -17,7 +17,8 @@
     "moreOptions": "訊息選項",
     "checking": "檢查中…",
     "notSent": "尚未傳送，點一下重試",
-    "queued": "等待傳送"
+    "queued": "等待傳送",
+    "retracted": "這則訊息已被收回。"
   },
   "translate": {
     "translatedFrom": "譯自{language}",

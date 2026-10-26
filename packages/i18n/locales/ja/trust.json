@@ -72,7 +72,8 @@
       "human": "この決定はモデレーターが行いました。",
       "askPerson": "どの決定についても、担当者による確認を求められます。",
       "affectsTitle": "影響すること",
-      "stillAllowedTitle": "引き続きできること"
+      "stillAllowedTitle": "引き続きできること",
+      "ruleLine": "ルール：{rule}"
     },
     "rule": {
       "late_cancel": "直前キャンセルのルール",
@@ -113,7 +114,8 @@
     "dispute": {
       "cta": "このカードに異議を申し立てる",
       "window": "{date}まで、このカードに異議を申し立てられます。",
-      "windowClosed": "異議申し立ての期間は終了しましたが、引き続き不服申し立てができます。"
+      "windowClosed": "異議申し立ての期間は終了しましたが、引き続き不服申し立てができます。",
+      "windowLeft": "{date}まで、このカードに異議を申し立てられます（残り{duration}）。"
     },
     "appeal": {
       "cta": "この決定に不服を申し立てる",
@@ -144,7 +146,8 @@
         "upheld": "決定は維持されました。",
         "overturned": "決定は取り消されました。"
       },
-      "reviewerNote": "確認担当者のコメント"
+      "reviewerNote": "確認担当者のコメント",
+      "reviewerNoteLine": "確認担当者のコメント：{note}"
     }
   },
   "hostRestriction": {

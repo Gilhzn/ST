@@ -66,5 +66,9 @@
   "deposit_action_required": {
     "title": "保證金需要你處理",
     "body": "我們需要你確認「{gameTitle}」的 {amount} 保證金預先授權。請開啟 App 繼續。"
+  },
+  "waitlist_offer": {
+    "title": "有一個名額留給你",
+    "body": "你候補的一場比賽有了空位。請在邀請過期前到 App 中接受。"
   }
 }

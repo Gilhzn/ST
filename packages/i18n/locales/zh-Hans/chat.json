@@ -17,7 +17,8 @@
     "moreOptions": "消息选项",
     "checking": "检查中…",
     "notSent": "未发送，点按重试",
-    "queued": "等待发送"
+    "queued": "等待发送",
+    "retracted": "这条消息已被撤回。"
   },
   "translate": {
     "translatedFrom": "译自{language}",

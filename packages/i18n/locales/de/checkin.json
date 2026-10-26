@@ -7,7 +7,9 @@
     "title": "Standort wird geprüft",
     "progress": "Standort wird geprüft … {done} von {total}",
     "accuracy": "Genauigkeit: {accuracy}",
-    "retry": "Erneut versuchen"
+    "retry": "Erneut versuchen",
+    "intro": "Bleib, wo du bist. Wir nehmen drei Standortmessungen im Abstand von ein paar Sekunden vor.",
+    "start": "Meinen Standort prüfen"
   },
   "success": {
     "title": "Du bist eingecheckt",
@@ -42,13 +44,22 @@
     "hint": "Richte die Kamera auf den Code auf dem Bildschirm der Organisation.",
     "enterCode": "Stattdessen Code eingeben",
     "codeLabel": "6-stelliger Code",
-    "scanInstead": "Stattdessen QR-Code scannen"
+    "scanInstead": "Stattdessen QR-Code scannen",
+    "submit": "Mit Code einchecken",
+    "tokenHint": "Gib den Code ein, der unter dem QR-Code der Organisation steht.",
+    "tokenLabel": "Check-in-Code"
   },
   "peer": {
     "ask": "Mitspieler:in fragen",
     "hint": "Wir bitten Spieler:innen, die schon eingecheckt sind, zu bestätigen, dass du da bist.",
     "waiting": "Warten auf {needed, plural, one {# Bestätigung} other {# Bestätigungen}} · Erhalten: {received}",
-    "sent": "Anfrage an deine Mitspieler:innen gesendet."
+    "sent": "Anfrage an deine Mitspieler:innen gesendet.",
+    "confirm": "Bestätigen",
+    "confirmA11y": "Bestätigen, dass {name} da ist",
+    "confirmHint": "Bestätige nur Spieler:innen, die du gerade am Spielort siehst.",
+    "confirmTitle": "Mitspieler:innen bestätigen",
+    "confirmed": "{count, plural, one {Danke. Bisher # Bestätigung.} other {Danke. Bisher # Bestätigungen.}}",
+    "waitingNeeded": "Warten auf die Bestätigung von {needed, plural, one {# Mitspieler:in, der oder die schon eingecheckt ist.} other {# Mitspieler:innen, die schon eingecheckt sind.}}"
   },
   "permission": {
     "location": {
@@ -82,6 +93,13 @@
     "manualTitle": "Spieler:innen markieren",
     "markPresent": "{name} als anwesend markieren",
     "present": "Anwesend",
-    "notHere": "Nicht da"
-  }
+    "notHere": "Nicht da",
+    "newCode": "Neuer Code",
+    "qrA11y": "Check-in-QR-Code zum Scannen für die Spieler:innen"
+  },
+  "geofence": {
+    "title": "Sport Talent",
+    "body": "Du bist in der Nähe des Spiels. Tippe, um einzuchecken."
+  },
+  "fallbacks": "{count, plural, one {Probiere den anderen Weg unten.} other {Probiere einen der anderen Wege unten.}}"
 }

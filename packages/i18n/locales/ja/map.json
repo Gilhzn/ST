@@ -19,7 +19,10 @@
     "sortSoonest": "開始が早い順",
     "sortNearest": "近い順",
     "showList": "リスト",
-    "showMap": "地図"
+    "showMap": "地図",
+    "sortA11y": "並べ替え：{sort}",
+    "expand": "試合をもっと表示",
+    "collapse": "表示を減らす"
   },
   "card": {
     "distanceAway": "{distance}先",
@@ -51,7 +54,8 @@
   "empty": {
     "title": "{distance}以内に{sports}の試合はありません。",
     "widen": "{distance}に広げる",
-    "create": "試合を作成"
+    "create": "試合を作成",
+    "allSports": "いずれかの種目"
   },
   "locationDenied": {
     "title": "位置情報がオフです",
@@ -64,5 +68,9 @@
   },
   "offline": {
     "cachedNote": "保存済みの試合を表示しています。"
+  },
+  "zoom": {
+    "in": "拡大",
+    "out": "縮小"
   }
 }

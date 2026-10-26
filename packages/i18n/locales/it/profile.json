@@ -10,7 +10,10 @@
     "gamesHosted": "Partite organizzate",
     "checkInRate": "Tasso di check-in",
     "favoriteVenue": "Campo preferito",
-    "none": "Ancora nessuno"
+    "none": "Ancora nessuno",
+    "verifiedAttendance": "Presenze verificate",
+    "noShows": "Assenze",
+    "lateCancels": "Cancellazioni tardive"
   },
   "positions": {
     "title": "Ruoli",
@@ -54,5 +57,8 @@
     "changePhoto": "Cambia foto",
     "removePhoto": "Rimuovi foto",
     "saved": "Profilo salvato."
+  },
+  "sanctions": {
+    "openHint": "Mostra perché vale e cosa puoi fare"
   }
 }

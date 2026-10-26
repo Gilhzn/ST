@@ -113,5 +113,24 @@
     "withPercent": "{status} · {percent}",
     "a11y": "Fiabilité : {status}, {percent}",
     "a11yNew": "Fiabilité : nouveau joueur"
+  },
+  "nav": {
+    "map": "Carte",
+    "games": "Parties",
+    "inbox": "Messages",
+    "profile": "Profil",
+    "settings": "Réglages"
+  },
+  "datetime": {
+    "dayTime": "{day}, {time}"
+  },
+  "notFound": {
+    "title": "Page introuvable",
+    "body": "Le lien est peut-être ancien ou mal saisi.",
+    "home": "Aller à la carte"
+  },
+  "placeholder": {
+    "title": "Bientôt disponible",
+    "body": "Cette partie de Sport Talent arrive dans la prochaine mise à jour."
   }
 }

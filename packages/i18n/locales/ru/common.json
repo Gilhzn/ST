@@ -113,5 +113,24 @@
     "withPercent": "{status} · {percent}",
     "a11y": "Надёжность: {status}, {percent}",
     "a11yNew": "Надёжность: новый игрок"
+  },
+  "nav": {
+    "map": "Карта",
+    "games": "Игры",
+    "inbox": "Входящие",
+    "profile": "Профиль",
+    "settings": "Настройки"
+  },
+  "datetime": {
+    "dayTime": "{day}, {time}"
+  },
+  "notFound": {
+    "title": "Мы не нашли эту страницу",
+    "body": "Возможно, ссылка устарела или в ней опечатка.",
+    "home": "Перейти к карте"
+  },
+  "placeholder": {
+    "title": "Скоро",
+    "body": "Эта часть Sport Talent появится в следующем обновлении."
   }
 }

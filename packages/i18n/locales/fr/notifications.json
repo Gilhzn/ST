@@ -66,5 +66,9 @@
   "deposit_action_required": {
     "title": "Action requise pour ta caution",
     "body": "Nous avons besoin que tu confirmes le blocage de {amount} pour la caution de « {gameTitle} ». Ouvre l’appli pour continuer."
+  },
+  "waitlist_offer": {
+    "title": "Une place t’attend",
+    "body": "Une place s’est libérée dans une partie où tu es sur liste d’attente. Accepte-la dans l’appli avant la fin de l’offre."
   }
 }

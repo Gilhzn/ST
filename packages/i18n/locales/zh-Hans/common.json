@@ -113,5 +113,24 @@
     "withPercent": "{status} · {percent}",
     "a11y": "可靠度：{status}，{percent}",
     "a11yNew": "可靠度：新玩家"
+  },
+  "nav": {
+    "map": "地图",
+    "games": "比赛",
+    "inbox": "收件箱",
+    "profile": "我的",
+    "settings": "设置"
+  },
+  "datetime": {
+    "dayTime": "{day} {time}"
+  },
+  "notFound": {
+    "title": "找不到这个页面",
+    "body": "链接可能已过期，或输入有误。",
+    "home": "前往地图"
+  },
+  "placeholder": {
+    "title": "即将推出",
+    "body": "Sport Talent 的这一部分将在下次更新中上线。"
   }
 }

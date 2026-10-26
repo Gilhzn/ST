@@ -72,7 +72,8 @@
       "human": "Das Moderationsteam hat diese Entscheidung getroffen.",
       "askPerson": "Du kannst jede Entscheidung von einem Menschen prüfen lassen.",
       "affectsTitle": "Was das betrifft",
-      "stillAllowedTitle": "Was du weiterhin tun kannst"
+      "stillAllowedTitle": "Was du weiterhin tun kannst",
+      "ruleLine": "Regel: {rule}"
     },
     "rule": {
       "late_cancel": "Regel zu späten Absagen",
@@ -113,7 +114,8 @@
     "dispute": {
       "cta": "Gelbe Karte anfechten",
       "window": "Du kannst diese Gelbe Karte bis {date} anfechten.",
-      "windowClosed": "Die Frist zum Anfechten ist vorbei, aber du kannst weiterhin Einspruch einlegen."
+      "windowClosed": "Die Frist zum Anfechten ist vorbei, aber du kannst weiterhin Einspruch einlegen.",
+      "windowLeft": "Du kannst diese Gelbe Karte bis {date} anfechten (noch {duration})."
     },
     "appeal": {
       "cta": "Einspruch einlegen",
@@ -144,7 +146,8 @@
         "upheld": "Die Entscheidung bleibt bestehen.",
         "overturned": "Die Entscheidung wurde aufgehoben."
       },
-      "reviewerNote": "Anmerkung der prüfenden Person"
+      "reviewerNote": "Anmerkung der prüfenden Person",
+      "reviewerNoteLine": "Anmerkung der prüfenden Person: {note}"
     }
   },
   "hostRestriction": {

@@ -19,7 +19,10 @@
     "sortSoonest": "Zeitlich am nächsten",
     "sortNearest": "Am nächsten",
     "showList": "Liste",
-    "showMap": "Karte"
+    "showMap": "Karte",
+    "sortA11y": "Sortieren nach: {sort}",
+    "expand": "Mehr Spiele anzeigen",
+    "collapse": "Weniger anzeigen"
   },
   "card": {
     "distanceAway": "{distance} entfernt",
@@ -51,7 +54,8 @@
   "empty": {
     "title": "Keine Spiele im Umkreis von {distance} für {sports}.",
     "widen": "Auf {distance} erweitern",
-    "create": "Spiel erstellen"
+    "create": "Spiel erstellen",
+    "allSports": "jede Sportart"
   },
   "locationDenied": {
     "title": "Der Standort ist aus",
@@ -64,5 +68,9 @@
   },
   "offline": {
     "cachedNote": "Gespeicherte Spiele werden angezeigt."
+  },
+  "zoom": {
+    "in": "Vergrößern",
+    "out": "Verkleinern"
   }
 }

@@ -95,7 +95,8 @@
       "venueNameLabel": "场地名称",
       "venueNameHint": "给这个地点起个名字，方便玩家找到。",
       "hideExactLabel": "在我批准玩家之前隐藏确切位置",
-      "hideExactHelp": "玩家会先看到大致区域。你批准后，再分享确切地点。"
+      "hideExactHelp": "玩家会先看到大致区域。你批准后，再分享确切地点。",
+      "pinHere": "将当前地图区域用作集合地点"
     },
     "when": {
       "title": "什么时候？",
@@ -122,7 +123,13 @@
       "minReliable": "仅限可靠玩家",
       "approval": "加入方式",
       "approvalAuto": "自动批准玩家",
-      "approvalManual": "我逐个批准"
+      "approvalManual": "我逐个批准",
+      "fewer": "减少人数",
+      "more": "增加人数",
+      "minPlayers": "最少人数",
+      "minPlayersHelp": "{count, plural, other {至少有 # 名玩家时，比赛才会进行。}}",
+      "fewerMin": "降低最少人数",
+      "moreMin": "提高最少人数"
     },
     "deposit": {
       "title": "押金（选填）",
@@ -136,7 +143,11 @@
       "edit": "编辑",
       "publish": "发布比赛",
       "publishing": "正在发布…",
-      "offlineHint": "恢复网络后再发布。"
+      "offlineHint": "恢复网络后再发布。",
+      "whenValue": "{start} · {duration}",
+      "whoValue": "{capacity, plural, other {# 名玩家}}（最少 {min} 名）· {visibility}",
+      "noDeposit": "无押金",
+      "editA11y": "编辑{section}"
     },
     "published": {
       "title": "你的比赛已发布",
@@ -144,7 +155,8 @@
       "whatsapp": "分享到 WhatsApp",
       "copyLink": "复制链接",
       "linkCopied": "链接已复制。",
-      "showQr": "显示二维码"
+      "showQr": "显示二维码",
+      "viewGame": "查看比赛"
     },
     "discard": {
       "title": "放弃草稿？",
@@ -164,7 +176,8 @@
       "title": "你暂时无法组织比赛",
       "body": "你的账号已暂停组织比赛。请查看原因和结束时间。",
       "action": "查看详情"
-    }
+    },
+    "defaultTitle": "{sport}比赛"
   },
   "details": {
     "hiddenLocation": "组织者批准你加入后，会分享确切地点",
@@ -187,7 +200,11 @@
       "cancelConfirm": "取消这场比赛",
       "showQr": "显示签到二维码",
       "teams": "分队",
-      "enterResult": "录入比分"
+      "enterResult": "录入比分",
+      "badge": "组织者",
+      "approved": "已批准该玩家。",
+      "waitlisted": "比赛已满员，该玩家已进入候补名单。",
+      "rejected": "已拒绝该申请。"
     },
     "facts": {
       "players": "{joined}/{capacity} 名玩家",
@@ -215,7 +232,8 @@
       "directions": "路线",
       "cantMakeIt": "我去不了",
       "leaveWaitlist": "退出候补",
-      "waitlistPosition": "你目前排在候补第 {position} 位。"
+      "waitlistPosition": "你目前排在候补第 {position} 位。",
+      "requestHint": "向组织者发送申请"
     },
     "outcome": {
       "joined": "你已加入，到时见。",
@@ -227,7 +245,10 @@
       "lateWarning": "在开始前不到{hours, plural, other {# 小时}}取消，会被视为临时取消，并记一张黄牌。",
       "freeUntil": "在 {time}前取消不会受到处罚。",
       "confirm": "取消我的名额",
-      "keep": "保留我的名额"
+      "keep": "保留我的名额",
+      "done": "你的名额已取消。",
+      "cardIssued": "你的名额已取消。这次临时取消让你得到了一张黄牌。",
+      "lateRecorded": "你的名额已取消。由于取消得较晚，比赛结束后你可能会得到一张黄牌，除非候补名单中的人接替了你的名额。"
     },
     "deposit": {
       "disclosure": "预授权 {amount} · 签到后释放",
@@ -239,20 +260,33 @@
         "released": "已释放",
         "forfeited": "已扣留",
         "failed": "预授权失败"
-      }
+      },
+      "saved": "付款方式已保存。预授权会在比赛前一天进行。"
     },
     "banner": {
       "cancelled": "这场比赛已取消。原因：{reason}",
       "cancelledNoReason": "这场比赛已取消。",
       "ended": "这场比赛已结束。",
       "rateHost": "为组织者评分"
+    },
+    "when": "{relative} · {absolute}",
+    "playersAfterJoin": "组织者批准你加入后，你就能看到有谁参加。",
+    "checkedIn": "已签到",
+    "offer": {
+      "title": "有空位了",
+      "body": "你是候补名单中的下一位。接受名额即可加入比赛。",
+      "flash": "比赛即将开始，所以候补名单中的所有人都收到了这个邀请。最先接受的人将获得名额。",
+      "acceptWithin": "请在{duration}内接受（截止 {time}）。",
+      "accept": "占下名额",
+      "accepted": "你已加入，到时见。"
     }
   },
   "invite": {
     "title": "你收到了邀请",
     "join": "加入",
     "signUpToJoin": "注册后加入",
-    "expired": "此邀请已过期，请向组织者索取新的链接。"
+    "expired": "此邀请已过期，请向组织者索取新的链接。",
+    "signedOutBody": "登录或创建账号，即可查看并加入这场比赛。"
   },
   "teams": {
     "title": "分队",
@@ -264,7 +298,10 @@
     "movePlayer": "调整玩家",
     "moveTo": "移到{team}",
     "lock": "锁定分队",
-    "locked": "分队已锁定，已通知玩家。"
+    "locked": "分队已锁定，已通知玩家。",
+    "coverageTeam": "{team}：{roles}",
+    "notLocked": "组织者还没有确定分队。",
+    "reshuffled": "已重新分队。"
   },
   "result": {
     "title": "录入比分",
@@ -276,6 +313,41 @@
     "didntPlay": "我们没有比赛",
     "submit": "保存比分",
     "saved": "比分已保存。玩家可以在{hours, plural, other {# 小时}}内提出异议。",
-    "closed": "录入比分的时间已于 {time}截止。"
+    "closed": "录入比分的时间已于 {time}截止。",
+    "notYet": "比赛于 {time}结束后，你就可以录入比分。"
+  },
+  "my": {
+    "refresh": "刷新",
+    "segmentsA11y": "显示比赛",
+    "segment": {
+      "upcoming": "即将开始",
+      "hosting": "我组织的",
+      "past": "已结束"
+    },
+    "findGame": "找比赛",
+    "hostGame": "组织比赛",
+    "empty": {
+      "upcoming": {
+        "title": "没有即将开始的比赛",
+        "body": "你加入或组织的比赛会显示在这里。去地图上找一场吧。"
+      },
+      "hosting": {
+        "title": "你还没有组织任何比赛",
+        "body": "组织一场比赛后，你的玩家会列在这里。"
+      },
+      "past": {
+        "title": "还没有已结束的比赛",
+        "body": "你参加或组织过的比赛会列在这里。"
+      }
+    },
+    "state": {
+      "hosting": "组织中",
+      "going": "已加入",
+      "waitlisted": "候补中",
+      "requested": "已发送申请",
+      "cancelled": "已取消",
+      "checkedIn": "已签到",
+      "noShow": "未到场"
+    }
   }
 }

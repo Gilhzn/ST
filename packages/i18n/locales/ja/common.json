@@ -113,5 +113,24 @@
     "withPercent": "{status} · {percent}",
     "a11y": "信頼度：{status}、{percent}",
     "a11yNew": "信頼度：新規プレイヤー"
+  },
+  "nav": {
+    "map": "地図",
+    "games": "試合",
+    "inbox": "受信トレイ",
+    "profile": "プロフィール",
+    "settings": "設定"
+  },
+  "datetime": {
+    "dayTime": "{day} {time}"
+  },
+  "notFound": {
+    "title": "ページが見つかりません",
+    "body": "リンクが古いか、入力が間違っている可能性があります。",
+    "home": "地図へ移動"
+  },
+  "placeholder": {
+    "title": "近日公開",
+    "body": "Sport Talentのこの機能は、次回のアップデートで追加されます。"
   }
 }

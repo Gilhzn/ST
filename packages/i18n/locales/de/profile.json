@@ -10,7 +10,10 @@
     "gamesHosted": "Organisierte Spiele",
     "checkInRate": "Check-in-Quote",
     "favoriteVenue": "Lieblingsspielort",
-    "none": "Noch keine"
+    "none": "Noch keine",
+    "verifiedAttendance": "Bestätigte Anwesenheit",
+    "noShows": "Nicht erschienen",
+    "lateCancels": "Späte Absagen"
   },
   "positions": {
     "title": "Positionen",
@@ -54,5 +57,8 @@
     "changePhoto": "Foto ändern",
     "removePhoto": "Foto entfernen",
     "saved": "Profil gespeichert."
+  },
+  "sanctions": {
+    "openHint": "Zeigt, warum das gilt und was du tun kannst"
   }
 }

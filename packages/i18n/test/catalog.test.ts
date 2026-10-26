@@ -7,6 +7,7 @@ import { NAMESPACES, resources } from '../src/resources';
 import { STATEMENT_PARAMS } from '../src/params';
 import {
   analyzeMessage,
+  findDuplicateKeys,
   flatten,
   formatReport,
   loadCatalog,
@@ -120,6 +121,12 @@ describe('validator', () => {
   it('requires identical select options', () => {
     const c = base({ a: '{k, select, a {A} b {B} other {O}}' }, { a: '{k, select, a {A} other {O}}' });
     expect(messages(c).join('\n')).toMatch(/select options/);
+  });
+
+  it('finds duplicate JSON keys that JSON.parse would silently drop', () => {
+    expect(findDuplicateKeys('{"a":{"x":"1"},"b":"2"}')).toEqual([]);
+    expect(findDuplicateKeys('{"a":{"x":"1"},"a":{"y":"2"}}')).toEqual(['a']);
+    expect(findDuplicateKeys('{"o":{"k":"\\"k\\"","k":"2"},"l":[{"z":1,"z":2}]}')).toEqual(['o.k', 'l.z']);
   });
 
   it('flatten rejects non-string leaves and dotted keys', () => {

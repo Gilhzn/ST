@@ -19,7 +19,10 @@
     "sortSoonest": "Раньше всего",
     "sortNearest": "Ближе всего",
     "showList": "Список",
-    "showMap": "Карта"
+    "showMap": "Карта",
+    "sortA11y": "Сортировка: {sort}",
+    "expand": "Показать больше игр",
+    "collapse": "Показать меньше"
   },
   "card": {
     "distanceAway": "В {distance} от вас",
@@ -51,7 +54,8 @@
   "empty": {
     "title": "В радиусе {distance} нет игр: {sports}.",
     "widen": "Расширить до {distance}",
-    "create": "Создать игру"
+    "create": "Создать игру",
+    "allSports": "любые виды спорта"
   },
   "locationDenied": {
     "title": "Геолокация отключена",
@@ -64,5 +68,9 @@
   },
   "offline": {
     "cachedNote": "Показаны сохранённые игры."
+  },
+  "zoom": {
+    "in": "Приблизить",
+    "out": "Отдалить"
   }
 }

@@ -45,7 +45,9 @@
     "safety": "Compte et sécurité",
     "safetyLocked": "Toujours activées. Nous sommes tenus de t’informer des décisions concernant ton compte.",
     "osOff": "Les notifications sont désactivées dans les réglages de ton appareil.",
-    "osOffAction": "Ouvrir les réglages de l’appareil"
+    "osOffAction": "Ouvrir les réglages de l’appareil",
+    "deviceNote": "Ces choix sont enregistrés sur cet appareil.",
+    "unavailable": "Les notifications push ne sont pas disponibles ici. Tu verras quand même les nouveautés dans tes messages."
   },
   "privacy": {
     "title": "Confidentialité et sécurité",
@@ -67,11 +69,16 @@
     "blocked": {
       "title": "Joueurs bloqués",
       "empty": "Tu n’as bloqué personne.",
-      "unblockConfirm": "Débloquer {name} ?"
+      "unblockConfirm": "Débloquer {name} ?",
+      "unnamed": "Joueur bloqué {number}",
+      "since": "Bloqué le {date}",
+      "unblocked": "Joueur débloqué."
     },
     "data": {
       "download": "Télécharger mes données",
-      "help": "Demande une copie de tes données. Nous te préviendrons quand elle sera prête."
+      "help": "Demande une copie de tes données. Nous te préviendrons quand elle sera prête.",
+      "title": "Tes données",
+      "contact": "Contacte-nous et nous t’enverrons une copie."
     }
   },
   "delete": {
@@ -87,7 +94,15 @@
     "button": "Supprimer mon compte",
     "deleting": "Suppression de ton compte…",
     "done": "Ton compte a été supprimé.",
-    "webLink": "Tu peux aussi supprimer ton compte sur le web : {url}"
+    "webLink": "Tu peux aussi supprimer ton compte sur le web : {url}",
+    "confirmIntro": "C’est la dernière étape. Ton compte sera supprimé immédiatement et ta session sera fermée.",
+    "gamesTitle": "Tes parties",
+    "games": "Tu quitteras les parties que tu as rejointes, sans carton jaune, et les blocages de caution seront levés. Les parties que tu organises et qui n’ont pas commencé passeront à un coorganisateur s’il y en a un. Sinon, elles seront annulées et les joueurs seront prévenus.",
+    "keptMore": "Les enregistrements de paiement sont conservés, sous une forme qui ne t’identifie pas, jusqu’à 7 ans, car la loi fiscale l’exige. Les sauvegardes sont effacées sous 30 jours.",
+    "timingTitle": "Quand cela se passe",
+    "timing": "Ton profil disparaît de l’appli immédiatement. Le reste de tes données personnelles est effacé sous 24 heures.",
+    "reregister": "Tu pourras t’inscrire de nouveau plus tard avec le même numéro. Si un bannissement ou un avertissement est encore en cours, le temps restant s’applique de nouveau.",
+    "keep": "Garder mon compte"
   },
   "about": {
     "version": "Version {version}",

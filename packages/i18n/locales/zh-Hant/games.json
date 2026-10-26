@@ -95,7 +95,8 @@
       "venueNameLabel": "場地名稱",
       "venueNameHint": "幫這個地點取個名字，方便球友找到。",
       "hideExactLabel": "在我核准球友之前隱藏確切位置",
-      "hideExactHelp": "球友會先看到大致區域。你核准後，再分享確切地點。"
+      "hideExactHelp": "球友會先看到大致區域。你核准後，再分享確切地點。",
+      "pinHere": "將目前的地圖區域用作集合地點"
     },
     "when": {
       "title": "什麼時候？",
@@ -122,7 +123,13 @@
       "minReliable": "僅限可靠球友",
       "approval": "加入方式",
       "approvalAuto": "自動核准球友",
-      "approvalManual": "我逐一核准"
+      "approvalManual": "我逐一核准",
+      "fewer": "減少人數",
+      "more": "增加人數",
+      "minPlayers": "最少人數",
+      "minPlayersHelp": "{count, plural, other {至少有 # 位球友時，比賽才會進行。}}",
+      "fewerMin": "降低最少人數",
+      "moreMin": "提高最少人數"
     },
     "deposit": {
       "title": "保證金（選填）",
@@ -136,7 +143,11 @@
       "edit": "編輯",
       "publish": "發布比賽",
       "publishing": "正在發布…",
-      "offlineHint": "恢復連線後再發布。"
+      "offlineHint": "恢復連線後再發布。",
+      "whenValue": "{start} · {duration}",
+      "whoValue": "{capacity, plural, other {# 位球友}}（最少 {min} 位）· {visibility}",
+      "noDeposit": "無保證金",
+      "editA11y": "編輯{section}"
     },
     "published": {
       "title": "你的比賽已發布",
@@ -144,7 +155,8 @@
       "whatsapp": "分享到 WhatsApp",
       "copyLink": "複製連結",
       "linkCopied": "已複製連結。",
-      "showQr": "顯示 QR 碼"
+      "showQr": "顯示 QR 碼",
+      "viewGame": "查看比賽"
     },
     "discard": {
       "title": "要捨棄草稿嗎？",
@@ -164,7 +176,8 @@
       "title": "你目前無法主辦比賽",
       "body": "你的帳號已暫停主辦比賽。請查看原因與結束時間。",
       "action": "查看詳情"
-    }
+    },
+    "defaultTitle": "{sport}比賽"
   },
   "details": {
     "hiddenLocation": "主辦人核准你加入後，會分享確切地點",
@@ -187,7 +200,11 @@
       "cancelConfirm": "取消這場比賽",
       "showQr": "顯示報到 QR 碼",
       "teams": "分隊",
-      "enterResult": "輸入比分"
+      "enterResult": "輸入比分",
+      "badge": "主辦人",
+      "approved": "已核准該球友。",
+      "waitlisted": "比賽已額滿，該球友已進入候補名單。",
+      "rejected": "已拒絕該申請。"
     },
     "facts": {
       "players": "{joined}/{capacity} 位球友",
@@ -215,7 +232,8 @@
       "directions": "路線",
       "cantMakeIt": "我無法參加",
       "leaveWaitlist": "退出候補",
-      "waitlistPosition": "你目前排在候補第 {position} 位。"
+      "waitlistPosition": "你目前排在候補第 {position} 位。",
+      "requestHint": "向主辦人送出申請"
     },
     "outcome": {
       "joined": "你已加入，到時見。",
@@ -227,7 +245,10 @@
       "lateWarning": "在開始前不到{hours, plural, other {# 小時}}取消，會視為臨時取消，並記一張黃牌。",
       "freeUntil": "在 {time}前取消不會受到處罰。",
       "confirm": "取消我的名額",
-      "keep": "保留我的名額"
+      "keep": "保留我的名額",
+      "done": "你的名額已取消。",
+      "cardIssued": "你的名額已取消。這次臨時取消讓你得到了一張黃牌。",
+      "lateRecorded": "你的名額已取消。由於取消得較晚，比賽結束後你可能會得到一張黃牌，除非候補名單中的人接替了你的名額。"
     },
     "deposit": {
       "disclosure": "預先授權 {amount} · 報到後釋放",
@@ -239,20 +260,33 @@
         "released": "已釋放",
         "forfeited": "已扣留",
         "failed": "預先授權失敗"
-      }
+      },
+      "saved": "付款方式已儲存。預先授權會在比賽前一天進行。"
     },
     "banner": {
       "cancelled": "這場比賽已取消。原因：{reason}",
       "cancelledNoReason": "這場比賽已取消。",
       "ended": "這場比賽已結束。",
       "rateHost": "為主辦人評分"
+    },
+    "when": "{relative} · {absolute}",
+    "playersAfterJoin": "主辦人核准你加入後，你就能看到有誰參加。",
+    "checkedIn": "已報到",
+    "offer": {
+      "title": "有空位了",
+      "body": "你是候補名單中的下一位。接受名額即可加入比賽。",
+      "flash": "比賽即將開始，所以候補名單中的所有人都收到了這個邀請。最先接受的人將獲得名額。",
+      "acceptWithin": "請在{duration}內接受（截止 {time}）。",
+      "accept": "保留名額",
+      "accepted": "你已加入，到時見。"
     }
   },
   "invite": {
     "title": "你收到了邀請",
     "join": "加入",
     "signUpToJoin": "註冊後加入",
-    "expired": "這個邀請已過期，請向主辦人索取新的連結。"
+    "expired": "這個邀請已過期，請向主辦人索取新的連結。",
+    "signedOutBody": "登入或建立帳號，即可查看並加入這場比賽。"
   },
   "teams": {
     "title": "分隊",
@@ -264,7 +298,10 @@
     "movePlayer": "調整球友",
     "moveTo": "移到{team}",
     "lock": "鎖定分隊",
-    "locked": "分隊已鎖定，已通知球友。"
+    "locked": "分隊已鎖定，已通知球友。",
+    "coverageTeam": "{team}：{roles}",
+    "notLocked": "主辦人還沒有確定分隊。",
+    "reshuffled": "已重新分隊。"
   },
   "result": {
     "title": "輸入比分",
@@ -276,6 +313,41 @@
     "didntPlay": "我們沒有比賽",
     "submit": "儲存比分",
     "saved": "已儲存比分。球友可以在{hours, plural, other {# 小時}}內提出異議。",
-    "closed": "輸入比分的時間已於 {time}截止。"
+    "closed": "輸入比分的時間已於 {time}截止。",
+    "notYet": "比賽於 {time}結束後，你就可以輸入比分。"
+  },
+  "my": {
+    "refresh": "重新整理",
+    "segmentsA11y": "顯示比賽",
+    "segment": {
+      "upcoming": "即將開始",
+      "hosting": "我主辦的",
+      "past": "已結束"
+    },
+    "findGame": "找比賽",
+    "hostGame": "主辦比賽",
+    "empty": {
+      "upcoming": {
+        "title": "沒有即將開始的比賽",
+        "body": "你加入或主辦的比賽會顯示在這裡。到地圖上找一場吧。"
+      },
+      "hosting": {
+        "title": "你還沒有主辦任何比賽",
+        "body": "主辦一場比賽後，你的球友會列在這裡。"
+      },
+      "past": {
+        "title": "還沒有已結束的比賽",
+        "body": "你參加或主辦過的比賽會列在這裡。"
+      }
+    },
+    "state": {
+      "hosting": "主辦中",
+      "going": "已加入",
+      "waitlisted": "候補中",
+      "requested": "已送出申請",
+      "cancelled": "已取消",
+      "checkedIn": "已報到",
+      "noShow": "未到場"
+    }
   }
 }

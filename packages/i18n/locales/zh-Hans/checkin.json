@@ -7,7 +7,9 @@
     "title": "正在确认你的位置",
     "progress": "正在确认你的位置… {done}/{total}",
     "accuracy": "精度：{accuracy}",
-    "retry": "再试一次"
+    "retry": "再试一次",
+    "intro": "请待在原地。我们会间隔几秒读取三次位置。",
+    "start": "检查我的位置"
   },
   "success": {
     "title": "签到成功",
@@ -42,13 +44,22 @@
     "hint": "将相机对准组织者屏幕上的二维码。",
     "enterCode": "改为输入验证码",
     "codeLabel": "6 位数字码",
-    "scanInstead": "改为扫描二维码"
+    "scanInstead": "改为扫描二维码",
+    "submit": "用验证码签到",
+    "tokenHint": "请输入组织者二维码下方显示的验证码。",
+    "tokenLabel": "签到码"
   },
   "peer": {
     "ask": "请队友确认",
     "hint": "我们会请已签到的玩家确认你已到场。",
     "waiting": "等待{needed, plural, other {# 个确认}} · 已收到 {received} 个",
-    "sent": "已向你的队友发送请求。"
+    "sent": "已向你的队友发送请求。",
+    "confirm": "确认",
+    "confirmA11y": "确认 {name} 已到场",
+    "confirmHint": "只确认你此刻在场地上看到的玩家。",
+    "confirmTitle": "确认队友",
+    "confirmed": "{count, plural, other {谢谢，目前已有 # 个确认。}}",
+    "waitingNeeded": "正在等待{needed, plural, other {# 名}}已签到的队友确认你。"
   },
   "permission": {
     "location": {
@@ -82,6 +93,13 @@
     "manualTitle": "标记玩家",
     "markPresent": "将 {name} 标记为已到场",
     "present": "已到场",
-    "notHere": "未到场"
-  }
+    "notHere": "未到场",
+    "newCode": "新验证码",
+    "qrA11y": "供玩家扫描的签到二维码"
+  },
+  "geofence": {
+    "title": "Sport Talent",
+    "body": "你已在比赛附近，点按即可签到。"
+  },
+  "fallbacks": "{count, plural, other {请试试下面的其他方式。}}"
 }

@@ -7,7 +7,9 @@
     "title": "Verifica della tua posizione",
     "progress": "Verifica della posizione… {done} di {total}",
     "accuracy": "Precisione: {accuracy}",
-    "retry": "Riprova"
+    "retry": "Riprova",
+    "intro": "Resta dove sei. Facciamo tre rilevazioni della posizione a distanza di qualche secondo.",
+    "start": "Controlla la mia posizione"
   },
   "success": {
     "title": "Check-in effettuato",
@@ -42,13 +44,22 @@
     "hint": "Inquadra il codice sullo schermo dell’organizzatore con la fotocamera.",
     "enterCode": "Inserisci invece il codice",
     "codeLabel": "Codice di 6 cifre",
-    "scanInstead": "Scansiona invece il codice QR"
+    "scanInstead": "Scansiona invece il codice QR",
+    "submit": "Fai il check-in con il codice",
+    "tokenHint": "Inserisci il codice mostrato sotto il QR dell’organizzatore.",
+    "tokenLabel": "Codice di check-in"
   },
   "peer": {
     "ask": "Chiedi a un compagno",
     "hint": "Chiederemo ai giocatori che hanno già fatto il check-in di confermare che sei qui.",
     "waiting": "In attesa di {needed, plural, one {# conferma} many {# di conferme} other {# conferme}} · ricevute: {received}",
-    "sent": "Richiesta inviata ai tuoi compagni."
+    "sent": "Richiesta inviata ai tuoi compagni.",
+    "confirm": "Conferma",
+    "confirmA11y": "Conferma che {name} è qui",
+    "confirmHint": "Conferma solo i giocatori che vedi sul campo in questo momento.",
+    "confirmTitle": "Conferma i compagni di squadra",
+    "confirmed": "{count, plural, one {Grazie. Finora # conferma.} many {Grazie. Finora # di conferme.} other {Grazie. Finora # conferme.}}",
+    "waitingNeeded": "In attesa della conferma di {needed, plural, one {# compagno che ha già fatto il check-in.} many {# di compagni che hanno già fatto il check-in.} other {# compagni che hanno già fatto il check-in.}}"
   },
   "permission": {
     "location": {
@@ -82,6 +93,13 @@
     "manualTitle": "Segna i giocatori",
     "markPresent": "Segna {name} come presente",
     "present": "Presente",
-    "notHere": "Assente"
-  }
+    "notHere": "Assente",
+    "newCode": "Nuovo codice",
+    "qrA11y": "Codice QR di check-in che i giocatori scansionano"
+  },
+  "geofence": {
+    "title": "Sport Talent",
+    "body": "Sei vicino alla partita. Tocca per fare il check-in."
+  },
+  "fallbacks": "{count, plural, one {Prova l’altro metodo qui sotto.} many {Prova uno degli altri metodi qui sotto.} other {Prova uno degli altri metodi qui sotto.}}"
 }

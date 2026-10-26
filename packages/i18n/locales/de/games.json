@@ -95,7 +95,8 @@
       "venueNameLabel": "Name des Spielorts",
       "venueNameHint": "Gib dem Ort einen Namen, damit ihn die Spieler:innen finden.",
       "hideExactLabel": "Genauen Standort verbergen, bis ich Spieler:innen bestätige",
-      "hideExactHelp": "Spieler:innen sehen zuerst nur die Gegend. Den genauen Ort teilst du, nachdem du sie bestätigt hast."
+      "hideExactHelp": "Spieler:innen sehen zuerst nur die Gegend. Den genauen Ort teilst du, nachdem du sie bestätigt hast.",
+      "pinHere": "Aktuellen Kartenausschnitt als Treffpunkt verwenden"
     },
     "when": {
       "title": "Wann?",
@@ -122,7 +123,13 @@
       "minReliable": "Nur Zuverlässige",
       "approval": "Teilnahme",
       "approvalAuto": "Spieler:innen automatisch bestätigen",
-      "approvalManual": "Ich bestätige jede Person einzeln"
+      "approvalManual": "Ich bestätige jede Person einzeln",
+      "fewer": "Weniger Spieler:innen",
+      "more": "Mehr Spieler:innen",
+      "minPlayers": "Mindestanzahl Spieler:innen",
+      "minPlayersHelp": "{count, plural, one {Das Spiel findet mit mindestens # Person statt.} other {Das Spiel findet mit mindestens # Personen statt.}}",
+      "fewerMin": "Mindestanzahl verringern",
+      "moreMin": "Mindestanzahl erhöhen"
     },
     "deposit": {
       "title": "Kaution (optional)",
@@ -136,7 +143,11 @@
       "edit": "Bearbeiten",
       "publish": "Spiel veröffentlichen",
       "publishing": "Wird veröffentlicht …",
-      "offlineHint": "Veröffentliche, wenn du wieder online bist."
+      "offlineHint": "Veröffentliche, wenn du wieder online bist.",
+      "whenValue": "{start} · {duration}",
+      "whoValue": "{capacity, plural, one {# Spieler:in} other {# Spieler:innen}} (mind. {min}) · {visibility}",
+      "noDeposit": "Keine Kaution",
+      "editA11y": "{section} bearbeiten"
     },
     "published": {
       "title": "Dein Spiel ist online",
@@ -144,7 +155,8 @@
       "whatsapp": "Über WhatsApp teilen",
       "copyLink": "Link kopieren",
       "linkCopied": "Link kopiert.",
-      "showQr": "QR-Code anzeigen"
+      "showQr": "QR-Code anzeigen",
+      "viewGame": "Spiel ansehen"
     },
     "discard": {
       "title": "Entwurf verwerfen?",
@@ -164,7 +176,8 @@
       "title": "Du kannst gerade keine Spiele organisieren",
       "body": "Das Organisieren ist für dein Konto pausiert. Sieh nach, warum und wann es endet.",
       "action": "Details ansehen"
-    }
+    },
+    "defaultTitle": "{sport}-Spiel"
   },
   "details": {
     "hiddenLocation": "Den genauen Ort erfährst du, sobald die Organisation dich bestätigt hat",
@@ -187,7 +200,11 @@
       "cancelConfirm": "Dieses Spiel absagen",
       "showQr": "Check-in-QR anzeigen",
       "teams": "Teams",
-      "enterResult": "Ergebnis eintragen"
+      "enterResult": "Ergebnis eintragen",
+      "badge": "Organisation",
+      "approved": "Spieler:in bestätigt.",
+      "waitlisted": "Das Spiel ist voll, deshalb steht die Person auf der Warteliste.",
+      "rejected": "Anfrage abgelehnt."
     },
     "facts": {
       "players": "{joined} von {capacity} Spieler:innen",
@@ -215,7 +232,8 @@
       "directions": "Route",
       "cantMakeIt": "Ich kann nicht kommen",
       "leaveWaitlist": "Warteliste verlassen",
-      "waitlistPosition": "Du bist auf Platz {position} der Warteliste."
+      "waitlistPosition": "Du bist auf Platz {position} der Warteliste.",
+      "requestHint": "Sendet eine Anfrage an die Organisation"
     },
     "outcome": {
       "joined": "Du bist dabei. Bis dann!",
@@ -227,7 +245,10 @@
       "lateWarning": "Eine Absage weniger als {hours, plural, one {# Stunde} other {# Stunden}} vor Beginn zählt als späte Absage und bringt dir eine Gelbe Karte ein.",
       "freeUntil": "Bis {time} kannst du ohne Folgen absagen.",
       "confirm": "Meine Teilnahme absagen",
-      "keep": "Platz behalten"
+      "keep": "Platz behalten",
+      "done": "Deine Teilnahme ist abgesagt.",
+      "cardIssued": "Deine Teilnahme ist abgesagt. Diese späte Absage hat dir eine Gelbe Karte eingebracht.",
+      "lateRecorded": "Deine Teilnahme ist abgesagt. Weil es spät war, kannst du nach dem Spiel eine Gelbe Karte bekommen, es sei denn, jemand von der Warteliste übernimmt deinen Platz."
     },
     "deposit": {
       "disclosure": "{amount} reserviert · wird nach dem Check-in aufgehoben",
@@ -239,20 +260,33 @@
         "released": "Aufgehoben",
         "forfeited": "Einbehalten",
         "failed": "Reservierung fehlgeschlagen"
-      }
+      },
+      "saved": "Zahlungsmethode gespeichert. Die Reservierung erfolgt am Tag vor dem Spiel."
     },
     "banner": {
       "cancelled": "Dieses Spiel wurde abgesagt. Grund: {reason}",
       "cancelledNoReason": "Dieses Spiel wurde abgesagt.",
       "ended": "Dieses Spiel ist beendet.",
       "rateHost": "Organisation bewerten"
+    },
+    "when": "{relative} · {absolute}",
+    "playersAfterJoin": "Wer mitspielt, siehst du, sobald die Organisation dich bestätigt hat.",
+    "checkedIn": "Eingecheckt",
+    "offer": {
+      "title": "Ein Platz ist frei geworden",
+      "body": "Du bist als Nächstes auf der Warteliste dran. Nimm den Platz an, um beim Spiel dabei zu sein.",
+      "flash": "Das Spiel beginnt bald, deshalb haben alle auf der Warteliste dieses Angebot bekommen. Wer zuerst zusagt, bekommt den Platz.",
+      "acceptWithin": "Nimm den Platz innerhalb von {duration} an (bis {time}).",
+      "accept": "Platz annehmen",
+      "accepted": "Du bist dabei. Bis dann!"
     }
   },
   "invite": {
     "title": "Du bist eingeladen",
     "join": "Mitspielen",
     "signUpToJoin": "Registrieren und mitspielen",
-    "expired": "Diese Einladung ist abgelaufen. Bitte die Organisation um einen neuen Link."
+    "expired": "Diese Einladung ist abgelaufen. Bitte die Organisation um einen neuen Link.",
+    "signedOutBody": "Melde dich an oder erstelle ein Konto, um dieses Spiel zu sehen und beizutreten."
   },
   "teams": {
     "title": "Teams",
@@ -264,7 +298,10 @@
     "movePlayer": "Spieler:in verschieben",
     "moveTo": "Verschieben zu: {team}",
     "lock": "Teams sperren",
-    "locked": "Die Teams sind gesperrt. Die Spieler:innen wurden benachrichtigt."
+    "locked": "Die Teams sind gesperrt. Die Spieler:innen wurden benachrichtigt.",
+    "coverageTeam": "{team}: {roles}",
+    "notLocked": "Die Organisation hat die Teams noch nicht festgelegt.",
+    "reshuffled": "Teams neu gemischt."
   },
   "result": {
     "title": "Ergebnis eintragen",
@@ -276,6 +313,41 @@
     "didntPlay": "Wir haben nicht gespielt",
     "submit": "Ergebnis speichern",
     "saved": "Ergebnis gespeichert. Die Spieler:innen können es {hours, plural, one {# Stunde} other {# Stunden}} lang anfechten.",
-    "closed": "Die Frist für das Ergebnis ist um {time} abgelaufen."
+    "closed": "Die Frist für das Ergebnis ist um {time} abgelaufen.",
+    "notYet": "Das Ergebnis kannst du eintragen, wenn das Spiel um {time} endet."
+  },
+  "my": {
+    "refresh": "Aktualisieren",
+    "segmentsA11y": "Spiele anzeigen",
+    "segment": {
+      "upcoming": "Anstehend",
+      "hosting": "Organisiert",
+      "past": "Vergangen"
+    },
+    "findGame": "Spiel finden",
+    "hostGame": "Spiel organisieren",
+    "empty": {
+      "upcoming": {
+        "title": "Keine anstehenden Spiele",
+        "body": "Spiele, denen du beitrittst oder die du organisierst, erscheinen hier. Finde eins auf der Karte."
+      },
+      "hosting": {
+        "title": "Du organisierst nichts",
+        "body": "Organisiere ein Spiel, und deine Spieler:innen werden hier aufgelistet."
+      },
+      "past": {
+        "title": "Noch keine vergangenen Spiele",
+        "body": "Spiele, die du gespielt oder organisiert hast, werden hier aufgelistet."
+      }
+    },
+    "state": {
+      "hosting": "Du organisierst",
+      "going": "Du bist dabei",
+      "waitlisted": "Auf der Warteliste",
+      "requested": "Anfrage gesendet",
+      "cancelled": "Abgesagt",
+      "checkedIn": "Eingecheckt",
+      "noShow": "Nicht erschienen"
+    }
   }
 }

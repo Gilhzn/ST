@@ -72,7 +72,8 @@
       "human": "這項決定由審核員作出。",
       "askPerson": "你可以要求由真人複核任何決定。",
       "affectsTitle": "影響範圍",
-      "stillAllowedTitle": "你仍然可以做的事"
+      "stillAllowedTitle": "你仍然可以做的事",
+      "ruleLine": "適用規則：{rule}"
     },
     "rule": {
       "late_cancel": "臨時取消規則",
@@ -113,7 +114,8 @@
     "dispute": {
       "cta": "對這張黃牌提出異議",
       "window": "你可以在 {date}前對這張黃牌提出異議。",
-      "windowClosed": "異議期已結束，但你仍然可以提出申訴。"
+      "windowClosed": "異議期已結束，但你仍然可以提出申訴。",
+      "windowLeft": "你可以在 {date}前對這張黃牌提出異議（還剩{duration}）。"
     },
     "appeal": {
       "cta": "對這項決定提出申訴",
@@ -144,7 +146,8 @@
         "upheld": "維持原決定。",
         "overturned": "決定已撤銷。"
       },
-      "reviewerNote": "審核員備註"
+      "reviewerNote": "審核員備註",
+      "reviewerNoteLine": "審核員備註：{note}"
     }
   },
   "hostRestriction": {

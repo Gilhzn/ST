@@ -17,7 +17,8 @@
     "moreOptions": "メッセージのオプション",
     "checking": "確認中…",
     "notSent": "未送信です。タップして再試行",
-    "queued": "送信待ち"
+    "queued": "送信待ち",
+    "retracted": "このメッセージは削除されました。"
   },
   "translate": {
     "translatedFrom": "{language}から翻訳",

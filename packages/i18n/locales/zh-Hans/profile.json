@@ -10,7 +10,10 @@
     "gamesHosted": "组织比赛",
     "checkInRate": "签到率",
     "favoriteVenue": "常去场地",
-    "none": "暂无"
+    "none": "暂无",
+    "verifiedAttendance": "已核实到场",
+    "noShows": "爽约",
+    "lateCancels": "临时取消"
   },
   "positions": {
     "title": "位置",
@@ -54,5 +57,8 @@
     "changePhoto": "更换照片",
     "removePhoto": "移除照片",
     "saved": "资料已保存。"
+  },
+  "sanctions": {
+    "openHint": "查看原因以及你可以怎么做"
   }
 }

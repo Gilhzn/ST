@@ -19,7 +19,10 @@
     "sortSoonest": "最早開始",
     "sortNearest": "距離最近",
     "showList": "清單",
-    "showMap": "地圖"
+    "showMap": "地圖",
+    "sortA11y": "排序方式：{sort}",
+    "expand": "顯示更多比賽",
+    "collapse": "收合"
   },
   "card": {
     "distanceAway": "距離 {distance}",
@@ -51,7 +54,8 @@
   "empty": {
     "title": "{distance}內沒有{sports}比賽。",
     "widen": "擴大到 {distance}",
-    "create": "建立比賽"
+    "create": "建立比賽",
+    "allSports": "任何運動"
   },
   "locationDenied": {
     "title": "位置服務已關閉",
@@ -64,5 +68,9 @@
   },
   "offline": {
     "cachedNote": "正在顯示已儲存的比賽。"
+  },
+  "zoom": {
+    "in": "放大",
+    "out": "縮小"
   }
 }

@@ -10,7 +10,10 @@
     "gamesHosted": "主催した試合",
     "checkInRate": "チェックイン率",
     "favoriteVenue": "よく行く会場",
-    "none": "まだありません"
+    "none": "まだありません",
+    "verifiedAttendance": "確認済みの出席",
+    "noShows": "無断欠席",
+    "lateCancels": "直前キャンセル"
   },
   "positions": {
     "title": "ポジション",
@@ -54,5 +57,8 @@
     "changePhoto": "写真を変更",
     "removePhoto": "写真を削除",
     "saved": "プロフィールを保存しました。"
+  },
+  "sanctions": {
+    "openHint": "理由と、できることを表示します"
   }
 }

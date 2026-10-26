@@ -95,7 +95,8 @@
       "venueNameLabel": "Nom du lieu",
       "venueNameHint": "Donne un nom à l’endroit pour que les joueurs le trouvent.",
       "hideExactLabel": "Masquer l’emplacement exact tant que je n’ai pas validé les joueurs",
-      "hideExactHelp": "Les joueurs voient d’abord la zone. Tu partages l’endroit exact après les avoir validés."
+      "hideExactHelp": "Les joueurs voient d’abord la zone. Tu partages l’endroit exact après les avoir validés.",
+      "pinHere": "Utiliser la zone actuelle de la carte comme point de rendez-vous"
     },
     "when": {
       "title": "Quand ?",
@@ -122,7 +123,13 @@
       "minReliable": "Fiables uniquement",
       "approval": "Participation",
       "approvalAuto": "Valider les joueurs automatiquement",
-      "approvalManual": "Je valide chaque joueur"
+      "approvalManual": "Je valide chaque joueur",
+      "fewer": "Moins de joueurs",
+      "more": "Plus de joueurs",
+      "minPlayers": "Nombre minimum de joueurs",
+      "minPlayersHelp": "{count, plural, one {La partie a lieu avec au moins # joueur.} many {La partie a lieu avec au moins # de joueurs.} other {La partie a lieu avec au moins # joueurs.}}",
+      "fewerMin": "Baisser le minimum",
+      "moreMin": "Augmenter le minimum"
     },
     "deposit": {
       "title": "Caution (facultatif)",
@@ -136,7 +143,11 @@
       "edit": "Modifier",
       "publish": "Publier la partie",
       "publishing": "Publication…",
-      "offlineHint": "Publie quand tu seras de nouveau en ligne."
+      "offlineHint": "Publie quand tu seras de nouveau en ligne.",
+      "whenValue": "{start} · {duration}",
+      "whoValue": "{capacity, plural, one {# joueur} many {# de joueurs} other {# joueurs}} (min. {min}) · {visibility}",
+      "noDeposit": "Sans caution",
+      "editA11y": "Modifier : {section}"
     },
     "published": {
       "title": "Ta partie est en ligne",
@@ -144,7 +155,8 @@
       "whatsapp": "Partager sur WhatsApp",
       "copyLink": "Copier le lien",
       "linkCopied": "Lien copié.",
-      "showQr": "Afficher le QR code"
+      "showQr": "Afficher le QR code",
+      "viewGame": "Voir la partie"
     },
     "discard": {
       "title": "Abandonner le brouillon ?",
@@ -164,7 +176,8 @@
       "title": "Tu ne peux pas organiser de partie pour le moment",
       "body": "L’organisation de parties est suspendue sur ton compte. Consulte la raison et la date de fin.",
       "action": "Voir les détails"
-    }
+    },
+    "defaultTitle": "Partie de {sport}"
   },
   "details": {
     "hiddenLocation": "L’endroit exact est partagé une fois que l’organisateur t’a validé",
@@ -187,7 +200,11 @@
       "cancelConfirm": "Annuler cette partie",
       "showQr": "Afficher le QR de check-in",
       "teams": "Équipes",
-      "enterResult": "Saisir le résultat"
+      "enterResult": "Saisir le résultat",
+      "badge": "Organisateur",
+      "approved": "Joueur validé.",
+      "waitlisted": "La partie est complète, le joueur est donc sur la liste d’attente.",
+      "rejected": "Demande refusée."
     },
     "facts": {
       "players": "{joined} joueurs sur {capacity}",
@@ -215,7 +232,8 @@
       "directions": "Itinéraire",
       "cantMakeIt": "Je ne peux pas venir",
       "leaveWaitlist": "Quitter la liste d’attente",
-      "waitlistPosition": "Tu es n° {position} sur la liste d’attente."
+      "waitlistPosition": "Tu es n° {position} sur la liste d’attente.",
+      "requestHint": "Envoie une demande à l’organisateur"
     },
     "outcome": {
       "joined": "C’est bon, ta place est réservée. À bientôt !",
@@ -227,7 +245,10 @@
       "lateWarning": "Annuler moins de {hours, plural, one {# heure} many {# d’heures} other {# heures}} avant le début compte comme une annulation tardive et te vaut un carton jaune.",
       "freeUntil": "Tu peux annuler sans pénalité jusqu’à {time}.",
       "confirm": "Annuler ma place",
-      "keep": "Garder ma place"
+      "keep": "Garder ma place",
+      "done": "Ta place est annulée.",
+      "cardIssued": "Ta place est annulée. Cette annulation tardive t’a valu un carton jaune.",
+      "lateRecorded": "Ta place est annulée. Comme c’était tardif, tu peux recevoir un carton jaune après la partie, sauf si quelqu’un de la liste d’attente prend ta place."
     },
     "deposit": {
       "disclosure": "Blocage de {amount} · levé après le check-in",
@@ -239,20 +260,33 @@
         "released": "Libérée",
         "forfeited": "Conservée",
         "failed": "Échec du blocage"
-      }
+      },
+      "saved": "Moyen de paiement enregistré. Le blocage est effectué la veille de la partie."
     },
     "banner": {
       "cancelled": "Cette partie a été annulée. Raison : {reason}",
       "cancelledNoReason": "Cette partie a été annulée.",
       "ended": "Cette partie est terminée.",
       "rateHost": "Noter l’organisateur"
+    },
+    "when": "{relative} · {absolute}",
+    "playersAfterJoin": "Tu verras qui joue une fois que l’organisateur t’aura validé.",
+    "checkedIn": "Check-in fait",
+    "offer": {
+      "title": "Une place s’est libérée",
+      "body": "C’est bientôt ton tour sur la liste d’attente. Accepte la place pour rejoindre la partie.",
+      "flash": "La partie commence bientôt, donc toutes les personnes de la liste d’attente ont reçu cette offre. La première à accepter obtient la place.",
+      "acceptWithin": "Accepte dans les {duration} (jusqu’à {time}).",
+      "accept": "Prendre la place",
+      "accepted": "C’est bon, ta place est réservée. À bientôt !"
     }
   },
   "invite": {
     "title": "Tu as reçu une invitation",
     "join": "Rejoindre",
     "signUpToJoin": "S’inscrire pour rejoindre",
-    "expired": "Cette invitation a expiré. Demande un nouveau lien à l’organisateur."
+    "expired": "Cette invitation a expiré. Demande un nouveau lien à l’organisateur.",
+    "signedOutBody": "Connecte-toi ou crée un compte pour voir cette partie et la rejoindre."
   },
   "teams": {
     "title": "Équipes",
@@ -264,7 +298,10 @@
     "movePlayer": "Déplacer un joueur",
     "moveTo": "Déplacer vers : {team}",
     "lock": "Verrouiller les équipes",
-    "locked": "Les équipes sont verrouillées. Les joueurs ont été prévenus."
+    "locked": "Les équipes sont verrouillées. Les joueurs ont été prévenus.",
+    "coverageTeam": "{team} : {roles}",
+    "notLocked": "L’organisateur n’a pas encore défini les équipes.",
+    "reshuffled": "Équipes mélangées."
   },
   "result": {
     "title": "Saisir le résultat",
@@ -276,6 +313,41 @@
     "didntPlay": "Nous n’avons pas joué",
     "submit": "Enregistrer le résultat",
     "saved": "Résultat enregistré. Les joueurs peuvent le contester pendant {hours, plural, one {# heure} many {# d’heures} other {# heures}}.",
-    "closed": "Le délai de saisie du résultat s’est terminé à {time}."
+    "closed": "Le délai de saisie du résultat s’est terminé à {time}.",
+    "notYet": "Tu pourras saisir le résultat à la fin de la partie, à {time}."
+  },
+  "my": {
+    "refresh": "Actualiser",
+    "segmentsA11y": "Afficher les parties",
+    "segment": {
+      "upcoming": "À venir",
+      "hosting": "J’organise",
+      "past": "Passées"
+    },
+    "findGame": "Trouver une partie",
+    "hostGame": "Organiser une partie",
+    "empty": {
+      "upcoming": {
+        "title": "Aucune partie à venir",
+        "body": "Les parties que tu rejoins ou organises apparaissent ici. Trouve-en une sur la carte."
+      },
+      "hosting": {
+        "title": "Tu n’organises rien",
+        "body": "Organise une partie et tes joueurs seront listés ici."
+      },
+      "past": {
+        "title": "Pas encore de parties passées",
+        "body": "Les parties que tu as jouées ou organisées seront listées ici."
+      }
+    },
+    "state": {
+      "hosting": "Tu organises",
+      "going": "Ta place est réservée",
+      "waitlisted": "Sur liste d’attente",
+      "requested": "Demande envoyée",
+      "cancelled": "Annulée",
+      "checkedIn": "Check-in fait",
+      "noShow": "Absence"
+    }
   }
 }

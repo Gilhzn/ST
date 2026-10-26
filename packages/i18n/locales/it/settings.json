@@ -45,7 +45,9 @@
     "safety": "Account e sicurezza",
     "safetyLocked": "Sempre attive. Siamo tenuti a informarti sulle decisioni riguardanti il tuo account.",
     "osOff": "Le notifiche sono disattivate nelle impostazioni del dispositivo.",
-    "osOffAction": "Apri le impostazioni del dispositivo"
+    "osOffAction": "Apri le impostazioni del dispositivo",
+    "deviceNote": "Queste scelte sono salvate su questo dispositivo.",
+    "unavailable": "Le notifiche push non sono disponibili qui. Vedrai comunque gli aggiornamenti nella posta."
   },
   "privacy": {
     "title": "Privacy e sicurezza",
@@ -67,11 +69,16 @@
     "blocked": {
       "title": "Giocatori bloccati",
       "empty": "Non hai bloccato nessuno.",
-      "unblockConfirm": "Sbloccare {name}?"
+      "unblockConfirm": "Sbloccare {name}?",
+      "unnamed": "Giocatore bloccato {number}",
+      "since": "Bloccato il {date}",
+      "unblocked": "Giocatore sbloccato."
     },
     "data": {
       "download": "Scarica i miei dati",
-      "help": "Richiedi una copia dei tuoi dati. Ti avviseremo quando sarà pronta."
+      "help": "Richiedi una copia dei tuoi dati. Ti avviseremo quando sarà pronta.",
+      "title": "I tuoi dati",
+      "contact": "Contattaci e ti invieremo una copia."
     }
   },
   "delete": {
@@ -87,7 +94,15 @@
     "button": "Elimina il mio account",
     "deleting": "Eliminazione dell’account…",
     "done": "Il tuo account è stato eliminato.",
-    "webLink": "Puoi eliminare l’account anche dal web: {url}"
+    "webLink": "Puoi eliminare l’account anche dal web: {url}",
+    "confirmIntro": "Questo è l’ultimo passaggio. Il tuo account sarà eliminato subito e la tua sessione verrà chiusa.",
+    "gamesTitle": "Le tue partite",
+    "games": "Le tue iscrizioni alle partite verranno annullate, senza cartellino giallo, e i blocchi delle cauzioni saranno rimossi. Le partite che organizzi e che non sono ancora iniziate passano a un co-organizzatore, se c’è. Altrimenti vengono annullate e i giocatori vengono avvisati.",
+    "keptMore": "I registri dei pagamenti sono conservati, in una forma che non ti identifica, fino a 7 anni, perché lo richiede la legge fiscale. I backup vengono cancellati entro 30 giorni.",
+    "timingTitle": "Quando succede",
+    "timing": "Il tuo profilo scompare subito dall’app. Il resto dei tuoi dati personali viene cancellato entro 24 ore.",
+    "reregister": "Potrai registrarti di nuovo in seguito con lo stesso numero. Se un blocco o un avvertimento è ancora in corso, il tempo rimanente si applica di nuovo.",
+    "keep": "Mantieni il mio account"
   },
   "about": {
     "version": "Versione {version}",
