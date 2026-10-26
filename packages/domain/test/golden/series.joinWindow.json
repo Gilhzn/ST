@@ -1,0 +1,546 @@
+[
+  {
+    "name": "before-open",
+    "kind": "series.joinWindow",
+    "input": {
+      "series": {
+        "hostId": "00000000-0000-4000-8000-0000000000ff"
+      },
+      "occurrence": {
+        "seriesId": "00000000-0000-4000-8000-00000000c001",
+        "occurrenceKey": "00000000-0000-4000-8000-00000000c001:0:2026-10-27",
+        "slotDate": "2026-10-27",
+        "scheduleRevision": 0,
+        "gameId": "72acd25b-9e0b-8469-bfe5-576bb4c88fb1",
+        "startsAt": "2026-10-27T20:00:00.000Z",
+        "endsAt": "2026-10-27T21:00:00.000Z",
+        "opensAt": "2026-09-29T20:00:00.000Z",
+        "priorityUntil": "2026-09-30T20:00:00.000Z",
+        "reconfirmAt": "2026-10-25T20:00:00.000Z",
+        "releaseAt": "2026-10-26T20:00:00.000Z",
+        "status": "scheduled",
+        "overridden": false
+      },
+      "roster": [
+        {
+          "seriesId": "00000000-0000-4000-8000-00000000c001",
+          "userId": "00000000-0000-4000-8000-000000000001",
+          "status": "regular",
+          "alwaysIn": true,
+          "joinedVia": "invite_link",
+          "consecutiveMisses": 0,
+          "leaveOfferedAt": null,
+          "joinedAt": "2026-09-01T10:00:00.000Z",
+          "leftAt": null
+        },
+        {
+          "seriesId": "00000000-0000-4000-8000-00000000c001",
+          "userId": "00000000-0000-4000-8000-000000000002",
+          "status": "left",
+          "alwaysIn": true,
+          "joinedVia": "invite_link",
+          "consecutiveMisses": 0,
+          "leaveOfferedAt": null,
+          "joinedAt": "2026-09-02T10:00:00.000Z",
+          "leftAt": null
+        },
+        {
+          "seriesId": "00000000-0000-4000-8000-00000000c001",
+          "userId": "00000000-0000-4000-8000-000000000003",
+          "status": "invited",
+          "alwaysIn": true,
+          "joinedVia": "invite_link",
+          "consecutiveMisses": 0,
+          "leaveOfferedAt": null,
+          "joinedAt": "2026-09-03T10:00:00.000Z",
+          "leftAt": null
+        }
+      ],
+      "userId": "00000000-0000-4000-8000-000000000001"
+    },
+    "now": "2026-09-29T19:59:59.999Z",
+    "expected": {
+      "ok": false,
+      "error": "game_not_open"
+    },
+    "tags": [
+      "prd-v5:AC-GAME-010"
+    ]
+  },
+  {
+    "name": "priority.regular-joins",
+    "kind": "series.joinWindow",
+    "input": {
+      "series": {
+        "hostId": "00000000-0000-4000-8000-0000000000ff"
+      },
+      "occurrence": {
+        "seriesId": "00000000-0000-4000-8000-00000000c001",
+        "occurrenceKey": "00000000-0000-4000-8000-00000000c001:0:2026-10-27",
+        "slotDate": "2026-10-27",
+        "scheduleRevision": 0,
+        "gameId": "72acd25b-9e0b-8469-bfe5-576bb4c88fb1",
+        "startsAt": "2026-10-27T20:00:00.000Z",
+        "endsAt": "2026-10-27T21:00:00.000Z",
+        "opensAt": "2026-09-29T20:00:00.000Z",
+        "priorityUntil": "2026-09-30T20:00:00.000Z",
+        "reconfirmAt": "2026-10-25T20:00:00.000Z",
+        "releaseAt": "2026-10-26T20:00:00.000Z",
+        "status": "scheduled",
+        "overridden": false
+      },
+      "roster": [
+        {
+          "seriesId": "00000000-0000-4000-8000-00000000c001",
+          "userId": "00000000-0000-4000-8000-000000000001",
+          "status": "regular",
+          "alwaysIn": true,
+          "joinedVia": "invite_link",
+          "consecutiveMisses": 0,
+          "leaveOfferedAt": null,
+          "joinedAt": "2026-09-01T10:00:00.000Z",
+          "leftAt": null
+        },
+        {
+          "seriesId": "00000000-0000-4000-8000-00000000c001",
+          "userId": "00000000-0000-4000-8000-000000000002",
+          "status": "left",
+          "alwaysIn": true,
+          "joinedVia": "invite_link",
+          "consecutiveMisses": 0,
+          "leaveOfferedAt": null,
+          "joinedAt": "2026-09-02T10:00:00.000Z",
+          "leftAt": null
+        },
+        {
+          "seriesId": "00000000-0000-4000-8000-00000000c001",
+          "userId": "00000000-0000-4000-8000-000000000003",
+          "status": "invited",
+          "alwaysIn": true,
+          "joinedVia": "invite_link",
+          "consecutiveMisses": 0,
+          "leaveOfferedAt": null,
+          "joinedAt": "2026-09-03T10:00:00.000Z",
+          "leftAt": null
+        }
+      ],
+      "userId": "00000000-0000-4000-8000-000000000001"
+    },
+    "now": "2026-09-29T20:00:00.000Z",
+    "expected": {
+      "ok": true,
+      "value": "roster_only"
+    },
+    "tags": [
+      "prd-v5:AC-GAME-010"
+    ]
+  },
+  {
+    "name": "priority.host",
+    "kind": "series.joinWindow",
+    "input": {
+      "series": {
+        "hostId": "00000000-0000-4000-8000-0000000000ff"
+      },
+      "occurrence": {
+        "seriesId": "00000000-0000-4000-8000-00000000c001",
+        "occurrenceKey": "00000000-0000-4000-8000-00000000c001:0:2026-10-27",
+        "slotDate": "2026-10-27",
+        "scheduleRevision": 0,
+        "gameId": "72acd25b-9e0b-8469-bfe5-576bb4c88fb1",
+        "startsAt": "2026-10-27T20:00:00.000Z",
+        "endsAt": "2026-10-27T21:00:00.000Z",
+        "opensAt": "2026-09-29T20:00:00.000Z",
+        "priorityUntil": "2026-09-30T20:00:00.000Z",
+        "reconfirmAt": "2026-10-25T20:00:00.000Z",
+        "releaseAt": "2026-10-26T20:00:00.000Z",
+        "status": "scheduled",
+        "overridden": false
+      },
+      "roster": [
+        {
+          "seriesId": "00000000-0000-4000-8000-00000000c001",
+          "userId": "00000000-0000-4000-8000-000000000001",
+          "status": "regular",
+          "alwaysIn": true,
+          "joinedVia": "invite_link",
+          "consecutiveMisses": 0,
+          "leaveOfferedAt": null,
+          "joinedAt": "2026-09-01T10:00:00.000Z",
+          "leftAt": null
+        },
+        {
+          "seriesId": "00000000-0000-4000-8000-00000000c001",
+          "userId": "00000000-0000-4000-8000-000000000002",
+          "status": "left",
+          "alwaysIn": true,
+          "joinedVia": "invite_link",
+          "consecutiveMisses": 0,
+          "leaveOfferedAt": null,
+          "joinedAt": "2026-09-02T10:00:00.000Z",
+          "leftAt": null
+        },
+        {
+          "seriesId": "00000000-0000-4000-8000-00000000c001",
+          "userId": "00000000-0000-4000-8000-000000000003",
+          "status": "invited",
+          "alwaysIn": true,
+          "joinedVia": "invite_link",
+          "consecutiveMisses": 0,
+          "leaveOfferedAt": null,
+          "joinedAt": "2026-09-03T10:00:00.000Z",
+          "leftAt": null
+        }
+      ],
+      "userId": "00000000-0000-4000-8000-0000000000ff"
+    },
+    "now": "2026-09-29T20:00:00.000Z",
+    "expected": {
+      "ok": true,
+      "value": "roster_only"
+    },
+    "tags": [
+      "prd-v5:AC-GAME-010"
+    ]
+  },
+  {
+    "name": "priority.left-member-waits",
+    "kind": "series.joinWindow",
+    "input": {
+      "series": {
+        "hostId": "00000000-0000-4000-8000-0000000000ff"
+      },
+      "occurrence": {
+        "seriesId": "00000000-0000-4000-8000-00000000c001",
+        "occurrenceKey": "00000000-0000-4000-8000-00000000c001:0:2026-10-27",
+        "slotDate": "2026-10-27",
+        "scheduleRevision": 0,
+        "gameId": "72acd25b-9e0b-8469-bfe5-576bb4c88fb1",
+        "startsAt": "2026-10-27T20:00:00.000Z",
+        "endsAt": "2026-10-27T21:00:00.000Z",
+        "opensAt": "2026-09-29T20:00:00.000Z",
+        "priorityUntil": "2026-09-30T20:00:00.000Z",
+        "reconfirmAt": "2026-10-25T20:00:00.000Z",
+        "releaseAt": "2026-10-26T20:00:00.000Z",
+        "status": "scheduled",
+        "overridden": false
+      },
+      "roster": [
+        {
+          "seriesId": "00000000-0000-4000-8000-00000000c001",
+          "userId": "00000000-0000-4000-8000-000000000001",
+          "status": "regular",
+          "alwaysIn": true,
+          "joinedVia": "invite_link",
+          "consecutiveMisses": 0,
+          "leaveOfferedAt": null,
+          "joinedAt": "2026-09-01T10:00:00.000Z",
+          "leftAt": null
+        },
+        {
+          "seriesId": "00000000-0000-4000-8000-00000000c001",
+          "userId": "00000000-0000-4000-8000-000000000002",
+          "status": "left",
+          "alwaysIn": true,
+          "joinedVia": "invite_link",
+          "consecutiveMisses": 0,
+          "leaveOfferedAt": null,
+          "joinedAt": "2026-09-02T10:00:00.000Z",
+          "leftAt": null
+        },
+        {
+          "seriesId": "00000000-0000-4000-8000-00000000c001",
+          "userId": "00000000-0000-4000-8000-000000000003",
+          "status": "invited",
+          "alwaysIn": true,
+          "joinedVia": "invite_link",
+          "consecutiveMisses": 0,
+          "leaveOfferedAt": null,
+          "joinedAt": "2026-09-03T10:00:00.000Z",
+          "leftAt": null
+        }
+      ],
+      "userId": "00000000-0000-4000-8000-000000000002"
+    },
+    "now": "2026-09-30T19:00:00.000Z",
+    "expected": {
+      "ok": false,
+      "error": "roster_priority"
+    },
+    "tags": [
+      "prd-v5:AC-GAME-010"
+    ]
+  },
+  {
+    "name": "priority.invited-not-yet-regular-waits",
+    "kind": "series.joinWindow",
+    "input": {
+      "series": {
+        "hostId": "00000000-0000-4000-8000-0000000000ff"
+      },
+      "occurrence": {
+        "seriesId": "00000000-0000-4000-8000-00000000c001",
+        "occurrenceKey": "00000000-0000-4000-8000-00000000c001:0:2026-10-27",
+        "slotDate": "2026-10-27",
+        "scheduleRevision": 0,
+        "gameId": "72acd25b-9e0b-8469-bfe5-576bb4c88fb1",
+        "startsAt": "2026-10-27T20:00:00.000Z",
+        "endsAt": "2026-10-27T21:00:00.000Z",
+        "opensAt": "2026-09-29T20:00:00.000Z",
+        "priorityUntil": "2026-09-30T20:00:00.000Z",
+        "reconfirmAt": "2026-10-25T20:00:00.000Z",
+        "releaseAt": "2026-10-26T20:00:00.000Z",
+        "status": "scheduled",
+        "overridden": false
+      },
+      "roster": [
+        {
+          "seriesId": "00000000-0000-4000-8000-00000000c001",
+          "userId": "00000000-0000-4000-8000-000000000001",
+          "status": "regular",
+          "alwaysIn": true,
+          "joinedVia": "invite_link",
+          "consecutiveMisses": 0,
+          "leaveOfferedAt": null,
+          "joinedAt": "2026-09-01T10:00:00.000Z",
+          "leftAt": null
+        },
+        {
+          "seriesId": "00000000-0000-4000-8000-00000000c001",
+          "userId": "00000000-0000-4000-8000-000000000002",
+          "status": "left",
+          "alwaysIn": true,
+          "joinedVia": "invite_link",
+          "consecutiveMisses": 0,
+          "leaveOfferedAt": null,
+          "joinedAt": "2026-09-02T10:00:00.000Z",
+          "leftAt": null
+        },
+        {
+          "seriesId": "00000000-0000-4000-8000-00000000c001",
+          "userId": "00000000-0000-4000-8000-000000000003",
+          "status": "invited",
+          "alwaysIn": true,
+          "joinedVia": "invite_link",
+          "consecutiveMisses": 0,
+          "leaveOfferedAt": null,
+          "joinedAt": "2026-09-03T10:00:00.000Z",
+          "leftAt": null
+        }
+      ],
+      "userId": "00000000-0000-4000-8000-000000000003"
+    },
+    "now": "2026-09-29T20:00:00.000Z",
+    "expected": {
+      "ok": false,
+      "error": "roster_priority"
+    },
+    "tags": [
+      "prd-v5:AC-GAME-010"
+    ]
+  },
+  {
+    "name": "priority.public-waits-24h",
+    "kind": "series.joinWindow",
+    "input": {
+      "series": {
+        "hostId": "00000000-0000-4000-8000-0000000000ff"
+      },
+      "occurrence": {
+        "seriesId": "00000000-0000-4000-8000-00000000c001",
+        "occurrenceKey": "00000000-0000-4000-8000-00000000c001:0:2026-10-27",
+        "slotDate": "2026-10-27",
+        "scheduleRevision": 0,
+        "gameId": "72acd25b-9e0b-8469-bfe5-576bb4c88fb1",
+        "startsAt": "2026-10-27T20:00:00.000Z",
+        "endsAt": "2026-10-27T21:00:00.000Z",
+        "opensAt": "2026-09-29T20:00:00.000Z",
+        "priorityUntil": "2026-09-30T20:00:00.000Z",
+        "reconfirmAt": "2026-10-25T20:00:00.000Z",
+        "releaseAt": "2026-10-26T20:00:00.000Z",
+        "status": "scheduled",
+        "overridden": false
+      },
+      "roster": [
+        {
+          "seriesId": "00000000-0000-4000-8000-00000000c001",
+          "userId": "00000000-0000-4000-8000-000000000001",
+          "status": "regular",
+          "alwaysIn": true,
+          "joinedVia": "invite_link",
+          "consecutiveMisses": 0,
+          "leaveOfferedAt": null,
+          "joinedAt": "2026-09-01T10:00:00.000Z",
+          "leftAt": null
+        },
+        {
+          "seriesId": "00000000-0000-4000-8000-00000000c001",
+          "userId": "00000000-0000-4000-8000-000000000002",
+          "status": "left",
+          "alwaysIn": true,
+          "joinedVia": "invite_link",
+          "consecutiveMisses": 0,
+          "leaveOfferedAt": null,
+          "joinedAt": "2026-09-02T10:00:00.000Z",
+          "leftAt": null
+        },
+        {
+          "seriesId": "00000000-0000-4000-8000-00000000c001",
+          "userId": "00000000-0000-4000-8000-000000000003",
+          "status": "invited",
+          "alwaysIn": true,
+          "joinedVia": "invite_link",
+          "consecutiveMisses": 0,
+          "leaveOfferedAt": null,
+          "joinedAt": "2026-09-03T10:00:00.000Z",
+          "leftAt": null
+        }
+      ],
+      "userId": "00000000-0000-4000-8000-000000000009"
+    },
+    "now": "2026-09-30T19:59:59.999Z",
+    "expected": {
+      "ok": false,
+      "error": "roster_priority"
+    },
+    "tags": [
+      "prd-v5:AC-GAME-010"
+    ]
+  },
+  {
+    "name": "open.public-after-24h",
+    "kind": "series.joinWindow",
+    "input": {
+      "series": {
+        "hostId": "00000000-0000-4000-8000-0000000000ff"
+      },
+      "occurrence": {
+        "seriesId": "00000000-0000-4000-8000-00000000c001",
+        "occurrenceKey": "00000000-0000-4000-8000-00000000c001:0:2026-10-27",
+        "slotDate": "2026-10-27",
+        "scheduleRevision": 0,
+        "gameId": "72acd25b-9e0b-8469-bfe5-576bb4c88fb1",
+        "startsAt": "2026-10-27T20:00:00.000Z",
+        "endsAt": "2026-10-27T21:00:00.000Z",
+        "opensAt": "2026-09-29T20:00:00.000Z",
+        "priorityUntil": "2026-09-30T20:00:00.000Z",
+        "reconfirmAt": "2026-10-25T20:00:00.000Z",
+        "releaseAt": "2026-10-26T20:00:00.000Z",
+        "status": "scheduled",
+        "overridden": false
+      },
+      "roster": [
+        {
+          "seriesId": "00000000-0000-4000-8000-00000000c001",
+          "userId": "00000000-0000-4000-8000-000000000001",
+          "status": "regular",
+          "alwaysIn": true,
+          "joinedVia": "invite_link",
+          "consecutiveMisses": 0,
+          "leaveOfferedAt": null,
+          "joinedAt": "2026-09-01T10:00:00.000Z",
+          "leftAt": null
+        },
+        {
+          "seriesId": "00000000-0000-4000-8000-00000000c001",
+          "userId": "00000000-0000-4000-8000-000000000002",
+          "status": "left",
+          "alwaysIn": true,
+          "joinedVia": "invite_link",
+          "consecutiveMisses": 0,
+          "leaveOfferedAt": null,
+          "joinedAt": "2026-09-02T10:00:00.000Z",
+          "leftAt": null
+        },
+        {
+          "seriesId": "00000000-0000-4000-8000-00000000c001",
+          "userId": "00000000-0000-4000-8000-000000000003",
+          "status": "invited",
+          "alwaysIn": true,
+          "joinedVia": "invite_link",
+          "consecutiveMisses": 0,
+          "leaveOfferedAt": null,
+          "joinedAt": "2026-09-03T10:00:00.000Z",
+          "leftAt": null
+        }
+      ],
+      "userId": "00000000-0000-4000-8000-000000000009"
+    },
+    "now": "2026-09-30T20:00:00.000Z",
+    "expected": {
+      "ok": true,
+      "value": "open"
+    },
+    "tags": [
+      "prd-v5:AC-GAME-010"
+    ]
+  },
+  {
+    "name": "closed.at-start",
+    "kind": "series.joinWindow",
+    "input": {
+      "series": {
+        "hostId": "00000000-0000-4000-8000-0000000000ff"
+      },
+      "occurrence": {
+        "seriesId": "00000000-0000-4000-8000-00000000c001",
+        "occurrenceKey": "00000000-0000-4000-8000-00000000c001:0:2026-10-27",
+        "slotDate": "2026-10-27",
+        "scheduleRevision": 0,
+        "gameId": "72acd25b-9e0b-8469-bfe5-576bb4c88fb1",
+        "startsAt": "2026-10-27T20:00:00.000Z",
+        "endsAt": "2026-10-27T21:00:00.000Z",
+        "opensAt": "2026-09-29T20:00:00.000Z",
+        "priorityUntil": "2026-09-30T20:00:00.000Z",
+        "reconfirmAt": "2026-10-25T20:00:00.000Z",
+        "releaseAt": "2026-10-26T20:00:00.000Z",
+        "status": "scheduled",
+        "overridden": false
+      },
+      "roster": [
+        {
+          "seriesId": "00000000-0000-4000-8000-00000000c001",
+          "userId": "00000000-0000-4000-8000-000000000001",
+          "status": "regular",
+          "alwaysIn": true,
+          "joinedVia": "invite_link",
+          "consecutiveMisses": 0,
+          "leaveOfferedAt": null,
+          "joinedAt": "2026-09-01T10:00:00.000Z",
+          "leftAt": null
+        },
+        {
+          "seriesId": "00000000-0000-4000-8000-00000000c001",
+          "userId": "00000000-0000-4000-8000-000000000002",
+          "status": "left",
+          "alwaysIn": true,
+          "joinedVia": "invite_link",
+          "consecutiveMisses": 0,
+          "leaveOfferedAt": null,
+          "joinedAt": "2026-09-02T10:00:00.000Z",
+          "leftAt": null
+        },
+        {
+          "seriesId": "00000000-0000-4000-8000-00000000c001",
+          "userId": "00000000-0000-4000-8000-000000000003",
+          "status": "invited",
+          "alwaysIn": true,
+          "joinedVia": "invite_link",
+          "consecutiveMisses": 0,
+          "leaveOfferedAt": null,
+          "joinedAt": "2026-09-03T10:00:00.000Z",
+          "leftAt": null
+        }
+      ],
+      "userId": "00000000-0000-4000-8000-000000000001"
+    },
+    "now": "2026-10-27T20:00:00.000Z",
+    "expected": {
+      "ok": false,
+      "error": "game_not_open"
+    },
+    "tags": [
+      "prd-v5:AC-GAME-010"
+    ]
+  }
+]

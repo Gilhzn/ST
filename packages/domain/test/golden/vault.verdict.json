@@ -1,0 +1,250 @@
+[
+  {
+    "name": "publish.opted-in-no-tags.venue-public",
+    "kind": "vault.verdict",
+    "input": {
+      "item": {
+        "id": "m1",
+        "gameId": "00000000-0000-4000-8000-0000000a0001",
+        "venueId": "00000000-0000-4000-8000-00000000beef",
+        "uploaderId": "00000000-0000-4000-8000-000000000001",
+        "kind": "photo",
+        "status": "processing",
+        "visibility": "participants",
+        "publicOptIn": true,
+        "mimeType": "image/jpeg",
+        "sizeBytes": 1048576,
+        "durationSeconds": null,
+        "storagePath": "media/m1.jpg",
+        "createdAt": "2026-11-01T20:00:00.000Z",
+        "publishedAt": null,
+        "expiresAt": "2027-11-01T20:00:00.000Z",
+        "removedAt": null
+      },
+      "tags": [],
+      "verdict": {
+        "decision": "publish",
+        "categories": [],
+        "exifStripped": true,
+        "csamHashMatch": false,
+        "source": "vision",
+        "reasonKey": null
+      }
+    },
+    "now": "2026-11-01T21:00:00.000Z",
+    "expected": {
+      "item": {
+        "id": "m1",
+        "gameId": "00000000-0000-4000-8000-0000000a0001",
+        "venueId": "00000000-0000-4000-8000-00000000beef",
+        "uploaderId": "00000000-0000-4000-8000-000000000001",
+        "kind": "photo",
+        "status": "published",
+        "visibility": "venue_public",
+        "publicOptIn": true,
+        "mimeType": "image/jpeg",
+        "sizeBytes": 1048576,
+        "durationSeconds": null,
+        "storagePath": "media/m1.jpg",
+        "createdAt": "2026-11-01T20:00:00.000Z",
+        "publishedAt": "2026-11-01T21:00:00.000Z",
+        "expiresAt": "2027-11-01T20:00:00.000Z",
+        "removedAt": null
+      },
+      "effects": [
+        {
+          "type": "SetMediaStatus",
+          "mediaId": "m1",
+          "status": "published",
+          "dedupeKey": "media-status:m1:published"
+        },
+        {
+          "type": "SetMediaVisibility",
+          "mediaId": "m1",
+          "visibility": "venue_public",
+          "dedupeKey": "media-visibility:m1:venue_public:2026-11-01T21:00:00.000Z"
+        }
+      ]
+    }
+  },
+  {
+    "name": "block.policy.notifies-uploader",
+    "kind": "vault.verdict",
+    "input": {
+      "item": {
+        "id": "m1",
+        "gameId": "00000000-0000-4000-8000-0000000a0001",
+        "venueId": "00000000-0000-4000-8000-00000000beef",
+        "uploaderId": "00000000-0000-4000-8000-000000000001",
+        "kind": "photo",
+        "status": "processing",
+        "visibility": "participants",
+        "publicOptIn": true,
+        "mimeType": "image/jpeg",
+        "sizeBytes": 1048576,
+        "durationSeconds": null,
+        "storagePath": "media/m1.jpg",
+        "createdAt": "2026-11-01T20:00:00.000Z",
+        "publishedAt": null,
+        "expiresAt": "2027-11-01T20:00:00.000Z",
+        "removedAt": null
+      },
+      "tags": [],
+      "verdict": {
+        "decision": "block",
+        "categories": [],
+        "exifStripped": true,
+        "csamHashMatch": false,
+        "source": "vision",
+        "reasonKey": null
+      }
+    },
+    "now": "2026-11-01T21:00:00.000Z",
+    "expected": {
+      "item": {
+        "id": "m1",
+        "gameId": "00000000-0000-4000-8000-0000000a0001",
+        "venueId": "00000000-0000-4000-8000-00000000beef",
+        "uploaderId": "00000000-0000-4000-8000-000000000001",
+        "kind": "photo",
+        "status": "blocked",
+        "visibility": "participants",
+        "publicOptIn": true,
+        "mimeType": "image/jpeg",
+        "sizeBytes": 1048576,
+        "durationSeconds": null,
+        "storagePath": "media/m1.jpg",
+        "createdAt": "2026-11-01T20:00:00.000Z",
+        "publishedAt": null,
+        "expiresAt": "2027-11-01T20:00:00.000Z",
+        "removedAt": null
+      },
+      "effects": [
+        {
+          "type": "SetMediaStatus",
+          "mediaId": "m1",
+          "status": "blocked",
+          "dedupeKey": "media-status:m1:blocked"
+        },
+        {
+          "type": "Notify15",
+          "userId": "00000000-0000-4000-8000-000000000001",
+          "kind": "media_blocked",
+          "params": {
+            "mediaId": "m1",
+            "reasonKey": "media.blocked.policy"
+          },
+          "gameId": "00000000-0000-4000-8000-0000000a0001",
+          "seriesId": null,
+          "dedupeKey": "notify:media_blocked:m1"
+        }
+      ]
+    }
+  },
+  {
+    "name": "ac-vault-003.csam.block-preserve-restrict-review",
+    "kind": "vault.verdict",
+    "input": {
+      "item": {
+        "id": "m1",
+        "gameId": "00000000-0000-4000-8000-0000000a0001",
+        "venueId": "00000000-0000-4000-8000-00000000beef",
+        "uploaderId": "00000000-0000-4000-8000-000000000001",
+        "kind": "photo",
+        "status": "processing",
+        "visibility": "participants",
+        "publicOptIn": true,
+        "mimeType": "image/jpeg",
+        "sizeBytes": 1048576,
+        "durationSeconds": null,
+        "storagePath": "media/m1.jpg",
+        "createdAt": "2026-11-01T20:00:00.000Z",
+        "publishedAt": null,
+        "expiresAt": "2027-11-01T20:00:00.000Z",
+        "removedAt": null
+      },
+      "tags": [],
+      "verdict": {
+        "decision": "csam",
+        "categories": [],
+        "exifStripped": true,
+        "csamHashMatch": true,
+        "source": "hash",
+        "reasonKey": null
+      }
+    },
+    "now": "2026-11-01T21:00:00.000Z",
+    "expected": {
+      "item": {
+        "id": "m1",
+        "gameId": "00000000-0000-4000-8000-0000000a0001",
+        "venueId": "00000000-0000-4000-8000-00000000beef",
+        "uploaderId": "00000000-0000-4000-8000-000000000001",
+        "kind": "photo",
+        "status": "blocked",
+        "visibility": "participants",
+        "publicOptIn": true,
+        "mimeType": "image/jpeg",
+        "sizeBytes": 1048576,
+        "durationSeconds": null,
+        "storagePath": "media/m1.jpg",
+        "createdAt": "2026-11-01T20:00:00.000Z",
+        "publishedAt": null,
+        "expiresAt": "2027-11-01T20:00:00.000Z",
+        "removedAt": null
+      },
+      "effects": [
+        {
+          "type": "SetMediaStatus",
+          "mediaId": "m1",
+          "status": "blocked",
+          "dedupeKey": "media-status:m1:blocked"
+        },
+        {
+          "type": "PreserveMediaEvidence",
+          "mediaId": "m1",
+          "uploaderId": "00000000-0000-4000-8000-000000000001",
+          "dedupeKey": "preserve:m1"
+        },
+        {
+          "type": "RestrictAccountPendingReview",
+          "userId": "00000000-0000-4000-8000-000000000001",
+          "reason": "csam_match",
+          "dedupeKey": "restrict:media_csam:m1"
+        },
+        {
+          "type": "EnqueueReview",
+          "item": {
+            "kind": "media_csam",
+            "priority": "high",
+            "subjectUserId": "00000000-0000-4000-8000-000000000001",
+            "venueId": "00000000-0000-4000-8000-00000000beef",
+            "gameId": "00000000-0000-4000-8000-0000000a0001",
+            "sanctionId": null,
+            "appealId": null,
+            "reportIds": [],
+            "evidence": {
+              "mediaId": "m1",
+              "csamHashMatch": true,
+              "source": "hash"
+            },
+            "dueBy": "2026-11-01T22:00:00.000Z",
+            "dedupeKey": "media_csam:m1"
+          }
+        },
+        {
+          "type": "Audit",
+          "action": "media.csam_blocked",
+          "subjectUserId": "00000000-0000-4000-8000-000000000001",
+          "data": {
+            "mediaId": "m1",
+            "gameId": "00000000-0000-4000-8000-0000000a0001"
+          }
+        }
+      ]
+    },
+    "tags": [
+      "prd-v5:AC-VAULT-003"
+    ]
+  }
+]

@@ -1,0 +1,439 @@
+[
+  {
+    "name": "ac-vault-004.two-of-three-accepted.stays-participants",
+    "kind": "vault.visibility",
+    "input": {
+      "item": {
+        "id": "m1",
+        "gameId": "00000000-0000-4000-8000-0000000a0001",
+        "venueId": "00000000-0000-4000-8000-00000000beef",
+        "uploaderId": "00000000-0000-4000-8000-000000000001",
+        "kind": "photo",
+        "status": "published",
+        "visibility": "participants",
+        "publicOptIn": false,
+        "mimeType": "image/jpeg",
+        "sizeBytes": 1048576,
+        "durationSeconds": null,
+        "storagePath": "media/m1.jpg",
+        "createdAt": "2026-11-01T20:00:00.000Z",
+        "publishedAt": "2026-11-01T20:00:00.000Z",
+        "expiresAt": "2027-11-01T20:00:00.000Z",
+        "removedAt": null
+      },
+      "tags": [
+        {
+          "mediaId": "m1",
+          "userId": "00000000-0000-4000-8000-000000000002",
+          "taggedBy": "00000000-0000-4000-8000-000000000001",
+          "status": "accepted",
+          "vetoPublic": false,
+          "createdAt": "2026-11-01T20:00:00.000Z",
+          "decidedAt": null
+        },
+        {
+          "mediaId": "m1",
+          "userId": "00000000-0000-4000-8000-000000000003",
+          "taggedBy": "00000000-0000-4000-8000-000000000001",
+          "status": "accepted",
+          "vetoPublic": false,
+          "createdAt": "2026-11-01T20:00:00.000Z",
+          "decidedAt": null
+        },
+        {
+          "mediaId": "m1",
+          "userId": "00000000-0000-4000-8000-000000000004",
+          "taggedBy": "00000000-0000-4000-8000-000000000001",
+          "status": "requested",
+          "vetoPublic": false,
+          "createdAt": "2026-11-01T20:00:00.000Z",
+          "decidedAt": null
+        }
+      ],
+      "requested": "venue_public",
+      "actorId": "00000000-0000-4000-8000-000000000001"
+    },
+    "now": "2026-11-01T21:00:00.000Z",
+    "expected": {
+      "ok": true,
+      "value": {
+        "item": {
+          "id": "m1",
+          "gameId": "00000000-0000-4000-8000-0000000a0001",
+          "venueId": "00000000-0000-4000-8000-00000000beef",
+          "uploaderId": "00000000-0000-4000-8000-000000000001",
+          "kind": "photo",
+          "status": "published",
+          "visibility": "participants",
+          "publicOptIn": true,
+          "mimeType": "image/jpeg",
+          "sizeBytes": 1048576,
+          "durationSeconds": null,
+          "storagePath": "media/m1.jpg",
+          "createdAt": "2026-11-01T20:00:00.000Z",
+          "publishedAt": "2026-11-01T20:00:00.000Z",
+          "expiresAt": "2027-11-01T20:00:00.000Z",
+          "removedAt": null
+        },
+        "tags": [
+          {
+            "mediaId": "m1",
+            "userId": "00000000-0000-4000-8000-000000000002",
+            "taggedBy": "00000000-0000-4000-8000-000000000001",
+            "status": "accepted",
+            "vetoPublic": false,
+            "createdAt": "2026-11-01T20:00:00.000Z",
+            "decidedAt": null
+          },
+          {
+            "mediaId": "m1",
+            "userId": "00000000-0000-4000-8000-000000000003",
+            "taggedBy": "00000000-0000-4000-8000-000000000001",
+            "status": "accepted",
+            "vetoPublic": false,
+            "createdAt": "2026-11-01T20:00:00.000Z",
+            "decidedAt": null
+          },
+          {
+            "mediaId": "m1",
+            "userId": "00000000-0000-4000-8000-000000000004",
+            "taggedBy": "00000000-0000-4000-8000-000000000001",
+            "status": "requested",
+            "vetoPublic": false,
+            "createdAt": "2026-11-01T20:00:00.000Z",
+            "decidedAt": null
+          }
+        ],
+        "effects": [],
+        "pendingUserIds": [
+          "00000000-0000-4000-8000-000000000004"
+        ]
+      }
+    },
+    "tags": [
+      "prd-v5:AC-VAULT-004"
+    ]
+  },
+  {
+    "name": "all-accepted.promoted",
+    "kind": "vault.visibility",
+    "input": {
+      "item": {
+        "id": "m1",
+        "gameId": "00000000-0000-4000-8000-0000000a0001",
+        "venueId": "00000000-0000-4000-8000-00000000beef",
+        "uploaderId": "00000000-0000-4000-8000-000000000001",
+        "kind": "photo",
+        "status": "published",
+        "visibility": "participants",
+        "publicOptIn": false,
+        "mimeType": "image/jpeg",
+        "sizeBytes": 1048576,
+        "durationSeconds": null,
+        "storagePath": "media/m1.jpg",
+        "createdAt": "2026-11-01T20:00:00.000Z",
+        "publishedAt": "2026-11-01T20:00:00.000Z",
+        "expiresAt": "2027-11-01T20:00:00.000Z",
+        "removedAt": null
+      },
+      "tags": [
+        {
+          "mediaId": "m1",
+          "userId": "00000000-0000-4000-8000-000000000002",
+          "taggedBy": "00000000-0000-4000-8000-000000000001",
+          "status": "accepted",
+          "vetoPublic": false,
+          "createdAt": "2026-11-01T20:00:00.000Z",
+          "decidedAt": null
+        },
+        {
+          "mediaId": "m1",
+          "userId": "00000000-0000-4000-8000-000000000003",
+          "taggedBy": "00000000-0000-4000-8000-000000000001",
+          "status": "removed",
+          "vetoPublic": false,
+          "createdAt": "2026-11-01T20:00:00.000Z",
+          "decidedAt": null
+        }
+      ],
+      "requested": "venue_public",
+      "actorId": "00000000-0000-4000-8000-000000000001"
+    },
+    "now": "2026-11-01T21:00:00.000Z",
+    "expected": {
+      "ok": true,
+      "value": {
+        "item": {
+          "id": "m1",
+          "gameId": "00000000-0000-4000-8000-0000000a0001",
+          "venueId": "00000000-0000-4000-8000-00000000beef",
+          "uploaderId": "00000000-0000-4000-8000-000000000001",
+          "kind": "photo",
+          "status": "published",
+          "visibility": "venue_public",
+          "publicOptIn": true,
+          "mimeType": "image/jpeg",
+          "sizeBytes": 1048576,
+          "durationSeconds": null,
+          "storagePath": "media/m1.jpg",
+          "createdAt": "2026-11-01T20:00:00.000Z",
+          "publishedAt": "2026-11-01T20:00:00.000Z",
+          "expiresAt": "2027-11-01T20:00:00.000Z",
+          "removedAt": null
+        },
+        "tags": [
+          {
+            "mediaId": "m1",
+            "userId": "00000000-0000-4000-8000-000000000002",
+            "taggedBy": "00000000-0000-4000-8000-000000000001",
+            "status": "accepted",
+            "vetoPublic": false,
+            "createdAt": "2026-11-01T20:00:00.000Z",
+            "decidedAt": null
+          },
+          {
+            "mediaId": "m1",
+            "userId": "00000000-0000-4000-8000-000000000003",
+            "taggedBy": "00000000-0000-4000-8000-000000000001",
+            "status": "removed",
+            "vetoPublic": false,
+            "createdAt": "2026-11-01T20:00:00.000Z",
+            "decidedAt": null
+          }
+        ],
+        "effects": [
+          {
+            "type": "SetMediaVisibility",
+            "mediaId": "m1",
+            "visibility": "venue_public",
+            "dedupeKey": "media-visibility:m1:venue_public:2026-11-01T21:00:00.000Z"
+          }
+        ],
+        "pendingUserIds": []
+      }
+    }
+  },
+  {
+    "name": "veto.declined-or-removed-from-public.blocks",
+    "kind": "vault.visibility",
+    "input": {
+      "item": {
+        "id": "m1",
+        "gameId": "00000000-0000-4000-8000-0000000a0001",
+        "venueId": "00000000-0000-4000-8000-00000000beef",
+        "uploaderId": "00000000-0000-4000-8000-000000000001",
+        "kind": "photo",
+        "status": "published",
+        "visibility": "participants",
+        "publicOptIn": false,
+        "mimeType": "image/jpeg",
+        "sizeBytes": 1048576,
+        "durationSeconds": null,
+        "storagePath": "media/m1.jpg",
+        "createdAt": "2026-11-01T20:00:00.000Z",
+        "publishedAt": "2026-11-01T20:00:00.000Z",
+        "expiresAt": "2027-11-01T20:00:00.000Z",
+        "removedAt": null
+      },
+      "tags": [
+        {
+          "mediaId": "m1",
+          "userId": "00000000-0000-4000-8000-000000000002",
+          "taggedBy": "00000000-0000-4000-8000-000000000001",
+          "status": "declined",
+          "vetoPublic": true,
+          "createdAt": "2026-11-01T20:00:00.000Z",
+          "decidedAt": null
+        },
+        {
+          "mediaId": "m1",
+          "userId": "00000000-0000-4000-8000-000000000003",
+          "taggedBy": "00000000-0000-4000-8000-000000000001",
+          "status": "removed",
+          "vetoPublic": true,
+          "createdAt": "2026-11-01T20:00:00.000Z",
+          "decidedAt": null
+        }
+      ],
+      "requested": "venue_public",
+      "actorId": "00000000-0000-4000-8000-000000000001"
+    },
+    "now": "2026-11-01T21:00:00.000Z",
+    "expected": {
+      "ok": true,
+      "value": {
+        "item": {
+          "id": "m1",
+          "gameId": "00000000-0000-4000-8000-0000000a0001",
+          "venueId": "00000000-0000-4000-8000-00000000beef",
+          "uploaderId": "00000000-0000-4000-8000-000000000001",
+          "kind": "photo",
+          "status": "published",
+          "visibility": "participants",
+          "publicOptIn": true,
+          "mimeType": "image/jpeg",
+          "sizeBytes": 1048576,
+          "durationSeconds": null,
+          "storagePath": "media/m1.jpg",
+          "createdAt": "2026-11-01T20:00:00.000Z",
+          "publishedAt": "2026-11-01T20:00:00.000Z",
+          "expiresAt": "2027-11-01T20:00:00.000Z",
+          "removedAt": null
+        },
+        "tags": [
+          {
+            "mediaId": "m1",
+            "userId": "00000000-0000-4000-8000-000000000002",
+            "taggedBy": "00000000-0000-4000-8000-000000000001",
+            "status": "declined",
+            "vetoPublic": true,
+            "createdAt": "2026-11-01T20:00:00.000Z",
+            "decidedAt": null
+          },
+          {
+            "mediaId": "m1",
+            "userId": "00000000-0000-4000-8000-000000000003",
+            "taggedBy": "00000000-0000-4000-8000-000000000001",
+            "status": "removed",
+            "vetoPublic": true,
+            "createdAt": "2026-11-01T20:00:00.000Z",
+            "decidedAt": null
+          }
+        ],
+        "effects": [],
+        "pendingUserIds": [
+          "00000000-0000-4000-8000-000000000002",
+          "00000000-0000-4000-8000-000000000003"
+        ]
+      }
+    },
+    "tags": [
+      "prd-v5:VAULT-005"
+    ]
+  },
+  {
+    "name": "opt-out.demoted",
+    "kind": "vault.visibility",
+    "input": {
+      "item": {
+        "id": "m1",
+        "gameId": "00000000-0000-4000-8000-0000000a0001",
+        "venueId": "00000000-0000-4000-8000-00000000beef",
+        "uploaderId": "00000000-0000-4000-8000-000000000001",
+        "kind": "photo",
+        "status": "published",
+        "visibility": "venue_public",
+        "publicOptIn": true,
+        "mimeType": "image/jpeg",
+        "sizeBytes": 1048576,
+        "durationSeconds": null,
+        "storagePath": "media/m1.jpg",
+        "createdAt": "2026-11-01T20:00:00.000Z",
+        "publishedAt": "2026-11-01T20:00:00.000Z",
+        "expiresAt": "2027-11-01T20:00:00.000Z",
+        "removedAt": null
+      },
+      "tags": [],
+      "requested": "participants",
+      "actorId": "00000000-0000-4000-8000-000000000001"
+    },
+    "now": "2026-11-01T21:00:00.000Z",
+    "expected": {
+      "ok": true,
+      "value": {
+        "item": {
+          "id": "m1",
+          "gameId": "00000000-0000-4000-8000-0000000a0001",
+          "venueId": "00000000-0000-4000-8000-00000000beef",
+          "uploaderId": "00000000-0000-4000-8000-000000000001",
+          "kind": "photo",
+          "status": "published",
+          "visibility": "participants",
+          "publicOptIn": false,
+          "mimeType": "image/jpeg",
+          "sizeBytes": 1048576,
+          "durationSeconds": null,
+          "storagePath": "media/m1.jpg",
+          "createdAt": "2026-11-01T20:00:00.000Z",
+          "publishedAt": "2026-11-01T20:00:00.000Z",
+          "expiresAt": "2027-11-01T20:00:00.000Z",
+          "removedAt": null
+        },
+        "tags": [],
+        "effects": [
+          {
+            "type": "SetMediaVisibility",
+            "mediaId": "m1",
+            "visibility": "participants",
+            "dedupeKey": "media-visibility:m1:participants:2026-11-01T21:00:00.000Z"
+          }
+        ],
+        "pendingUserIds": []
+      }
+    }
+  },
+  {
+    "name": "not-uploader",
+    "kind": "vault.visibility",
+    "input": {
+      "item": {
+        "id": "m1",
+        "gameId": "00000000-0000-4000-8000-0000000a0001",
+        "venueId": "00000000-0000-4000-8000-00000000beef",
+        "uploaderId": "00000000-0000-4000-8000-000000000001",
+        "kind": "photo",
+        "status": "published",
+        "visibility": "participants",
+        "publicOptIn": false,
+        "mimeType": "image/jpeg",
+        "sizeBytes": 1048576,
+        "durationSeconds": null,
+        "storagePath": "media/m1.jpg",
+        "createdAt": "2026-11-01T20:00:00.000Z",
+        "publishedAt": "2026-11-01T20:00:00.000Z",
+        "expiresAt": "2027-11-01T20:00:00.000Z",
+        "removedAt": null
+      },
+      "tags": [],
+      "requested": "venue_public",
+      "actorId": "00000000-0000-4000-8000-000000000002"
+    },
+    "now": "2026-11-01T21:00:00.000Z",
+    "expected": {
+      "ok": false,
+      "error": "not_uploader"
+    }
+  },
+  {
+    "name": "blocked-item",
+    "kind": "vault.visibility",
+    "input": {
+      "item": {
+        "id": "m1",
+        "gameId": "00000000-0000-4000-8000-0000000a0001",
+        "venueId": "00000000-0000-4000-8000-00000000beef",
+        "uploaderId": "00000000-0000-4000-8000-000000000001",
+        "kind": "photo",
+        "status": "blocked",
+        "visibility": "participants",
+        "publicOptIn": false,
+        "mimeType": "image/jpeg",
+        "sizeBytes": 1048576,
+        "durationSeconds": null,
+        "storagePath": "media/m1.jpg",
+        "createdAt": "2026-11-01T20:00:00.000Z",
+        "publishedAt": "2026-11-01T20:00:00.000Z",
+        "expiresAt": "2027-11-01T20:00:00.000Z",
+        "removedAt": null
+      },
+      "tags": [],
+      "requested": "venue_public",
+      "actorId": "00000000-0000-4000-8000-000000000001"
+    },
+    "now": "2026-11-01T21:00:00.000Z",
+    "expected": {
+      "ok": false,
+      "error": "not_published"
+    }
+  }
+]

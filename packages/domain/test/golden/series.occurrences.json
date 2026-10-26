@@ -1,0 +1,1534 @@
+[
+  {
+    "name": "london.weekly.4-week-horizon.dst-autumn",
+    "kind": "series.occurrences",
+    "description": "Local 20:00 stays 20:00 across the BST→GMT change on 2026-10-25; slot 2026-11-03 is beyond now + 4 weeks",
+    "input": {
+      "series": {
+        "id": "00000000-0000-4000-8000-00000000c001",
+        "hostId": "00000000-0000-4000-8000-0000000000ff",
+        "sport": "football",
+        "title": "Tuesday 5-a-side",
+        "notes": null,
+        "visibility": "public",
+        "venueId": null,
+        "location": {
+          "lat": 51.5,
+          "lng": -0.12
+        },
+        "approxLocation": {
+          "lat": 51.5,
+          "lng": -0.12
+        },
+        "hideExactLocation": false,
+        "capacity": 3,
+        "minPlayers": 2,
+        "depositMinor": 0,
+        "currency": "GBP",
+        "depositForfeitTo": "host",
+        "womenOnly": false,
+        "teamCount": 2,
+        "recurrence": "weekly",
+        "weekday": 2,
+        "startTime": "20:00",
+        "timeZone": "Europe/London",
+        "durationMinutes": 60,
+        "anchorDate": "2026-10-06",
+        "endDate": null,
+        "horizonWeeks": 4,
+        "rosterPriorityHours": 24,
+        "autoJoinReconfirmHours": 48,
+        "skippedDates": [],
+        "scheduleRevision": 0,
+        "status": "active",
+        "inviteToken": "tok",
+        "createdAt": "2026-09-01T00:00:00.000Z",
+        "updatedAt": "2026-09-01T00:00:00.000Z"
+      },
+      "existing": [],
+      "roster": []
+    },
+    "now": "2026-10-06T12:00:00.000Z",
+    "expected": {
+      "occurrences": [
+        {
+          "seriesId": "00000000-0000-4000-8000-00000000c001",
+          "occurrenceKey": "00000000-0000-4000-8000-00000000c001:0:2026-10-06",
+          "slotDate": "2026-10-06",
+          "scheduleRevision": 0,
+          "gameId": "090dcece-f82b-8080-8c90-8e755385c0f7",
+          "startsAt": "2026-10-06T19:00:00.000Z",
+          "endsAt": "2026-10-06T20:00:00.000Z",
+          "opensAt": "2026-10-06T12:00:00.000Z",
+          "priorityUntil": "2026-10-06T19:00:00.000Z",
+          "reconfirmAt": "2026-10-04T19:00:00.000Z",
+          "releaseAt": "2026-10-05T19:00:00.000Z",
+          "status": "scheduled",
+          "overridden": false
+        },
+        {
+          "seriesId": "00000000-0000-4000-8000-00000000c001",
+          "occurrenceKey": "00000000-0000-4000-8000-00000000c001:0:2026-10-13",
+          "slotDate": "2026-10-13",
+          "scheduleRevision": 0,
+          "gameId": "cebb513d-0c9b-8ecc-981e-34a243956e6b",
+          "startsAt": "2026-10-13T19:00:00.000Z",
+          "endsAt": "2026-10-13T20:00:00.000Z",
+          "opensAt": "2026-10-06T12:00:00.000Z",
+          "priorityUntil": "2026-10-07T12:00:00.000Z",
+          "reconfirmAt": "2026-10-11T19:00:00.000Z",
+          "releaseAt": "2026-10-12T19:00:00.000Z",
+          "status": "scheduled",
+          "overridden": false
+        },
+        {
+          "seriesId": "00000000-0000-4000-8000-00000000c001",
+          "occurrenceKey": "00000000-0000-4000-8000-00000000c001:0:2026-10-20",
+          "slotDate": "2026-10-20",
+          "scheduleRevision": 0,
+          "gameId": "6c902154-62d2-89c9-b43e-16a78df06764",
+          "startsAt": "2026-10-20T19:00:00.000Z",
+          "endsAt": "2026-10-20T20:00:00.000Z",
+          "opensAt": "2026-10-06T12:00:00.000Z",
+          "priorityUntil": "2026-10-07T12:00:00.000Z",
+          "reconfirmAt": "2026-10-18T19:00:00.000Z",
+          "releaseAt": "2026-10-19T19:00:00.000Z",
+          "status": "scheduled",
+          "overridden": false
+        },
+        {
+          "seriesId": "00000000-0000-4000-8000-00000000c001",
+          "occurrenceKey": "00000000-0000-4000-8000-00000000c001:0:2026-10-27",
+          "slotDate": "2026-10-27",
+          "scheduleRevision": 0,
+          "gameId": "72acd25b-9e0b-8469-bfe5-576bb4c88fb1",
+          "startsAt": "2026-10-27T20:00:00.000Z",
+          "endsAt": "2026-10-27T21:00:00.000Z",
+          "opensAt": "2026-10-06T12:00:00.000Z",
+          "priorityUntil": "2026-10-07T12:00:00.000Z",
+          "reconfirmAt": "2026-10-25T20:00:00.000Z",
+          "releaseAt": "2026-10-26T20:00:00.000Z",
+          "status": "scheduled",
+          "overridden": false
+        }
+      ],
+      "effects": [
+        {
+          "type": "CreateOccurrence",
+          "occurrence": {
+            "seriesId": "00000000-0000-4000-8000-00000000c001",
+            "occurrenceKey": "00000000-0000-4000-8000-00000000c001:0:2026-10-06",
+            "slotDate": "2026-10-06",
+            "scheduleRevision": 0,
+            "gameId": "090dcece-f82b-8080-8c90-8e755385c0f7",
+            "startsAt": "2026-10-06T19:00:00.000Z",
+            "endsAt": "2026-10-06T20:00:00.000Z",
+            "opensAt": "2026-10-06T12:00:00.000Z",
+            "priorityUntil": "2026-10-06T19:00:00.000Z",
+            "reconfirmAt": "2026-10-04T19:00:00.000Z",
+            "releaseAt": "2026-10-05T19:00:00.000Z",
+            "status": "scheduled",
+            "overridden": false
+          },
+          "game": {
+            "id": "090dcece-f82b-8080-8c90-8e755385c0f7",
+            "seriesId": "00000000-0000-4000-8000-00000000c001",
+            "hostId": "00000000-0000-4000-8000-0000000000ff",
+            "approxLocation": {
+              "lat": 51.5,
+              "lng": -0.12
+            },
+            "startsAt": "2026-10-06T19:00:00.000Z",
+            "endsAt": "2026-10-06T20:00:00.000Z",
+            "sport": "football",
+            "title": "Tuesday 5-a-side",
+            "notes": null,
+            "visibility": "public",
+            "venueId": null,
+            "location": {
+              "lat": 51.5,
+              "lng": -0.12
+            },
+            "hideExactLocation": false,
+            "capacity": 3,
+            "minPlayers": 2,
+            "depositMinor": 0,
+            "currency": "GBP",
+            "depositForfeitTo": "host",
+            "womenOnly": false,
+            "teamCount": 2
+          },
+          "dedupeKey": "occurrence:00000000-0000-4000-8000-00000000c001:0:2026-10-06"
+        },
+        {
+          "type": "CreateOccurrence",
+          "occurrence": {
+            "seriesId": "00000000-0000-4000-8000-00000000c001",
+            "occurrenceKey": "00000000-0000-4000-8000-00000000c001:0:2026-10-13",
+            "slotDate": "2026-10-13",
+            "scheduleRevision": 0,
+            "gameId": "cebb513d-0c9b-8ecc-981e-34a243956e6b",
+            "startsAt": "2026-10-13T19:00:00.000Z",
+            "endsAt": "2026-10-13T20:00:00.000Z",
+            "opensAt": "2026-10-06T12:00:00.000Z",
+            "priorityUntil": "2026-10-07T12:00:00.000Z",
+            "reconfirmAt": "2026-10-11T19:00:00.000Z",
+            "releaseAt": "2026-10-12T19:00:00.000Z",
+            "status": "scheduled",
+            "overridden": false
+          },
+          "game": {
+            "id": "cebb513d-0c9b-8ecc-981e-34a243956e6b",
+            "seriesId": "00000000-0000-4000-8000-00000000c001",
+            "hostId": "00000000-0000-4000-8000-0000000000ff",
+            "approxLocation": {
+              "lat": 51.5,
+              "lng": -0.12
+            },
+            "startsAt": "2026-10-13T19:00:00.000Z",
+            "endsAt": "2026-10-13T20:00:00.000Z",
+            "sport": "football",
+            "title": "Tuesday 5-a-side",
+            "notes": null,
+            "visibility": "public",
+            "venueId": null,
+            "location": {
+              "lat": 51.5,
+              "lng": -0.12
+            },
+            "hideExactLocation": false,
+            "capacity": 3,
+            "minPlayers": 2,
+            "depositMinor": 0,
+            "currency": "GBP",
+            "depositForfeitTo": "host",
+            "womenOnly": false,
+            "teamCount": 2
+          },
+          "dedupeKey": "occurrence:00000000-0000-4000-8000-00000000c001:0:2026-10-13"
+        },
+        {
+          "type": "CreateOccurrence",
+          "occurrence": {
+            "seriesId": "00000000-0000-4000-8000-00000000c001",
+            "occurrenceKey": "00000000-0000-4000-8000-00000000c001:0:2026-10-20",
+            "slotDate": "2026-10-20",
+            "scheduleRevision": 0,
+            "gameId": "6c902154-62d2-89c9-b43e-16a78df06764",
+            "startsAt": "2026-10-20T19:00:00.000Z",
+            "endsAt": "2026-10-20T20:00:00.000Z",
+            "opensAt": "2026-10-06T12:00:00.000Z",
+            "priorityUntil": "2026-10-07T12:00:00.000Z",
+            "reconfirmAt": "2026-10-18T19:00:00.000Z",
+            "releaseAt": "2026-10-19T19:00:00.000Z",
+            "status": "scheduled",
+            "overridden": false
+          },
+          "game": {
+            "id": "6c902154-62d2-89c9-b43e-16a78df06764",
+            "seriesId": "00000000-0000-4000-8000-00000000c001",
+            "hostId": "00000000-0000-4000-8000-0000000000ff",
+            "approxLocation": {
+              "lat": 51.5,
+              "lng": -0.12
+            },
+            "startsAt": "2026-10-20T19:00:00.000Z",
+            "endsAt": "2026-10-20T20:00:00.000Z",
+            "sport": "football",
+            "title": "Tuesday 5-a-side",
+            "notes": null,
+            "visibility": "public",
+            "venueId": null,
+            "location": {
+              "lat": 51.5,
+              "lng": -0.12
+            },
+            "hideExactLocation": false,
+            "capacity": 3,
+            "minPlayers": 2,
+            "depositMinor": 0,
+            "currency": "GBP",
+            "depositForfeitTo": "host",
+            "womenOnly": false,
+            "teamCount": 2
+          },
+          "dedupeKey": "occurrence:00000000-0000-4000-8000-00000000c001:0:2026-10-20"
+        },
+        {
+          "type": "CreateOccurrence",
+          "occurrence": {
+            "seriesId": "00000000-0000-4000-8000-00000000c001",
+            "occurrenceKey": "00000000-0000-4000-8000-00000000c001:0:2026-10-27",
+            "slotDate": "2026-10-27",
+            "scheduleRevision": 0,
+            "gameId": "72acd25b-9e0b-8469-bfe5-576bb4c88fb1",
+            "startsAt": "2026-10-27T20:00:00.000Z",
+            "endsAt": "2026-10-27T21:00:00.000Z",
+            "opensAt": "2026-10-06T12:00:00.000Z",
+            "priorityUntil": "2026-10-07T12:00:00.000Z",
+            "reconfirmAt": "2026-10-25T20:00:00.000Z",
+            "releaseAt": "2026-10-26T20:00:00.000Z",
+            "status": "scheduled",
+            "overridden": false
+          },
+          "game": {
+            "id": "72acd25b-9e0b-8469-bfe5-576bb4c88fb1",
+            "seriesId": "00000000-0000-4000-8000-00000000c001",
+            "hostId": "00000000-0000-4000-8000-0000000000ff",
+            "approxLocation": {
+              "lat": 51.5,
+              "lng": -0.12
+            },
+            "startsAt": "2026-10-27T20:00:00.000Z",
+            "endsAt": "2026-10-27T21:00:00.000Z",
+            "sport": "football",
+            "title": "Tuesday 5-a-side",
+            "notes": null,
+            "visibility": "public",
+            "venueId": null,
+            "location": {
+              "lat": 51.5,
+              "lng": -0.12
+            },
+            "hideExactLocation": false,
+            "capacity": 3,
+            "minPlayers": 2,
+            "depositMinor": 0,
+            "currency": "GBP",
+            "depositForfeitTo": "host",
+            "womenOnly": false,
+            "teamCount": 2
+          },
+          "dedupeKey": "occurrence:00000000-0000-4000-8000-00000000c001:0:2026-10-27"
+        }
+      ]
+    },
+    "tags": [
+      "dst",
+      "prd-v5:GAME-010"
+    ]
+  },
+  {
+    "name": "jerusalem.biweekly.dst-autumn.priority-6h",
+    "kind": "series.occurrences",
+    "input": {
+      "series": {
+        "id": "00000000-0000-4000-8000-00000000c001",
+        "hostId": "00000000-0000-4000-8000-0000000000ff",
+        "sport": "football",
+        "title": "Tuesday 5-a-side",
+        "notes": null,
+        "visibility": "public",
+        "venueId": null,
+        "location": {
+          "lat": 51.5,
+          "lng": -0.12
+        },
+        "approxLocation": {
+          "lat": 51.5,
+          "lng": -0.12
+        },
+        "hideExactLocation": false,
+        "capacity": 3,
+        "minPlayers": 2,
+        "depositMinor": 0,
+        "currency": "GBP",
+        "depositForfeitTo": "host",
+        "womenOnly": false,
+        "teamCount": 2,
+        "recurrence": "biweekly",
+        "weekday": 2,
+        "startTime": "20:00",
+        "timeZone": "Asia/Jerusalem",
+        "durationMinutes": 60,
+        "anchorDate": "2026-10-13",
+        "endDate": null,
+        "horizonWeeks": 4,
+        "rosterPriorityHours": 6,
+        "autoJoinReconfirmHours": 48,
+        "skippedDates": [],
+        "scheduleRevision": 0,
+        "status": "active",
+        "inviteToken": "tok",
+        "createdAt": "2026-09-01T00:00:00.000Z",
+        "updatedAt": "2026-09-01T00:00:00.000Z"
+      },
+      "existing": [],
+      "roster": []
+    },
+    "now": "2026-10-12T00:00:00.000Z",
+    "expected": {
+      "occurrences": [
+        {
+          "seriesId": "00000000-0000-4000-8000-00000000c001",
+          "occurrenceKey": "00000000-0000-4000-8000-00000000c001:0:2026-10-13",
+          "slotDate": "2026-10-13",
+          "scheduleRevision": 0,
+          "gameId": "cebb513d-0c9b-8ecc-981e-34a243956e6b",
+          "startsAt": "2026-10-13T17:00:00.000Z",
+          "endsAt": "2026-10-13T18:00:00.000Z",
+          "opensAt": "2026-10-12T00:00:00.000Z",
+          "priorityUntil": "2026-10-12T06:00:00.000Z",
+          "reconfirmAt": "2026-10-11T17:00:00.000Z",
+          "releaseAt": "2026-10-12T17:00:00.000Z",
+          "status": "scheduled",
+          "overridden": false
+        },
+        {
+          "seriesId": "00000000-0000-4000-8000-00000000c001",
+          "occurrenceKey": "00000000-0000-4000-8000-00000000c001:0:2026-10-27",
+          "slotDate": "2026-10-27",
+          "scheduleRevision": 0,
+          "gameId": "72acd25b-9e0b-8469-bfe5-576bb4c88fb1",
+          "startsAt": "2026-10-27T18:00:00.000Z",
+          "endsAt": "2026-10-27T19:00:00.000Z",
+          "opensAt": "2026-10-12T00:00:00.000Z",
+          "priorityUntil": "2026-10-12T06:00:00.000Z",
+          "reconfirmAt": "2026-10-25T18:00:00.000Z",
+          "releaseAt": "2026-10-26T18:00:00.000Z",
+          "status": "scheduled",
+          "overridden": false
+        }
+      ],
+      "effects": [
+        {
+          "type": "CreateOccurrence",
+          "occurrence": {
+            "seriesId": "00000000-0000-4000-8000-00000000c001",
+            "occurrenceKey": "00000000-0000-4000-8000-00000000c001:0:2026-10-13",
+            "slotDate": "2026-10-13",
+            "scheduleRevision": 0,
+            "gameId": "cebb513d-0c9b-8ecc-981e-34a243956e6b",
+            "startsAt": "2026-10-13T17:00:00.000Z",
+            "endsAt": "2026-10-13T18:00:00.000Z",
+            "opensAt": "2026-10-12T00:00:00.000Z",
+            "priorityUntil": "2026-10-12T06:00:00.000Z",
+            "reconfirmAt": "2026-10-11T17:00:00.000Z",
+            "releaseAt": "2026-10-12T17:00:00.000Z",
+            "status": "scheduled",
+            "overridden": false
+          },
+          "game": {
+            "id": "cebb513d-0c9b-8ecc-981e-34a243956e6b",
+            "seriesId": "00000000-0000-4000-8000-00000000c001",
+            "hostId": "00000000-0000-4000-8000-0000000000ff",
+            "approxLocation": {
+              "lat": 51.5,
+              "lng": -0.12
+            },
+            "startsAt": "2026-10-13T17:00:00.000Z",
+            "endsAt": "2026-10-13T18:00:00.000Z",
+            "sport": "football",
+            "title": "Tuesday 5-a-side",
+            "notes": null,
+            "visibility": "public",
+            "venueId": null,
+            "location": {
+              "lat": 51.5,
+              "lng": -0.12
+            },
+            "hideExactLocation": false,
+            "capacity": 3,
+            "minPlayers": 2,
+            "depositMinor": 0,
+            "currency": "GBP",
+            "depositForfeitTo": "host",
+            "womenOnly": false,
+            "teamCount": 2
+          },
+          "dedupeKey": "occurrence:00000000-0000-4000-8000-00000000c001:0:2026-10-13"
+        },
+        {
+          "type": "CreateOccurrence",
+          "occurrence": {
+            "seriesId": "00000000-0000-4000-8000-00000000c001",
+            "occurrenceKey": "00000000-0000-4000-8000-00000000c001:0:2026-10-27",
+            "slotDate": "2026-10-27",
+            "scheduleRevision": 0,
+            "gameId": "72acd25b-9e0b-8469-bfe5-576bb4c88fb1",
+            "startsAt": "2026-10-27T18:00:00.000Z",
+            "endsAt": "2026-10-27T19:00:00.000Z",
+            "opensAt": "2026-10-12T00:00:00.000Z",
+            "priorityUntil": "2026-10-12T06:00:00.000Z",
+            "reconfirmAt": "2026-10-25T18:00:00.000Z",
+            "releaseAt": "2026-10-26T18:00:00.000Z",
+            "status": "scheduled",
+            "overridden": false
+          },
+          "game": {
+            "id": "72acd25b-9e0b-8469-bfe5-576bb4c88fb1",
+            "seriesId": "00000000-0000-4000-8000-00000000c001",
+            "hostId": "00000000-0000-4000-8000-0000000000ff",
+            "approxLocation": {
+              "lat": 51.5,
+              "lng": -0.12
+            },
+            "startsAt": "2026-10-27T18:00:00.000Z",
+            "endsAt": "2026-10-27T19:00:00.000Z",
+            "sport": "football",
+            "title": "Tuesday 5-a-side",
+            "notes": null,
+            "visibility": "public",
+            "venueId": null,
+            "location": {
+              "lat": 51.5,
+              "lng": -0.12
+            },
+            "hideExactLocation": false,
+            "capacity": 3,
+            "minPlayers": 2,
+            "depositMinor": 0,
+            "currency": "GBP",
+            "depositForfeitTo": "host",
+            "womenOnly": false,
+            "teamCount": 2
+          },
+          "dedupeKey": "occurrence:00000000-0000-4000-8000-00000000c001:0:2026-10-27"
+        }
+      ]
+    },
+    "tags": [
+      "dst"
+    ]
+  },
+  {
+    "name": "steady-state.only-the-new-slot",
+    "kind": "series.occurrences",
+    "input": {
+      "series": {
+        "id": "00000000-0000-4000-8000-00000000c001",
+        "hostId": "00000000-0000-4000-8000-0000000000ff",
+        "sport": "football",
+        "title": "Tuesday 5-a-side",
+        "notes": null,
+        "visibility": "public",
+        "venueId": null,
+        "location": {
+          "lat": 51.5,
+          "lng": -0.12
+        },
+        "approxLocation": {
+          "lat": 51.5,
+          "lng": -0.12
+        },
+        "hideExactLocation": false,
+        "capacity": 3,
+        "minPlayers": 2,
+        "depositMinor": 0,
+        "currency": "GBP",
+        "depositForfeitTo": "host",
+        "womenOnly": false,
+        "teamCount": 2,
+        "recurrence": "weekly",
+        "weekday": 2,
+        "startTime": "20:00",
+        "timeZone": "Europe/London",
+        "durationMinutes": 60,
+        "anchorDate": "2026-10-06",
+        "endDate": null,
+        "horizonWeeks": 4,
+        "rosterPriorityHours": 24,
+        "autoJoinReconfirmHours": 48,
+        "skippedDates": [],
+        "scheduleRevision": 0,
+        "status": "active",
+        "inviteToken": "tok",
+        "createdAt": "2026-09-01T00:00:00.000Z",
+        "updatedAt": "2026-09-01T00:00:00.000Z"
+      },
+      "existing": [
+        {
+          "seriesId": "00000000-0000-4000-8000-00000000c001",
+          "occurrenceKey": "00000000-0000-4000-8000-00000000c001:0:2026-10-06",
+          "slotDate": "2026-10-06",
+          "scheduleRevision": 0,
+          "gameId": "090dcece-f82b-8080-8c90-8e755385c0f7",
+          "startsAt": "2026-10-06T19:00:00.000Z",
+          "endsAt": "2026-10-06T20:00:00.000Z",
+          "opensAt": "2026-10-06T12:00:00.000Z",
+          "priorityUntil": "2026-10-06T19:00:00.000Z",
+          "reconfirmAt": "2026-10-04T19:00:00.000Z",
+          "releaseAt": "2026-10-05T19:00:00.000Z",
+          "status": "scheduled",
+          "overridden": false
+        },
+        {
+          "seriesId": "00000000-0000-4000-8000-00000000c001",
+          "occurrenceKey": "00000000-0000-4000-8000-00000000c001:0:2026-10-13",
+          "slotDate": "2026-10-13",
+          "scheduleRevision": 0,
+          "gameId": "cebb513d-0c9b-8ecc-981e-34a243956e6b",
+          "startsAt": "2026-10-13T19:00:00.000Z",
+          "endsAt": "2026-10-13T20:00:00.000Z",
+          "opensAt": "2026-10-06T12:00:00.000Z",
+          "priorityUntil": "2026-10-07T12:00:00.000Z",
+          "reconfirmAt": "2026-10-11T19:00:00.000Z",
+          "releaseAt": "2026-10-12T19:00:00.000Z",
+          "status": "scheduled",
+          "overridden": false
+        },
+        {
+          "seriesId": "00000000-0000-4000-8000-00000000c001",
+          "occurrenceKey": "00000000-0000-4000-8000-00000000c001:0:2026-10-20",
+          "slotDate": "2026-10-20",
+          "scheduleRevision": 0,
+          "gameId": "6c902154-62d2-89c9-b43e-16a78df06764",
+          "startsAt": "2026-10-20T19:00:00.000Z",
+          "endsAt": "2026-10-20T20:00:00.000Z",
+          "opensAt": "2026-10-06T12:00:00.000Z",
+          "priorityUntil": "2026-10-07T12:00:00.000Z",
+          "reconfirmAt": "2026-10-18T19:00:00.000Z",
+          "releaseAt": "2026-10-19T19:00:00.000Z",
+          "status": "scheduled",
+          "overridden": false
+        },
+        {
+          "seriesId": "00000000-0000-4000-8000-00000000c001",
+          "occurrenceKey": "00000000-0000-4000-8000-00000000c001:0:2026-10-27",
+          "slotDate": "2026-10-27",
+          "scheduleRevision": 0,
+          "gameId": "72acd25b-9e0b-8469-bfe5-576bb4c88fb1",
+          "startsAt": "2026-10-27T20:00:00.000Z",
+          "endsAt": "2026-10-27T21:00:00.000Z",
+          "opensAt": "2026-10-06T12:00:00.000Z",
+          "priorityUntil": "2026-10-07T12:00:00.000Z",
+          "reconfirmAt": "2026-10-25T20:00:00.000Z",
+          "releaseAt": "2026-10-26T20:00:00.000Z",
+          "status": "scheduled",
+          "overridden": false
+        }
+      ],
+      "roster": []
+    },
+    "now": "2026-10-06T21:00:00.000Z",
+    "expected": {
+      "occurrences": [
+        {
+          "seriesId": "00000000-0000-4000-8000-00000000c001",
+          "occurrenceKey": "00000000-0000-4000-8000-00000000c001:0:2026-11-03",
+          "slotDate": "2026-11-03",
+          "scheduleRevision": 0,
+          "gameId": "d0b5000c-d263-82c5-ae88-6c5181566ee7",
+          "startsAt": "2026-11-03T20:00:00.000Z",
+          "endsAt": "2026-11-03T21:00:00.000Z",
+          "opensAt": "2026-10-06T21:00:00.000Z",
+          "priorityUntil": "2026-10-07T21:00:00.000Z",
+          "reconfirmAt": "2026-11-01T20:00:00.000Z",
+          "releaseAt": "2026-11-02T20:00:00.000Z",
+          "status": "scheduled",
+          "overridden": false
+        }
+      ],
+      "effects": [
+        {
+          "type": "CreateOccurrence",
+          "occurrence": {
+            "seriesId": "00000000-0000-4000-8000-00000000c001",
+            "occurrenceKey": "00000000-0000-4000-8000-00000000c001:0:2026-11-03",
+            "slotDate": "2026-11-03",
+            "scheduleRevision": 0,
+            "gameId": "d0b5000c-d263-82c5-ae88-6c5181566ee7",
+            "startsAt": "2026-11-03T20:00:00.000Z",
+            "endsAt": "2026-11-03T21:00:00.000Z",
+            "opensAt": "2026-10-06T21:00:00.000Z",
+            "priorityUntil": "2026-10-07T21:00:00.000Z",
+            "reconfirmAt": "2026-11-01T20:00:00.000Z",
+            "releaseAt": "2026-11-02T20:00:00.000Z",
+            "status": "scheduled",
+            "overridden": false
+          },
+          "game": {
+            "id": "d0b5000c-d263-82c5-ae88-6c5181566ee7",
+            "seriesId": "00000000-0000-4000-8000-00000000c001",
+            "hostId": "00000000-0000-4000-8000-0000000000ff",
+            "approxLocation": {
+              "lat": 51.5,
+              "lng": -0.12
+            },
+            "startsAt": "2026-11-03T20:00:00.000Z",
+            "endsAt": "2026-11-03T21:00:00.000Z",
+            "sport": "football",
+            "title": "Tuesday 5-a-side",
+            "notes": null,
+            "visibility": "public",
+            "venueId": null,
+            "location": {
+              "lat": 51.5,
+              "lng": -0.12
+            },
+            "hideExactLocation": false,
+            "capacity": 3,
+            "minPlayers": 2,
+            "depositMinor": 0,
+            "currency": "GBP",
+            "depositForfeitTo": "host",
+            "womenOnly": false,
+            "teamCount": 2
+          },
+          "dedupeKey": "occurrence:00000000-0000-4000-8000-00000000c001:0:2026-11-03"
+        }
+      ]
+    }
+  },
+  {
+    "name": "skipped-ended-and-other-revision-duplicates-excluded",
+    "kind": "series.occurrences",
+    "input": {
+      "series": {
+        "id": "00000000-0000-4000-8000-00000000c001",
+        "hostId": "00000000-0000-4000-8000-0000000000ff",
+        "sport": "football",
+        "title": "Tuesday 5-a-side",
+        "notes": null,
+        "visibility": "public",
+        "venueId": null,
+        "location": {
+          "lat": 51.5,
+          "lng": -0.12
+        },
+        "approxLocation": {
+          "lat": 51.5,
+          "lng": -0.12
+        },
+        "hideExactLocation": false,
+        "capacity": 3,
+        "minPlayers": 2,
+        "depositMinor": 0,
+        "currency": "GBP",
+        "depositForfeitTo": "host",
+        "womenOnly": false,
+        "teamCount": 2,
+        "recurrence": "weekly",
+        "weekday": 2,
+        "startTime": "20:00",
+        "timeZone": "Europe/London",
+        "durationMinutes": 60,
+        "anchorDate": "2026-10-06",
+        "endDate": "2026-10-27",
+        "horizonWeeks": 4,
+        "rosterPriorityHours": 24,
+        "autoJoinReconfirmHours": 48,
+        "skippedDates": [
+          "2026-10-20"
+        ],
+        "scheduleRevision": 0,
+        "status": "active",
+        "inviteToken": "tok",
+        "createdAt": "2026-09-01T00:00:00.000Z",
+        "updatedAt": "2026-09-01T00:00:00.000Z"
+      },
+      "existing": [
+        {
+          "seriesId": "00000000-0000-4000-8000-00000000c001",
+          "occurrenceKey": "00000000-0000-4000-8000-00000000c001:7:2026-10-13",
+          "slotDate": "2026-10-13",
+          "scheduleRevision": 7,
+          "gameId": "cb286487-3893-867a-ab3d-57d48842115c",
+          "startsAt": "2026-10-13T19:00:00.000Z",
+          "endsAt": "2026-10-13T20:00:00.000Z",
+          "opensAt": "2026-10-06T12:00:00.000Z",
+          "priorityUntil": "2026-10-07T12:00:00.000Z",
+          "reconfirmAt": "2026-10-11T19:00:00.000Z",
+          "releaseAt": "2026-10-12T19:00:00.000Z",
+          "status": "scheduled",
+          "overridden": false
+        }
+      ],
+      "roster": []
+    },
+    "now": "2026-10-06T12:00:00.000Z",
+    "expected": {
+      "occurrences": [
+        {
+          "seriesId": "00000000-0000-4000-8000-00000000c001",
+          "occurrenceKey": "00000000-0000-4000-8000-00000000c001:0:2026-10-06",
+          "slotDate": "2026-10-06",
+          "scheduleRevision": 0,
+          "gameId": "090dcece-f82b-8080-8c90-8e755385c0f7",
+          "startsAt": "2026-10-06T19:00:00.000Z",
+          "endsAt": "2026-10-06T20:00:00.000Z",
+          "opensAt": "2026-10-06T12:00:00.000Z",
+          "priorityUntil": "2026-10-06T19:00:00.000Z",
+          "reconfirmAt": "2026-10-04T19:00:00.000Z",
+          "releaseAt": "2026-10-05T19:00:00.000Z",
+          "status": "scheduled",
+          "overridden": false
+        },
+        {
+          "seriesId": "00000000-0000-4000-8000-00000000c001",
+          "occurrenceKey": "00000000-0000-4000-8000-00000000c001:0:2026-10-27",
+          "slotDate": "2026-10-27",
+          "scheduleRevision": 0,
+          "gameId": "72acd25b-9e0b-8469-bfe5-576bb4c88fb1",
+          "startsAt": "2026-10-27T20:00:00.000Z",
+          "endsAt": "2026-10-27T21:00:00.000Z",
+          "opensAt": "2026-10-06T12:00:00.000Z",
+          "priorityUntil": "2026-10-07T12:00:00.000Z",
+          "reconfirmAt": "2026-10-25T20:00:00.000Z",
+          "releaseAt": "2026-10-26T20:00:00.000Z",
+          "status": "scheduled",
+          "overridden": false
+        }
+      ],
+      "effects": [
+        {
+          "type": "CreateOccurrence",
+          "occurrence": {
+            "seriesId": "00000000-0000-4000-8000-00000000c001",
+            "occurrenceKey": "00000000-0000-4000-8000-00000000c001:0:2026-10-06",
+            "slotDate": "2026-10-06",
+            "scheduleRevision": 0,
+            "gameId": "090dcece-f82b-8080-8c90-8e755385c0f7",
+            "startsAt": "2026-10-06T19:00:00.000Z",
+            "endsAt": "2026-10-06T20:00:00.000Z",
+            "opensAt": "2026-10-06T12:00:00.000Z",
+            "priorityUntil": "2026-10-06T19:00:00.000Z",
+            "reconfirmAt": "2026-10-04T19:00:00.000Z",
+            "releaseAt": "2026-10-05T19:00:00.000Z",
+            "status": "scheduled",
+            "overridden": false
+          },
+          "game": {
+            "id": "090dcece-f82b-8080-8c90-8e755385c0f7",
+            "seriesId": "00000000-0000-4000-8000-00000000c001",
+            "hostId": "00000000-0000-4000-8000-0000000000ff",
+            "approxLocation": {
+              "lat": 51.5,
+              "lng": -0.12
+            },
+            "startsAt": "2026-10-06T19:00:00.000Z",
+            "endsAt": "2026-10-06T20:00:00.000Z",
+            "sport": "football",
+            "title": "Tuesday 5-a-side",
+            "notes": null,
+            "visibility": "public",
+            "venueId": null,
+            "location": {
+              "lat": 51.5,
+              "lng": -0.12
+            },
+            "hideExactLocation": false,
+            "capacity": 3,
+            "minPlayers": 2,
+            "depositMinor": 0,
+            "currency": "GBP",
+            "depositForfeitTo": "host",
+            "womenOnly": false,
+            "teamCount": 2
+          },
+          "dedupeKey": "occurrence:00000000-0000-4000-8000-00000000c001:0:2026-10-06"
+        },
+        {
+          "type": "CreateOccurrence",
+          "occurrence": {
+            "seriesId": "00000000-0000-4000-8000-00000000c001",
+            "occurrenceKey": "00000000-0000-4000-8000-00000000c001:0:2026-10-27",
+            "slotDate": "2026-10-27",
+            "scheduleRevision": 0,
+            "gameId": "72acd25b-9e0b-8469-bfe5-576bb4c88fb1",
+            "startsAt": "2026-10-27T20:00:00.000Z",
+            "endsAt": "2026-10-27T21:00:00.000Z",
+            "opensAt": "2026-10-06T12:00:00.000Z",
+            "priorityUntil": "2026-10-07T12:00:00.000Z",
+            "reconfirmAt": "2026-10-25T20:00:00.000Z",
+            "releaseAt": "2026-10-26T20:00:00.000Z",
+            "status": "scheduled",
+            "overridden": false
+          },
+          "game": {
+            "id": "72acd25b-9e0b-8469-bfe5-576bb4c88fb1",
+            "seriesId": "00000000-0000-4000-8000-00000000c001",
+            "hostId": "00000000-0000-4000-8000-0000000000ff",
+            "approxLocation": {
+              "lat": 51.5,
+              "lng": -0.12
+            },
+            "startsAt": "2026-10-27T20:00:00.000Z",
+            "endsAt": "2026-10-27T21:00:00.000Z",
+            "sport": "football",
+            "title": "Tuesday 5-a-side",
+            "notes": null,
+            "visibility": "public",
+            "venueId": null,
+            "location": {
+              "lat": 51.5,
+              "lng": -0.12
+            },
+            "hideExactLocation": false,
+            "capacity": 3,
+            "minPlayers": 2,
+            "depositMinor": 0,
+            "currency": "GBP",
+            "depositForfeitTo": "host",
+            "womenOnly": false,
+            "teamCount": 2
+          },
+          "dedupeKey": "occurrence:00000000-0000-4000-8000-00000000c001:0:2026-10-27"
+        }
+      ]
+    }
+  },
+  {
+    "name": "paused.nothing",
+    "kind": "series.occurrences",
+    "input": {
+      "series": {
+        "id": "00000000-0000-4000-8000-00000000c001",
+        "hostId": "00000000-0000-4000-8000-0000000000ff",
+        "sport": "football",
+        "title": "Tuesday 5-a-side",
+        "notes": null,
+        "visibility": "public",
+        "venueId": null,
+        "location": {
+          "lat": 51.5,
+          "lng": -0.12
+        },
+        "approxLocation": {
+          "lat": 51.5,
+          "lng": -0.12
+        },
+        "hideExactLocation": false,
+        "capacity": 3,
+        "minPlayers": 2,
+        "depositMinor": 0,
+        "currency": "GBP",
+        "depositForfeitTo": "host",
+        "womenOnly": false,
+        "teamCount": 2,
+        "recurrence": "weekly",
+        "weekday": 2,
+        "startTime": "20:00",
+        "timeZone": "Europe/London",
+        "durationMinutes": 60,
+        "anchorDate": "2026-10-06",
+        "endDate": null,
+        "horizonWeeks": 4,
+        "rosterPriorityHours": 24,
+        "autoJoinReconfirmHours": 48,
+        "skippedDates": [],
+        "scheduleRevision": 0,
+        "status": "paused",
+        "inviteToken": "tok",
+        "createdAt": "2026-09-01T00:00:00.000Z",
+        "updatedAt": "2026-09-01T00:00:00.000Z"
+      },
+      "existing": [],
+      "roster": []
+    },
+    "now": "2026-10-06T12:00:00.000Z",
+    "expected": {
+      "occurrences": [],
+      "effects": []
+    }
+  },
+  {
+    "name": "always-in.seniority.host-seat.waitlist-overflow",
+    "kind": "series.occurrences",
+    "description": "capacity 2 = host + 1 seat; U1 (oldest) approved, U3 waitlisted; U2 ineligible, U4 not always-in, U5 only invited",
+    "input": {
+      "series": {
+        "id": "00000000-0000-4000-8000-00000000c001",
+        "hostId": "00000000-0000-4000-8000-0000000000ff",
+        "sport": "football",
+        "title": "Tuesday 5-a-side",
+        "notes": null,
+        "visibility": "public",
+        "venueId": null,
+        "location": {
+          "lat": 51.5,
+          "lng": -0.12
+        },
+        "approxLocation": {
+          "lat": 51.5,
+          "lng": -0.12
+        },
+        "hideExactLocation": false,
+        "capacity": 2,
+        "minPlayers": 2,
+        "depositMinor": 0,
+        "currency": "GBP",
+        "depositForfeitTo": "host",
+        "womenOnly": false,
+        "teamCount": 2,
+        "recurrence": "weekly",
+        "weekday": 2,
+        "startTime": "20:00",
+        "timeZone": "Europe/London",
+        "durationMinutes": 60,
+        "anchorDate": "2026-10-06",
+        "endDate": null,
+        "horizonWeeks": 4,
+        "rosterPriorityHours": 24,
+        "autoJoinReconfirmHours": 48,
+        "skippedDates": [],
+        "scheduleRevision": 0,
+        "status": "active",
+        "inviteToken": "tok",
+        "createdAt": "2026-09-01T00:00:00.000Z",
+        "updatedAt": "2026-09-01T00:00:00.000Z"
+      },
+      "existing": [
+        {
+          "seriesId": "00000000-0000-4000-8000-00000000c001",
+          "occurrenceKey": "00000000-0000-4000-8000-00000000c001:0:2026-10-13",
+          "slotDate": "2026-10-13",
+          "scheduleRevision": 0,
+          "gameId": "cebb513d-0c9b-8ecc-981e-34a243956e6b",
+          "startsAt": "2026-10-13T19:00:00.000Z",
+          "endsAt": "2026-10-13T20:00:00.000Z",
+          "opensAt": "2026-10-13T19:00:00.000Z",
+          "priorityUntil": "2026-10-13T19:00:00.000Z",
+          "reconfirmAt": "2026-10-11T19:00:00.000Z",
+          "releaseAt": "2026-10-12T19:00:00.000Z",
+          "status": "scheduled",
+          "overridden": false
+        },
+        {
+          "seriesId": "00000000-0000-4000-8000-00000000c001",
+          "occurrenceKey": "00000000-0000-4000-8000-00000000c001:0:2026-10-20",
+          "slotDate": "2026-10-20",
+          "scheduleRevision": 0,
+          "gameId": "6c902154-62d2-89c9-b43e-16a78df06764",
+          "startsAt": "2026-10-20T19:00:00.000Z",
+          "endsAt": "2026-10-20T20:00:00.000Z",
+          "opensAt": "2026-10-14T21:00:00.000Z",
+          "priorityUntil": "2026-10-15T21:00:00.000Z",
+          "reconfirmAt": "2026-10-18T19:00:00.000Z",
+          "releaseAt": "2026-10-19T19:00:00.000Z",
+          "status": "scheduled",
+          "overridden": false
+        },
+        {
+          "seriesId": "00000000-0000-4000-8000-00000000c001",
+          "occurrenceKey": "00000000-0000-4000-8000-00000000c001:0:2026-10-27",
+          "slotDate": "2026-10-27",
+          "scheduleRevision": 0,
+          "gameId": "72acd25b-9e0b-8469-bfe5-576bb4c88fb1",
+          "startsAt": "2026-10-27T20:00:00.000Z",
+          "endsAt": "2026-10-27T21:00:00.000Z",
+          "opensAt": "2026-10-14T21:00:00.000Z",
+          "priorityUntil": "2026-10-15T21:00:00.000Z",
+          "reconfirmAt": "2026-10-25T20:00:00.000Z",
+          "releaseAt": "2026-10-26T20:00:00.000Z",
+          "status": "scheduled",
+          "overridden": false
+        },
+        {
+          "seriesId": "00000000-0000-4000-8000-00000000c001",
+          "occurrenceKey": "00000000-0000-4000-8000-00000000c001:0:2026-11-03",
+          "slotDate": "2026-11-03",
+          "scheduleRevision": 0,
+          "gameId": "d0b5000c-d263-82c5-ae88-6c5181566ee7",
+          "startsAt": "2026-11-03T20:00:00.000Z",
+          "endsAt": "2026-11-03T21:00:00.000Z",
+          "opensAt": "2026-10-14T21:00:00.000Z",
+          "priorityUntil": "2026-10-15T21:00:00.000Z",
+          "reconfirmAt": "2026-11-01T20:00:00.000Z",
+          "releaseAt": "2026-11-02T20:00:00.000Z",
+          "status": "scheduled",
+          "overridden": false
+        }
+      ],
+      "roster": [
+        {
+          "seriesId": "00000000-0000-4000-8000-00000000c001",
+          "userId": "00000000-0000-4000-8000-000000000003",
+          "status": "regular",
+          "alwaysIn": true,
+          "joinedVia": "invite_link",
+          "consecutiveMisses": 0,
+          "leaveOfferedAt": null,
+          "joinedAt": "2026-09-03T10:00:00.000Z",
+          "leftAt": null
+        },
+        {
+          "seriesId": "00000000-0000-4000-8000-00000000c001",
+          "userId": "00000000-0000-4000-8000-000000000001",
+          "status": "regular",
+          "alwaysIn": true,
+          "joinedVia": "invite_link",
+          "consecutiveMisses": 0,
+          "leaveOfferedAt": null,
+          "joinedAt": "2026-09-01T10:00:00.000Z",
+          "leftAt": null
+        },
+        {
+          "seriesId": "00000000-0000-4000-8000-00000000c001",
+          "userId": "00000000-0000-4000-8000-000000000002",
+          "status": "regular",
+          "alwaysIn": true,
+          "joinedVia": "invite_link",
+          "consecutiveMisses": 0,
+          "leaveOfferedAt": null,
+          "joinedAt": "2026-09-02T10:00:00.000Z",
+          "leftAt": null
+        },
+        {
+          "seriesId": "00000000-0000-4000-8000-00000000c001",
+          "userId": "00000000-0000-4000-8000-000000000004",
+          "status": "regular",
+          "alwaysIn": false,
+          "joinedVia": "invite_link",
+          "consecutiveMisses": 0,
+          "leaveOfferedAt": null,
+          "joinedAt": "2026-09-04T10:00:00.000Z",
+          "leftAt": null
+        },
+        {
+          "seriesId": "00000000-0000-4000-8000-00000000c001",
+          "userId": "00000000-0000-4000-8000-000000000005",
+          "status": "invited",
+          "alwaysIn": true,
+          "joinedVia": "invite_link",
+          "consecutiveMisses": 0,
+          "leaveOfferedAt": null,
+          "joinedAt": "2026-09-05T10:00:00.000Z",
+          "leftAt": null
+        },
+        {
+          "seriesId": "00000000-0000-4000-8000-00000000c001",
+          "userId": "00000000-0000-4000-8000-0000000000ff",
+          "status": "regular",
+          "alwaysIn": true,
+          "joinedVia": "invite_link",
+          "consecutiveMisses": 0,
+          "leaveOfferedAt": null,
+          "joinedAt": "2026-09-0fT10:00:00.000Z",
+          "leftAt": null
+        }
+      ],
+      "ineligibleUserIds": [
+        "00000000-0000-4000-8000-000000000002"
+      ]
+    },
+    "now": "2026-10-14T21:00:00.000Z",
+    "expected": {
+      "occurrences": [
+        {
+          "seriesId": "00000000-0000-4000-8000-00000000c001",
+          "occurrenceKey": "00000000-0000-4000-8000-00000000c001:0:2026-11-10",
+          "slotDate": "2026-11-10",
+          "scheduleRevision": 0,
+          "gameId": "59b47675-f579-8984-9cb3-fd3078f4ff01",
+          "startsAt": "2026-11-10T20:00:00.000Z",
+          "endsAt": "2026-11-10T21:00:00.000Z",
+          "opensAt": "2026-10-14T21:00:00.000Z",
+          "priorityUntil": "2026-10-15T21:00:00.000Z",
+          "reconfirmAt": "2026-11-08T20:00:00.000Z",
+          "releaseAt": "2026-11-09T20:00:00.000Z",
+          "status": "scheduled",
+          "overridden": false
+        }
+      ],
+      "effects": [
+        {
+          "type": "CreateOccurrence",
+          "occurrence": {
+            "seriesId": "00000000-0000-4000-8000-00000000c001",
+            "occurrenceKey": "00000000-0000-4000-8000-00000000c001:0:2026-11-10",
+            "slotDate": "2026-11-10",
+            "scheduleRevision": 0,
+            "gameId": "59b47675-f579-8984-9cb3-fd3078f4ff01",
+            "startsAt": "2026-11-10T20:00:00.000Z",
+            "endsAt": "2026-11-10T21:00:00.000Z",
+            "opensAt": "2026-10-14T21:00:00.000Z",
+            "priorityUntil": "2026-10-15T21:00:00.000Z",
+            "reconfirmAt": "2026-11-08T20:00:00.000Z",
+            "releaseAt": "2026-11-09T20:00:00.000Z",
+            "status": "scheduled",
+            "overridden": false
+          },
+          "game": {
+            "id": "59b47675-f579-8984-9cb3-fd3078f4ff01",
+            "seriesId": "00000000-0000-4000-8000-00000000c001",
+            "hostId": "00000000-0000-4000-8000-0000000000ff",
+            "approxLocation": {
+              "lat": 51.5,
+              "lng": -0.12
+            },
+            "startsAt": "2026-11-10T20:00:00.000Z",
+            "endsAt": "2026-11-10T21:00:00.000Z",
+            "sport": "football",
+            "title": "Tuesday 5-a-side",
+            "notes": null,
+            "visibility": "public",
+            "venueId": null,
+            "location": {
+              "lat": 51.5,
+              "lng": -0.12
+            },
+            "hideExactLocation": false,
+            "capacity": 2,
+            "minPlayers": 2,
+            "depositMinor": 0,
+            "currency": "GBP",
+            "depositForfeitTo": "host",
+            "womenOnly": false,
+            "teamCount": 2
+          },
+          "dedupeKey": "occurrence:00000000-0000-4000-8000-00000000c001:0:2026-11-10"
+        },
+        {
+          "type": "AutoJoin",
+          "gameId": "59b47675-f579-8984-9cb3-fd3078f4ff01",
+          "seriesId": "00000000-0000-4000-8000-00000000c001",
+          "userId": "00000000-0000-4000-8000-000000000001",
+          "joinedAs": "approved",
+          "dedupeKey": "autojoin:59b47675-f579-8984-9cb3-fd3078f4ff01:00000000-0000-4000-8000-000000000001"
+        },
+        {
+          "type": "AutoJoin",
+          "gameId": "59b47675-f579-8984-9cb3-fd3078f4ff01",
+          "seriesId": "00000000-0000-4000-8000-00000000c001",
+          "userId": "00000000-0000-4000-8000-000000000003",
+          "joinedAs": "waitlisted",
+          "dedupeKey": "autojoin:59b47675-f579-8984-9cb3-fd3078f4ff01:00000000-0000-4000-8000-000000000003"
+        }
+      ]
+    },
+    "tags": [
+      "prd-v5:GAME-010"
+    ]
+  },
+  {
+    "name": "always-in.skipped-when-generated-after-reconfirm-time",
+    "kind": "series.occurrences",
+    "input": {
+      "series": {
+        "id": "00000000-0000-4000-8000-00000000c001",
+        "hostId": "00000000-0000-4000-8000-0000000000ff",
+        "sport": "football",
+        "title": "Tuesday 5-a-side",
+        "notes": null,
+        "visibility": "public",
+        "venueId": null,
+        "location": {
+          "lat": 51.5,
+          "lng": -0.12
+        },
+        "approxLocation": {
+          "lat": 51.5,
+          "lng": -0.12
+        },
+        "hideExactLocation": false,
+        "capacity": 3,
+        "minPlayers": 2,
+        "depositMinor": 0,
+        "currency": "GBP",
+        "depositForfeitTo": "host",
+        "womenOnly": false,
+        "teamCount": 2,
+        "recurrence": "weekly",
+        "weekday": 2,
+        "startTime": "20:00",
+        "timeZone": "Europe/London",
+        "durationMinutes": 60,
+        "anchorDate": "2026-10-06",
+        "endDate": null,
+        "horizonWeeks": 4,
+        "rosterPriorityHours": 24,
+        "autoJoinReconfirmHours": 48,
+        "skippedDates": [],
+        "scheduleRevision": 0,
+        "status": "active",
+        "inviteToken": "tok",
+        "createdAt": "2026-09-01T00:00:00.000Z",
+        "updatedAt": "2026-09-01T00:00:00.000Z"
+      },
+      "existing": [],
+      "roster": [
+        {
+          "seriesId": "00000000-0000-4000-8000-00000000c001",
+          "userId": "00000000-0000-4000-8000-000000000001",
+          "status": "regular",
+          "alwaysIn": true,
+          "joinedVia": "invite_link",
+          "consecutiveMisses": 0,
+          "leaveOfferedAt": null,
+          "joinedAt": "2026-09-01T10:00:00.000Z",
+          "leftAt": null
+        }
+      ]
+    },
+    "now": "2026-10-06T12:00:00.000Z",
+    "expected": {
+      "occurrences": [
+        {
+          "seriesId": "00000000-0000-4000-8000-00000000c001",
+          "occurrenceKey": "00000000-0000-4000-8000-00000000c001:0:2026-10-06",
+          "slotDate": "2026-10-06",
+          "scheduleRevision": 0,
+          "gameId": "090dcece-f82b-8080-8c90-8e755385c0f7",
+          "startsAt": "2026-10-06T19:00:00.000Z",
+          "endsAt": "2026-10-06T20:00:00.000Z",
+          "opensAt": "2026-10-06T12:00:00.000Z",
+          "priorityUntil": "2026-10-06T19:00:00.000Z",
+          "reconfirmAt": "2026-10-04T19:00:00.000Z",
+          "releaseAt": "2026-10-05T19:00:00.000Z",
+          "status": "scheduled",
+          "overridden": false
+        },
+        {
+          "seriesId": "00000000-0000-4000-8000-00000000c001",
+          "occurrenceKey": "00000000-0000-4000-8000-00000000c001:0:2026-10-13",
+          "slotDate": "2026-10-13",
+          "scheduleRevision": 0,
+          "gameId": "cebb513d-0c9b-8ecc-981e-34a243956e6b",
+          "startsAt": "2026-10-13T19:00:00.000Z",
+          "endsAt": "2026-10-13T20:00:00.000Z",
+          "opensAt": "2026-10-06T12:00:00.000Z",
+          "priorityUntil": "2026-10-07T12:00:00.000Z",
+          "reconfirmAt": "2026-10-11T19:00:00.000Z",
+          "releaseAt": "2026-10-12T19:00:00.000Z",
+          "status": "scheduled",
+          "overridden": false
+        },
+        {
+          "seriesId": "00000000-0000-4000-8000-00000000c001",
+          "occurrenceKey": "00000000-0000-4000-8000-00000000c001:0:2026-10-20",
+          "slotDate": "2026-10-20",
+          "scheduleRevision": 0,
+          "gameId": "6c902154-62d2-89c9-b43e-16a78df06764",
+          "startsAt": "2026-10-20T19:00:00.000Z",
+          "endsAt": "2026-10-20T20:00:00.000Z",
+          "opensAt": "2026-10-06T12:00:00.000Z",
+          "priorityUntil": "2026-10-07T12:00:00.000Z",
+          "reconfirmAt": "2026-10-18T19:00:00.000Z",
+          "releaseAt": "2026-10-19T19:00:00.000Z",
+          "status": "scheduled",
+          "overridden": false
+        },
+        {
+          "seriesId": "00000000-0000-4000-8000-00000000c001",
+          "occurrenceKey": "00000000-0000-4000-8000-00000000c001:0:2026-10-27",
+          "slotDate": "2026-10-27",
+          "scheduleRevision": 0,
+          "gameId": "72acd25b-9e0b-8469-bfe5-576bb4c88fb1",
+          "startsAt": "2026-10-27T20:00:00.000Z",
+          "endsAt": "2026-10-27T21:00:00.000Z",
+          "opensAt": "2026-10-06T12:00:00.000Z",
+          "priorityUntil": "2026-10-07T12:00:00.000Z",
+          "reconfirmAt": "2026-10-25T20:00:00.000Z",
+          "releaseAt": "2026-10-26T20:00:00.000Z",
+          "status": "scheduled",
+          "overridden": false
+        }
+      ],
+      "effects": [
+        {
+          "type": "CreateOccurrence",
+          "occurrence": {
+            "seriesId": "00000000-0000-4000-8000-00000000c001",
+            "occurrenceKey": "00000000-0000-4000-8000-00000000c001:0:2026-10-06",
+            "slotDate": "2026-10-06",
+            "scheduleRevision": 0,
+            "gameId": "090dcece-f82b-8080-8c90-8e755385c0f7",
+            "startsAt": "2026-10-06T19:00:00.000Z",
+            "endsAt": "2026-10-06T20:00:00.000Z",
+            "opensAt": "2026-10-06T12:00:00.000Z",
+            "priorityUntil": "2026-10-06T19:00:00.000Z",
+            "reconfirmAt": "2026-10-04T19:00:00.000Z",
+            "releaseAt": "2026-10-05T19:00:00.000Z",
+            "status": "scheduled",
+            "overridden": false
+          },
+          "game": {
+            "id": "090dcece-f82b-8080-8c90-8e755385c0f7",
+            "seriesId": "00000000-0000-4000-8000-00000000c001",
+            "hostId": "00000000-0000-4000-8000-0000000000ff",
+            "approxLocation": {
+              "lat": 51.5,
+              "lng": -0.12
+            },
+            "startsAt": "2026-10-06T19:00:00.000Z",
+            "endsAt": "2026-10-06T20:00:00.000Z",
+            "sport": "football",
+            "title": "Tuesday 5-a-side",
+            "notes": null,
+            "visibility": "public",
+            "venueId": null,
+            "location": {
+              "lat": 51.5,
+              "lng": -0.12
+            },
+            "hideExactLocation": false,
+            "capacity": 3,
+            "minPlayers": 2,
+            "depositMinor": 0,
+            "currency": "GBP",
+            "depositForfeitTo": "host",
+            "womenOnly": false,
+            "teamCount": 2
+          },
+          "dedupeKey": "occurrence:00000000-0000-4000-8000-00000000c001:0:2026-10-06"
+        },
+        {
+          "type": "CreateOccurrence",
+          "occurrence": {
+            "seriesId": "00000000-0000-4000-8000-00000000c001",
+            "occurrenceKey": "00000000-0000-4000-8000-00000000c001:0:2026-10-13",
+            "slotDate": "2026-10-13",
+            "scheduleRevision": 0,
+            "gameId": "cebb513d-0c9b-8ecc-981e-34a243956e6b",
+            "startsAt": "2026-10-13T19:00:00.000Z",
+            "endsAt": "2026-10-13T20:00:00.000Z",
+            "opensAt": "2026-10-06T12:00:00.000Z",
+            "priorityUntil": "2026-10-07T12:00:00.000Z",
+            "reconfirmAt": "2026-10-11T19:00:00.000Z",
+            "releaseAt": "2026-10-12T19:00:00.000Z",
+            "status": "scheduled",
+            "overridden": false
+          },
+          "game": {
+            "id": "cebb513d-0c9b-8ecc-981e-34a243956e6b",
+            "seriesId": "00000000-0000-4000-8000-00000000c001",
+            "hostId": "00000000-0000-4000-8000-0000000000ff",
+            "approxLocation": {
+              "lat": 51.5,
+              "lng": -0.12
+            },
+            "startsAt": "2026-10-13T19:00:00.000Z",
+            "endsAt": "2026-10-13T20:00:00.000Z",
+            "sport": "football",
+            "title": "Tuesday 5-a-side",
+            "notes": null,
+            "visibility": "public",
+            "venueId": null,
+            "location": {
+              "lat": 51.5,
+              "lng": -0.12
+            },
+            "hideExactLocation": false,
+            "capacity": 3,
+            "minPlayers": 2,
+            "depositMinor": 0,
+            "currency": "GBP",
+            "depositForfeitTo": "host",
+            "womenOnly": false,
+            "teamCount": 2
+          },
+          "dedupeKey": "occurrence:00000000-0000-4000-8000-00000000c001:0:2026-10-13"
+        },
+        {
+          "type": "AutoJoin",
+          "gameId": "cebb513d-0c9b-8ecc-981e-34a243956e6b",
+          "seriesId": "00000000-0000-4000-8000-00000000c001",
+          "userId": "00000000-0000-4000-8000-000000000001",
+          "joinedAs": "approved",
+          "dedupeKey": "autojoin:cebb513d-0c9b-8ecc-981e-34a243956e6b:00000000-0000-4000-8000-000000000001"
+        },
+        {
+          "type": "CreateOccurrence",
+          "occurrence": {
+            "seriesId": "00000000-0000-4000-8000-00000000c001",
+            "occurrenceKey": "00000000-0000-4000-8000-00000000c001:0:2026-10-20",
+            "slotDate": "2026-10-20",
+            "scheduleRevision": 0,
+            "gameId": "6c902154-62d2-89c9-b43e-16a78df06764",
+            "startsAt": "2026-10-20T19:00:00.000Z",
+            "endsAt": "2026-10-20T20:00:00.000Z",
+            "opensAt": "2026-10-06T12:00:00.000Z",
+            "priorityUntil": "2026-10-07T12:00:00.000Z",
+            "reconfirmAt": "2026-10-18T19:00:00.000Z",
+            "releaseAt": "2026-10-19T19:00:00.000Z",
+            "status": "scheduled",
+            "overridden": false
+          },
+          "game": {
+            "id": "6c902154-62d2-89c9-b43e-16a78df06764",
+            "seriesId": "00000000-0000-4000-8000-00000000c001",
+            "hostId": "00000000-0000-4000-8000-0000000000ff",
+            "approxLocation": {
+              "lat": 51.5,
+              "lng": -0.12
+            },
+            "startsAt": "2026-10-20T19:00:00.000Z",
+            "endsAt": "2026-10-20T20:00:00.000Z",
+            "sport": "football",
+            "title": "Tuesday 5-a-side",
+            "notes": null,
+            "visibility": "public",
+            "venueId": null,
+            "location": {
+              "lat": 51.5,
+              "lng": -0.12
+            },
+            "hideExactLocation": false,
+            "capacity": 3,
+            "minPlayers": 2,
+            "depositMinor": 0,
+            "currency": "GBP",
+            "depositForfeitTo": "host",
+            "womenOnly": false,
+            "teamCount": 2
+          },
+          "dedupeKey": "occurrence:00000000-0000-4000-8000-00000000c001:0:2026-10-20"
+        },
+        {
+          "type": "AutoJoin",
+          "gameId": "6c902154-62d2-89c9-b43e-16a78df06764",
+          "seriesId": "00000000-0000-4000-8000-00000000c001",
+          "userId": "00000000-0000-4000-8000-000000000001",
+          "joinedAs": "approved",
+          "dedupeKey": "autojoin:6c902154-62d2-89c9-b43e-16a78df06764:00000000-0000-4000-8000-000000000001"
+        },
+        {
+          "type": "CreateOccurrence",
+          "occurrence": {
+            "seriesId": "00000000-0000-4000-8000-00000000c001",
+            "occurrenceKey": "00000000-0000-4000-8000-00000000c001:0:2026-10-27",
+            "slotDate": "2026-10-27",
+            "scheduleRevision": 0,
+            "gameId": "72acd25b-9e0b-8469-bfe5-576bb4c88fb1",
+            "startsAt": "2026-10-27T20:00:00.000Z",
+            "endsAt": "2026-10-27T21:00:00.000Z",
+            "opensAt": "2026-10-06T12:00:00.000Z",
+            "priorityUntil": "2026-10-07T12:00:00.000Z",
+            "reconfirmAt": "2026-10-25T20:00:00.000Z",
+            "releaseAt": "2026-10-26T20:00:00.000Z",
+            "status": "scheduled",
+            "overridden": false
+          },
+          "game": {
+            "id": "72acd25b-9e0b-8469-bfe5-576bb4c88fb1",
+            "seriesId": "00000000-0000-4000-8000-00000000c001",
+            "hostId": "00000000-0000-4000-8000-0000000000ff",
+            "approxLocation": {
+              "lat": 51.5,
+              "lng": -0.12
+            },
+            "startsAt": "2026-10-27T20:00:00.000Z",
+            "endsAt": "2026-10-27T21:00:00.000Z",
+            "sport": "football",
+            "title": "Tuesday 5-a-side",
+            "notes": null,
+            "visibility": "public",
+            "venueId": null,
+            "location": {
+              "lat": 51.5,
+              "lng": -0.12
+            },
+            "hideExactLocation": false,
+            "capacity": 3,
+            "minPlayers": 2,
+            "depositMinor": 0,
+            "currency": "GBP",
+            "depositForfeitTo": "host",
+            "womenOnly": false,
+            "teamCount": 2
+          },
+          "dedupeKey": "occurrence:00000000-0000-4000-8000-00000000c001:0:2026-10-27"
+        },
+        {
+          "type": "AutoJoin",
+          "gameId": "72acd25b-9e0b-8469-bfe5-576bb4c88fb1",
+          "seriesId": "00000000-0000-4000-8000-00000000c001",
+          "userId": "00000000-0000-4000-8000-000000000001",
+          "joinedAs": "approved",
+          "dedupeKey": "autojoin:72acd25b-9e0b-8469-bfe5-576bb4c88fb1:00000000-0000-4000-8000-000000000001"
+        }
+      ]
+    }
+  }
+]

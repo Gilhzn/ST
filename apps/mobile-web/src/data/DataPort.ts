@@ -20,6 +20,38 @@
  */
 import type {
   AuthUser,
+  ConnectionView,
+  EditScope,
+  FriendUpcomingGame,
+  GameSeries,
+  GameSeriesCreateInput,
+  GameSeriesDetail,
+  InviteLink,
+  InviteTarget,
+  MediaId,
+  MediaItem,
+  MediaItemView,
+  MediaTag,
+  MediaUploadIntent,
+  MediaUploadRequest,
+  MediaVisibility,
+  MigrationStats,
+  NetworkPrivacy,
+  PeerRating,
+  PeerRatingInput,
+  PeerSkillSummary,
+  RatingEligibility,
+  ResultConfirmationSummary,
+  ResultVerdict,
+  RosterMember,
+  RosterMemberView,
+  SeriesEdit,
+  SeriesId,
+  SeriesOccurrence,
+  ShareMessage,
+  SkillRating,
+  GameRatingEligibility,
+  UpcomingGamesAudience,
   Block,
   CancelResult,
   ChatEvent,
@@ -299,6 +331,144 @@ export interface NotificationsApi {
   markNotificationsRead(ids: readonly NotificationId[]): Promise<void>;
 }
 
+// ---------------------------------------------------------------------------
+// Phase 1.5 (contract v3)
+// ---------------------------------------------------------------------------
+
+/** Recurring series, occurrences and rosters (GAME-010/011). */
+export interface SeriesApi {
+  /**
+   * Creates a series and its first `horizonWeeks` of occurrences (the host is
+   * on the roster and approved in each). Rejects `validation` (duration outside
+   * 30–240, `rosterPriorityHours` outside 6–72, unknown time zone, …),
+   * `host_suspended`, `account_banned`.
+   */
+  createSeries(input: GameSeriesCreateInput): Promise<GameSeriesDetail>;
+  /** `null` when missing or not visible. */
+  getSeries(seriesId: SeriesId): Promise<GameSeriesDetail | null>;
+  /** Series the caller hosts or is a regular of. */
+  listMySeries(): Promise<GameSeries[]>;
+  /**
+   * Host only. `scope: 'this'` edits one occurrence; `'following'` edits the
+   * template from the pivot on (schedule changes reschedule later occurrences).
+   * Rejects `outside_window` for an occurrence that has started (or, when moving
+   * it, is within `lateCancelWindowHours`), `validation` for invalid fields.
+   */
+  editSeries(seriesId: SeriesId, edit: SeriesEdit): Promise<GameSeriesDetail>;
+  /** Host only. Ends the series; later occurrences are cancelled (`series_ended`). */
+  endSeries(seriesId: SeriesId): Promise<GameSeries>;
+  /** Generated occurrences, earliest first (`from` inclusive / `to` exclusive on `startsAt`). */
+  listOccurrences(seriesId: SeriesId, options?: { from?: IsoDateTime; to?: IsoDateTime }): Promise<SeriesOccurrence[]>;
+  /**
+   * Host only. Skips the occurrence on `occurrenceKey` (generated or not yet).
+   * Inside `lateCancelWindowHours` with participants this counts as a host late
+   * game cancellation (TRUST-051(c)).
+   */
+  skipOccurrence(seriesId: SeriesId, occurrenceKey: string): Promise<SeriesOccurrence>;
+  /** Roster (host sees all; regulars see regulars). */
+  listRoster(seriesId: SeriesId): Promise<RosterMemberView[]>;
+  /** Host only. Invites a user (e.g. from "played with"); they become `invited` until they accept. */
+  inviteToRoster(seriesId: SeriesId, userId: UserId): Promise<RosterMember>;
+  /** The caller accepts a roster invite (`invited` → `regular`). */
+  acceptRosterInvite(seriesId: SeriesId): Promise<RosterMember>;
+  /** Host only. Removes a member (`left`). Rejects `forbidden` for the host. */
+  removeFromRoster(seriesId: SeriesId, userId: UserId): Promise<RosterMember>;
+  /** The caller leaves the roster (no card, GAME-011). */
+  leaveRoster(seriesId: SeriesId): Promise<RosterMember>;
+  /** The caller's "I'm always in" flag. Applies to occurrences generated from now on. */
+  setAlwaysIn(seriesId: SeriesId, alwaysIn: boolean): Promise<RosterMember>;
+  /**
+   * The caller answers the T−48h reconfirmation of an auto-join: `true` keeps
+   * the spot, `false` releases it without a card (before the late window).
+   */
+  reconfirmAutoJoin(gameId: GameId, attending: boolean): Promise<Participant>;
+}
+
+/** Result confirmation, peer ratings and Glicko skill ratings (GAME-071, RATE-*, GLK-*). */
+export interface RatingsApi {
+  /** A verified participant confirms or disputes the submitted result (once; may change until the window closes). */
+  confirmResult(gameId: GameId, verdict: ResultVerdict): Promise<ResultConfirmationSummary>;
+  getResultConfirmation(gameId: GameId): Promise<ResultConfirmationSummary | null>;
+  /** Whether the game counts for Glicko (GLK-003), e.g. "Not rated: too few verified players". */
+  getGameRatingStatus(gameId: GameId): Promise<GameRatingEligibility>;
+  /** Whether and whom the caller may rate after this game (RATE-001/002). */
+  getRatingEligibility(gameId: GameId): Promise<RatingEligibility>;
+  /** Rejects `forbidden` when ineligible, `outside_window` after `endsAt + 48h`, `validation` for >5 ratees. */
+  submitPeerRatings(gameId: GameId, ratings: readonly PeerRatingInput[]): Promise<PeerRating[]>;
+  /** The caller's Glicko ratings, one per sport and format family. */
+  listMySkillRatings(): Promise<SkillRating[]>;
+  /** The caller's private peer summary for a sport (RATE-004), or `null` without ratings. */
+  getMyPeerSummary(sport: SportId): Promise<PeerSkillSummary | null>;
+  /** Host only: 1–5 bands of the game's participants for balancing (never public). */
+  getSkillBands(gameId: GameId): Promise<Readonly<Record<UserId, Stars>>>;
+}
+
+/** Media Vault (VAULT-001..009). */
+export interface MediaApi {
+  /** Published items of a game visible to the caller (participants), newest first. */
+  listGameMedia(gameId: GameId): Promise<MediaItemView[]>;
+  /** The venue vault: `venue_public` items only, newest first. */
+  listVenueMedia(venueId: VenueId, options?: { from?: IsoDateTime; to?: IsoDateTime }): Promise<MediaItemView[]>;
+  /**
+   * Starts a direct upload. Rejects `forbidden` (not a verified attendee),
+   * `outside_window` (before `startsAt` or after `endsAt + 2h`), `validation`
+   * (size, duration or type; details carry the `MediaRejectReason`),
+   * `rate_limited` (30 items per user per game).
+   */
+  createMediaUploadIntent(request: MediaUploadRequest): Promise<MediaUploadIntent>;
+  /** Hands the uploaded object to the pre-publication pipeline; the item starts `processing`. */
+  completeMediaUpload(mediaId: MediaId): Promise<MediaItem>;
+  /** Uploader only. Creates tag *requests* (invisible until accepted). */
+  tagMedia(mediaId: MediaId, userIds: readonly UserId[]): Promise<MediaTag[]>;
+  /** The tagged caller accepts or declines a tag request. */
+  respondToMediaTag(mediaId: MediaId, accept: boolean): Promise<MediaTag>;
+  /** The tagged caller untags themselves; the item leaves `venue_public` when `removeFromPublic`. */
+  untagMe(mediaId: MediaId, removeFromPublic: boolean): Promise<MediaTag>;
+  /** Pending tag requests for the caller. */
+  listMyTagRequests(): Promise<MediaTag[]>;
+  /**
+   * Uploader only. `venue_public` is applied only when every tag is accepted;
+   * otherwise the opt-in is stored and the item stays `participants` (AC-VAULT-004/005).
+   */
+  setMediaVisibility(mediaId: MediaId, visibility: MediaVisibility): Promise<MediaItem>;
+  /** Uploader (or moderator) only. */
+  deleteMedia(mediaId: MediaId): Promise<void>;
+}
+
+/** Played-with, friends and network privacy. */
+export interface NetworkApi {
+  /** The caller's connections (blocked pairs excluded), most recent first. */
+  listConnections(filter?: 'all' | 'friends' | 'played_with' | 'requests'): Promise<ConnectionView[]>;
+  /** Rejects `blocked`, `conflict` when already friends or requested. Accepts an incoming request instead of duplicating. */
+  requestFriend(userId: UserId): Promise<ConnectionView>;
+  respondFriendRequest(userId: UserId, accept: boolean): Promise<ConnectionView>;
+  /** Removes a friendship or withdraws a request; played-with stays. */
+  removeFriend(userId: UserId): Promise<void>;
+  getNetworkPrivacy(): Promise<NetworkPrivacy>;
+  setNetworkPrivacy(audience: UpcomingGamesAudience): Promise<NetworkPrivacy>;
+  /** Upcoming games of friends who share them with friends (blocks and visibility rules applied). */
+  listFriendsUpcomingGames(): Promise<FriendUpcomingGame[]>;
+}
+
+/** Invite links, share messages and WhatsApp migration stats (PRD §5.4). */
+export interface InviteApi {
+  /** Host only. The current link with its rich preview. */
+  getInviteLink(target: InviteTarget): Promise<InviteLink>;
+  /** Host only. Rotates the token; old links stop working. */
+  rotateInviteLink(target: InviteTarget): Promise<InviteLink>;
+  /** The localisable share text (key + params) for the share sheet / `wa.me`. */
+  getShareMessage(target: InviteTarget, locale: Locale): Promise<ShareMessage>;
+  /** Resolves a series invite token (grants visibility of a private series). */
+  resolveSeriesInvite(inviteToken: string): Promise<GameSeriesDetail | null>;
+  /** Joins the series roster through its link (`joinedVia: 'invite_link'`). */
+  joinSeriesViaInvite(inviteToken: string): Promise<RosterMember>;
+  /** Host only. */
+  getMigrationStats(target: InviteTarget): Promise<MigrationStats>;
+}
+
+/** Edit scope re-exported for screens that build {@link SeriesEdit}s. */
+export type { EditScope };
+
 /**
  * The complete data access surface used by the app. Obtain the active
  * implementation from the data provider (`useData()`); never instantiate an
@@ -312,4 +482,9 @@ export interface DataPort
     CheckInApi,
     TrustApi,
     ChatApi,
-    NotificationsApi {}
+    NotificationsApi,
+    SeriesApi,
+    RatingsApi,
+    MediaApi,
+    NetworkApi,
+    InviteApi {}

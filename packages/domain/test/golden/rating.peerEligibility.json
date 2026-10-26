@@ -1,0 +1,229 @@
+[
+  {
+    "name": "eligible.excludes-self-blocked-rated",
+    "kind": "rating.peerEligibility",
+    "input": {
+      "game": {
+        "endsAt": "2026-11-01T20:00:00.000Z"
+      },
+      "rater": {
+        "userId": "00000000-0000-4000-8000-000000000001",
+        "reliability": 0.85,
+        "verifiedGamesInSport": 5,
+        "hasActiveSanction": false,
+        "verifiedInGame": true
+      },
+      "verifiedUserIds": [
+        "00000000-0000-4000-8000-000000000001",
+        "00000000-0000-4000-8000-000000000003",
+        "00000000-0000-4000-8000-000000000002",
+        "00000000-0000-4000-8000-000000000004"
+      ],
+      "blocks": [
+        {
+          "blockerId": "00000000-0000-4000-8000-000000000004",
+          "blockedId": "00000000-0000-4000-8000-000000000001"
+        }
+      ],
+      "alreadyRated": [
+        "00000000-0000-4000-8000-000000000003"
+      ]
+    },
+    "now": "2026-11-01T21:00:00.000Z",
+    "expected": {
+      "canRate": true,
+      "reasons": [],
+      "verifiedGamesInSport": 5,
+      "requiredGames": 5,
+      "windowClosesAt": "2026-11-03T20:00:00.000Z",
+      "remainingRatees": 4,
+      "rateableUserIds": [
+        "00000000-0000-4000-8000-000000000002"
+      ]
+    },
+    "tags": [
+      "prd-v5:RATE-002"
+    ]
+  },
+  {
+    "name": "ac-rate-002.three-verified-games",
+    "kind": "rating.peerEligibility",
+    "input": {
+      "game": {
+        "endsAt": "2026-11-01T20:00:00.000Z"
+      },
+      "rater": {
+        "userId": "00000000-0000-4000-8000-000000000001",
+        "reliability": 0.85,
+        "verifiedGamesInSport": 3,
+        "hasActiveSanction": false,
+        "verifiedInGame": true
+      },
+      "verifiedUserIds": [
+        "00000000-0000-4000-8000-000000000001",
+        "00000000-0000-4000-8000-000000000003",
+        "00000000-0000-4000-8000-000000000002",
+        "00000000-0000-4000-8000-000000000004"
+      ],
+      "blocks": [
+        {
+          "blockerId": "00000000-0000-4000-8000-000000000004",
+          "blockedId": "00000000-0000-4000-8000-000000000001"
+        }
+      ],
+      "alreadyRated": [
+        "00000000-0000-4000-8000-000000000003"
+      ]
+    },
+    "now": "2026-11-01T21:00:00.000Z",
+    "expected": {
+      "canRate": false,
+      "reasons": [
+        "too_few_games"
+      ],
+      "verifiedGamesInSport": 3,
+      "requiredGames": 5,
+      "windowClosesAt": "2026-11-03T20:00:00.000Z",
+      "remainingRatees": 4,
+      "rateableUserIds": []
+    },
+    "tags": [
+      "prd-v5:AC-RATE-002"
+    ]
+  },
+  {
+    "name": "new-rater.low-reliability",
+    "kind": "rating.peerEligibility",
+    "input": {
+      "game": {
+        "endsAt": "2026-11-01T20:00:00.000Z"
+      },
+      "rater": {
+        "userId": "00000000-0000-4000-8000-000000000001",
+        "reliability": null,
+        "verifiedGamesInSport": 5,
+        "hasActiveSanction": false,
+        "verifiedInGame": true
+      },
+      "verifiedUserIds": [
+        "00000000-0000-4000-8000-000000000001",
+        "00000000-0000-4000-8000-000000000003",
+        "00000000-0000-4000-8000-000000000002",
+        "00000000-0000-4000-8000-000000000004"
+      ],
+      "blocks": [
+        {
+          "blockerId": "00000000-0000-4000-8000-000000000004",
+          "blockedId": "00000000-0000-4000-8000-000000000001"
+        }
+      ],
+      "alreadyRated": [
+        "00000000-0000-4000-8000-000000000003"
+      ]
+    },
+    "now": "2026-11-01T21:00:00.000Z",
+    "expected": {
+      "canRate": false,
+      "reasons": [
+        "low_reliability"
+      ],
+      "verifiedGamesInSport": 5,
+      "requiredGames": 5,
+      "windowClosesAt": "2026-11-03T20:00:00.000Z",
+      "remainingRatees": 4,
+      "rateableUserIds": []
+    }
+  },
+  {
+    "name": "window.closes-48h-after-end",
+    "kind": "rating.peerEligibility",
+    "input": {
+      "game": {
+        "endsAt": "2026-11-01T20:00:00.000Z"
+      },
+      "rater": {
+        "userId": "00000000-0000-4000-8000-000000000001",
+        "reliability": 0.85,
+        "verifiedGamesInSport": 5,
+        "hasActiveSanction": false,
+        "verifiedInGame": true
+      },
+      "verifiedUserIds": [
+        "00000000-0000-4000-8000-000000000001",
+        "00000000-0000-4000-8000-000000000003",
+        "00000000-0000-4000-8000-000000000002",
+        "00000000-0000-4000-8000-000000000004"
+      ],
+      "blocks": [
+        {
+          "blockerId": "00000000-0000-4000-8000-000000000004",
+          "blockedId": "00000000-0000-4000-8000-000000000001"
+        }
+      ],
+      "alreadyRated": [
+        "00000000-0000-4000-8000-000000000003"
+      ]
+    },
+    "now": "2026-11-03T20:00:00.001Z",
+    "expected": {
+      "canRate": false,
+      "reasons": [
+        "window_closed"
+      ],
+      "verifiedGamesInSport": 5,
+      "requiredGames": 5,
+      "windowClosesAt": "2026-11-03T20:00:00.000Z",
+      "remainingRatees": 4,
+      "rateableUserIds": []
+    },
+    "tags": [
+      "boundary"
+    ]
+  },
+  {
+    "name": "window.inclusive-at-48h",
+    "kind": "rating.peerEligibility",
+    "input": {
+      "game": {
+        "endsAt": "2026-11-01T20:00:00.000Z"
+      },
+      "rater": {
+        "userId": "00000000-0000-4000-8000-000000000001",
+        "reliability": 0.85,
+        "verifiedGamesInSport": 5,
+        "hasActiveSanction": false,
+        "verifiedInGame": true
+      },
+      "verifiedUserIds": [
+        "00000000-0000-4000-8000-000000000001",
+        "00000000-0000-4000-8000-000000000003",
+        "00000000-0000-4000-8000-000000000002",
+        "00000000-0000-4000-8000-000000000004"
+      ],
+      "blocks": [
+        {
+          "blockerId": "00000000-0000-4000-8000-000000000004",
+          "blockedId": "00000000-0000-4000-8000-000000000001"
+        }
+      ],
+      "alreadyRated": [
+        "00000000-0000-4000-8000-000000000003"
+      ]
+    },
+    "now": "2026-11-03T20:00:00.000Z",
+    "expected": {
+      "canRate": true,
+      "reasons": [],
+      "verifiedGamesInSport": 5,
+      "requiredGames": 5,
+      "windowClosesAt": "2026-11-03T20:00:00.000Z",
+      "remainingRatees": 4,
+      "rateableUserIds": [
+        "00000000-0000-4000-8000-000000000002"
+      ]
+    },
+    "tags": [
+      "boundary"
+    ]
+  }
+]

@@ -1,0 +1,325 @@
+[
+  {
+    "name": "photo.ok-at-end",
+    "kind": "vault.upload",
+    "input": {
+      "game": {
+        "startsAt": "2026-11-01T18:00:00.000Z",
+        "endsAt": "2026-11-01T20:00:00.000Z"
+      },
+      "verifiedAttendee": true,
+      "request": {
+        "gameId": "00000000-0000-4000-8000-0000000a0001",
+        "kind": "photo",
+        "mimeType": "image/jpeg",
+        "sizeBytes": 5242880
+      },
+      "existingCount": 0
+    },
+    "now": "2026-11-01T20:00:00.000Z",
+    "expected": {
+      "ok": true,
+      "value": {
+        "maxBytes": 20971520
+      }
+    },
+    "tags": [
+      "prd-v5:VAULT-001"
+    ]
+  },
+  {
+    "name": "ac-vault-001.locked-2h-after.22-05",
+    "kind": "vault.upload",
+    "input": {
+      "game": {
+        "startsAt": "2026-11-01T18:00:00.000Z",
+        "endsAt": "2026-11-01T20:00:00.000Z"
+      },
+      "verifiedAttendee": true,
+      "request": {
+        "gameId": "00000000-0000-4000-8000-0000000a0001",
+        "kind": "photo",
+        "mimeType": "image/jpeg",
+        "sizeBytes": 5242880
+      },
+      "existingCount": 0
+    },
+    "now": "2026-11-01T22:05:00.000Z",
+    "expected": {
+      "ok": false,
+      "error": "window_closed"
+    },
+    "tags": [
+      "prd-v5:VAULT-001"
+    ]
+  },
+  {
+    "name": "window.inclusive-at-end-plus-2h",
+    "kind": "vault.upload",
+    "input": {
+      "game": {
+        "startsAt": "2026-11-01T18:00:00.000Z",
+        "endsAt": "2026-11-01T20:00:00.000Z"
+      },
+      "verifiedAttendee": true,
+      "request": {
+        "gameId": "00000000-0000-4000-8000-0000000a0001",
+        "kind": "photo",
+        "mimeType": "image/jpeg",
+        "sizeBytes": 5242880
+      },
+      "existingCount": 0
+    },
+    "now": "2026-11-01T22:00:00.000Z",
+    "expected": {
+      "ok": true,
+      "value": {
+        "maxBytes": 20971520
+      }
+    },
+    "tags": [
+      "prd-v5:VAULT-001"
+    ]
+  },
+  {
+    "name": "window.before-start",
+    "kind": "vault.upload",
+    "input": {
+      "game": {
+        "startsAt": "2026-11-01T18:00:00.000Z",
+        "endsAt": "2026-11-01T20:00:00.000Z"
+      },
+      "verifiedAttendee": true,
+      "request": {
+        "gameId": "00000000-0000-4000-8000-0000000a0001",
+        "kind": "photo",
+        "mimeType": "image/jpeg",
+        "sizeBytes": 5242880
+      },
+      "existingCount": 0
+    },
+    "now": "2026-11-01T17:59:59.999Z",
+    "expected": {
+      "ok": false,
+      "error": "window_not_open"
+    },
+    "tags": [
+      "prd-v5:VAULT-001"
+    ]
+  },
+  {
+    "name": "not-a-verified-attendee",
+    "kind": "vault.upload",
+    "input": {
+      "game": {
+        "startsAt": "2026-11-01T18:00:00.000Z",
+        "endsAt": "2026-11-01T20:00:00.000Z"
+      },
+      "verifiedAttendee": false,
+      "request": {
+        "gameId": "00000000-0000-4000-8000-0000000a0001",
+        "kind": "photo",
+        "mimeType": "image/jpeg",
+        "sizeBytes": 5242880
+      },
+      "existingCount": 0
+    },
+    "now": "2026-11-01T20:00:00.000Z",
+    "expected": {
+      "ok": false,
+      "error": "not_verified_attendee"
+    },
+    "tags": [
+      "prd-v5:VAULT-001"
+    ]
+  },
+  {
+    "name": "photo.over-20mb",
+    "kind": "vault.upload",
+    "input": {
+      "game": {
+        "startsAt": "2026-11-01T18:00:00.000Z",
+        "endsAt": "2026-11-01T20:00:00.000Z"
+      },
+      "verifiedAttendee": true,
+      "request": {
+        "gameId": "00000000-0000-4000-8000-0000000a0001",
+        "kind": "photo",
+        "mimeType": "image/jpeg",
+        "sizeBytes": 20971521
+      },
+      "existingCount": 0
+    },
+    "now": "2026-11-01T20:00:00.000Z",
+    "expected": {
+      "ok": false,
+      "error": "too_large"
+    },
+    "tags": [
+      "prd-v5:VAULT-001"
+    ]
+  },
+  {
+    "name": "photo.gif-unsupported",
+    "kind": "vault.upload",
+    "input": {
+      "game": {
+        "startsAt": "2026-11-01T18:00:00.000Z",
+        "endsAt": "2026-11-01T20:00:00.000Z"
+      },
+      "verifiedAttendee": true,
+      "request": {
+        "gameId": "00000000-0000-4000-8000-0000000a0001",
+        "kind": "photo",
+        "mimeType": "image/gif",
+        "sizeBytes": 5242880
+      },
+      "existingCount": 0
+    },
+    "now": "2026-11-01T20:00:00.000Z",
+    "expected": {
+      "ok": false,
+      "error": "unsupported_type"
+    },
+    "tags": [
+      "prd-v5:VAULT-001"
+    ]
+  },
+  {
+    "name": "video.ok",
+    "kind": "vault.upload",
+    "input": {
+      "game": {
+        "startsAt": "2026-11-01T18:00:00.000Z",
+        "endsAt": "2026-11-01T20:00:00.000Z"
+      },
+      "verifiedAttendee": true,
+      "request": {
+        "gameId": "00000000-0000-4000-8000-0000000a0001",
+        "kind": "video",
+        "mimeType": "video/mp4",
+        "sizeBytes": 104857600,
+        "durationSeconds": 30
+      },
+      "existingCount": 0
+    },
+    "now": "2026-11-01T20:00:00.000Z",
+    "expected": {
+      "ok": true,
+      "value": {
+        "maxBytes": 209715200
+      }
+    },
+    "tags": [
+      "prd-v5:VAULT-001"
+    ]
+  },
+  {
+    "name": "video.61s-too-long",
+    "kind": "vault.upload",
+    "input": {
+      "game": {
+        "startsAt": "2026-11-01T18:00:00.000Z",
+        "endsAt": "2026-11-01T20:00:00.000Z"
+      },
+      "verifiedAttendee": true,
+      "request": {
+        "gameId": "00000000-0000-4000-8000-0000000a0001",
+        "kind": "video",
+        "mimeType": "video/mp4",
+        "sizeBytes": 104857600,
+        "durationSeconds": 61
+      },
+      "existingCount": 0
+    },
+    "now": "2026-11-01T20:00:00.000Z",
+    "expected": {
+      "ok": false,
+      "error": "too_long"
+    },
+    "tags": [
+      "prd-v5:VAULT-001"
+    ]
+  },
+  {
+    "name": "video.over-200mb",
+    "kind": "vault.upload",
+    "input": {
+      "game": {
+        "startsAt": "2026-11-01T18:00:00.000Z",
+        "endsAt": "2026-11-01T20:00:00.000Z"
+      },
+      "verifiedAttendee": true,
+      "request": {
+        "gameId": "00000000-0000-4000-8000-0000000a0001",
+        "kind": "video",
+        "mimeType": "video/mp4",
+        "sizeBytes": 209715201,
+        "durationSeconds": 30
+      },
+      "existingCount": 0
+    },
+    "now": "2026-11-01T20:00:00.000Z",
+    "expected": {
+      "ok": false,
+      "error": "too_large"
+    },
+    "tags": [
+      "prd-v5:VAULT-001"
+    ]
+  },
+  {
+    "name": "cap.30-per-user-per-game",
+    "kind": "vault.upload",
+    "input": {
+      "game": {
+        "startsAt": "2026-11-01T18:00:00.000Z",
+        "endsAt": "2026-11-01T20:00:00.000Z"
+      },
+      "verifiedAttendee": true,
+      "request": {
+        "gameId": "00000000-0000-4000-8000-0000000a0001",
+        "kind": "photo",
+        "mimeType": "image/jpeg",
+        "sizeBytes": 5242880
+      },
+      "existingCount": 30
+    },
+    "now": "2026-11-01T20:00:00.000Z",
+    "expected": {
+      "ok": false,
+      "error": "user_cap_reached"
+    },
+    "tags": [
+      "prd-v5:VAULT-001"
+    ]
+  },
+  {
+    "name": "cap.29-still-ok",
+    "kind": "vault.upload",
+    "input": {
+      "game": {
+        "startsAt": "2026-11-01T18:00:00.000Z",
+        "endsAt": "2026-11-01T20:00:00.000Z"
+      },
+      "verifiedAttendee": true,
+      "request": {
+        "gameId": "00000000-0000-4000-8000-0000000a0001",
+        "kind": "photo",
+        "mimeType": "image/jpeg",
+        "sizeBytes": 5242880
+      },
+      "existingCount": 29
+    },
+    "now": "2026-11-01T20:00:00.000Z",
+    "expected": {
+      "ok": true,
+      "value": {
+        "maxBytes": 20971520
+      }
+    },
+    "tags": [
+      "prd-v5:VAULT-001"
+    ]
+  }
+]

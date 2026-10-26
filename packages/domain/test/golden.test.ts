@@ -22,11 +22,26 @@ import {
   isCheckInOpen,
   processNoShows,
   promoteFromWaitlist,
-  resolveTrustConfig,
+  resolveDomainConfig,
   resultWindow,
   verifyPeer,
   verifyQr,
-  type TrustConfig,
+  aggregatePeerRatings,
+  applyMediaVerdict,
+  checkMediaUpload,
+  checkOccurrenceJoinWindow,
+  derivePlayedWith,
+  filterFriendsUpcomingGames,
+  friendTransition,
+  gameRatingEligibility,
+  glicko2Update,
+  peerRatingEligibility,
+  planSeriesOccurrences,
+  processAutoJoins,
+  processRatingPeriod,
+  requestMediaVisibility,
+  summarizeResultConfirmations,
+  type DomainConfig,
 } from '../src';
 import { assertSanctionInvariants } from './helpers';
 
@@ -35,14 +50,24 @@ interface GoldenCase {
   kind: string;
   description?: string;
   input: Record<string, never>;
-  config?: Partial<TrustConfig>;
+  config?: Partial<DomainConfig>;
   now: string;
   expected: unknown;
   targets?: ('ts' | 'sql')[];
   tags?: string[];
 }
 
-type Runner = (input: never, config: TrustConfig, now: number) => unknown;
+type Runner = (input: never, config: DomainConfig, now: number) => unknown;
+
+/** Floats in Glicko outputs are compared at 6 decimals on both sides (README). */
+const round6deep = (v: unknown): unknown =>
+  typeof v === 'number'
+    ? Number.isInteger(v) ? v : Math.round(v * 1e6) / 1e6
+    : Array.isArray(v)
+      ? v.map(round6deep)
+      : v && typeof v === 'object'
+        ? Object.fromEntries(Object.entries(v).map(([k, x]) => [k, round6deep(x)]))
+        : v;
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 const RUNNERS: Record<string, Runner> = {
@@ -81,6 +106,25 @@ const RUNNERS: Record<string, Runner> = {
     effects: applyHostGameCancellation(createTrustState(i.state.userId, i.state), { game: i.game, cancelledAt: i.cancelledAt }, c, now).effects,
   }),
   'checkin.verifyPeer': (i: any, c, now) => verifyPeer(i, now, c),
+  // Phase 1.5 (contract v3)
+  'series.occurrences': (i: any, c, now) => planSeriesOccurrences(i, c, now),
+  'series.autoJoins': (i: any, c, now) => processAutoJoins(i, c, now),
+  'series.joinWindow': (i: any, _c, now) => checkOccurrenceJoinWindow(i.series, i.occurrence, i.roster, i.userId, now),
+  'rating.glicko2': (i: any) => round6deep(glicko2Update(i.player, i.results, i.tau, i.maxRd ?? Infinity)),
+  'rating.glickoPeriod': (i: any, c, now) => round6deep(processRatingPeriod(i, c, now)),
+  'rating.gameEligibility': (i: any, c) => gameRatingEligibility(i, c),
+  'rating.resultConfirmation': (i: any) => summarizeResultConfirmations(i, i.viewerId),
+  'rating.peerEligibility': (i: any, c, now) => peerRatingEligibility(i, c, now),
+  'rating.peerAggregate': (i: any, c) => aggregatePeerRatings(i, c),
+  'vault.upload': (i: any, c, now) => checkMediaUpload(i, c, now),
+  'vault.visibility': (i: any, _c, now) => requestMediaVisibility(i.item, i.tags, i.requested, i.actorId, now),
+  'vault.verdict': (i: any, _c, now) => {
+    const r = applyMediaVerdict(i.item, i.tags, i.verdict, now);
+    return { item: r.item, effects: r.effects };
+  },
+  'network.playedWith': (i: any, c, now) => derivePlayedWith(i.attendance, i.blocks, c, now),
+  'network.friend': (i: any, _c, now) => friendTransition(i.connection, i.actor, i.other, i.action, i.blocks, now),
+  'network.friendsGames': (i: any, _c, now) => filterFriendsUpcomingGames(i.viewerId, i.candidates, i.connections, i.privacy, i.blocks, now),
 };
 /* eslint-enable @typescript-eslint/no-explicit-any */
 
@@ -114,7 +158,7 @@ for (const kind of Object.keys(RUNNERS)) {
   const list = all.filter((c) => c.kind === kind && (c.targets ?? ['ts', 'sql']).includes('ts'));
   describe(`golden: ${kind}`, () => {
     it.each(list.map((c) => [c.name, c] as const))('%s', (_name, c) => {
-      const out = (RUNNERS[kind] as Runner)(c.input as never, resolveTrustConfig(c.config), Date.parse(c.now));
+      const out = (RUNNERS[kind] as Runner)(c.input as never, resolveDomainConfig(c.config), Date.parse(c.now));
       expect(out).toEqual(c.expected);
       const effects = (out as { effects?: unknown }).effects;
       if (Array.isArray(effects)) assertSanctionInvariants(effects);

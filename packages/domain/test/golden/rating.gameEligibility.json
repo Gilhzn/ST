@@ -1,0 +1,283 @@
+[
+  {
+    "name": "eligible.7-of-10-verified",
+    "kind": "rating.gameEligibility",
+    "input": {
+      "sport": "football",
+      "startsAt": "2026-11-01T19:00:00.000Z",
+      "teamScores": [
+        3,
+        2
+      ],
+      "resultStatus": "confirmed",
+      "approvedCount": 10,
+      "verifiedCount": 7,
+      "teamsPublishedAt": "2026-11-01T18:55:00.000Z",
+      "teams": [
+        [
+          "00000000-0000-4000-8000-000000000001"
+        ],
+        [
+          "00000000-0000-4000-8000-000000000002"
+        ]
+      ]
+    },
+    "now": "2026-03-01T18:00:00.000Z",
+    "expected": {
+      "eligible": true,
+      "reason": null
+    },
+    "tags": [
+      "prd-v5:GLK-003"
+    ]
+  },
+  {
+    "name": "ac-glk-003.6-of-10-verified",
+    "kind": "rating.gameEligibility",
+    "input": {
+      "sport": "football",
+      "startsAt": "2026-11-01T19:00:00.000Z",
+      "teamScores": [
+        3,
+        2
+      ],
+      "resultStatus": "pending",
+      "approvedCount": 10,
+      "verifiedCount": 6,
+      "teamsPublishedAt": "2026-11-01T18:55:00.000Z",
+      "teams": [
+        [
+          "00000000-0000-4000-8000-000000000001"
+        ],
+        [
+          "00000000-0000-4000-8000-000000000002"
+        ]
+      ]
+    },
+    "now": "2026-03-01T18:00:00.000Z",
+    "expected": {
+      "eligible": false,
+      "reason": "too_few_verified"
+    },
+    "tags": [
+      "prd-v5:GLK-003"
+    ]
+  },
+  {
+    "name": "running.unrated",
+    "kind": "rating.gameEligibility",
+    "input": {
+      "sport": "running",
+      "startsAt": "2026-11-01T19:00:00.000Z",
+      "teamScores": [
+        3,
+        2
+      ],
+      "resultStatus": "confirmed",
+      "approvedCount": 10,
+      "verifiedCount": 7,
+      "teamsPublishedAt": "2026-11-01T18:55:00.000Z",
+      "teams": [
+        [
+          "00000000-0000-4000-8000-000000000001"
+        ],
+        [
+          "00000000-0000-4000-8000-000000000002"
+        ]
+      ]
+    },
+    "now": "2026-03-01T18:00:00.000Z",
+    "expected": {
+      "eligible": false,
+      "reason": "unrated_sport"
+    },
+    "tags": [
+      "prd-v5:GLK-003"
+    ]
+  },
+  {
+    "name": "no-result",
+    "kind": "rating.gameEligibility",
+    "input": {
+      "sport": "football",
+      "startsAt": "2026-11-01T19:00:00.000Z",
+      "teamScores": null,
+      "resultStatus": "confirmed",
+      "approvedCount": 10,
+      "verifiedCount": 7,
+      "teamsPublishedAt": "2026-11-01T18:55:00.000Z",
+      "teams": [
+        [
+          "00000000-0000-4000-8000-000000000001"
+        ],
+        [
+          "00000000-0000-4000-8000-000000000002"
+        ]
+      ]
+    },
+    "now": "2026-03-01T18:00:00.000Z",
+    "expected": {
+      "eligible": false,
+      "reason": "no_result"
+    },
+    "tags": [
+      "prd-v5:GLK-003"
+    ]
+  },
+  {
+    "name": "teams-published-after-kickoff",
+    "kind": "rating.gameEligibility",
+    "input": {
+      "sport": "football",
+      "startsAt": "2026-11-01T19:00:00.000Z",
+      "teamScores": [
+        3,
+        2
+      ],
+      "resultStatus": "confirmed",
+      "approvedCount": 10,
+      "verifiedCount": 7,
+      "teamsPublishedAt": "2026-11-01T19:00:00.001Z",
+      "teams": [
+        [
+          "00000000-0000-4000-8000-000000000001"
+        ],
+        [
+          "00000000-0000-4000-8000-000000000002"
+        ]
+      ]
+    },
+    "now": "2026-03-01T18:00:00.000Z",
+    "expected": {
+      "eligible": false,
+      "reason": "teams_not_published"
+    },
+    "tags": [
+      "prd-v5:GLK-003"
+    ]
+  },
+  {
+    "name": "teams-never-published",
+    "kind": "rating.gameEligibility",
+    "input": {
+      "sport": "football",
+      "startsAt": "2026-11-01T19:00:00.000Z",
+      "teamScores": [
+        3,
+        2
+      ],
+      "resultStatus": "confirmed",
+      "approvedCount": 10,
+      "verifiedCount": 7,
+      "teamsPublishedAt": null,
+      "teams": [
+        [
+          "00000000-0000-4000-8000-000000000001"
+        ],
+        [
+          "00000000-0000-4000-8000-000000000002"
+        ]
+      ]
+    },
+    "now": "2026-03-01T18:00:00.000Z",
+    "expected": {
+      "eligible": false,
+      "reason": "teams_not_published"
+    },
+    "tags": [
+      "prd-v5:GLK-003"
+    ]
+  },
+  {
+    "name": "one-side",
+    "kind": "rating.gameEligibility",
+    "input": {
+      "sport": "football",
+      "startsAt": "2026-11-01T19:00:00.000Z",
+      "teamScores": [
+        1
+      ],
+      "resultStatus": "confirmed",
+      "approvedCount": 10,
+      "verifiedCount": 7,
+      "teamsPublishedAt": "2026-11-01T18:55:00.000Z",
+      "teams": [
+        [
+          "00000000-0000-4000-8000-000000000001"
+        ]
+      ]
+    },
+    "now": "2026-03-01T18:00:00.000Z",
+    "expected": {
+      "eligible": false,
+      "reason": "not_two_sides"
+    },
+    "tags": [
+      "prd-v5:GLK-003"
+    ]
+  },
+  {
+    "name": "disputed",
+    "kind": "rating.gameEligibility",
+    "input": {
+      "sport": "football",
+      "startsAt": "2026-11-01T19:00:00.000Z",
+      "teamScores": [
+        3,
+        2
+      ],
+      "resultStatus": "disputed",
+      "approvedCount": 10,
+      "verifiedCount": 7,
+      "teamsPublishedAt": "2026-11-01T18:55:00.000Z",
+      "teams": [
+        [
+          "00000000-0000-4000-8000-000000000001"
+        ],
+        [
+          "00000000-0000-4000-8000-000000000002"
+        ]
+      ]
+    },
+    "now": "2026-03-01T18:00:00.000Z",
+    "expected": {
+      "eligible": false,
+      "reason": "result_disputed"
+    },
+    "tags": [
+      "prd-v5:GLK-003"
+    ]
+  },
+  {
+    "name": "not-yet-confirmed",
+    "kind": "rating.gameEligibility",
+    "input": {
+      "sport": "football",
+      "startsAt": "2026-11-01T19:00:00.000Z",
+      "teamScores": [
+        3,
+        2
+      ],
+      "resultStatus": "pending",
+      "approvedCount": 10,
+      "verifiedCount": 7,
+      "teamsPublishedAt": "2026-11-01T18:55:00.000Z",
+      "teams": [
+        [
+          "00000000-0000-4000-8000-000000000001"
+        ],
+        [
+          "00000000-0000-4000-8000-000000000002"
+        ]
+      ]
+    },
+    "now": "2026-03-01T18:00:00.000Z",
+    "expected": {
+      "eligible": false,
+      "reason": "result_not_confirmed"
+    },
+    "tags": [
+      "prd-v5:GLK-003"
+    ]
+  }
+]

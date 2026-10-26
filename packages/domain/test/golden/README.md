@@ -21,7 +21,7 @@ node --experimental-strip-types packages/domain/scripts/build-golden.ts   # or: 
   "kind": "trust.applyEvent",                          // = file name
   "description": "optional",
   "input": { /* kind-specific, see below */ },
-  "config": { "lateCancelWindowHours": 6 },            // optional partial TrustConfig over DEFAULT_TRUST_CONFIG
+  "config": { "lateCancelWindowHours": 6 },            // optional partial DomainConfig (TrustConfig ∪ Phase15Config) over the defaults
   "now": "2026-03-01T22:00:00.000Z",                    // ISO-8601 UTC; TS uses Date.parse, SQL sets st.now
   "expected": { /* exact (deep-equal) output */ },
   "targets": ["ts", "sql"],                             // optional, default both
@@ -30,6 +30,8 @@ node --experimental-strip-types packages/domain/scripts/build-golden.ts   # or: 
 ```
 
 Conventions: ids are UUID strings (usable verbatim in SQL); timestamps are ISO strings; shapes are the camelCase TS types from `src/types.ts` (the SQL runner maps to snake_case). Effects are compared **in order**.
+
+`config` keys may come from `TrustConfig` (`trust_config`) or, since contract v3, `Phase15Config` (`phase15_config`); runners resolve both with `resolveDomainConfig`. **Floating point:** `rating.glicko2` / `rating.glickoPeriod` outputs are rounded to **6 decimals** (every non-integer number, recursively) before comparing, on both sides; `rating.peerAggregate` means and weights are already rounded to 4 decimals by the function itself.
 
 ### Derived ids
 
@@ -64,11 +66,45 @@ The pgcrypto version is in `src/crypto/uuid.ts`. Fixture rows in `input.state.sa
 | `checkin.verifyPeer` | `PeerCheckInInput` (only `checkInMethod = 'gps'` confirmers anchor) | `PeerConfirmResult` | `verifyPeer` | `peer_confirm` |
 | `trust.hostGameCancelled` | `{ state: Partial<TrustState> & { userId: hostId }, game: { id, hostId, startsAt }, cancelledAt }` | `{ effects }` | `applyHostGameCancellation` | game cancellation by host (`cancel_game`) |
 
+### Phase 1.5 kinds (contract v3)
+
+| kind | input | expected | TS function | SQL / Edge counterpart |
+|---|---|---|---|---|
+| `series.occurrences` | `SeriesPlanInput` (`series`, `existing`, `roster`, `ineligibleUserIds?`) | `SeriesPlan` (`occurrences`, `effects`: `CreateOccurrence` then `AutoJoin`s per occurrence) | `planSeriesOccurrences` | rolling generation job (`generate_series_occurrences`) |
+| `series.autoJoins` | `{ series: { id, title }, occurrence, autoJoins, roster }` | `{ effects }` | `processAutoJoins` | reconfirm/release job |
+| `series.joinWindow` | `{ series: { hostId }, occurrence, roster, userId }` | `Result<'roster_only' \| 'open', 'roster_priority' \| 'game_not_open'>` | `checkOccurrenceJoinWindow` | `request_join` priority guard |
+| `rating.glicko2` | `{ player, results: [{ opponent: { r, rd }, score }], tau, maxRd? }` | `GlickoParams` (6 dp) | `glicko2Update` | SQL `glicko2_update` |
+| `rating.glickoPeriod` | `RatingPeriodInput` (`period`, `games`, `ratings`, `reliability`) | `{ updates: RatingUpdate[], ratings: SkillRating[] }` (6 dp) | `processRatingPeriod` | weekly rating job |
+| `rating.gameEligibility` | `GameRatingInput` | `GameRatingEligibility` | `gameRatingEligibility` | rating job filter |
+| `rating.resultConfirmation` | `{ gameId, submittedBy, verifiedUserIds, confirmations, viewerId? }` | `ResultConfirmationSummary` | `summarizeResultConfirmations` | `confirm_result` |
+| `rating.peerEligibility` | `PeerEligibilityInput` | `RatingEligibility` | `peerRatingEligibility` | `submit_peer_ratings` guard |
+| `rating.peerAggregate` | `PeerAggregateInput` (`self: { selfSkill, attributes? }`, `received`, `given`) | `PeerSkillSummary` | `aggregatePeerRatings` | peer summary recompute |
+| `vault.upload` | `MediaUploadCheckInput` | `Result<{ maxBytes }, MediaRejectReason>` | `checkMediaUpload` | `create_media_upload` |
+| `vault.visibility` | `{ item, tags, requested, actorId }` | `Result<{ item, tags, effects, pendingUserIds }, MediaRejectReason>` | `requestMediaVisibility` | `set_media_visibility` |
+| `vault.verdict` | `{ item, tags, verdict }` | `{ item, effects }` | `applyMediaVerdict` | Edge media pipeline |
+| `network.playedWith` | `{ attendance, blocks }` | `PlayedWith[]` | `derivePlayedWith` | `connections` refresh |
+| `network.friend` | `{ connection, actor, other, action, blocks }` | `Result<{ connection, effects }>` | `friendTransition` | `friend_*` RPCs |
+| `network.friendsGames` | `{ viewerId, candidates, connections, privacy, blocks }` | `FriendGameCandidate[]` | `filterFriendsUpcomingGames` | `friends_upcoming_games` |
+
+Derived ids and keys (contract v3):
+
+```
+occurrenceKey     = seriesId + ":" + scheduleRevision + ":" + slotDate (local YYYY-MM-DD)
+occurrence gameId = stableUuid("occurrence:" + occurrenceKey)
+rating period     = ISO week "YYYY-Www" (UTC, Monday start) for 7-day periods
+```
+
+Series times are wall-clock in the series' IANA zone: an ambiguous time (fall back) is the earlier instant, a non-existent one (spring forward) is shifted forward by the gap. Every `Phase15Effect` carries a deterministic `dedupeKey` (apply idempotently).
+
 `TrustState` lists default to empty: `sanctions`, `appeals`, `chatBlocks`, `reports`, `reporterProfiles`, `attendance`, `hostRatings`, `reviewItems`, `venues`, `overturns`, `depositSettlements`, `pendingLateCancels` (see `src/trust/engine.ts`).
 
 `LateCancelFinalized` (`{ type, gameId, userId, startsAt, cancelledAt, refilled }`, in `TrustEvent` since contract v2) is produced by `processNoShows` at `endsAt + finalizeAfterEndHours`.
 
 ## Coverage of required scenarios
+
+Phase 1.5: series DST (London, Jerusalem), 4-week rolling horizon, skip/end/other-revision, always-in seniority and waitlist overflow, no auto-join without time to reconfirm, T−48h reconfirm, T−24h release with GAME-011 leave offer, AC-GAME-010 priority window · Glickman's worked example, idle RD cap, frozen players (AC-GLK-004), idempotent periods with lazy RD inflation, display gate · GLK-003 (AC-GLK-003) · GAME-071 majority · AC-RATE-002, rating window · RATE-003 decay / reciprocity / 2σ trim, RATE-004 prior · AC-VAULT-001/003/004, limits, vetoes · played-with lookback, friend state machine with blocks, friends' games privacy.
+
+MVP:
 
 late cancel (boundaries, refill, config) · no-show + 48 h dispute · deposits captured only after the dispute window · escalation 2 / 3 / 4 (dispute-window and disputed cards excluded, no re-trigger) · dispute auto-void after 7 days (and the 3-per-90-days limit) · moderator overturn cascade and permanent ban · chat blocks · report evaluation (qualified, 48 h creation window collusion, rival team, co-attendance, account age, red/spam, 14-day window, overturn protection) · venue auto-hide at 3 distinct reporters · host reliability · reliability % · result window and chat TTL boundaries · waitlist standard / short / flash fill / regulars · QR wire format and ±1 step · peer verification.
 

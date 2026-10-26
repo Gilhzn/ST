@@ -1,0 +1,271 @@
+[
+  {
+    "name": "friends-only.privacy.blocks.public-upcoming",
+    "kind": "network.friendsGames",
+    "description": "U3 shares with nobody, U4 is only requested, U8 (host of g8) blocked the viewer",
+    "input": {
+      "viewerId": "00000000-0000-4000-8000-000000000001",
+      "candidates": [
+        {
+          "ownerId": "00000000-0000-4000-8000-000000000002",
+          "game": {
+            "id": "g2",
+            "hostId": "00000000-0000-4000-8000-0000000000ff",
+            "visibility": "public",
+            "status": "scheduled",
+            "startsAt": "2026-11-04T12:00:00.000Z"
+          }
+        },
+        {
+          "ownerId": "00000000-0000-4000-8000-000000000003",
+          "game": {
+            "id": "g3",
+            "hostId": "00000000-0000-4000-8000-0000000000ff",
+            "visibility": "public",
+            "status": "scheduled",
+            "startsAt": "2026-11-03T12:00:00.000Z"
+          }
+        },
+        {
+          "ownerId": "00000000-0000-4000-8000-000000000004",
+          "game": {
+            "id": "g4",
+            "hostId": "00000000-0000-4000-8000-0000000000ff",
+            "visibility": "public",
+            "status": "scheduled",
+            "startsAt": "2026-11-03T12:00:00.000Z"
+          }
+        },
+        {
+          "ownerId": "00000000-0000-4000-8000-000000000002",
+          "game": {
+            "id": "g1",
+            "hostId": "00000000-0000-4000-8000-0000000000ff",
+            "visibility": "public",
+            "status": "scheduled",
+            "startsAt": "2026-11-03T12:00:00.000Z"
+          }
+        },
+        {
+          "ownerId": "00000000-0000-4000-8000-000000000002",
+          "game": {
+            "id": "g5",
+            "hostId": "00000000-0000-4000-8000-0000000000ff",
+            "visibility": "private",
+            "status": "scheduled",
+            "startsAt": "2026-11-03T12:00:00.000Z"
+          }
+        },
+        {
+          "ownerId": "00000000-0000-4000-8000-000000000002",
+          "game": {
+            "id": "g6",
+            "hostId": "00000000-0000-4000-8000-0000000000ff",
+            "visibility": "public",
+            "status": "scheduled",
+            "startsAt": "2026-10-31T12:00:00.000Z"
+          }
+        },
+        {
+          "ownerId": "00000000-0000-4000-8000-000000000002",
+          "game": {
+            "id": "g7",
+            "hostId": "00000000-0000-4000-8000-0000000000ff",
+            "visibility": "public",
+            "status": "cancelled",
+            "startsAt": "2026-11-03T12:00:00.000Z"
+          }
+        },
+        {
+          "ownerId": "00000000-0000-4000-8000-000000000002",
+          "game": {
+            "id": "g8",
+            "hostId": "00000000-0000-4000-8000-000000000008",
+            "visibility": "public",
+            "status": "scheduled",
+            "startsAt": "2026-11-03T12:00:00.000Z"
+          }
+        }
+      ],
+      "connections": [
+        {
+          "userA": "00000000-0000-4000-8000-000000000001",
+          "userB": "00000000-0000-4000-8000-000000000002",
+          "gamesTogether": 1,
+          "lastPlayedAt": null,
+          "friendStatus": "accepted",
+          "friendRequestedBy": "00000000-0000-4000-8000-000000000001",
+          "friendRequestedAt": null,
+          "friendAcceptedAt": null
+        },
+        {
+          "userA": "00000000-0000-4000-8000-000000000001",
+          "userB": "00000000-0000-4000-8000-000000000003",
+          "gamesTogether": 1,
+          "lastPlayedAt": null,
+          "friendStatus": "accepted",
+          "friendRequestedBy": "00000000-0000-4000-8000-000000000003",
+          "friendRequestedAt": null,
+          "friendAcceptedAt": null
+        },
+        {
+          "userA": "00000000-0000-4000-8000-000000000001",
+          "userB": "00000000-0000-4000-8000-000000000004",
+          "gamesTogether": 1,
+          "lastPlayedAt": null,
+          "friendStatus": "requested",
+          "friendRequestedBy": "00000000-0000-4000-8000-000000000001",
+          "friendRequestedAt": null,
+          "friendAcceptedAt": null
+        }
+      ],
+      "privacy": {
+        "00000000-0000-4000-8000-000000000003": {
+          "upcomingGamesVisibleTo": "nobody"
+        }
+      },
+      "blocks": [
+        {
+          "blockerId": "00000000-0000-4000-8000-000000000008",
+          "blockedId": "00000000-0000-4000-8000-000000000001"
+        }
+      ]
+    },
+    "now": "2026-11-01T12:00:00.000Z",
+    "expected": [
+      {
+        "ownerId": "00000000-0000-4000-8000-000000000002",
+        "game": {
+          "id": "g1",
+          "hostId": "00000000-0000-4000-8000-0000000000ff",
+          "visibility": "public",
+          "status": "scheduled",
+          "startsAt": "2026-11-03T12:00:00.000Z"
+        }
+      },
+      {
+        "ownerId": "00000000-0000-4000-8000-000000000002",
+        "game": {
+          "id": "g2",
+          "hostId": "00000000-0000-4000-8000-0000000000ff",
+          "visibility": "public",
+          "status": "scheduled",
+          "startsAt": "2026-11-04T12:00:00.000Z"
+        }
+      }
+    ]
+  },
+  {
+    "name": "blocked-friend.hidden",
+    "kind": "network.friendsGames",
+    "input": {
+      "viewerId": "00000000-0000-4000-8000-000000000001",
+      "candidates": [
+        {
+          "ownerId": "00000000-0000-4000-8000-000000000002",
+          "game": {
+            "id": "g2",
+            "hostId": "00000000-0000-4000-8000-0000000000ff",
+            "visibility": "public",
+            "status": "scheduled",
+            "startsAt": "2026-11-04T12:00:00.000Z"
+          }
+        },
+        {
+          "ownerId": "00000000-0000-4000-8000-000000000003",
+          "game": {
+            "id": "g3",
+            "hostId": "00000000-0000-4000-8000-0000000000ff",
+            "visibility": "public",
+            "status": "scheduled",
+            "startsAt": "2026-11-03T12:00:00.000Z"
+          }
+        },
+        {
+          "ownerId": "00000000-0000-4000-8000-000000000004",
+          "game": {
+            "id": "g4",
+            "hostId": "00000000-0000-4000-8000-0000000000ff",
+            "visibility": "public",
+            "status": "scheduled",
+            "startsAt": "2026-11-03T12:00:00.000Z"
+          }
+        },
+        {
+          "ownerId": "00000000-0000-4000-8000-000000000002",
+          "game": {
+            "id": "g1",
+            "hostId": "00000000-0000-4000-8000-0000000000ff",
+            "visibility": "public",
+            "status": "scheduled",
+            "startsAt": "2026-11-03T12:00:00.000Z"
+          }
+        },
+        {
+          "ownerId": "00000000-0000-4000-8000-000000000002",
+          "game": {
+            "id": "g5",
+            "hostId": "00000000-0000-4000-8000-0000000000ff",
+            "visibility": "private",
+            "status": "scheduled",
+            "startsAt": "2026-11-03T12:00:00.000Z"
+          }
+        },
+        {
+          "ownerId": "00000000-0000-4000-8000-000000000002",
+          "game": {
+            "id": "g6",
+            "hostId": "00000000-0000-4000-8000-0000000000ff",
+            "visibility": "public",
+            "status": "scheduled",
+            "startsAt": "2026-10-31T12:00:00.000Z"
+          }
+        },
+        {
+          "ownerId": "00000000-0000-4000-8000-000000000002",
+          "game": {
+            "id": "g7",
+            "hostId": "00000000-0000-4000-8000-0000000000ff",
+            "visibility": "public",
+            "status": "cancelled",
+            "startsAt": "2026-11-03T12:00:00.000Z"
+          }
+        },
+        {
+          "ownerId": "00000000-0000-4000-8000-000000000002",
+          "game": {
+            "id": "g8",
+            "hostId": "00000000-0000-4000-8000-000000000008",
+            "visibility": "public",
+            "status": "scheduled",
+            "startsAt": "2026-11-03T12:00:00.000Z"
+          }
+        }
+      ],
+      "connections": [
+        {
+          "userA": "00000000-0000-4000-8000-000000000001",
+          "userB": "00000000-0000-4000-8000-000000000002",
+          "gamesTogether": 1,
+          "lastPlayedAt": null,
+          "friendStatus": "accepted",
+          "friendRequestedBy": "00000000-0000-4000-8000-000000000001",
+          "friendRequestedAt": null,
+          "friendAcceptedAt": null
+        }
+      ],
+      "privacy": {},
+      "blocks": [
+        {
+          "blockerId": "00000000-0000-4000-8000-000000000001",
+          "blockedId": "00000000-0000-4000-8000-000000000002"
+        }
+      ]
+    },
+    "now": "2026-11-01T12:00:00.000Z",
+    "expected": [],
+    "tags": [
+      "blocks-override"
+    ]
+  }
+]

@@ -1,0 +1,342 @@
+[
+  {
+    "name": "request.after-playing-together",
+    "kind": "network.friend",
+    "input": {
+      "connection": {
+        "userA": "00000000-0000-4000-8000-000000000001",
+        "userB": "00000000-0000-4000-8000-000000000002",
+        "gamesTogether": 2,
+        "lastPlayedAt": "2026-10-30T20:00:00.000Z",
+        "friendStatus": null,
+        "friendRequestedBy": null,
+        "friendRequestedAt": null,
+        "friendAcceptedAt": null
+      },
+      "actor": "00000000-0000-4000-8000-000000000002",
+      "other": "00000000-0000-4000-8000-000000000001",
+      "action": "request",
+      "blocks": []
+    },
+    "now": "2026-11-01T12:00:00.000Z",
+    "expected": {
+      "ok": true,
+      "value": {
+        "connection": {
+          "userA": "00000000-0000-4000-8000-000000000001",
+          "userB": "00000000-0000-4000-8000-000000000002",
+          "gamesTogether": 2,
+          "lastPlayedAt": "2026-10-30T20:00:00.000Z",
+          "friendStatus": "requested",
+          "friendRequestedBy": "00000000-0000-4000-8000-000000000002",
+          "friendRequestedAt": "2026-11-01T12:00:00.000Z",
+          "friendAcceptedAt": null
+        },
+        "effects": [
+          {
+            "type": "UpsertConnection",
+            "connection": {
+              "userA": "00000000-0000-4000-8000-000000000001",
+              "userB": "00000000-0000-4000-8000-000000000002",
+              "gamesTogether": 2,
+              "lastPlayedAt": "2026-10-30T20:00:00.000Z",
+              "friendStatus": "requested",
+              "friendRequestedBy": "00000000-0000-4000-8000-000000000002",
+              "friendRequestedAt": "2026-11-01T12:00:00.000Z",
+              "friendAcceptedAt": null
+            },
+            "dedupeKey": "connection:00000000-0000-4000-8000-000000000001:00000000-0000-4000-8000-000000000002:request:2026-11-01T12:00:00.000Z"
+          },
+          {
+            "type": "Notify15",
+            "userId": "00000000-0000-4000-8000-000000000001",
+            "kind": "friend_request",
+            "params": {
+              "userId": "00000000-0000-4000-8000-000000000002"
+            },
+            "gameId": null,
+            "seriesId": null,
+            "dedupeKey": "notify:friend_request:00000000-0000-4000-8000-000000000001:00000000-0000-4000-8000-000000000002:2026-11-01T12:00:00.000Z"
+          }
+        ]
+      }
+    }
+  },
+  {
+    "name": "accept.incoming",
+    "kind": "network.friend",
+    "input": {
+      "connection": {
+        "userA": "00000000-0000-4000-8000-000000000001",
+        "userB": "00000000-0000-4000-8000-000000000002",
+        "gamesTogether": 2,
+        "lastPlayedAt": "2026-10-30T20:00:00.000Z",
+        "friendStatus": "requested",
+        "friendRequestedBy": "00000000-0000-4000-8000-000000000001",
+        "friendRequestedAt": "2026-10-31T00:00:00.000Z",
+        "friendAcceptedAt": null
+      },
+      "actor": "00000000-0000-4000-8000-000000000002",
+      "other": "00000000-0000-4000-8000-000000000001",
+      "action": "accept",
+      "blocks": []
+    },
+    "now": "2026-11-01T12:00:00.000Z",
+    "expected": {
+      "ok": true,
+      "value": {
+        "connection": {
+          "userA": "00000000-0000-4000-8000-000000000001",
+          "userB": "00000000-0000-4000-8000-000000000002",
+          "gamesTogether": 2,
+          "lastPlayedAt": "2026-10-30T20:00:00.000Z",
+          "friendStatus": "accepted",
+          "friendRequestedBy": "00000000-0000-4000-8000-000000000001",
+          "friendRequestedAt": "2026-10-31T00:00:00.000Z",
+          "friendAcceptedAt": "2026-11-01T12:00:00.000Z"
+        },
+        "effects": [
+          {
+            "type": "UpsertConnection",
+            "connection": {
+              "userA": "00000000-0000-4000-8000-000000000001",
+              "userB": "00000000-0000-4000-8000-000000000002",
+              "gamesTogether": 2,
+              "lastPlayedAt": "2026-10-30T20:00:00.000Z",
+              "friendStatus": "accepted",
+              "friendRequestedBy": "00000000-0000-4000-8000-000000000001",
+              "friendRequestedAt": "2026-10-31T00:00:00.000Z",
+              "friendAcceptedAt": "2026-11-01T12:00:00.000Z"
+            },
+            "dedupeKey": "connection:00000000-0000-4000-8000-000000000001:00000000-0000-4000-8000-000000000002:accept:2026-11-01T12:00:00.000Z"
+          },
+          {
+            "type": "Notify15",
+            "userId": "00000000-0000-4000-8000-000000000001",
+            "kind": "friend_accepted",
+            "params": {
+              "userId": "00000000-0000-4000-8000-000000000002"
+            },
+            "gameId": null,
+            "seriesId": null,
+            "dedupeKey": "notify:friend_accepted:00000000-0000-4000-8000-000000000001:00000000-0000-4000-8000-000000000002:2026-11-01T12:00:00.000Z"
+          }
+        ]
+      }
+    }
+  },
+  {
+    "name": "mutual-request.auto-accepts",
+    "kind": "network.friend",
+    "input": {
+      "connection": {
+        "userA": "00000000-0000-4000-8000-000000000001",
+        "userB": "00000000-0000-4000-8000-000000000002",
+        "gamesTogether": 2,
+        "lastPlayedAt": "2026-10-30T20:00:00.000Z",
+        "friendStatus": "requested",
+        "friendRequestedBy": "00000000-0000-4000-8000-000000000001",
+        "friendRequestedAt": "2026-10-31T00:00:00.000Z",
+        "friendAcceptedAt": null
+      },
+      "actor": "00000000-0000-4000-8000-000000000002",
+      "other": "00000000-0000-4000-8000-000000000001",
+      "action": "request",
+      "blocks": []
+    },
+    "now": "2026-11-01T12:00:00.000Z",
+    "expected": {
+      "ok": true,
+      "value": {
+        "connection": {
+          "userA": "00000000-0000-4000-8000-000000000001",
+          "userB": "00000000-0000-4000-8000-000000000002",
+          "gamesTogether": 2,
+          "lastPlayedAt": "2026-10-30T20:00:00.000Z",
+          "friendStatus": "accepted",
+          "friendRequestedBy": "00000000-0000-4000-8000-000000000001",
+          "friendRequestedAt": "2026-10-31T00:00:00.000Z",
+          "friendAcceptedAt": "2026-11-01T12:00:00.000Z"
+        },
+        "effects": [
+          {
+            "type": "UpsertConnection",
+            "connection": {
+              "userA": "00000000-0000-4000-8000-000000000001",
+              "userB": "00000000-0000-4000-8000-000000000002",
+              "gamesTogether": 2,
+              "lastPlayedAt": "2026-10-30T20:00:00.000Z",
+              "friendStatus": "accepted",
+              "friendRequestedBy": "00000000-0000-4000-8000-000000000001",
+              "friendRequestedAt": "2026-10-31T00:00:00.000Z",
+              "friendAcceptedAt": "2026-11-01T12:00:00.000Z"
+            },
+            "dedupeKey": "connection:00000000-0000-4000-8000-000000000001:00000000-0000-4000-8000-000000000002:request:2026-11-01T12:00:00.000Z"
+          },
+          {
+            "type": "Notify15",
+            "userId": "00000000-0000-4000-8000-000000000001",
+            "kind": "friend_accepted",
+            "params": {
+              "userId": "00000000-0000-4000-8000-000000000002"
+            },
+            "gameId": null,
+            "seriesId": null,
+            "dedupeKey": "notify:friend_accepted:00000000-0000-4000-8000-000000000001:00000000-0000-4000-8000-000000000002:2026-11-01T12:00:00.000Z"
+          }
+        ]
+      }
+    }
+  },
+  {
+    "name": "decline.clears",
+    "kind": "network.friend",
+    "input": {
+      "connection": {
+        "userA": "00000000-0000-4000-8000-000000000001",
+        "userB": "00000000-0000-4000-8000-000000000002",
+        "gamesTogether": 2,
+        "lastPlayedAt": "2026-10-30T20:00:00.000Z",
+        "friendStatus": "requested",
+        "friendRequestedBy": "00000000-0000-4000-8000-000000000001",
+        "friendRequestedAt": "2026-10-31T00:00:00.000Z",
+        "friendAcceptedAt": null
+      },
+      "actor": "00000000-0000-4000-8000-000000000002",
+      "other": "00000000-0000-4000-8000-000000000001",
+      "action": "decline",
+      "blocks": []
+    },
+    "now": "2026-11-01T12:00:00.000Z",
+    "expected": {
+      "ok": true,
+      "value": {
+        "connection": {
+          "userA": "00000000-0000-4000-8000-000000000001",
+          "userB": "00000000-0000-4000-8000-000000000002",
+          "gamesTogether": 2,
+          "lastPlayedAt": "2026-10-30T20:00:00.000Z",
+          "friendStatus": null,
+          "friendRequestedBy": null,
+          "friendRequestedAt": null,
+          "friendAcceptedAt": null
+        },
+        "effects": [
+          {
+            "type": "DeleteFriendship",
+            "userA": "00000000-0000-4000-8000-000000000001",
+            "userB": "00000000-0000-4000-8000-000000000002",
+            "dedupeKey": "unfriend:00000000-0000-4000-8000-000000000001:00000000-0000-4000-8000-000000000002:decline:2026-11-01T12:00:00.000Z"
+          }
+        ]
+      }
+    }
+  },
+  {
+    "name": "blocked.cannot-request",
+    "kind": "network.friend",
+    "input": {
+      "connection": {
+        "userA": "00000000-0000-4000-8000-000000000001",
+        "userB": "00000000-0000-4000-8000-000000000002",
+        "gamesTogether": 2,
+        "lastPlayedAt": "2026-10-30T20:00:00.000Z",
+        "friendStatus": null,
+        "friendRequestedBy": null,
+        "friendRequestedAt": null,
+        "friendAcceptedAt": null
+      },
+      "actor": "00000000-0000-4000-8000-000000000001",
+      "other": "00000000-0000-4000-8000-000000000002",
+      "action": "request",
+      "blocks": [
+        {
+          "blockerId": "00000000-0000-4000-8000-000000000002",
+          "blockedId": "00000000-0000-4000-8000-000000000001"
+        }
+      ]
+    },
+    "now": "2026-11-01T12:00:00.000Z",
+    "expected": {
+      "ok": false,
+      "error": "blocked"
+    },
+    "tags": [
+      "blocks-override"
+    ]
+  },
+  {
+    "name": "blocked.cannot-accept",
+    "kind": "network.friend",
+    "input": {
+      "connection": {
+        "userA": "00000000-0000-4000-8000-000000000001",
+        "userB": "00000000-0000-4000-8000-000000000002",
+        "gamesTogether": 2,
+        "lastPlayedAt": "2026-10-30T20:00:00.000Z",
+        "friendStatus": "requested",
+        "friendRequestedBy": "00000000-0000-4000-8000-000000000001",
+        "friendRequestedAt": "2026-10-31T00:00:00.000Z",
+        "friendAcceptedAt": null
+      },
+      "actor": "00000000-0000-4000-8000-000000000002",
+      "other": "00000000-0000-4000-8000-000000000001",
+      "action": "accept",
+      "blocks": [
+        {
+          "blockerId": "00000000-0000-4000-8000-000000000001",
+          "blockedId": "00000000-0000-4000-8000-000000000002"
+        }
+      ]
+    },
+    "now": "2026-11-01T12:00:00.000Z",
+    "expected": {
+      "ok": false,
+      "error": "blocked"
+    },
+    "tags": [
+      "blocks-override"
+    ]
+  },
+  {
+    "name": "never-played.forbidden",
+    "kind": "network.friend",
+    "input": {
+      "connection": null,
+      "actor": "00000000-0000-4000-8000-000000000001",
+      "other": "00000000-0000-4000-8000-000000000003",
+      "action": "request",
+      "blocks": []
+    },
+    "now": "2026-11-01T12:00:00.000Z",
+    "expected": {
+      "ok": false,
+      "error": "forbidden"
+    }
+  },
+  {
+    "name": "duplicate-request.conflict",
+    "kind": "network.friend",
+    "input": {
+      "connection": {
+        "userA": "00000000-0000-4000-8000-000000000001",
+        "userB": "00000000-0000-4000-8000-000000000002",
+        "gamesTogether": 2,
+        "lastPlayedAt": "2026-10-30T20:00:00.000Z",
+        "friendStatus": "requested",
+        "friendRequestedBy": "00000000-0000-4000-8000-000000000001",
+        "friendRequestedAt": "2026-10-31T00:00:00.000Z",
+        "friendAcceptedAt": null
+      },
+      "actor": "00000000-0000-4000-8000-000000000001",
+      "other": "00000000-0000-4000-8000-000000000002",
+      "action": "request",
+      "blocks": []
+    },
+    "now": "2026-11-01T12:00:00.000Z",
+    "expected": {
+      "ok": false,
+      "error": "conflict"
+    }
+  }
+]

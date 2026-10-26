@@ -1,0 +1,462 @@
+[
+  {
+    "name": "no-ratings.self-prior",
+    "kind": "rating.peerAggregate",
+    "input": {
+      "userId": "00000000-0000-4000-8000-000000000001",
+      "sport": "football",
+      "self": {
+        "selfSkill": 3,
+        "attributes": {
+          "overall": 4,
+          "speed": 2
+        }
+      },
+      "received": [],
+      "given": []
+    },
+    "now": "2026-11-01T20:00:00.000Z",
+    "expected": {
+      "userId": "00000000-0000-4000-8000-000000000001",
+      "sport": "football",
+      "attributes": {
+        "speed": {
+          "mean": 2,
+          "evidenceWeight": 0,
+          "ratingsUsed": 0
+        },
+        "ball_control": {
+          "mean": 3,
+          "evidenceWeight": 0,
+          "ratingsUsed": 0
+        },
+        "passing": {
+          "mean": 3,
+          "evidenceWeight": 0,
+          "ratingsUsed": 0
+        },
+        "defence": {
+          "mean": 3,
+          "evidenceWeight": 0,
+          "ratingsUsed": 0
+        },
+        "overall": {
+          "mean": 4,
+          "evidenceWeight": 0,
+          "ratingsUsed": 0
+        }
+      },
+      "band": 4,
+      "raterCount": 0
+    },
+    "tags": [
+      "prd-v5:RATE-004"
+    ]
+  },
+  {
+    "name": "bayesian-mean.prior-weight-3",
+    "kind": "rating.peerAggregate",
+    "input": {
+      "userId": "00000000-0000-4000-8000-000000000001",
+      "sport": "football",
+      "self": {
+        "selfSkill": 3
+      },
+      "received": [
+        {
+          "gameId": "00000000-0000-4000-8000-0000000a0064",
+          "sport": "football",
+          "raterId": "00000000-0000-4000-8000-000000000002",
+          "rateeId": "00000000-0000-4000-8000-000000000001",
+          "scores": {
+            "overall": 5,
+            "passing": 2
+          },
+          "createdAt": "2026-10-31T20:00:00.000Z"
+        },
+        {
+          "gameId": "00000000-0000-4000-8000-0000000a0065",
+          "sport": "football",
+          "raterId": "00000000-0000-4000-8000-000000000003",
+          "rateeId": "00000000-0000-4000-8000-000000000001",
+          "scores": {
+            "overall": 5
+          },
+          "createdAt": "2026-10-31T20:00:00.000Z"
+        },
+        {
+          "gameId": "00000000-0000-4000-8000-0000000a0066",
+          "sport": "football",
+          "raterId": "00000000-0000-4000-8000-000000000004",
+          "rateeId": "00000000-0000-4000-8000-000000000001",
+          "scores": {
+            "overall": 4
+          },
+          "createdAt": "2026-10-31T20:00:00.000Z"
+        }
+      ],
+      "given": []
+    },
+    "now": "2026-11-01T20:00:00.000Z",
+    "expected": {
+      "userId": "00000000-0000-4000-8000-000000000001",
+      "sport": "football",
+      "attributes": {
+        "speed": {
+          "mean": 3,
+          "evidenceWeight": 0,
+          "ratingsUsed": 0
+        },
+        "ball_control": {
+          "mean": 3,
+          "evidenceWeight": 0,
+          "ratingsUsed": 0
+        },
+        "passing": {
+          "mean": 2.75,
+          "evidenceWeight": 1,
+          "ratingsUsed": 1
+        },
+        "defence": {
+          "mean": 3,
+          "evidenceWeight": 0,
+          "ratingsUsed": 0
+        },
+        "overall": {
+          "mean": 3.8333,
+          "evidenceWeight": 3,
+          "ratingsUsed": 3
+        }
+      },
+      "band": 4,
+      "raterCount": 3
+    },
+    "tags": [
+      "prd-v5:RATE-004"
+    ]
+  },
+  {
+    "name": "pair-decay.after-3-in-30-days",
+    "kind": "rating.peerAggregate",
+    "input": {
+      "userId": "00000000-0000-4000-8000-000000000001",
+      "sport": "football",
+      "self": {
+        "selfSkill": 3
+      },
+      "received": [
+        {
+          "gameId": "00000000-0000-4000-8000-0000000a0067",
+          "sport": "football",
+          "raterId": "00000000-0000-4000-8000-000000000002",
+          "rateeId": "00000000-0000-4000-8000-000000000001",
+          "scores": {
+            "overall": 5
+          },
+          "createdAt": "2026-10-22T20:00:00.000Z"
+        },
+        {
+          "gameId": "00000000-0000-4000-8000-0000000a0068",
+          "sport": "football",
+          "raterId": "00000000-0000-4000-8000-000000000002",
+          "rateeId": "00000000-0000-4000-8000-000000000001",
+          "scores": {
+            "overall": 5
+          },
+          "createdAt": "2026-10-24T20:00:00.000Z"
+        },
+        {
+          "gameId": "00000000-0000-4000-8000-0000000a0069",
+          "sport": "football",
+          "raterId": "00000000-0000-4000-8000-000000000002",
+          "rateeId": "00000000-0000-4000-8000-000000000001",
+          "scores": {
+            "overall": 5
+          },
+          "createdAt": "2026-10-26T20:00:00.000Z"
+        },
+        {
+          "gameId": "00000000-0000-4000-8000-0000000a006a",
+          "sport": "football",
+          "raterId": "00000000-0000-4000-8000-000000000002",
+          "rateeId": "00000000-0000-4000-8000-000000000001",
+          "scores": {
+            "overall": 5
+          },
+          "createdAt": "2026-10-28T20:00:00.000Z"
+        },
+        {
+          "gameId": "00000000-0000-4000-8000-0000000a006b",
+          "sport": "football",
+          "raterId": "00000000-0000-4000-8000-000000000002",
+          "rateeId": "00000000-0000-4000-8000-000000000001",
+          "scores": {
+            "overall": 5
+          },
+          "createdAt": "2026-10-30T20:00:00.000Z"
+        }
+      ],
+      "given": []
+    },
+    "now": "2026-11-01T20:00:00.000Z",
+    "expected": {
+      "userId": "00000000-0000-4000-8000-000000000001",
+      "sport": "football",
+      "attributes": {
+        "speed": {
+          "mean": 3,
+          "evidenceWeight": 0,
+          "ratingsUsed": 0
+        },
+        "ball_control": {
+          "mean": 3,
+          "evidenceWeight": 0,
+          "ratingsUsed": 0
+        },
+        "passing": {
+          "mean": 3,
+          "evidenceWeight": 0,
+          "ratingsUsed": 0
+        },
+        "defence": {
+          "mean": 3,
+          "evidenceWeight": 0,
+          "ratingsUsed": 0
+        },
+        "overall": {
+          "mean": 4.1111,
+          "evidenceWeight": 3.75,
+          "ratingsUsed": 5
+        }
+      },
+      "band": 4,
+      "raterCount": 1
+    },
+    "tags": [
+      "prd-v5:RATE-003"
+    ]
+  },
+  {
+    "name": "reciprocal-all-max.down-weighted",
+    "kind": "rating.peerAggregate",
+    "input": {
+      "userId": "00000000-0000-4000-8000-000000000001",
+      "sport": "football",
+      "self": {
+        "selfSkill": 3
+      },
+      "received": [
+        {
+          "gameId": "00000000-0000-4000-8000-0000000a006c",
+          "sport": "football",
+          "raterId": "00000000-0000-4000-8000-000000000002",
+          "rateeId": "00000000-0000-4000-8000-000000000001",
+          "scores": {
+            "overall": 5
+          },
+          "createdAt": "2026-10-31T20:00:00.000Z"
+        },
+        {
+          "gameId": "00000000-0000-4000-8000-0000000a006d",
+          "sport": "football",
+          "raterId": "00000000-0000-4000-8000-000000000003",
+          "rateeId": "00000000-0000-4000-8000-000000000001",
+          "scores": {
+            "overall": 3
+          },
+          "createdAt": "2026-10-31T20:00:00.000Z"
+        }
+      ],
+      "given": [
+        {
+          "gameId": "00000000-0000-4000-8000-0000000a006e",
+          "sport": "football",
+          "raterId": "00000000-0000-4000-8000-000000000001",
+          "rateeId": "00000000-0000-4000-8000-000000000002",
+          "scores": {
+            "overall": 5
+          },
+          "createdAt": "2026-10-31T20:00:00.000Z"
+        }
+      ]
+    },
+    "now": "2026-11-01T20:00:00.000Z",
+    "expected": {
+      "userId": "00000000-0000-4000-8000-000000000001",
+      "sport": "football",
+      "attributes": {
+        "speed": {
+          "mean": 3,
+          "evidenceWeight": 0,
+          "ratingsUsed": 0
+        },
+        "ball_control": {
+          "mean": 3,
+          "evidenceWeight": 0,
+          "ratingsUsed": 0
+        },
+        "passing": {
+          "mean": 3,
+          "evidenceWeight": 0,
+          "ratingsUsed": 0
+        },
+        "defence": {
+          "mean": 3,
+          "evidenceWeight": 0,
+          "ratingsUsed": 0
+        },
+        "overall": {
+          "mean": 3.2222,
+          "evidenceWeight": 1.5,
+          "ratingsUsed": 2
+        }
+      },
+      "band": 3,
+      "raterCount": 2
+    },
+    "tags": [
+      "prd-v5:RATE-003"
+    ]
+  },
+  {
+    "name": "outlier-beyond-2-sigma.trimmed",
+    "kind": "rating.peerAggregate",
+    "input": {
+      "userId": "00000000-0000-4000-8000-000000000001",
+      "sport": "football",
+      "self": {
+        "selfSkill": 3
+      },
+      "received": [
+        {
+          "gameId": "00000000-0000-4000-8000-0000000a006f",
+          "sport": "football",
+          "raterId": "00000000-0000-4000-8000-000000000002",
+          "rateeId": "00000000-0000-4000-8000-000000000001",
+          "scores": {
+            "overall": 4
+          },
+          "createdAt": "2026-10-31T20:00:00.000Z"
+        },
+        {
+          "gameId": "00000000-0000-4000-8000-0000000a0070",
+          "sport": "football",
+          "raterId": "00000000-0000-4000-8000-000000000003",
+          "rateeId": "00000000-0000-4000-8000-000000000001",
+          "scores": {
+            "overall": 4
+          },
+          "createdAt": "2026-10-31T20:00:00.000Z"
+        },
+        {
+          "gameId": "00000000-0000-4000-8000-0000000a0071",
+          "sport": "football",
+          "raterId": "00000000-0000-4000-8000-000000000004",
+          "rateeId": "00000000-0000-4000-8000-000000000001",
+          "scores": {
+            "overall": 4
+          },
+          "createdAt": "2026-10-31T20:00:00.000Z"
+        },
+        {
+          "gameId": "00000000-0000-4000-8000-0000000a0072",
+          "sport": "football",
+          "raterId": "00000000-0000-4000-8000-000000000005",
+          "rateeId": "00000000-0000-4000-8000-000000000001",
+          "scores": {
+            "overall": 4
+          },
+          "createdAt": "2026-10-31T20:00:00.000Z"
+        },
+        {
+          "gameId": "00000000-0000-4000-8000-0000000a0073",
+          "sport": "football",
+          "raterId": "00000000-0000-4000-8000-000000000006",
+          "rateeId": "00000000-0000-4000-8000-000000000001",
+          "scores": {
+            "overall": 4
+          },
+          "createdAt": "2026-10-31T20:00:00.000Z"
+        },
+        {
+          "gameId": "00000000-0000-4000-8000-0000000a0074",
+          "sport": "football",
+          "raterId": "00000000-0000-4000-8000-000000000007",
+          "rateeId": "00000000-0000-4000-8000-000000000001",
+          "scores": {
+            "overall": 4
+          },
+          "createdAt": "2026-10-31T20:00:00.000Z"
+        },
+        {
+          "gameId": "00000000-0000-4000-8000-0000000a0075",
+          "sport": "football",
+          "raterId": "00000000-0000-4000-8000-000000000008",
+          "rateeId": "00000000-0000-4000-8000-000000000001",
+          "scores": {
+            "overall": 4
+          },
+          "createdAt": "2026-10-31T20:00:00.000Z"
+        },
+        {
+          "gameId": "00000000-0000-4000-8000-0000000a0076",
+          "sport": "football",
+          "raterId": "00000000-0000-4000-8000-000000000009",
+          "rateeId": "00000000-0000-4000-8000-000000000001",
+          "scores": {
+            "overall": 4
+          },
+          "createdAt": "2026-10-31T20:00:00.000Z"
+        },
+        {
+          "gameId": "00000000-0000-4000-8000-0000000a0077",
+          "sport": "football",
+          "raterId": "00000000-0000-4000-8000-00000000000a",
+          "rateeId": "00000000-0000-4000-8000-000000000001",
+          "scores": {
+            "overall": 1
+          },
+          "createdAt": "2026-10-31T20:00:00.000Z"
+        }
+      ],
+      "given": []
+    },
+    "now": "2026-11-01T20:00:00.000Z",
+    "expected": {
+      "userId": "00000000-0000-4000-8000-000000000001",
+      "sport": "football",
+      "attributes": {
+        "speed": {
+          "mean": 3,
+          "evidenceWeight": 0,
+          "ratingsUsed": 0
+        },
+        "ball_control": {
+          "mean": 3,
+          "evidenceWeight": 0,
+          "ratingsUsed": 0
+        },
+        "passing": {
+          "mean": 3,
+          "evidenceWeight": 0,
+          "ratingsUsed": 0
+        },
+        "defence": {
+          "mean": 3,
+          "evidenceWeight": 0,
+          "ratingsUsed": 0
+        },
+        "overall": {
+          "mean": 3.7273,
+          "evidenceWeight": 8,
+          "ratingsUsed": 8
+        }
+      },
+      "band": 4,
+      "raterCount": 8
+    },
+    "tags": [
+      "prd-v5:RATE-003"
+    ]
+  }
+]

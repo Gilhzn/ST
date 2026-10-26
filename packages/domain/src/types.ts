@@ -37,8 +37,17 @@
  *   notification; `spoofing_suspected` review kind; `PeerConfirmation`;
  *   17 PRD v5 `TrustConfig` fields; `hostSuspensionDays` 30 → 14 (PRD TRUST-051);
  *   `CancelResult.sanction` is always `null` (late cancels are decided at finalisation).
+ * - v3 (Phase 1.5, additive and backward compatible): recurring series and
+ *   rosters (GAME-010/011), peer ratings and Glicko-2 (RATE-001..005,
+ *   GLK-001..007), result confirmation (GAME-071), Media Vault
+ *   (VAULT-001..009), network (played-with, friends, privacy), invite links
+ *   and WhatsApp migration (PRD §5.4, GAME-030/031). New config lives in
+ *   {@link Phase15Config} (not `TrustConfig`, whose SQL key parity is pinned);
+ *   new effects in {@link Phase15Effect} and notifications in
+ *   {@link Phase15NotificationKind}, so existing exhaustive maps keep compiling.
+ *   `Game.seriesId` is optional. Nothing was renamed or removed.
  */
-export const CONTRACT_VERSION = 2 as const;
+export const CONTRACT_VERSION = 3 as const;
 
 // ---------------------------------------------------------------------------
 // Primitives
@@ -549,6 +558,11 @@ export interface Game {
   teamCount: number;
   /** Present only for the host. */
   inviteToken: string | null;
+  /**
+   * The recurring series this game is an occurrence of (contract v3). Optional
+   * for backward compatibility: absent or `null` means a one-off game.
+   */
+  seriesId?: SeriesId | null;
   createdAt: IsoDateTime;
 }
 
@@ -936,7 +950,9 @@ export type ReviewKind =
   | 'appeal'
   | 'chat_recheck'
   /** Repeated spoofing signals on check-in. Review only: signals never sanction on their own. */
-  | 'spoofing_suspected';
+  | 'spoofing_suspected'
+  /** Contract v3: an upload matched a CSAM hash (VAULT-003); P0, account restricted pending this review. */
+  | 'media_csam';
 
 export type ReviewStatus = 'open' | 'in_review' | 'resolved';
 export type ReviewPriority = 'low' | 'normal' | 'high';
@@ -1399,7 +1415,8 @@ export interface CancelResult {
   /**
    * @deprecated Always `null`: a late cancel is decided at finalisation
    * (`endsAt + finalizeAfterEndHours`, TRUST-021), not at cancel time. Use
-   * `participant.lateCancel` to warn the user. Will be removed in contract v3.
+   * `participant.lateCancel` to warn the user. Kept in contract v3 for
+   * backward compatibility; removal is deferred to the next breaking version.
    */
   sanction: null;
 }
@@ -1546,6 +1563,11 @@ export type ErrorCode =
   | 'already_reported'
   | 'payment_failed'
   | 'payment_required'
+  /**
+   * Contract v3 (GAME-010): a non-regular asked to join a series occurrence
+   * inside its roster-only window (`SeriesOccurrence.priorityUntil`).
+   */
+  | 'roster_priority'
   | 'network'
   | 'unavailable'
   | 'unknown';
@@ -1576,3 +1598,876 @@ export function isStError(value: unknown): value is StError {
     typeof (value as { code?: unknown }).code === 'string'
   );
 }
+
+// ===========================================================================
+// Phase 1.5 (contract v3)
+// ===========================================================================
+
+/** `game_series.id` */
+export type SeriesId = string;
+/** `media_items.id` */
+export type MediaId = string;
+
+/** Wall-clock calendar date in a series' time zone, `YYYY-MM-DD`. */
+export type LocalDate = string;
+/** Wall-clock time of day in a series' time zone, 24 h `HH:MM`. */
+export type LocalTime = string;
+/** IANA time zone name, e.g. `Asia/Jerusalem`, `Europe/London`. */
+export type IanaTimeZone = string;
+/** ISO weekday: 1 = Monday … 7 = Sunday. */
+export type Weekday = 1 | 2 | 3 | 4 | 5 | 6 | 7;
+
+/**
+ * Phase 1.5 notifications. Kept apart from {@link NotificationKind} so the
+ * existing exhaustive i18n maps keep compiling; i18n keys are
+ * `notifications:<kind>.title|body` exactly like the MVP kinds.
+ */
+export type Phase15NotificationKind =
+  /** Added to a series roster (params: `seriesTitle`, `via`). */
+  | 'roster_added'
+  /** "Always in" auto-join needs a reconfirmation (params: `seriesTitle`, `startsAt`, `deadline`). */
+  | 'series_reconfirm'
+  /** An unconfirmed auto-join was released at the deadline. No card (params: `seriesTitle`, `startsAt`). */
+  | 'series_auto_released'
+  /** GAME-011: N consecutive unconfirmed occurrences; offer to leave the roster. No card (params: `seriesTitle`, `misses`). */
+  | 'roster_leave_offer'
+  | 'occurrence_skipped'
+  | 'occurrence_updated'
+  | 'occurrence_rescheduled'
+  /** Post-game peer rating is open until `deadline` (RATE-001). */
+  | 'peer_rating_open'
+  | 'friend_request'
+  | 'friend_accepted'
+  /** Someone tagged the user; invisible until accepted (VAULT-005). */
+  | 'media_tag_request'
+  /** The user's upload was blocked by the pre-publication pipeline (with SoR). */
+  | 'media_blocked';
+
+// ---------------------------------------------------------------------------
+// Phase 1.5 configuration
+// ---------------------------------------------------------------------------
+
+/**
+ * Phase 1.5 thresholds. Kept apart from {@link TrustConfig} (whose
+ * `trust_config` key parity is pinned by SQL tests); persisted in its own
+ * single-row table `phase15_config` with snake_case columns whose defaults equal
+ * {@link DEFAULT_PHASE15_CONFIG} key-for-key (same mechanical mapping).
+ */
+export interface Phase15Config {
+  // Series and roster (GAME-010/011)
+  /** Occurrences are generated this many weeks ahead, rolling. */
+  seriesHorizonWeeks: number;
+  /** Default roster-only window after an occurrence opens. */
+  rosterPriorityHoursDefault: number;
+  rosterPriorityHoursMin: number;
+  rosterPriorityHoursMax: number;
+  /** "Always in" members are asked to reconfirm this long before start. */
+  autoJoinReconfirmHours: number;
+  /** Unconfirmed auto-joins are released (no card) this long before start (aligned with the GAME-050 T−24h reminder). */
+  autoJoinReleaseHours: number;
+  /** GAME-011: consecutive unconfirmed occurrences before a leave-the-roster offer. */
+  rosterMissesBeforeLeaveOffer: number;
+  /** GAME-004 duration bounds. */
+  seriesMinDurationMinutes: number;
+  seriesMaxDurationMinutes: number;
+
+  // Glicko-2 (GLK-001..005)
+  glickoInitialRating: number;
+  glickoInitialRd: number;
+  glickoInitialSigma: number;
+  /** System constant τ (volatility change constraint). */
+  glickoTau: number;
+  /** Rating period length (weekly). */
+  glickoRatingPeriodDays: number;
+  /** GLK-003: verified / approved participants needed for a rated game. */
+  glickoMinVerifiedRatio: number;
+  /** GLK-004: players below this reliability are frozen (excluded from updates). */
+  glickoFreezeBelowReliability: number;
+  /** GLK-004: displayed (non-provisional) only at or above this reliability… */
+  glickoDisplayMinReliability: number;
+  /** …with at least this many rated games… */
+  glickoDisplayMinGames: number;
+  /** …and RD strictly below this. */
+  glickoDisplayMaxRd: number;
+
+  // Peer ratings (RATE-001..004)
+  /** Ratings accepted until `endsAt` + this. */
+  peerRatingWindowHours: number;
+  /** Co-players one rater may rate per game. */
+  peerRatingMaxRatees: number;
+  peerRaterMinReliability: number;
+  peerRaterMinVerifiedGames: number;
+  /** RATE-003: a pair's weight decays after this many ratings… */
+  peerPairDecayAfter: number;
+  /** …within this many days… */
+  peerPairDecayWindowDays: number;
+  /** …each further rating multiplies the weight by this. */
+  peerPairDecayFactor: number;
+  /** Weight multiplier for reciprocal all-max ("10/10") pairs. */
+  peerReciprocalWeight: number;
+  /** Ratings beyond this many standard deviations from the consensus are trimmed. */
+  peerOutlierSigma: number;
+  /** Bayesian prior weight of the self-assessment. */
+  peerSelfPriorWeight: number;
+
+  // Media Vault (VAULT-001/002/007)
+  /** Uploads accepted from `startsAt` to `endsAt` + this. */
+  mediaUploadAfterEndHours: number;
+  mediaPhotoMaxMb: number;
+  mediaVideoMaxMb: number;
+  mediaVideoMaxSeconds: number;
+  mediaMaxItemsPerUserPerGame: number;
+  /** Free retention in calendar months. */
+  mediaRetentionMonths: number;
+  /** Pro: retained while subscribed, then this grace (VAULT-007). */
+  mediaProGraceDays: number;
+
+  // Network (GAME-032)
+  /** "Played with" counts co-verified games within this many days. */
+  playedWithLookbackDays: number;
+}
+
+/** Phase 1.5 launch defaults (specs: PRD GAME-010/011/004, deferred-phases §4 and §7). */
+export const DEFAULT_PHASE15_CONFIG: Readonly<Phase15Config> = Object.freeze({
+  seriesHorizonWeeks: 4,
+  rosterPriorityHoursDefault: 24,
+  rosterPriorityHoursMin: 6,
+  rosterPriorityHoursMax: 72,
+  autoJoinReconfirmHours: 48,
+  autoJoinReleaseHours: 24,
+  rosterMissesBeforeLeaveOffer: 3,
+  seriesMinDurationMinutes: 30,
+  seriesMaxDurationMinutes: 240,
+
+  glickoInitialRating: 1500,
+  glickoInitialRd: 350,
+  glickoInitialSigma: 0.06,
+  glickoTau: 0.5,
+  glickoRatingPeriodDays: 7,
+  glickoMinVerifiedRatio: 0.7,
+  glickoFreezeBelowReliability: 0.7,
+  glickoDisplayMinReliability: 0.8,
+  glickoDisplayMinGames: 10,
+  glickoDisplayMaxRd: 100,
+
+  peerRatingWindowHours: 48,
+  peerRatingMaxRatees: 5,
+  peerRaterMinReliability: 0.8,
+  peerRaterMinVerifiedGames: 5,
+  peerPairDecayAfter: 3,
+  peerPairDecayWindowDays: 30,
+  peerPairDecayFactor: 0.5,
+  peerReciprocalWeight: 0.5,
+  peerOutlierSigma: 2,
+  peerSelfPriorWeight: 3,
+
+  mediaUploadAfterEndHours: 2,
+  mediaPhotoMaxMb: 20,
+  mediaVideoMaxMb: 200,
+  mediaVideoMaxSeconds: 60,
+  mediaMaxItemsPerUserPerGame: 30,
+  mediaRetentionMonths: 12,
+  mediaProGraceDays: 90,
+
+  playedWithLookbackDays: 365,
+});
+
+// ---------------------------------------------------------------------------
+// Recurring series and roster (GAME-010, GAME-011)
+// ---------------------------------------------------------------------------
+
+export type SeriesRecurrence = 'weekly' | 'biweekly';
+
+/** - `active`: occurrences are generated. `paused`: none generated. `ended`: closed for good. */
+export type SeriesStatus = 'active' | 'paused' | 'ended';
+
+/** Fields copied from the series template into each generated game. */
+export interface SeriesTemplate {
+  sport: SportId;
+  title: string;
+  notes: string | null;
+  visibility: GameVisibility;
+  venueId: VenueId | null;
+  location: LatLng | null;
+  hideExactLocation: boolean;
+  capacity: number;
+  minPlayers: number;
+  depositMinor: number;
+  currency: CurrencyCode;
+  depositForfeitTo: DepositForfeitTarget;
+  womenOnly: boolean;
+  teamCount: number;
+}
+
+/** The schedule of a series, in the series' local time zone (DST-correct). */
+export interface SeriesSchedule {
+  recurrence: SeriesRecurrence;
+  weekday: Weekday;
+  /** Local start time `HH:MM`. A time that does not exist on a DST-forward day is shifted forward by the gap. */
+  startTime: LocalTime;
+  timeZone: IanaTimeZone;
+  /** 30–240 (GAME-004). */
+  durationMinutes: number;
+}
+
+/**
+ * A recurring game (`game_series`). Occurrence slots are
+ * `anchorDate + k · (7 | 14)` days for `k ≥ 0`, up to `endDate`, generated
+ * {@link GameSeries.horizonWeeks} ahead on a rolling basis.
+ */
+export interface GameSeries extends SeriesTemplate, SeriesSchedule {
+  id: SeriesId;
+  hostId: UserId;
+  /** Approximate (≈500 m) location shown before approval, like `Game.approxLocation`. */
+  approxLocation: LatLng;
+  /** First slot. Re-based when a "this and following" edit changes the schedule. */
+  anchorDate: LocalDate;
+  /** Last possible slot (inclusive), or `null` for open-ended. */
+  endDate: LocalDate | null;
+  /** Default 4. */
+  horizonWeeks: number;
+  /** Roster-only window after an occurrence opens. Default 24, range 6–72. */
+  rosterPriorityHours: number;
+  /** "Always in" reconfirmation lead time. Default 48. */
+  autoJoinReconfirmHours: number;
+  /** Slots skipped before (or after) they were generated. */
+  skippedDates: readonly LocalDate[];
+  /** Incremented by every schedule change; part of occurrence keys. Starts at 0. */
+  scheduleRevision: number;
+  status: SeriesStatus;
+  /** Present only for the host. */
+  inviteToken: string | null;
+  createdAt: IsoDateTime;
+  updatedAt: IsoDateTime;
+}
+
+/** Input to create a series. */
+export interface GameSeriesCreateInput extends SeriesSchedule {
+  sport: SportId;
+  title: string;
+  notes?: string | null;
+  visibility: GameVisibility;
+  venueId: VenueId | null;
+  location?: LatLng | null;
+  hideExactLocation: boolean;
+  capacity: number;
+  minPlayers?: number;
+  depositMinor: number;
+  currency: CurrencyCode;
+  depositForfeitTo?: DepositForfeitTarget;
+  womenOnly: boolean;
+  teamCount: number;
+  /** First slot is the first `weekday` on or after this local date. */
+  startDate: LocalDate;
+  endDate?: LocalDate | null;
+  rosterPriorityHours?: number;
+  autoJoinReconfirmHours?: number;
+}
+
+/** Scope of an edit (GAME-010): one occurrence, or it and all later ones. */
+export type EditScope = 'this' | 'following';
+
+/** Fields editable for a single occurrence (`scope: 'this'`). */
+export interface OccurrencePatch {
+  title?: string;
+  notes?: string | null;
+  capacity?: number;
+  minPlayers?: number;
+  venueId?: VenueId | null;
+  location?: LatLng | null;
+  hideExactLocation?: boolean;
+  /** Moves this occurrence only. */
+  startsAt?: IsoDateTime;
+  durationMinutes?: number;
+}
+
+/**
+ * Fields editable for "this and following". Changing any {@link SeriesSchedule}
+ * field is a *reschedule*: later generated occurrences are cancelled (reason
+ * `rescheduled`) and regenerated under a new `scheduleRevision`.
+ * `womenOnly` cannot be edited (participants were admitted under it).
+ */
+export type SeriesPatch = Partial<Omit<SeriesTemplate, 'sport' | 'womenOnly'>> &
+  Partial<SeriesSchedule> & {
+    rosterPriorityHours?: number;
+    autoJoinReconfirmHours?: number;
+    endDate?: LocalDate | null;
+  };
+
+/** An edit request; `occurrenceKey` is the pivot occurrence. */
+export type SeriesEdit =
+  | { scope: 'this'; occurrenceKey: string; patch: OccurrencePatch }
+  | { scope: 'following'; occurrenceKey: string; patch: SeriesPatch };
+
+/**
+ * - `regular`: on the roster (priority window, auto-join if `alwaysIn`).
+ * - `invited`: the host invited them (e.g. from "played with"); not yet accepted.
+ * - `left`: left or removed.
+ */
+export type RosterStatus = 'regular' | 'invited' | 'left';
+
+/** How a member reached the roster (PRD §5.4 step 4: invite-link joiners are added automatically). */
+export type RosterJoinSource = 'invite_link' | 'host' | 'played_with';
+
+/** A series roster entry (`series_roster`, unique per series+user). */
+export interface RosterMember {
+  seriesId: SeriesId;
+  userId: UserId;
+  status: RosterStatus;
+  /** "I'm always in": auto-joined to each new occurrence, reconfirmed at T−`autoJoinReconfirmHours`. */
+  alwaysIn: boolean;
+  joinedVia: RosterJoinSource;
+  /** GAME-011: consecutive occurrences released for not reconfirming. Reset by any reconfirmation or attendance. */
+  consecutiveMisses: number;
+  /** When the leave-the-roster offer was sent, if it was. */
+  leaveOfferedAt: IsoDateTime | null;
+  joinedAt: IsoDateTime;
+  leftAt: IsoDateTime | null;
+}
+
+/** A roster entry with the member's public card. */
+export interface RosterMemberView extends RosterMember {
+  profile: PublicProfile;
+}
+
+/** - `scheduled`: a live game. `skipped`: skipped by the host. `cancelled`: cancelled (incl. rescheduled). */
+export type OccurrenceStatus = 'scheduled' | 'skipped' | 'cancelled';
+
+/** One generated (or planned) occurrence of a series (`series_occurrences`). */
+export interface SeriesOccurrence {
+  seriesId: SeriesId;
+  /** `${seriesId}:${scheduleRevision}:${slotDate}`; unique. */
+  occurrenceKey: string;
+  /** The schedule slot (local date) this occurrence fills. */
+  slotDate: LocalDate;
+  scheduleRevision: number;
+  /** `stableUuid('occurrence:' + occurrenceKey)`, so effects can reference the game before it is inserted. */
+  gameId: GameId;
+  startsAt: IsoDateTime;
+  endsAt: IsoDateTime;
+  /** When the occurrence was generated and became joinable (≈ `startsAt − horizonWeeks` in steady state). */
+  opensAt: IsoDateTime;
+  /** Roster-only until here: `opensAt + rosterPriorityHours` (capped at `startsAt`). */
+  priorityUntil: IsoDateTime;
+  /** Auto-joined members are asked to reconfirm here: `startsAt − autoJoinReconfirmHours`. */
+  reconfirmAt: IsoDateTime;
+  /** Unconfirmed auto-joins are released here: `startsAt − autoJoinReleaseHours`. */
+  releaseAt: IsoDateTime;
+  status: OccurrenceStatus;
+  /** Edited with scope `this` (later "following" edits still apply to it). */
+  overridden: boolean;
+}
+
+/** A roster member auto-joined to an occurrence (`series_auto_joins`, unique per game+user). */
+export interface AutoJoinRecord {
+  gameId: GameId;
+  seriesId: SeriesId;
+  userId: UserId;
+  /** `approved` or `waitlisted` at auto-join time. */
+  joinedAs: 'approved' | 'waitlisted';
+  reconfirmRequestedAt: IsoDateTime | null;
+  reconfirmedAt: IsoDateTime | null;
+  /** Declined or released (no card); `null` while held. */
+  releasedAt: IsoDateTime | null;
+}
+
+/** Everything the series screen needs. */
+export interface GameSeriesDetail {
+  series: GameSeries;
+  host: PublicProfile;
+  /** Upcoming occurrences inside the horizon, earliest first. */
+  upcoming: readonly SeriesOccurrence[];
+  rosterCount: number;
+  myRoster: RosterMember | null;
+  isHost: boolean;
+}
+
+// ---------------------------------------------------------------------------
+// Result confirmation (GAME-071)
+// ---------------------------------------------------------------------------
+
+export type ResultVerdict = 'confirm' | 'dispute';
+
+/** A verified participant's verdict on the submitted result (`result_confirmations`). */
+export interface ResultConfirmation {
+  gameId: GameId;
+  userId: UserId;
+  verdict: ResultVerdict;
+  createdAt: IsoDateTime;
+}
+
+/**
+ * - `pending`: no majority yet. `confirmed`: confirms > half of verified participants
+ *   (the submitter counts as a confirm). `disputed`: disputes > half (excluded from stats and ratings).
+ */
+export type ResultStatus = 'pending' | 'confirmed' | 'disputed';
+
+export interface ResultConfirmationSummary {
+  gameId: GameId;
+  status: ResultStatus;
+  confirms: number;
+  disputes: number;
+  verifiedCount: number;
+  myVerdict: ResultVerdict | null;
+}
+
+// ---------------------------------------------------------------------------
+// Peer ratings (RATE-001..005) and Glicko-2 (GLK-001..007)
+// ---------------------------------------------------------------------------
+
+/**
+ * Peer-rated attributes per sport (RATE-001; mirrors `sports.rating_attributes`
+ * for players). Every sport has `overall`, used for squad balancing.
+ */
+export const PLAYER_RATING_ATTRIBUTES = {
+  football: ['speed', 'ball_control', 'passing', 'defence', 'overall'],
+  basketball: ['shooting', 'handling', 'defence', 'athleticism', 'overall'],
+  tennis: ['serve', 'groundstrokes', 'net_play', 'movement', 'overall'],
+  padel: ['serve', 'volley', 'walls', 'positioning', 'overall'],
+  running: ['pace', 'endurance', 'overall'],
+  volleyball: ['serve', 'passing', 'attack', 'defence', 'overall'],
+} as const satisfies Record<SportId, readonly string[]>;
+
+/** A player attribute of sport `S`. */
+export type PlayerRatingAttribute<S extends SportId = SportId> = S extends SportId
+  ? (typeof PLAYER_RATING_ATTRIBUTES)[S][number]
+  : never;
+
+/** One rater's scores for one co-player in one game (`peer_ratings`, unique per game+rater+ratee). */
+export interface PeerRating {
+  gameId: GameId;
+  sport: SportId;
+  raterId: UserId;
+  rateeId: UserId;
+  /** 1–5 per attribute; a rater may skip attributes. */
+  scores: Readonly<Partial<Record<PlayerRatingAttribute, Stars>>>;
+  createdAt: IsoDateTime;
+}
+
+/** Input for one co-player. */
+export interface PeerRatingInput {
+  rateeId: UserId;
+  scores: Readonly<Partial<Record<PlayerRatingAttribute, Stars>>>;
+}
+
+/** Why a user may not rate (RATE-001/002). UI copy: `ratings:ineligible.<reason>`. */
+export type RatingIneligibleReason =
+  | 'not_verified'
+  | 'low_reliability'
+  | 'too_few_games'
+  | 'active_sanction'
+  | 'window_not_open'
+  | 'window_closed';
+
+/** Whether the caller may rate co-players of a game (AC-RATE-002). */
+export interface RatingEligibility {
+  canRate: boolean;
+  /** Every failing gate, in a fixed order. */
+  reasons: readonly RatingIneligibleReason[];
+  verifiedGamesInSport: number;
+  requiredGames: number;
+  windowClosesAt: IsoDateTime;
+  /** Ratees still allowed (max − already rated). */
+  remainingRatees: number;
+  /** Co-players the caller may rate (verified, not blocked, not self, not yet rated). */
+  rateableUserIds: readonly UserId[];
+}
+
+/** Aggregated peer rating per attribute (RATE-004). Shown to the player privately. */
+export interface PeerAttributeSummary {
+  /** Bayesian mean 1–5 (self prior, weight `peerSelfPriorWeight`). */
+  mean: number;
+  /** Effective weight of the peer evidence after decay, down-weighting and trimming. */
+  evidenceWeight: number;
+  /** Ratings kept after outlier trimming. */
+  ratingsUsed: number;
+}
+
+export interface PeerSkillSummary {
+  userId: UserId;
+  sport: SportId;
+  attributes: Readonly<Partial<Record<PlayerRatingAttribute, PeerAttributeSummary>>>;
+  /** Overall 1–5 band for hosts (rounded overall mean). */
+  band: Stars;
+  raterCount: number;
+}
+
+/** Glicko-2 format family (GLK-001), e.g. football small-sided vs full-sided. */
+export type FormatFamily =
+  | 'small_sided'
+  | 'full_sided'
+  | 'half_court'
+  | 'full_court'
+  | 'singles'
+  | 'doubles'
+  | 'pairs'
+  | 'teams';
+
+/** Glicko-2 parameters on the Glicko scale. */
+export interface GlickoParams {
+  /** Rating r (initial 1500). */
+  r: number;
+  /** Rating deviation RD (initial 350). */
+  rd: number;
+  /** Volatility σ (initial 0.06). */
+  sigma: number;
+}
+
+/** A player's skill rating per sport and format family (`skill_ratings`). */
+export interface SkillRating extends GlickoParams {
+  userId: UserId;
+  sport: SportId;
+  formatFamily: FormatFamily;
+  /** Rated games counted so far. */
+  games: number;
+  /** GLK-004: true unless reliability ≥ 80 %, games ≥ 10 and RD < 100. UI shows "Provisional". */
+  provisional: boolean;
+  /** GLK-005: `clamp((r − 900) / 200, 0, 7)`, one decimal. */
+  level: number;
+  /** Last processed rating period (`YYYY-Www`, ISO week), or `null`. */
+  lastPeriod: string | null;
+  updatedAt: IsoDateTime;
+}
+
+/** Outcome of one rated game for one side. Margin is never used (GLK-002). */
+export type MatchOutcome = 'win' | 'draw' | 'loss';
+
+/** Why a game produces no rating updates (GLK-003). UI copy: `ratings:notRated.<reason>`. */
+export type GameNotRatedReason =
+  | 'no_result'
+  | 'result_not_confirmed'
+  | 'result_disputed'
+  | 'too_few_verified'
+  | 'teams_not_published'
+  | 'not_two_sides'
+  | 'unrated_sport';
+
+export type GameRatingEligibility =
+  | { eligible: true; reason: null }
+  | { eligible: false; reason: GameNotRatedReason };
+
+/** One player's update for one rating period (`rating_updates`, unique per user+sport+family+period). */
+export interface RatingUpdate {
+  userId: UserId;
+  sport: SportId;
+  formatFamily: FormatFamily;
+  /** ISO week `YYYY-Www`. */
+  period: string;
+  before: GlickoParams;
+  after: GlickoParams;
+  /** Rated games added in this period. */
+  gamesAdded: number;
+  /** GLK-004: excluded (reliability < 70 %); `after` equals `before`. */
+  frozen: boolean;
+  /** `rating:<userId>:<sport>:<family>:<period>`. */
+  dedupeKey: string;
+}
+
+// ---------------------------------------------------------------------------
+// Media Vault (VAULT-001..009)
+// ---------------------------------------------------------------------------
+
+export type MediaKind = 'photo' | 'video';
+
+/**
+ * - `processing`: in the pre-publication pipeline (EXIF strip → CSAM hash → moderation).
+ * - `published`: visible per `visibility`.
+ * - `blocked`: the pipeline blocked it (never shown; evidence preserved for CSAM).
+ * - `removed`: deleted by the uploader, a moderator, or retention.
+ */
+export type MediaStatus = 'processing' | 'published' | 'blocked' | 'removed';
+
+/** `participants` (default) or `venue_public` (venue vault, VAULT-004/006). */
+export type MediaVisibility = 'participants' | 'venue_public';
+
+/** A media item (`media_items`). */
+export interface MediaItem {
+  id: MediaId;
+  gameId: GameId;
+  venueId: VenueId | null;
+  uploaderId: UserId;
+  kind: MediaKind;
+  status: MediaStatus;
+  /** Effective visibility (promoted to `venue_public` only when allowed). */
+  visibility: MediaVisibility;
+  /** The uploader's opt-in to `venue_public` (VAULT-004). */
+  publicOptIn: boolean;
+  mimeType: string;
+  sizeBytes: number;
+  /** Videos only. */
+  durationSeconds: number | null;
+  /** Storage object key; the adapter signs URLs. */
+  storagePath: string;
+  createdAt: IsoDateTime;
+  publishedAt: IsoDateTime | null;
+  /** Retention end (`createdAt + mediaRetentionMonths`). */
+  expiresAt: IsoDateTime;
+  removedAt: IsoDateTime | null;
+}
+
+/** A published item with signed URLs and the viewer-visible (accepted) tags. */
+export interface MediaItemView extends MediaItem {
+  url: string;
+  thumbnailUrl: string | null;
+  acceptedTags: readonly UserId[];
+}
+
+/**
+ * - `requested`: invisible until accepted (VAULT-005).
+ * - `accepted` / `declined` by the tagged user.
+ * - `removed`: untagged later (by the tagged user, the uploader or account deletion).
+ */
+export type MediaTagStatus = 'requested' | 'accepted' | 'declined' | 'removed';
+
+/** A tag on a media item (`media_tags`, unique per media+user). */
+export interface MediaTag {
+  mediaId: MediaId;
+  userId: UserId;
+  taggedBy: UserId;
+  status: MediaTagStatus;
+  /**
+   * The tagged user vetoed `venue_public` (declined the tag, or untagged with
+   * "remove from public", or deleted their account). A vetoing tag blocks
+   * promotion even after it is removed.
+   */
+  vetoPublic: boolean;
+  createdAt: IsoDateTime;
+  decidedAt: IsoDateTime | null;
+}
+
+/** Input to start an upload. */
+export interface MediaUploadRequest {
+  gameId: GameId;
+  kind: MediaKind;
+  mimeType: string;
+  sizeBytes: number;
+  durationSeconds?: number | null;
+}
+
+/** A signed direct-upload slot. Finish with `DataPort.completeMediaUpload`. */
+export interface MediaUploadIntent {
+  mediaId: MediaId;
+  uploadUrl: string;
+  method: 'PUT' | 'POST';
+  headers: Readonly<Record<string, string>>;
+  expiresAt: IsoDateTime;
+  maxBytes: number;
+}
+
+/** Why an upload or a visibility change was refused. */
+export type MediaRejectReason =
+  | 'not_verified_attendee'
+  | 'window_not_open'
+  | 'window_closed'
+  | 'too_large'
+  | 'too_long'
+  | 'unsupported_type'
+  | 'user_cap_reached'
+  | 'not_uploader'
+  | 'not_published'
+  | 'tags_pending';
+
+/** Pipeline outcome (VAULT-003). */
+export interface MediaModerationVerdict {
+  /** `publish`, `block` (policy) or `csam` (block + preserve + report + restrict). */
+  decision: 'publish' | 'block' | 'csam';
+  categories: readonly ModerationCategory[];
+  exifStripped: boolean;
+  csamHashMatch: boolean;
+  source: 'hash' | 'vision' | 'combined' | 'fallback';
+  /** i18n key explaining a block to the uploader, else `null`. */
+  reasonKey: string | null;
+}
+
+// ---------------------------------------------------------------------------
+// Network: played-with, friends, privacy
+// ---------------------------------------------------------------------------
+
+export type FriendStatus = 'requested' | 'accepted';
+
+/**
+ * A relationship between two users (`connections`, one row per unordered pair,
+ * `userA < userB` by string order).
+ * - played-with is auto-derived from co-verified attendance (GAME-032).
+ * - friendship is mutual: one requests, the other accepts.
+ * Blocks override everything (a blocked pair has no visible connection).
+ */
+export interface Connection {
+  userA: UserId;
+  userB: UserId;
+  /** Co-verified games within `playedWithLookbackDays`. */
+  gamesTogether: number;
+  lastPlayedAt: IsoDateTime | null;
+  friendStatus: FriendStatus | null;
+  friendRequestedBy: UserId | null;
+  friendRequestedAt: IsoDateTime | null;
+  friendAcceptedAt: IsoDateTime | null;
+}
+
+/** The relationship as seen by the viewer. */
+export type FriendState = 'none' | 'outgoing' | 'incoming' | 'friends';
+
+export interface ConnectionView {
+  user: PublicProfile;
+  playedWith: boolean;
+  gamesTogether: number;
+  lastPlayedAt: IsoDateTime | null;
+  friend: FriendState;
+}
+
+/** Who sees my upcoming games. */
+export type UpcomingGamesAudience = 'friends' | 'nobody';
+
+/** Default audience: friends (friendship is a mutual opt-in, so this stays private by default). */
+export const DEFAULT_UPCOMING_GAMES_AUDIENCE: UpcomingGamesAudience = 'friends';
+
+/** Network privacy settings (`network_privacy`; default {@link DEFAULT_UPCOMING_GAMES_AUDIENCE}). */
+export interface NetworkPrivacy {
+  userId: UserId;
+  upcomingGamesVisibleTo: UpcomingGamesAudience;
+  updatedAt: IsoDateTime;
+}
+
+/** A friend's upcoming game, as shown in "friends' games". */
+export interface FriendUpcomingGame {
+  friend: PublicProfile;
+  game: GameSummary;
+}
+
+// ---------------------------------------------------------------------------
+// Invites and WhatsApp migration (PRD §5.4, GAME-030/031)
+// ---------------------------------------------------------------------------
+
+export type InviteTarget = { kind: 'game'; gameId: GameId } | { kind: 'series'; seriesId: SeriesId };
+
+/** OpenGraph rich-preview fields (GAME-030). No address when the location is hidden. */
+export interface InvitePreview {
+  sport: SportId;
+  title: string;
+  /** Next (or the game's) start, UTC; format with `timeZone`. */
+  startsAt: IsoDateTime | null;
+  timeZone: IanaTimeZone | null;
+  recurrence: SeriesRecurrence | null;
+  weekday: Weekday | null;
+  localStartTime: LocalTime | null;
+  /** Neighbourhood or area label; never the address of a hidden-location game. */
+  areaLabel: string | null;
+  spotsLeft: number | null;
+  capacity: number;
+  womenOnly: boolean;
+  hostDisplayName: string;
+  ogImageUrl: string | null;
+}
+
+/** An invite link (host only). */
+export interface InviteLink {
+  target: InviteTarget;
+  token: string;
+  url: string;
+  preview: InvitePreview;
+  createdAt: IsoDateTime;
+  rotatedAt: IsoDateTime | null;
+}
+
+/** "How many of the group already moved" (PRD §5.4 step 5). */
+export interface MigrationStats {
+  target: InviteTarget;
+  /** Distinct users who joined (game) or entered the roster (series) through the link. */
+  joinedFromLink: number;
+  /** Of those, how many have at least one verified attendance since. */
+  activeFromLink: number;
+  /** Current regulars (series) or approved participants (game), any source. */
+  rosterSize: number;
+  /** Everyone who ever joined, any source and status. */
+  totalMembers: number;
+  firstJoinAt: IsoDateTime | null;
+  lastJoinAt: IsoDateTime | null;
+}
+
+/** A localisable share message: i18n key + ICU params (never raw text). */
+export interface ShareMessage {
+  /** e.g. `invite:share.series.weekly` (namespace `invite`). */
+  key: string;
+  params: Readonly<Record<string, string | number>>;
+  locale: Locale;
+  url: string;
+}
+
+// ---------------------------------------------------------------------------
+// Phase 1.5 effects
+// ---------------------------------------------------------------------------
+
+/** Snapshot of the game an occurrence materialises as (insert as `games` row). */
+export interface OccurrenceGameSnapshot extends SeriesTemplate {
+  id: GameId;
+  seriesId: SeriesId;
+  hostId: UserId;
+  approxLocation: LatLng;
+  startsAt: IsoDateTime;
+  endsAt: IsoDateTime;
+}
+
+/**
+ * Side effects of the Phase 1.5 pure modules, applied in order by an adapter.
+ * Every effect carries a deterministic `dedupeKey`; apply with
+ * `ON CONFLICT (dedupe_key) DO NOTHING` (or an equivalent idempotent upsert).
+ */
+export type Phase15Effect =
+  // series
+  | { type: 'CreateOccurrence'; occurrence: SeriesOccurrence; game: OccurrenceGameSnapshot; dedupeKey: string }
+  | {
+      type: 'UpdateOccurrence';
+      occurrenceKey: string;
+      gameId: GameId;
+      /** Game fields to change; when the start moves, the occurrence's derived times move with it. */
+      patch: Readonly<Partial<SeriesTemplate> & { startsAt?: IsoDateTime; endsAt?: IsoDateTime }>;
+      /** The occurrence row after the change (status, times, `overridden`). */
+      occurrence: SeriesOccurrence;
+      dedupeKey: string;
+    }
+  | {
+      type: 'CancelOccurrence';
+      occurrenceKey: string;
+      gameId: GameId;
+      reason: 'skipped' | 'rescheduled' | 'series_ended';
+      /** True when inside `lateCancelWindowHours` of start: route through the host late-cancel trust rule. */
+      lateCancel: boolean;
+      dedupeKey: string;
+    }
+  | { type: 'AutoJoin'; gameId: GameId; seriesId: SeriesId; userId: UserId; joinedAs: 'approved' | 'waitlisted'; dedupeKey: string }
+  | { type: 'RequestReconfirm'; gameId: GameId; userId: UserId; deadline: IsoDateTime; dedupeKey: string }
+  /** Cancel the auto-joined participation without a card and offer the spot to the waitlist. */
+  | { type: 'ReleaseAutoJoin'; gameId: GameId; userId: UserId; dedupeKey: string }
+  | { type: 'UpdateRosterMember'; seriesId: SeriesId; userId: UserId; patch: Readonly<Partial<RosterMember>>; dedupeKey: string }
+  | { type: 'UpdateSeries'; seriesId: SeriesId; patch: Readonly<Partial<GameSeries>>; dedupeKey: string }
+  // media
+  | { type: 'SetMediaStatus'; mediaId: MediaId; status: MediaStatus; dedupeKey: string }
+  | { type: 'SetMediaVisibility'; mediaId: MediaId; visibility: MediaVisibility; dedupeKey: string }
+  | { type: 'SetMediaTagStatus'; mediaId: MediaId; userId: UserId; status: MediaTagStatus; dedupeKey: string }
+  /** CSAM: preserve the original under legal hold and file the hotline report (VAULT-003). */
+  | { type: 'PreserveMediaEvidence'; mediaId: MediaId; uploaderId: UserId; dedupeKey: string }
+  | { type: 'DeleteMediaObject'; mediaId: MediaId; storagePath: string; dedupeKey: string }
+  /**
+   * CSAM match: restrict the account (no uploads, joins, chat or hosting) pending
+   * the `media_csam` human review. Not a sanction; a moderator decides.
+   */
+  | { type: 'RestrictAccountPendingReview'; userId: UserId; reason: 'csam_match'; dedupeKey: string }
+  // network
+  | { type: 'UpsertConnection'; connection: Connection; dedupeKey: string }
+  | { type: 'DeleteFriendship'; userA: UserId; userB: UserId; dedupeKey: string }
+  // shared
+  | {
+      type: 'Notify15';
+      userId: UserId;
+      kind: Phase15NotificationKind;
+      params: NotificationParams;
+      gameId: GameId | null;
+      seriesId: SeriesId | null;
+      dedupeKey: string;
+    }
+  /** Hand a trust-relevant fact to the trust engine (e.g. a CSAM restriction review). */
+  | { type: 'EnqueueReview'; item: NewReviewQueueItem }
+  | { type: 'Audit'; action: string; subjectUserId: UserId | null; data: Readonly<Record<string, string | number | boolean | null>> };
+
+/** Discriminant values of {@link Phase15Effect}. */
+export type Phase15EffectType = Phase15Effect['type'];

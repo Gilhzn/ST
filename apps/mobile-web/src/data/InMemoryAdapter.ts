@@ -146,6 +146,11 @@ function fail(code: ConstructorParameters<typeof StError>[0], message?: string):
   throw new StError(code, message);
 }
 
+/** Phase 1.5 DataPort methods are stubbed until the adapters implement them (contract v3). */
+function phase15NotImplemented(method: string): StError {
+  return new StError('unavailable', `${method} is not implemented yet (Phase 1.5)`);
+}
+
 export class InMemoryAdapter implements DataPort, BlockedNamesExtension {
   private state: MockState;
   private session: UserId | null = null;
@@ -1519,5 +1524,151 @@ export class InMemoryAdapter implements DataPort, BlockedNamesExtension {
         if (n.userId === me && ids.includes(n.id) && !n.readAt) n.readAt = at;
       }
     });
+  }
+
+  // -------------------------------------------------------------------------
+  // Phase 1.5 (contract v3): not implemented yet. Each stub rejects with
+  // StError('unavailable') so the DataPort contract holds until the app dev
+  // implements it.
+  // -------------------------------------------------------------------------
+  // SeriesApi
+  async createSeries(): Promise<never> {
+    throw phase15NotImplemented('createSeries');
+  }
+  async getSeries(): Promise<never> {
+    throw phase15NotImplemented('getSeries');
+  }
+  async listMySeries(): Promise<never> {
+    throw phase15NotImplemented('listMySeries');
+  }
+  async editSeries(): Promise<never> {
+    throw phase15NotImplemented('editSeries');
+  }
+  async endSeries(): Promise<never> {
+    throw phase15NotImplemented('endSeries');
+  }
+  async listOccurrences(): Promise<never> {
+    throw phase15NotImplemented('listOccurrences');
+  }
+  async skipOccurrence(): Promise<never> {
+    throw phase15NotImplemented('skipOccurrence');
+  }
+  async listRoster(): Promise<never> {
+    throw phase15NotImplemented('listRoster');
+  }
+  async inviteToRoster(): Promise<never> {
+    throw phase15NotImplemented('inviteToRoster');
+  }
+  async acceptRosterInvite(): Promise<never> {
+    throw phase15NotImplemented('acceptRosterInvite');
+  }
+  async removeFromRoster(): Promise<never> {
+    throw phase15NotImplemented('removeFromRoster');
+  }
+  async leaveRoster(): Promise<never> {
+    throw phase15NotImplemented('leaveRoster');
+  }
+  async setAlwaysIn(): Promise<never> {
+    throw phase15NotImplemented('setAlwaysIn');
+  }
+  async reconfirmAutoJoin(): Promise<never> {
+    throw phase15NotImplemented('reconfirmAutoJoin');
+  }
+  // RatingsApi
+  async confirmResult(): Promise<never> {
+    throw phase15NotImplemented('confirmResult');
+  }
+  async getResultConfirmation(): Promise<never> {
+    throw phase15NotImplemented('getResultConfirmation');
+  }
+  async getGameRatingStatus(): Promise<never> {
+    throw phase15NotImplemented('getGameRatingStatus');
+  }
+  async getRatingEligibility(): Promise<never> {
+    throw phase15NotImplemented('getRatingEligibility');
+  }
+  async submitPeerRatings(): Promise<never> {
+    throw phase15NotImplemented('submitPeerRatings');
+  }
+  async listMySkillRatings(): Promise<never> {
+    throw phase15NotImplemented('listMySkillRatings');
+  }
+  async getMyPeerSummary(): Promise<never> {
+    throw phase15NotImplemented('getMyPeerSummary');
+  }
+  async getSkillBands(): Promise<never> {
+    throw phase15NotImplemented('getSkillBands');
+  }
+  // MediaApi
+  async listGameMedia(): Promise<never> {
+    throw phase15NotImplemented('listGameMedia');
+  }
+  async listVenueMedia(): Promise<never> {
+    throw phase15NotImplemented('listVenueMedia');
+  }
+  async createMediaUploadIntent(): Promise<never> {
+    throw phase15NotImplemented('createMediaUploadIntent');
+  }
+  async completeMediaUpload(): Promise<never> {
+    throw phase15NotImplemented('completeMediaUpload');
+  }
+  async tagMedia(): Promise<never> {
+    throw phase15NotImplemented('tagMedia');
+  }
+  async respondToMediaTag(): Promise<never> {
+    throw phase15NotImplemented('respondToMediaTag');
+  }
+  async untagMe(): Promise<never> {
+    throw phase15NotImplemented('untagMe');
+  }
+  async listMyTagRequests(): Promise<never> {
+    throw phase15NotImplemented('listMyTagRequests');
+  }
+  async setMediaVisibility(): Promise<never> {
+    throw phase15NotImplemented('setMediaVisibility');
+  }
+  async deleteMedia(): Promise<never> {
+    throw phase15NotImplemented('deleteMedia');
+  }
+  // NetworkApi
+  async listConnections(): Promise<never> {
+    throw phase15NotImplemented('listConnections');
+  }
+  async requestFriend(): Promise<never> {
+    throw phase15NotImplemented('requestFriend');
+  }
+  async respondFriendRequest(): Promise<never> {
+    throw phase15NotImplemented('respondFriendRequest');
+  }
+  async removeFriend(): Promise<never> {
+    throw phase15NotImplemented('removeFriend');
+  }
+  async getNetworkPrivacy(): Promise<never> {
+    throw phase15NotImplemented('getNetworkPrivacy');
+  }
+  async setNetworkPrivacy(): Promise<never> {
+    throw phase15NotImplemented('setNetworkPrivacy');
+  }
+  async listFriendsUpcomingGames(): Promise<never> {
+    throw phase15NotImplemented('listFriendsUpcomingGames');
+  }
+  // InviteApi
+  async getInviteLink(): Promise<never> {
+    throw phase15NotImplemented('getInviteLink');
+  }
+  async rotateInviteLink(): Promise<never> {
+    throw phase15NotImplemented('rotateInviteLink');
+  }
+  async getShareMessage(): Promise<never> {
+    throw phase15NotImplemented('getShareMessage');
+  }
+  async resolveSeriesInvite(): Promise<never> {
+    throw phase15NotImplemented('resolveSeriesInvite');
+  }
+  async joinSeriesViaInvite(): Promise<never> {
+    throw phase15NotImplemented('joinSeriesViaInvite');
+  }
+  async getMigrationStats(): Promise<never> {
+    throw phase15NotImplemented('getMigrationStats');
   }
 }

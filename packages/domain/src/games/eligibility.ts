@@ -27,6 +27,12 @@ export interface JoinEligibilityInput {
   blocks: readonly Pick<Block, 'blockerId' | 'blockedId'>[];
   /** For an instance of a recurring series: its regulars, who alone may join for the priority window. */
   regularIds?: readonly UserId[];
+  /**
+   * The occurrence's `SeriesOccurrence.priorityUntil` (contract v3). When given it
+   * replaces the legacy `createdAt + REGULARS_PRIORITY_HOURS` window and a
+   * non-regular inside it gets `roster_priority` (legacy: `game_not_open`).
+   */
+  priorityUntil?: IsoDateTime | null;
 }
 
 function until(iso: IsoDateTime | null | undefined, now: EpochMs): boolean {
@@ -56,9 +62,10 @@ export function checkJoinEligibility(input: JoinEligibilityInput, now: EpochMs):
   if (game.hostId === user.id) return fail('forbidden');
   if (input.existing?.status === 'removed') return fail('forbidden');
   if (game.status !== 'scheduled' || now >= toEpochMs(game.startsAt)) return fail('game_not_open');
-  const priorityUntil = regularsPriorityUntil(game, input.regularIds);
+  const priorityUntil =
+    input.priorityUntil != null ? toEpochMs(input.priorityUntil) : regularsPriorityUntil(game, input.regularIds);
   if (priorityUntil !== null && now < priorityUntil && !(input.regularIds ?? []).includes(user.id)) {
-    return fail('game_not_open');
+    return fail(input.priorityUntil != null ? 'roster_priority' : 'game_not_open');
   }
   const st = input.existing?.status;
   if (st === 'requested' || st === 'approved' || st === 'waitlisted' || st === 'rejected') return fail('conflict');

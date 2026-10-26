@@ -1,0 +1,571 @@
+[
+  {
+    "name": "before-t-48h.nothing",
+    "kind": "series.autoJoins",
+    "input": {
+      "series": {
+        "id": "00000000-0000-4000-8000-00000000c001",
+        "title": "Tuesday 5-a-side"
+      },
+      "occurrence": {
+        "seriesId": "00000000-0000-4000-8000-00000000c001",
+        "occurrenceKey": "00000000-0000-4000-8000-00000000c001:0:2026-10-27",
+        "slotDate": "2026-10-27",
+        "scheduleRevision": 0,
+        "gameId": "72acd25b-9e0b-8469-bfe5-576bb4c88fb1",
+        "startsAt": "2026-10-27T20:00:00.000Z",
+        "endsAt": "2026-10-27T21:00:00.000Z",
+        "opensAt": "2026-09-29T20:00:00.000Z",
+        "priorityUntil": "2026-09-30T20:00:00.000Z",
+        "reconfirmAt": "2026-10-25T20:00:00.000Z",
+        "releaseAt": "2026-10-26T20:00:00.000Z",
+        "status": "scheduled",
+        "overridden": false
+      },
+      "autoJoins": [
+        {
+          "gameId": "72acd25b-9e0b-8469-bfe5-576bb4c88fb1",
+          "seriesId": "00000000-0000-4000-8000-00000000c001",
+          "userId": "00000000-0000-4000-8000-000000000002",
+          "joinedAs": "approved",
+          "reconfirmRequestedAt": null,
+          "reconfirmedAt": null,
+          "releasedAt": null
+        },
+        {
+          "gameId": "72acd25b-9e0b-8469-bfe5-576bb4c88fb1",
+          "seriesId": "00000000-0000-4000-8000-00000000c001",
+          "userId": "00000000-0000-4000-8000-000000000001",
+          "joinedAs": "approved",
+          "reconfirmRequestedAt": "2026-10-25T20:00:00.000Z",
+          "reconfirmedAt": null,
+          "releasedAt": null
+        },
+        {
+          "gameId": "72acd25b-9e0b-8469-bfe5-576bb4c88fb1",
+          "seriesId": "00000000-0000-4000-8000-00000000c001",
+          "userId": "00000000-0000-4000-8000-000000000003",
+          "joinedAs": "approved",
+          "reconfirmRequestedAt": null,
+          "reconfirmedAt": null,
+          "releasedAt": null
+        },
+        {
+          "gameId": "72acd25b-9e0b-8469-bfe5-576bb4c88fb1",
+          "seriesId": "00000000-0000-4000-8000-00000000c001",
+          "userId": "00000000-0000-4000-8000-000000000004",
+          "joinedAs": "approved",
+          "reconfirmRequestedAt": null,
+          "reconfirmedAt": "2026-10-25T21:00:00.000Z",
+          "releasedAt": null
+        },
+        {
+          "gameId": "72acd25b-9e0b-8469-bfe5-576bb4c88fb1",
+          "seriesId": "00000000-0000-4000-8000-00000000c001",
+          "userId": "00000000-0000-4000-8000-000000000005",
+          "joinedAs": "approved",
+          "reconfirmRequestedAt": null,
+          "reconfirmedAt": null,
+          "releasedAt": "2026-10-25T21:00:00.000Z"
+        }
+      ],
+      "roster": [
+        {
+          "seriesId": "00000000-0000-4000-8000-00000000c001",
+          "userId": "00000000-0000-4000-8000-000000000001",
+          "status": "regular",
+          "alwaysIn": true,
+          "joinedVia": "invite_link",
+          "consecutiveMisses": 2,
+          "leaveOfferedAt": null,
+          "joinedAt": "2026-09-01T10:00:00.000Z",
+          "leftAt": null
+        },
+        {
+          "seriesId": "00000000-0000-4000-8000-00000000c001",
+          "userId": "00000000-0000-4000-8000-000000000002",
+          "status": "regular",
+          "alwaysIn": true,
+          "joinedVia": "invite_link",
+          "consecutiveMisses": 0,
+          "leaveOfferedAt": null,
+          "joinedAt": "2026-09-02T10:00:00.000Z",
+          "leftAt": null
+        },
+        {
+          "seriesId": "00000000-0000-4000-8000-00000000c001",
+          "userId": "00000000-0000-4000-8000-000000000004",
+          "status": "regular",
+          "alwaysIn": true,
+          "joinedVia": "invite_link",
+          "consecutiveMisses": 0,
+          "leaveOfferedAt": null,
+          "joinedAt": "2026-09-04T10:00:00.000Z",
+          "leftAt": null
+        }
+      ]
+    },
+    "now": "2026-10-25T19:59:59.999Z",
+    "expected": {
+      "effects": []
+    }
+  },
+  {
+    "name": "t-48h.requests-each-unasked-held-auto-join-once",
+    "kind": "series.autoJoins",
+    "input": {
+      "series": {
+        "id": "00000000-0000-4000-8000-00000000c001",
+        "title": "Tuesday 5-a-side"
+      },
+      "occurrence": {
+        "seriesId": "00000000-0000-4000-8000-00000000c001",
+        "occurrenceKey": "00000000-0000-4000-8000-00000000c001:0:2026-10-27",
+        "slotDate": "2026-10-27",
+        "scheduleRevision": 0,
+        "gameId": "72acd25b-9e0b-8469-bfe5-576bb4c88fb1",
+        "startsAt": "2026-10-27T20:00:00.000Z",
+        "endsAt": "2026-10-27T21:00:00.000Z",
+        "opensAt": "2026-09-29T20:00:00.000Z",
+        "priorityUntil": "2026-09-30T20:00:00.000Z",
+        "reconfirmAt": "2026-10-25T20:00:00.000Z",
+        "releaseAt": "2026-10-26T20:00:00.000Z",
+        "status": "scheduled",
+        "overridden": false
+      },
+      "autoJoins": [
+        {
+          "gameId": "72acd25b-9e0b-8469-bfe5-576bb4c88fb1",
+          "seriesId": "00000000-0000-4000-8000-00000000c001",
+          "userId": "00000000-0000-4000-8000-000000000002",
+          "joinedAs": "approved",
+          "reconfirmRequestedAt": null,
+          "reconfirmedAt": null,
+          "releasedAt": null
+        },
+        {
+          "gameId": "72acd25b-9e0b-8469-bfe5-576bb4c88fb1",
+          "seriesId": "00000000-0000-4000-8000-00000000c001",
+          "userId": "00000000-0000-4000-8000-000000000001",
+          "joinedAs": "approved",
+          "reconfirmRequestedAt": "2026-10-25T20:00:00.000Z",
+          "reconfirmedAt": null,
+          "releasedAt": null
+        },
+        {
+          "gameId": "72acd25b-9e0b-8469-bfe5-576bb4c88fb1",
+          "seriesId": "00000000-0000-4000-8000-00000000c001",
+          "userId": "00000000-0000-4000-8000-000000000003",
+          "joinedAs": "approved",
+          "reconfirmRequestedAt": null,
+          "reconfirmedAt": null,
+          "releasedAt": null
+        },
+        {
+          "gameId": "72acd25b-9e0b-8469-bfe5-576bb4c88fb1",
+          "seriesId": "00000000-0000-4000-8000-00000000c001",
+          "userId": "00000000-0000-4000-8000-000000000004",
+          "joinedAs": "approved",
+          "reconfirmRequestedAt": null,
+          "reconfirmedAt": "2026-10-25T21:00:00.000Z",
+          "releasedAt": null
+        },
+        {
+          "gameId": "72acd25b-9e0b-8469-bfe5-576bb4c88fb1",
+          "seriesId": "00000000-0000-4000-8000-00000000c001",
+          "userId": "00000000-0000-4000-8000-000000000005",
+          "joinedAs": "approved",
+          "reconfirmRequestedAt": null,
+          "reconfirmedAt": null,
+          "releasedAt": "2026-10-25T21:00:00.000Z"
+        }
+      ],
+      "roster": [
+        {
+          "seriesId": "00000000-0000-4000-8000-00000000c001",
+          "userId": "00000000-0000-4000-8000-000000000001",
+          "status": "regular",
+          "alwaysIn": true,
+          "joinedVia": "invite_link",
+          "consecutiveMisses": 2,
+          "leaveOfferedAt": null,
+          "joinedAt": "2026-09-01T10:00:00.000Z",
+          "leftAt": null
+        },
+        {
+          "seriesId": "00000000-0000-4000-8000-00000000c001",
+          "userId": "00000000-0000-4000-8000-000000000002",
+          "status": "regular",
+          "alwaysIn": true,
+          "joinedVia": "invite_link",
+          "consecutiveMisses": 0,
+          "leaveOfferedAt": null,
+          "joinedAt": "2026-09-02T10:00:00.000Z",
+          "leftAt": null
+        },
+        {
+          "seriesId": "00000000-0000-4000-8000-00000000c001",
+          "userId": "00000000-0000-4000-8000-000000000004",
+          "status": "regular",
+          "alwaysIn": true,
+          "joinedVia": "invite_link",
+          "consecutiveMisses": 0,
+          "leaveOfferedAt": null,
+          "joinedAt": "2026-09-04T10:00:00.000Z",
+          "leftAt": null
+        }
+      ]
+    },
+    "now": "2026-10-25T20:00:00.000Z",
+    "expected": {
+      "effects": [
+        {
+          "type": "RequestReconfirm",
+          "gameId": "72acd25b-9e0b-8469-bfe5-576bb4c88fb1",
+          "userId": "00000000-0000-4000-8000-000000000002",
+          "deadline": "2026-10-26T20:00:00.000Z",
+          "dedupeKey": "reconfirm:72acd25b-9e0b-8469-bfe5-576bb4c88fb1:00000000-0000-4000-8000-000000000002"
+        },
+        {
+          "type": "Notify15",
+          "userId": "00000000-0000-4000-8000-000000000002",
+          "kind": "series_reconfirm",
+          "params": {
+            "seriesTitle": "Tuesday 5-a-side",
+            "startsAt": "2026-10-27T20:00:00.000Z",
+            "deadline": "2026-10-26T20:00:00.000Z"
+          },
+          "gameId": "72acd25b-9e0b-8469-bfe5-576bb4c88fb1",
+          "seriesId": "00000000-0000-4000-8000-00000000c001",
+          "dedupeKey": "notify:series_reconfirm:72acd25b-9e0b-8469-bfe5-576bb4c88fb1:00000000-0000-4000-8000-000000000002"
+        },
+        {
+          "type": "RequestReconfirm",
+          "gameId": "72acd25b-9e0b-8469-bfe5-576bb4c88fb1",
+          "userId": "00000000-0000-4000-8000-000000000003",
+          "deadline": "2026-10-26T20:00:00.000Z",
+          "dedupeKey": "reconfirm:72acd25b-9e0b-8469-bfe5-576bb4c88fb1:00000000-0000-4000-8000-000000000003"
+        },
+        {
+          "type": "Notify15",
+          "userId": "00000000-0000-4000-8000-000000000003",
+          "kind": "series_reconfirm",
+          "params": {
+            "seriesTitle": "Tuesday 5-a-side",
+            "startsAt": "2026-10-27T20:00:00.000Z",
+            "deadline": "2026-10-26T20:00:00.000Z"
+          },
+          "gameId": "72acd25b-9e0b-8469-bfe5-576bb4c88fb1",
+          "seriesId": "00000000-0000-4000-8000-00000000c001",
+          "dedupeKey": "notify:series_reconfirm:72acd25b-9e0b-8469-bfe5-576bb4c88fb1:00000000-0000-4000-8000-000000000003"
+        }
+      ]
+    },
+    "tags": [
+      "prd-v5:GAME-010"
+    ]
+  },
+  {
+    "name": "t-24h.release-unconfirmed.third-miss-offers-leave.no-card",
+    "kind": "series.autoJoins",
+    "description": "U1 was asked and misses for the 3rd time → leave offer (GAME-011); U2/U3 were never asked → released without a miss",
+    "input": {
+      "series": {
+        "id": "00000000-0000-4000-8000-00000000c001",
+        "title": "Tuesday 5-a-side"
+      },
+      "occurrence": {
+        "seriesId": "00000000-0000-4000-8000-00000000c001",
+        "occurrenceKey": "00000000-0000-4000-8000-00000000c001:0:2026-10-27",
+        "slotDate": "2026-10-27",
+        "scheduleRevision": 0,
+        "gameId": "72acd25b-9e0b-8469-bfe5-576bb4c88fb1",
+        "startsAt": "2026-10-27T20:00:00.000Z",
+        "endsAt": "2026-10-27T21:00:00.000Z",
+        "opensAt": "2026-09-29T20:00:00.000Z",
+        "priorityUntil": "2026-09-30T20:00:00.000Z",
+        "reconfirmAt": "2026-10-25T20:00:00.000Z",
+        "releaseAt": "2026-10-26T20:00:00.000Z",
+        "status": "scheduled",
+        "overridden": false
+      },
+      "autoJoins": [
+        {
+          "gameId": "72acd25b-9e0b-8469-bfe5-576bb4c88fb1",
+          "seriesId": "00000000-0000-4000-8000-00000000c001",
+          "userId": "00000000-0000-4000-8000-000000000002",
+          "joinedAs": "approved",
+          "reconfirmRequestedAt": null,
+          "reconfirmedAt": null,
+          "releasedAt": null
+        },
+        {
+          "gameId": "72acd25b-9e0b-8469-bfe5-576bb4c88fb1",
+          "seriesId": "00000000-0000-4000-8000-00000000c001",
+          "userId": "00000000-0000-4000-8000-000000000001",
+          "joinedAs": "approved",
+          "reconfirmRequestedAt": "2026-10-25T20:00:00.000Z",
+          "reconfirmedAt": null,
+          "releasedAt": null
+        },
+        {
+          "gameId": "72acd25b-9e0b-8469-bfe5-576bb4c88fb1",
+          "seriesId": "00000000-0000-4000-8000-00000000c001",
+          "userId": "00000000-0000-4000-8000-000000000003",
+          "joinedAs": "approved",
+          "reconfirmRequestedAt": null,
+          "reconfirmedAt": null,
+          "releasedAt": null
+        },
+        {
+          "gameId": "72acd25b-9e0b-8469-bfe5-576bb4c88fb1",
+          "seriesId": "00000000-0000-4000-8000-00000000c001",
+          "userId": "00000000-0000-4000-8000-000000000004",
+          "joinedAs": "approved",
+          "reconfirmRequestedAt": null,
+          "reconfirmedAt": "2026-10-25T21:00:00.000Z",
+          "releasedAt": null
+        },
+        {
+          "gameId": "72acd25b-9e0b-8469-bfe5-576bb4c88fb1",
+          "seriesId": "00000000-0000-4000-8000-00000000c001",
+          "userId": "00000000-0000-4000-8000-000000000005",
+          "joinedAs": "approved",
+          "reconfirmRequestedAt": null,
+          "reconfirmedAt": null,
+          "releasedAt": "2026-10-25T21:00:00.000Z"
+        }
+      ],
+      "roster": [
+        {
+          "seriesId": "00000000-0000-4000-8000-00000000c001",
+          "userId": "00000000-0000-4000-8000-000000000001",
+          "status": "regular",
+          "alwaysIn": true,
+          "joinedVia": "invite_link",
+          "consecutiveMisses": 2,
+          "leaveOfferedAt": null,
+          "joinedAt": "2026-09-01T10:00:00.000Z",
+          "leftAt": null
+        },
+        {
+          "seriesId": "00000000-0000-4000-8000-00000000c001",
+          "userId": "00000000-0000-4000-8000-000000000002",
+          "status": "regular",
+          "alwaysIn": true,
+          "joinedVia": "invite_link",
+          "consecutiveMisses": 0,
+          "leaveOfferedAt": null,
+          "joinedAt": "2026-09-02T10:00:00.000Z",
+          "leftAt": null
+        },
+        {
+          "seriesId": "00000000-0000-4000-8000-00000000c001",
+          "userId": "00000000-0000-4000-8000-000000000004",
+          "status": "regular",
+          "alwaysIn": true,
+          "joinedVia": "invite_link",
+          "consecutiveMisses": 0,
+          "leaveOfferedAt": null,
+          "joinedAt": "2026-09-04T10:00:00.000Z",
+          "leftAt": null
+        }
+      ]
+    },
+    "now": "2026-10-26T20:00:00.000Z",
+    "expected": {
+      "effects": [
+        {
+          "type": "ReleaseAutoJoin",
+          "gameId": "72acd25b-9e0b-8469-bfe5-576bb4c88fb1",
+          "userId": "00000000-0000-4000-8000-000000000001",
+          "dedupeKey": "release:72acd25b-9e0b-8469-bfe5-576bb4c88fb1:00000000-0000-4000-8000-000000000001"
+        },
+        {
+          "type": "Notify15",
+          "userId": "00000000-0000-4000-8000-000000000001",
+          "kind": "series_auto_released",
+          "params": {
+            "seriesTitle": "Tuesday 5-a-side",
+            "startsAt": "2026-10-27T20:00:00.000Z"
+          },
+          "gameId": "72acd25b-9e0b-8469-bfe5-576bb4c88fb1",
+          "seriesId": "00000000-0000-4000-8000-00000000c001",
+          "dedupeKey": "notify:series_auto_released:72acd25b-9e0b-8469-bfe5-576bb4c88fb1:00000000-0000-4000-8000-000000000001"
+        },
+        {
+          "type": "UpdateRosterMember",
+          "seriesId": "00000000-0000-4000-8000-00000000c001",
+          "userId": "00000000-0000-4000-8000-000000000001",
+          "patch": {
+            "consecutiveMisses": 3,
+            "leaveOfferedAt": "2026-10-26T20:00:00.000Z"
+          },
+          "dedupeKey": "roster-miss:00000000-0000-4000-8000-00000000c001:00000000-0000-4000-8000-000000000001:72acd25b-9e0b-8469-bfe5-576bb4c88fb1"
+        },
+        {
+          "type": "Notify15",
+          "userId": "00000000-0000-4000-8000-000000000001",
+          "kind": "roster_leave_offer",
+          "params": {
+            "seriesTitle": "Tuesday 5-a-side",
+            "misses": 3
+          },
+          "gameId": null,
+          "seriesId": "00000000-0000-4000-8000-00000000c001",
+          "dedupeKey": "notify:roster_leave_offer:00000000-0000-4000-8000-00000000c001:00000000-0000-4000-8000-000000000001:72acd25b-9e0b-8469-bfe5-576bb4c88fb1"
+        },
+        {
+          "type": "ReleaseAutoJoin",
+          "gameId": "72acd25b-9e0b-8469-bfe5-576bb4c88fb1",
+          "userId": "00000000-0000-4000-8000-000000000002",
+          "dedupeKey": "release:72acd25b-9e0b-8469-bfe5-576bb4c88fb1:00000000-0000-4000-8000-000000000002"
+        },
+        {
+          "type": "Notify15",
+          "userId": "00000000-0000-4000-8000-000000000002",
+          "kind": "series_auto_released",
+          "params": {
+            "seriesTitle": "Tuesday 5-a-side",
+            "startsAt": "2026-10-27T20:00:00.000Z"
+          },
+          "gameId": "72acd25b-9e0b-8469-bfe5-576bb4c88fb1",
+          "seriesId": "00000000-0000-4000-8000-00000000c001",
+          "dedupeKey": "notify:series_auto_released:72acd25b-9e0b-8469-bfe5-576bb4c88fb1:00000000-0000-4000-8000-000000000002"
+        },
+        {
+          "type": "ReleaseAutoJoin",
+          "gameId": "72acd25b-9e0b-8469-bfe5-576bb4c88fb1",
+          "userId": "00000000-0000-4000-8000-000000000003",
+          "dedupeKey": "release:72acd25b-9e0b-8469-bfe5-576bb4c88fb1:00000000-0000-4000-8000-000000000003"
+        },
+        {
+          "type": "Notify15",
+          "userId": "00000000-0000-4000-8000-000000000003",
+          "kind": "series_auto_released",
+          "params": {
+            "seriesTitle": "Tuesday 5-a-side",
+            "startsAt": "2026-10-27T20:00:00.000Z"
+          },
+          "gameId": "72acd25b-9e0b-8469-bfe5-576bb4c88fb1",
+          "seriesId": "00000000-0000-4000-8000-00000000c001",
+          "dedupeKey": "notify:series_auto_released:72acd25b-9e0b-8469-bfe5-576bb4c88fb1:00000000-0000-4000-8000-000000000003"
+        }
+      ]
+    },
+    "tags": [
+      "prd-v5:GAME-011"
+    ]
+  },
+  {
+    "name": "after-start.nothing",
+    "kind": "series.autoJoins",
+    "input": {
+      "series": {
+        "id": "00000000-0000-4000-8000-00000000c001",
+        "title": "Tuesday 5-a-side"
+      },
+      "occurrence": {
+        "seriesId": "00000000-0000-4000-8000-00000000c001",
+        "occurrenceKey": "00000000-0000-4000-8000-00000000c001:0:2026-10-27",
+        "slotDate": "2026-10-27",
+        "scheduleRevision": 0,
+        "gameId": "72acd25b-9e0b-8469-bfe5-576bb4c88fb1",
+        "startsAt": "2026-10-27T20:00:00.000Z",
+        "endsAt": "2026-10-27T21:00:00.000Z",
+        "opensAt": "2026-09-29T20:00:00.000Z",
+        "priorityUntil": "2026-09-30T20:00:00.000Z",
+        "reconfirmAt": "2026-10-25T20:00:00.000Z",
+        "releaseAt": "2026-10-26T20:00:00.000Z",
+        "status": "scheduled",
+        "overridden": false
+      },
+      "autoJoins": [
+        {
+          "gameId": "72acd25b-9e0b-8469-bfe5-576bb4c88fb1",
+          "seriesId": "00000000-0000-4000-8000-00000000c001",
+          "userId": "00000000-0000-4000-8000-000000000002",
+          "joinedAs": "approved",
+          "reconfirmRequestedAt": null,
+          "reconfirmedAt": null,
+          "releasedAt": null
+        },
+        {
+          "gameId": "72acd25b-9e0b-8469-bfe5-576bb4c88fb1",
+          "seriesId": "00000000-0000-4000-8000-00000000c001",
+          "userId": "00000000-0000-4000-8000-000000000001",
+          "joinedAs": "approved",
+          "reconfirmRequestedAt": "2026-10-25T20:00:00.000Z",
+          "reconfirmedAt": null,
+          "releasedAt": null
+        },
+        {
+          "gameId": "72acd25b-9e0b-8469-bfe5-576bb4c88fb1",
+          "seriesId": "00000000-0000-4000-8000-00000000c001",
+          "userId": "00000000-0000-4000-8000-000000000003",
+          "joinedAs": "approved",
+          "reconfirmRequestedAt": null,
+          "reconfirmedAt": null,
+          "releasedAt": null
+        },
+        {
+          "gameId": "72acd25b-9e0b-8469-bfe5-576bb4c88fb1",
+          "seriesId": "00000000-0000-4000-8000-00000000c001",
+          "userId": "00000000-0000-4000-8000-000000000004",
+          "joinedAs": "approved",
+          "reconfirmRequestedAt": null,
+          "reconfirmedAt": "2026-10-25T21:00:00.000Z",
+          "releasedAt": null
+        },
+        {
+          "gameId": "72acd25b-9e0b-8469-bfe5-576bb4c88fb1",
+          "seriesId": "00000000-0000-4000-8000-00000000c001",
+          "userId": "00000000-0000-4000-8000-000000000005",
+          "joinedAs": "approved",
+          "reconfirmRequestedAt": null,
+          "reconfirmedAt": null,
+          "releasedAt": "2026-10-25T21:00:00.000Z"
+        }
+      ],
+      "roster": [
+        {
+          "seriesId": "00000000-0000-4000-8000-00000000c001",
+          "userId": "00000000-0000-4000-8000-000000000001",
+          "status": "regular",
+          "alwaysIn": true,
+          "joinedVia": "invite_link",
+          "consecutiveMisses": 2,
+          "leaveOfferedAt": null,
+          "joinedAt": "2026-09-01T10:00:00.000Z",
+          "leftAt": null
+        },
+        {
+          "seriesId": "00000000-0000-4000-8000-00000000c001",
+          "userId": "00000000-0000-4000-8000-000000000002",
+          "status": "regular",
+          "alwaysIn": true,
+          "joinedVia": "invite_link",
+          "consecutiveMisses": 0,
+          "leaveOfferedAt": null,
+          "joinedAt": "2026-09-02T10:00:00.000Z",
+          "leftAt": null
+        },
+        {
+          "seriesId": "00000000-0000-4000-8000-00000000c001",
+          "userId": "00000000-0000-4000-8000-000000000004",
+          "status": "regular",
+          "alwaysIn": true,
+          "joinedVia": "invite_link",
+          "consecutiveMisses": 0,
+          "leaveOfferedAt": null,
+          "joinedAt": "2026-09-04T10:00:00.000Z",
+          "leftAt": null
+        }
+      ]
+    },
+    "now": "2026-10-27T20:00:00.000Z",
+    "expected": {
+      "effects": []
+    }
+  }
+]

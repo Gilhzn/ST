@@ -1,0 +1,94 @@
+[
+  {
+    "name": "glickman-2012-worked-example",
+    "kind": "rating.glicko2",
+    "description": "Paper: r′ ≈ 1464.06, RD′ ≈ 151.52, σ′ ≈ 0.05999 (numbers rounded to 6 decimals on both sides)",
+    "input": {
+      "player": {
+        "r": 1500,
+        "rd": 200,
+        "sigma": 0.06
+      },
+      "results": [
+        {
+          "opponent": {
+            "r": 1400,
+            "rd": 30
+          },
+          "score": 1
+        },
+        {
+          "opponent": {
+            "r": 1550,
+            "rd": 100
+          },
+          "score": 0
+        },
+        {
+          "opponent": {
+            "r": 1700,
+            "rd": 300
+          },
+          "score": 0
+        }
+      ],
+      "tau": 0.5
+    },
+    "now": "2026-03-01T18:00:00.000Z",
+    "expected": {
+      "r": 1464.050671,
+      "rd": 151.516524,
+      "sigma": 0.059996
+    },
+    "tags": [
+      "prd-v5:GLK-007"
+    ]
+  },
+  {
+    "name": "idle-period.rd-grows.capped-350",
+    "kind": "rating.glicko2",
+    "input": {
+      "player": {
+        "r": 1700,
+        "rd": 349.9,
+        "sigma": 0.06
+      },
+      "results": [],
+      "tau": 0.5,
+      "maxRd": 350
+    },
+    "now": "2026-03-01T18:00:00.000Z",
+    "expected": {
+      "r": 1700,
+      "rd": 350,
+      "sigma": 0.06
+    }
+  },
+  {
+    "name": "draw-between-equals.r-unchanged",
+    "kind": "rating.glicko2",
+    "input": {
+      "player": {
+        "r": 1620,
+        "rd": 80,
+        "sigma": 0.06
+      },
+      "results": [
+        {
+          "opponent": {
+            "r": 1620,
+            "rd": 80
+          },
+          "score": 0.5
+        }
+      ],
+      "tau": 0.5
+    },
+    "now": "2026-03-01T18:00:00.000Z",
+    "expected": {
+      "r": 1620,
+      "rd": 78.707297,
+      "sigma": 0.059997
+    }
+  }
+]

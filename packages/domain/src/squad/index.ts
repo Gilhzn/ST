@@ -19,7 +19,9 @@
 import {
   SCARCE_POSITIONS,
   SPORT_POSITIONS,
+  type PeerSkillSummary,
   type PositionId,
+  type SkillRating,
   type SportId,
   type Stars,
   type UserId,
@@ -336,4 +338,45 @@ export function balanceTeams(players: readonly SquadPlayer[], opts: BalanceOptio
     }
   }
   return summarize(prep, opts, bestTeamOf);
+}
+
+/** Where a balancing rating came from (GLK-006). */
+export type SquadRatingSource = 'glicko' | 'peer' | 'self';
+
+export interface SkillSources {
+  /** The player's Glicko rating for the game's sport and format family (see `currentSkillRating`). */
+  skill?: Pick<SkillRating, 'r' | 'provisional'> | null;
+  /** The player's peer summary for the sport. */
+  peer?: Pick<PeerSkillSummary, 'attributes'> | null;
+  /** The host's private correction (GAME-060), applied last. */
+  hostAdjustment?: number;
+}
+
+/**
+ * GLK-006: the balancing rating on the 1–5 scale. A non-provisional Glicko
+ * rating wins (`3 + (r − 1500) / 300`, so level 0 ≈ 1 and level 6 ≈ 5); else
+ * the peer overall mean when it rests on at least one rating (it already
+ * carries the self prior); else the self-assessment ({@link ratingFromUserSport}).
+ * The host adjustment is added and the result clamped to 1–5.
+ */
+export function squadRating(us: UserSport | null | undefined, sources: SkillSources = {}): { rating: number; source: SquadRatingSource } {
+  let rating: number;
+  let source: SquadRatingSource;
+  const overall = sources.peer?.attributes.overall;
+  if (sources.skill && !sources.skill.provisional) {
+    rating = 3 + (sources.skill.r - 1500) / 300;
+    source = 'glicko';
+  } else if (overall && overall.ratingsUsed > 0) {
+    rating = overall.mean;
+    source = 'peer';
+  } else {
+    rating = ratingFromUserSport(us);
+    source = 'self';
+  }
+  return { rating: Math.min(5, Math.max(1, rating + (sources.hostAdjustment ?? 0))), source };
+}
+
+/** {@link toSquadPlayer} using {@link squadRating} (Glicko → peer → self). */
+export function toSquadPlayerWithSkill(userId: UserId, us: UserSport | null | undefined, sources: SkillSources = {}): SquadPlayer {
+  return { userId, rating: squadRating(us, sources).rating, positions: us ? [...us.positions] : [] };
 }
