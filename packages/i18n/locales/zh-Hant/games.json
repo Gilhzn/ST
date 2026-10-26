@@ -85,7 +85,8 @@
       "formatVs": "{a} 對 {b}",
       "singles": "單打",
       "doubles": "雙打",
-      "teamCount": "隊伍數量"
+      "teamCount": "隊伍數量",
+      "subtitle": "選一項運動，下一步再設定賽制。"
     },
     "where": {
       "title": "要在哪裡打？",
@@ -96,7 +97,8 @@
       "venueNameHint": "幫這個地點取個名字，方便球友找到。",
       "hideExactLabel": "在我核准球友之前隱藏確切位置",
       "hideExactHelp": "球友會先看到大致區域。你核准後，再分享確切地點。",
-      "pinHere": "將目前的地圖區域用作集合地點"
+      "pinHere": "將目前的地圖區域用作集合地點",
+      "subtitle": "選擇附近的場地，或在地圖上放置標記。"
     },
     "when": {
       "title": "什麼時候？",
@@ -104,7 +106,8 @@
       "start": "開始時間",
       "duration": "時間長度",
       "repeatWeekly": "每週重複",
-      "comingSoon": "即將推出"
+      "comingSoon": "即將推出",
+      "subtitle": "選擇日期和開始時間。"
     },
     "who": {
       "title": "誰可以加入？",
@@ -129,14 +132,19 @@
       "minPlayers": "最少人數",
       "minPlayersHelp": "{count, plural, other {至少有 # 位球友時，比賽才會進行。}}",
       "fewerMin": "降低最少人數",
-      "moreMin": "提高最少人數"
+      "moreMin": "提高最少人數",
+      "subtitle": "設定人數，以及誰能找到你的球局。"
     },
     "deposit": {
       "title": "保證金（選填）",
       "toggle": "收取保證金",
       "amount": "保證金金額",
       "explain": "球友會預先授權 {amount} 的可退還保證金。報到後釋放，若球友未到場則會扣留。",
-      "currencyNote": "幣別依場地所在的國家或地區而定。"
+      "currencyNote": "幣別依場地所在的國家或地區而定。",
+      "subtitle": "小額、可退還的預授權能讓放鴿子變得很少見。",
+      "none": "無",
+      "custom": "其他",
+      "noneHelp": "球員不需預授權就能加入，你仍看得到他們的可靠度。"
     },
     "review": {
       "title": "確認比賽資訊",
@@ -147,7 +155,8 @@
       "whenValue": "{start} · {duration}",
       "whoValue": "{capacity, plural, other {# 位球友}}（最少 {min} 位）· {visibility}",
       "noDeposit": "無保證金",
-      "editA11y": "編輯{section}"
+      "editA11y": "編輯{section}",
+      "subtitle": "球員看到的球局就是這樣。"
     },
     "published": {
       "title": "你的比賽已發布",
@@ -156,7 +165,8 @@
       "copyLink": "複製連結",
       "linkCopied": "已複製連結。",
       "showQr": "顯示 QR 碼",
-      "viewGame": "查看比賽"
+      "viewGame": "查看比賽",
+      "body": "附近的球員現在就找得到。分享出去，名額會更快滿。"
     },
     "discard": {
       "title": "要捨棄草稿嗎？",
@@ -204,7 +214,11 @@
       "badge": "主辦人",
       "approved": "已核准該球友。",
       "waitlisted": "比賽已額滿，該球友已進入候補名單。",
-      "rejected": "已拒絕該申請。"
+      "rejected": "已拒絕該申請。",
+      "title": "主揪",
+      "since": "{date} 加入",
+      "approveA11y": "核准 {name}",
+      "rejectA11y": "婉拒 {name}"
     },
     "facts": {
       "players": "{joined}/{capacity} 位球友",
@@ -212,7 +226,13 @@
       "deposit": "保證金 {amount}",
       "womenOnly": "僅限女性",
       "private": "私人比賽",
-      "format": "賽制：{format}"
+      "format": "賽制：{format}",
+      "liveNow": "進行中",
+      "over": "已結束",
+      "playersLabel": "球員",
+      "starts": "開始",
+      "duration": "時長",
+      "startsIn": "距離開始"
     },
     "sections": {
       "players": "球友",
@@ -278,7 +298,12 @@
       "flash": "比賽即將開始，所以候補名單中的所有人都收到了這個邀請。最先接受的人將獲得名額。",
       "acceptWithin": "請在{duration}內接受（截止 {time}）。",
       "accept": "保留名額",
-      "accepted": "你已加入，到時見。"
+      "accepted": "你已加入，到時見。",
+      "flashTag": "限時邀約"
+    },
+    "until": "至 {time}",
+    "players": {
+      "toggle": "{count, plural, other {# 位球員。顯示或隱藏名單。}}"
     }
   },
   "invite": {
@@ -286,7 +311,9 @@
     "join": "加入",
     "signUpToJoin": "註冊後加入",
     "expired": "這個邀請已過期，請向主辦人索取新的連結。",
-    "signedOutBody": "登入或建立帳號，即可查看並加入這場比賽。"
+    "signedOutBody": "登入或建立帳號，即可查看並加入這場比賽。",
+    "from": "{name} 邀請你來打球",
+    "hint": "主揪會逐一核准球員。你一通過我們就會通知你。"
   },
   "teams": {
     "title": "分隊",
@@ -354,6 +381,19 @@
       "cancelled": "已取消",
       "checkedIn": "已報到",
       "noShow": "未到場"
+    },
+    "subtitle": "{count, plural, =0 {目前沒有即將開始的球局} other {# 場即將開始的球局}}",
+    "section": {
+      "today": "今天",
+      "tomorrow": "明天",
+      "thisWeek": "本週",
+      "later": "之後",
+      "pastWeek": "本週",
+      "earlier": "更早"
     }
+  },
+  "card": {
+    "areaOnly": "核准後顯示確切位置",
+    "pinnedSpot": "地圖上的集合點"
   }
 }

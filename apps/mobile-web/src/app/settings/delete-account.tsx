@@ -1,12 +1,12 @@
-import { Screen } from '@/components/Screen';
 import { DeleteAccountFlow } from '@/features/settings/DeleteAccountFlow';
+import { SettingsFrame } from '@/features/settings/SettingsFrame';
 import { useT } from '@/i18n';
 
 export default function DeleteAccountScreen() {
   const { t } = useT();
   return (
-    <Screen title={t('settings:delete.title')} testID="screen.settings.delete" backFallback="/settings">
+    <SettingsFrame title={t('settings:delete.title')} testID="screen.settings.delete">
       <DeleteAccountFlow />
-    </Screen>
+    </SettingsFrame>
   );
 }

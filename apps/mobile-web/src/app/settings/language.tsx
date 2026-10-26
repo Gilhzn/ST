@@ -1,4 +1,4 @@
-import { Screen } from '@/components/Screen';
+import { SettingsFrame } from '@/features/settings/SettingsFrame';
 import { LanguagePicker } from '@/features/settings/LanguagePicker';
 import { useT } from '@/i18n';
 
@@ -6,8 +6,8 @@ import { useT } from '@/i18n';
 export default function LanguageScreen() {
   const { t } = useT();
   return (
-    <Screen title={t('settings:language.title')} testID="screen.settings.language" backFallback="/settings">
-      <LanguagePicker showTitle={false} />
-    </Screen>
+    <SettingsFrame title={t('settings:language.title')} testID="screen.settings.language">
+      <LanguagePicker />
+    </SettingsFrame>
   );
 }

@@ -85,7 +85,8 @@
       "formatVs": "{a} vs {b}",
       "singles": "Singles",
       "doubles": "Doubles",
-      "teamCount": "Number of teams"
+      "teamCount": "Number of teams",
+      "subtitle": "Pick one. You can set the format next."
     },
     "where": {
       "title": "Where will you play?",
@@ -96,7 +97,8 @@
       "venueNameHint": "Name the place so players can find it.",
       "hideExactLabel": "Hide exact location until I approve players",
       "hideExactHelp": "Players see the area first. You share the exact spot after you approve them.",
-      "pinHere": "Use the current map area as the meeting point"
+      "pinHere": "Use the current map area as the meeting point",
+      "subtitle": "Choose a venue near you or drop a pin."
     },
     "when": {
       "title": "When?",
@@ -104,7 +106,8 @@
       "start": "Start time",
       "duration": "Duration",
       "repeatWeekly": "Repeat weekly",
-      "comingSoon": "Coming soon"
+      "comingSoon": "Coming soon",
+      "subtitle": "Pick a day and a start time."
     },
     "who": {
       "title": "Who can join?",
@@ -129,14 +132,19 @@
       "minPlayers": "Minimum players",
       "minPlayersHelp": "{count, plural, one {The game goes ahead with at least # player.} other {The game goes ahead with at least # players.}}",
       "fewerMin": "Lower the minimum",
-      "moreMin": "Raise the minimum"
+      "moreMin": "Raise the minimum",
+      "subtitle": "Set the numbers and who can find your game."
     },
     "deposit": {
       "title": "Deposit (optional)",
       "toggle": "Ask for a deposit",
       "amount": "Deposit amount",
       "explain": "Players place a refundable hold of {amount}. It’s released after check-in and kept if they don’t show.",
-      "currencyNote": "The currency follows the venue’s country."
+      "currencyNote": "The currency follows the venue’s country.",
+      "subtitle": "A small refundable hold makes no-shows rare.",
+      "none": "None",
+      "custom": "Other",
+      "noneHelp": "Players join without a hold. You can still see their reliability."
     },
     "review": {
       "title": "Review your game",
@@ -147,7 +155,8 @@
       "whenValue": "{start} · {duration}",
       "whoValue": "{capacity, plural, one {# player} other {# players}} (min. {min}) · {visibility}",
       "noDeposit": "No deposit",
-      "editA11y": "Edit {section}"
+      "editA11y": "Edit {section}",
+      "subtitle": "This is how players will see your game."
     },
     "published": {
       "title": "Your game is live",
@@ -156,7 +165,8 @@
       "copyLink": "Copy link",
       "linkCopied": "Link copied.",
       "showQr": "Show QR code",
-      "viewGame": "View game"
+      "viewGame": "View game",
+      "body": "Players nearby can find it now. Share it to fill the spots faster."
     },
     "discard": {
       "title": "Discard draft?",
@@ -204,7 +214,11 @@
       "badge": "Host",
       "approved": "Player approved.",
       "waitlisted": "The game is full, so the player is on the waitlist.",
-      "rejected": "Request declined."
+      "rejected": "Request declined.",
+      "title": "Your host",
+      "since": "Member since {date}",
+      "approveA11y": "Approve {name}",
+      "rejectA11y": "Decline {name}"
     },
     "facts": {
       "players": "{joined} of {capacity} players",
@@ -212,7 +226,13 @@
       "deposit": "{amount} deposit",
       "womenOnly": "Women only",
       "private": "Private game",
-      "format": "Format: {format}"
+      "format": "Format: {format}",
+      "liveNow": "Live now",
+      "over": "Ended",
+      "playersLabel": "Players",
+      "starts": "Starts",
+      "duration": "Duration",
+      "startsIn": "Starts in"
     },
     "sections": {
       "players": "Players",
@@ -278,7 +298,12 @@
       "flash": "The game starts soon, so everyone on the waitlist got this offer. The first to accept gets the spot.",
       "acceptWithin": "Accept within {duration} (until {time}).",
       "accept": "Take the spot",
-      "accepted": "You’re in. See you there."
+      "accepted": "You’re in. See you there.",
+      "flashTag": "Flash offer"
+    },
+    "until": "until {time}",
+    "players": {
+      "toggle": "{count, plural, one {# player. Show or hide the list.} other {# players. Show or hide the list.}}"
     }
   },
   "invite": {
@@ -286,7 +311,9 @@
     "join": "Join",
     "signUpToJoin": "Sign up to join",
     "expired": "This invite has expired. Ask the host for a new link.",
-    "signedOutBody": "Sign in or create an account to see this game and join it."
+    "signedOutBody": "Sign in or create an account to see this game and join it.",
+    "from": "{name} invited you to play",
+    "hint": "The host approves each player. We’ll let you know as soon as you’re in."
   },
   "teams": {
     "title": "Teams",
@@ -354,6 +381,19 @@
       "cancelled": "Cancelled",
       "checkedIn": "Checked in",
       "noShow": "No-show"
+    },
+    "subtitle": "{count, plural, =0 {Nothing coming up yet} one {# upcoming game} other {# upcoming games}}",
+    "section": {
+      "today": "Today",
+      "tomorrow": "Tomorrow",
+      "thisWeek": "This week",
+      "later": "Later",
+      "pastWeek": "This week",
+      "earlier": "Earlier"
     }
+  },
+  "card": {
+    "areaOnly": "Exact spot after approval",
+    "pinnedSpot": "Meeting point on the map"
   }
 }

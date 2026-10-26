@@ -85,7 +85,8 @@
       "formatVs": "{a} contra {b}",
       "singles": "Individuales",
       "doubles": "Dobles",
-      "teamCount": "Número de equipos"
+      "teamCount": "Número de equipos",
+      "subtitle": "Elige uno. El formato lo eliges después."
     },
     "where": {
       "title": "¿Dónde vais a jugar?",
@@ -96,7 +97,8 @@
       "venueNameHint": "Ponle nombre al sitio para que los jugadores lo encuentren.",
       "hideExactLabel": "Ocultar la ubicación exacta hasta que apruebe a los jugadores",
       "hideExactHelp": "Los jugadores ven primero la zona. Compartes el punto exacto cuando los apruebas.",
-      "pinHere": "Usar la zona actual del mapa como punto de encuentro"
+      "pinHere": "Usar la zona actual del mapa como punto de encuentro",
+      "subtitle": "Elige una cancha cercana o marca un punto."
     },
     "when": {
       "title": "¿Cuándo?",
@@ -104,7 +106,8 @@
       "start": "Hora de inicio",
       "duration": "Duración",
       "repeatWeekly": "Repetir cada semana",
-      "comingSoon": "Próximamente"
+      "comingSoon": "Próximamente",
+      "subtitle": "Elige un día y una hora de inicio."
     },
     "who": {
       "title": "¿Quién puede unirse?",
@@ -129,14 +132,19 @@
       "minPlayers": "Mínimo de jugadores",
       "minPlayersHelp": "{count, plural, one {El partido se juega con al menos # jugador.} many {El partido se juega con al menos # de jugadores.} other {El partido se juega con al menos # jugadores.}}",
       "fewerMin": "Bajar el mínimo",
-      "moreMin": "Subir el mínimo"
+      "moreMin": "Subir el mínimo",
+      "subtitle": "Define las cifras y quién puede encontrar tu partido."
     },
     "deposit": {
       "title": "Depósito (opcional)",
       "toggle": "Pedir un depósito",
       "amount": "Importe del depósito",
       "explain": "Los jugadores hacen una retención reembolsable de {amount}. Se libera tras el check-in y se conserva si no se presentan.",
-      "currencyNote": "La moneda depende del país del lugar."
+      "currencyNote": "La moneda depende del país del lugar.",
+      "subtitle": "Una pequeña retención reembolsable hace que casi nadie falte.",
+      "none": "Ninguno",
+      "custom": "Otro",
+      "noneHelp": "Los jugadores se unen sin retención. Igualmente ves su fiabilidad."
     },
     "review": {
       "title": "Revisa tu partido",
@@ -147,7 +155,8 @@
       "whenValue": "{start} · {duration}",
       "whoValue": "{capacity, plural, one {# jugador} many {# de jugadores} other {# jugadores}} (mín. {min}) · {visibility}",
       "noDeposit": "Sin depósito",
-      "editA11y": "Editar {section}"
+      "editA11y": "Editar {section}",
+      "subtitle": "Así verán tu partido los jugadores."
     },
     "published": {
       "title": "Tu partido ya está publicado",
@@ -156,7 +165,8 @@
       "copyLink": "Copiar enlace",
       "linkCopied": "Enlace copiado.",
       "showQr": "Mostrar código QR",
-      "viewGame": "Ver partido"
+      "viewGame": "Ver partido",
+      "body": "Los jugadores cercanos ya pueden encontrarlo. Compártelo para llenar las plazas antes."
     },
     "discard": {
       "title": "¿Descartar el borrador?",
@@ -204,7 +214,11 @@
       "badge": "Organizador",
       "approved": "Jugador aprobado.",
       "waitlisted": "El partido está completo, así que el jugador queda en la lista de espera.",
-      "rejected": "Solicitud rechazada."
+      "rejected": "Solicitud rechazada.",
+      "title": "Organiza",
+      "since": "Miembro desde {date}",
+      "approveA11y": "Aprobar a {name}",
+      "rejectA11y": "Rechazar a {name}"
     },
     "facts": {
       "players": "{joined} de {capacity} jugadores",
@@ -212,7 +226,13 @@
       "deposit": "Depósito de {amount}",
       "womenOnly": "Solo mujeres",
       "private": "Partido privado",
-      "format": "Formato: {format}"
+      "format": "Formato: {format}",
+      "liveNow": "En directo",
+      "over": "Terminado",
+      "playersLabel": "Jugadores",
+      "starts": "Empieza",
+      "duration": "Duración",
+      "startsIn": "Empieza en"
     },
     "sections": {
       "players": "Jugadores",
@@ -278,7 +298,12 @@
       "flash": "El partido empieza pronto, así que todos los de la lista de espera han recibido esta oferta. Quien acepte primero se queda la plaza.",
       "acceptWithin": "Acepta en {duration} (hasta las {time}).",
       "accept": "Quedarme con la plaza",
-      "accepted": "Estás dentro. Nos vemos allí."
+      "accepted": "Estás dentro. Nos vemos allí.",
+      "flashTag": "Oferta flash"
+    },
+    "until": "hasta las {time}",
+    "players": {
+      "toggle": "{count, plural, one {# jugador. Mostrar u ocultar la lista.} many {# de jugadores. Mostrar u ocultar la lista.} other {# jugadores. Mostrar u ocultar la lista.}}"
     }
   },
   "invite": {
@@ -286,7 +311,9 @@
     "join": "Unirme",
     "signUpToJoin": "Regístrate para unirte",
     "expired": "Esta invitación ha caducado. Pide un enlace nuevo al organizador.",
-    "signedOutBody": "Inicia sesión o crea una cuenta para ver este partido y unirte."
+    "signedOutBody": "Inicia sesión o crea una cuenta para ver este partido y unirte.",
+    "from": "{name} te ha invitado a jugar",
+    "hint": "Quien organiza aprueba a cada jugador. Te avisaremos en cuanto estés dentro."
   },
   "teams": {
     "title": "Equipos",
@@ -354,6 +381,19 @@
       "cancelled": "Cancelado",
       "checkedIn": "Check-in hecho",
       "noShow": "No se presentó"
+    },
+    "subtitle": "{count, plural, =0 {Aún no tienes partidos próximos} one {# partido próximo} many {# de partidos próximos} other {# partidos próximos}}",
+    "section": {
+      "today": "Hoy",
+      "tomorrow": "Mañana",
+      "thisWeek": "Esta semana",
+      "later": "Más adelante",
+      "pastWeek": "Esta semana",
+      "earlier": "Anteriores"
     }
+  },
+  "card": {
+    "areaOnly": "Ubicación exacta tras la aprobación",
+    "pinnedSpot": "Punto de encuentro en el mapa"
   }
 }

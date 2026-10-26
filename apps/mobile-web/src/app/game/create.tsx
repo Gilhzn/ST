@@ -1,36 +1,66 @@
 /**
- * Create Game wizard (design §13.5): Sport → Where → When → Who → Deposit →
- * Review, with a mirrored stepper ("Step 2 of 5"), inline validation per step,
- * a local draft, a discard prompt, and a share step after publishing.
+ * Create Game wizard (design v2 §15.5): full-screen modal with a close button, "Step 2 of 5"
+ * and a segmented progress bar (mirrors). Sport tiles → venue cards (or a dropped pin) →
+ * calendar day tiles, time and duration → big capacity / minimum steppers, visibility cards and
+ * explained switches → deposit tiers → a review card with per-row Edit. Publishing shows a
+ * success illustration with the game card and share actions (success haptic). Inline validation
+ * per step, a local autosaved draft and a discard prompt.
  */
 import { SPORT_IDS, type GameDetail, type LatLng, type NearbyVenue, type SportId } from '@st/domain';
-import { BidiText, Button, Card, EmptyState, isolate, radius, Row, spacing, Stack, Text, TextField, useTheme } from '@st/ui';
+import {
+  BidiText,
+  Button,
+  Card,
+  EmptyState,
+  Haptics,
+  Icon,
+  IconButton,
+  Illustration,
+  isolate,
+  ListGroup,
+  ListItem,
+  radius,
+  Segmented,
+  spacing,
+  SportGlyphBadge,
+  StatusPill,
+  Text,
+  TextField,
+  usePressScale,
+  useTheme,
+  type IconName,
+} from '@st/ui';
 import * as Clipboard from 'expo-clipboard';
 import { router, useLocalSearchParams } from 'expo-router';
 import { useEffect, useMemo, useRef, useState, type ReactNode } from 'react';
-import { AccessibilityInfo, Linking, Platform, Pressable, Switch, View } from 'react-native';
+import { AccessibilityInfo, Animated, Linking, Platform, Pressable, ScrollView, Switch, View } from 'react-native';
 
 import { ChoiceChip } from '@/components/ChoiceChip';
 import { ConfirmDialog } from '@/components/ConfirmDialog';
-import { Icon } from '@/components/Icon';
+import { GameCard } from '@/components/GameCard';
 import { goBack, Screen } from '@/components/Screen';
 import { SelectField } from '@/components/SelectField';
-import { InlineError, Skeleton } from '@/components/States';
+import { Banner, InlineError, Skeleton } from '@/components/States';
+import { SportTile } from '@/components/SportTile';
 import { useToast } from '@/components/Toast';
 import { useData } from '@/data/DataProvider';
 import { DEFAULT_MAP_CENTER } from '@/features/map/cities';
+import { compactMinutes } from '@/features/game/DetailsParts';
 import { useAction, useAsync } from '@/hooks/useAsync';
 import { useT } from '@/i18n';
 import { currencyForCountry } from '@/lib/currency';
 import { deviceRegion } from '@/lib/device';
-import { currencyDigits, formatDate, formatDateTime, formatDistance, formatDuration, formatMoney, formatTime, usesMiles } from '@/lib/format';
+import { currencyDigits, formatDate, formatDateTime, formatDistance, formatDuration, formatList, formatMoney, formatNumber, formatTime, usesMiles } from '@/lib/format';
 import { getCurrentPosition, getLocationPermission } from '@/platform/location';
 import { getPref, PrefKeys, setPref } from '@/state/prefs';
 import { useSession } from '@/state/session';
 
 const STEPS = ['sport', 'where', 'when', 'who', 'deposit'] as const;
 const DURATIONS = [60, 90, 120];
-const DAYS = [0, 1, 2, 3, 4, 5, 6];
+const DAYS = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13];
+const QUICK_TIMES = ['07:00', '12:00', '18:00', '19:30', '21:00'];
+/** Deposit tiers in major units of the venue currency (plus None and Custom). */
+const DEPOSIT_TIERS = ['10', '20', '50'];
 
 /** Capacity range and defaults per sport (host included). */
 const CAPACITY: Record<SportId, { min: number; max: number; def: number; teams: number }> = {
@@ -114,6 +144,7 @@ export default function CreateGameScreen() {
   const [discard, setDiscard] = useState(false);
   const [center, setCenter] = useState<LatLng>(DEFAULT_MAP_CENTER);
   const [published, setPublished] = useState<GameDetail | null>(null);
+  const [customDeposit, setCustomDeposit] = useState(false);
   const restored = useRef(false);
   const miles = useMemo(() => usesMiles(deviceRegion()), []);
 
@@ -223,6 +254,10 @@ export default function CreateGameScreen() {
     else if (draft.sport && !published) setDiscard(true);
     else goBack('/map');
   };
+  const close = () => {
+    if (draft.sport && !published) setDiscard(true);
+    else goBack('/map');
+  };
 
   if (hostSuspended) {
     return (
@@ -241,153 +276,206 @@ export default function CreateGameScreen() {
   if (published) {
     const url = `${Platform.OS === 'web' && typeof window !== 'undefined' ? window.location.origin : 'https://sporttalent.app'}/invite/${published.inviteToken ?? ''}`;
     return (
-      <Screen testID="screen.game.create.done" title={t('games:wizard.published.title')} back={false}>
-        <Stack gap="lg">
-          <Card accentEdge>
-            <Stack gap="xs">
-              <Text variant="label" color="textSecondary">
-                {t(`common:sports.${published.sport}`)}
-              </Text>
-              <BidiText variant="title2">{published.title}</BidiText>
-              <Text variant="body" color="textSecondary">
-                {isolate(formatDateTime(published.startsAt, locale), 'ltr')}
-              </Text>
-            </Stack>
-          </Card>
-          <Text variant="title3">{t('games:wizard.published.shareTitle')}</Text>
-          <Row gap="sm" wrap>
-            <Button
-              testID="game.create.share.whatsapp"
-              variant="secondary"
-              label={t('games:wizard.published.whatsapp')}
-              onPress={() => void Linking.openURL(`https://wa.me/?text=${encodeURIComponent(`${published.title} ${url}`)}`)}
-            />
-            <Button
-              testID="game.create.share.copy"
-              variant="secondary"
-              label={t('games:wizard.published.copyLink')}
-              onPress={async () => {
-                await Clipboard.setStringAsync(url);
-                toast(t('games:wizard.published.linkCopied'));
-              }}
-            />
-          </Row>
-          <Button testID="game.create.view" size="lg" fullWidth label={t('games:wizard.published.viewGame')} onPress={() => router.replace(`/game/${published.id}`)} />
-        </Stack>
+      <Screen
+        testID="screen.game.create.done"
+        back={false}
+        contentStyle={{ gap: spacing.xl, paddingTop: spacing.xl }}
+        footer={<Button testID="game.create.view" size="lg" fullWidth iconEnd="ArrowRight" label={t('games:wizard.published.viewGame')} onPress={() => router.replace(`/game/${published.id}`)} />}
+      >
+        <View style={{ alignItems: 'center', gap: spacing.md }}>
+          <Illustration name="success" size={160} />
+          <Text variant="title1" align="center" role="heading" aria-level={1}>
+            {t('games:wizard.published.title')}
+          </Text>
+          <Text variant="callout" color="textSecondary" align="center" style={{ maxWidth: 340 }}>
+            {t('games:wizard.published.body')}
+          </Text>
+        </View>
+        <GameCard game={{ ...published, approvedCount: published.approvedCount, waitlistCount: published.waitlistCount }} now={Date.now()} />
+        <View style={{ gap: spacing.sm }}>
+          <Text variant="overline" color="textTertiary">
+            {t('games:wizard.published.shareTitle')}
+          </Text>
+          <View style={{ flexDirection: 'row', gap: spacing.sm }}>
+            <View style={{ flex: 1 }}>
+              <Button
+                testID="game.create.share.whatsapp"
+                variant="secondary"
+                fullWidth
+                icon="WhatsappLogo"
+                label={t('games:wizard.published.whatsapp')}
+                onPress={() => void Linking.openURL(`https://wa.me/?text=${encodeURIComponent(`${published.title} ${url}`)}`)}
+              />
+            </View>
+            <View style={{ flex: 1 }}>
+              <Button
+                testID="game.create.share.copy"
+                variant="secondary"
+                fullWidth
+                icon="Copy"
+                label={t('games:wizard.published.copyLink')}
+                onPress={async () => {
+                  await Clipboard.setStringAsync(url);
+                  Haptics.selection();
+                  toast(t('games:wizard.published.linkCopied'), 'success');
+                }}
+              />
+            </View>
+          </View>
+        </View>
       </Screen>
     );
   }
 
   const isReview = step === STEPS.length;
-  const progress = Math.min(1, (step + 1) / (STEPS.length + 1));
+  const stepLabel = isReview ? t('games:wizard.review.title') : t('games:wizard.stepOf', { current: step + 1, total: STEPS.length });
 
-  const footer = (
-    <Stack gap="sm">
-      {showErrors && stepError ? (
-        <Text variant="callout" color="dangerText" accessibilityLiveRegion="polite" testID="game.create.error">
-          {stepError}
-        </Text>
-      ) : null}
-      <InlineError error={publish.error} />
-      <Row gap="sm">
-        <Button testID="game.create.back" variant="secondary" label={t('common:actions.back')} onPress={back} />
-        <View style={{ flex: 1 }} />
-        {isReview ? (
-          <Button
-            testID="game.create.publish"
-            size="lg"
-            label={t('games:wizard.review.publish')}
-            loading={publish.busy}
-            loadingLabel={t('games:wizard.review.publishing')}
-            onPress={async () => {
-              const g = await publish.run();
-              if (g) setPublished(g);
-            }}
-          />
-        ) : (
-          <Button testID="game.create.next" size="lg" label={t('common:actions.next')} onPress={next} />
-        )}
-      </Row>
-    </Stack>
+  const header = (
+    <View style={{ width: '100%', maxWidth: 760, alignSelf: 'center', paddingStart: spacing.sm, paddingEnd: spacing.lg, paddingBottom: spacing.sm, gap: spacing.sm }}>
+      <View style={{ flexDirection: 'row', alignItems: 'center', gap: spacing.xs, minHeight: 52 }}>
+        <IconButton testID="nav.back" icon="X" label={t('common:actions.close')} color="text" onPress={close} />
+        <View style={{ flex: 1, alignItems: 'center' }}>
+          <Text variant="headline" role="heading" aria-level={1}>
+            {t('games:wizard.title')}
+          </Text>
+          <Text variant="caption" color="textSecondary" aria-live="polite" testID="game.create.step">
+            {stepLabel}
+          </Text>
+        </View>
+        <View style={{ width: 44 }} />
+      </View>
+      <View
+        role="progressbar"
+        aria-label={stepLabel}
+        aria-valuemin={0}
+        aria-valuemax={STEPS.length + 1}
+        aria-valuenow={step + 1}
+        style={{ flexDirection: 'row', gap: spacing.xs, paddingStart: spacing.sm }}
+      >
+        {[...STEPS, 'review'].map((name, i) => (
+          <View key={name} style={{ flex: 1, height: 4, borderRadius: 2, backgroundColor: i <= step ? theme.colors.primary : theme.colors.surfaceSunken }} />
+        ))}
+      </View>
+    </View>
   );
 
-  return (
-    <Screen testID="screen.game.create" title={t('games:wizard.title')} backFallback="/map" footer={footer}>
-      <Stack gap="xs">
-        <Text variant="label" color="textSecondary" accessibilityLiveRegion="polite" testID="game.create.step">
-          {isReview ? t('games:wizard.review.title') : t('games:wizard.stepOf', { current: step + 1, total: STEPS.length })}
-        </Text>
-        <View
-          accessibilityRole="progressbar"
-          accessibilityValue={{ min: 0, max: STEPS.length + 1, now: step + 1 }}
-          style={{ height: 6, borderRadius: radius.pill, backgroundColor: theme.colors.surfaceSunken, flexDirection: 'row', overflow: 'hidden' }}
-        >
-          <View style={{ width: `${progress * 100}%`, backgroundColor: theme.colors.primary }} />
+  const footer = (
+    <>
+      {showErrors && stepError ? (
+        <View style={{ flexDirection: 'row', alignItems: 'center', gap: spacing.xs }}>
+          <Icon name="WarningCircle" size={16} weight="bold" color="dangerText" />
+          <Text variant="footnote" color="dangerText" aria-live="polite" testID="game.create.error" style={{ flex: 1 }}>
+            {stepError}
+          </Text>
         </View>
-      </Stack>
+      ) : null}
+      <InlineError error={publish.error} />
+      <View style={{ flexDirection: 'row', gap: spacing.sm }}>
+        <Button testID="game.create.back" variant="outline" size="lg" icon="ArrowLeft" label={t('common:actions.back')} onPress={back} />
+        <View style={{ flex: 1 }}>
+          {isReview ? (
+            <Button
+              testID="game.create.publish"
+              size="lg"
+              fullWidth
+              icon="Confetti"
+              haptic="publishGame"
+              label={t('games:wizard.review.publish')}
+              loading={publish.busy}
+              loadingLabel={t('games:wizard.review.publishing')}
+              onPress={async () => {
+                const g = await publish.run();
+                if (g) setPublished(g);
+              }}
+            />
+          ) : (
+            <Button testID="game.create.next" size="lg" fullWidth iconEnd="ArrowRight" label={t('common:actions.next')} onPress={next} />
+          )}
+        </View>
+      </View>
+    </>
+  );
 
+  const depositTier = !draft.depositOn ? 'none' : customDeposit || !DEPOSIT_TIERS.includes(draft.deposit) ? 'custom' : draft.deposit;
+  const money = (major: number) => {
+    try {
+      return new Intl.NumberFormat(locale, { style: 'currency', currency, maximumFractionDigits: 0, minimumFractionDigits: 0 }).format(major);
+    } catch {
+      return formatMoney(major * 10 ** currencyDigits(currency, locale), currency, locale);
+    }
+  };
+
+  return (
+    <Screen testID="screen.game.create" header={header} footer={footer} contentStyle={{ gap: spacing.xl, paddingTop: spacing.lg }}>
       {step === 0 ? (
-        <Stack gap="lg">
-          <Text variant="title2">{t('games:wizard.sport.title')}</Text>
-          <Row gap="sm" wrap accessibilityRole="radiogroup">
+        <>
+          <StepTitle title={t('games:wizard.sport.title')} subtitle={t('games:wizard.sport.subtitle')} />
+          <View role="radiogroup" aria-label={t('games:wizard.stepName.sport')} style={{ flexDirection: 'row', flexWrap: 'wrap', gap: spacing.md }}>
             {SPORT_IDS.map((s) => (
-              <ChoiceChip
+              <SportTile
                 key={s}
                 testID={`game.create.sport.${s}`}
                 sport={s}
+                role="radio"
                 label={t(`common:sports.${s}`)}
-                selectionRole="radio"
+                caption={t('common:players.count', { count: CAPACITY[s].def })}
                 selected={draft.sport === s}
-                onToggle={() => update({ sport: s, capacity: CAPACITY[s].def, minPlayers: null, teamCount: CAPACITY[s].teams, venueId: draft.venueId })}
+                onPress={() => update({ sport: s, capacity: CAPACITY[s].def, minPlayers: null, teamCount: CAPACITY[s].teams, venueId: draft.venueId })}
               />
             ))}
-          </Row>
+          </View>
           <TextField
             testID="game.create.title"
             label={t('games:wizard.sport.gameTitleLabel')}
             helperText={t('games:wizard.sport.gameTitleHint')}
+            icon="PencilSimple"
             value={draft.title}
             maxLength={80}
             onChangeText={(title) => update({ title })}
           />
           {draft.sport && draft.sport !== 'running' ? (
-            <Stack gap="xs">
-              <Text variant="label">{t('games:wizard.sport.teamCount')}</Text>
-              <Row gap="sm" wrap accessibilityRole="radiogroup">
-                {[1, 2, 3, 4].map((n) => (
-                  <ChoiceChip key={n} testID={`game.create.teams.${n}`} label={String(n)} selectionRole="radio" selected={draft.teamCount === n} onToggle={() => update({ teamCount: n })} />
-                ))}
-              </Row>
-            </Stack>
+            <View style={{ gap: spacing.sm }}>
+              <Text variant="label" color="textSecondary">
+                {t('games:wizard.sport.teamCount')}
+              </Text>
+              <Segmented
+                label={t('games:wizard.sport.teamCount')}
+                value={String(draft.teamCount)}
+                onChange={(v) => update({ teamCount: Number(v) })}
+                options={[1, 2, 3, 4].map((n) => ({ value: String(n), label: formatNumber(n, locale), testID: `game.create.teams.${n}` }))}
+              />
+            </View>
           ) : null}
-        </Stack>
+        </>
       ) : null}
 
       {step === 1 ? (
-        <Stack gap="lg">
-          <Text variant="title2">{t('games:wizard.where.title')}</Text>
-          {venues.loading && !venues.data ? <Skeleton rows={3} height={64} /> : null}
-          <Stack gap="sm">
+        <>
+          <StepTitle title={t('games:wizard.where.title')} subtitle={t('games:wizard.where.subtitle')} />
+          {venues.loading && !venues.data ? <Skeleton kind="row" rows={4} /> : null}
+          <View role="radiogroup" aria-label={t('games:wizard.stepName.where')} style={{ gap: spacing.sm }}>
             {(venues.data ?? []).slice(0, 12).map((v: NearbyVenue) => (
-              <SelectableRow
+              <ChoiceCard
                 key={v.id}
                 testID={`game.create.venue.${v.id}`}
                 selected={draft.venueId === v.id}
                 onPress={() => update({ venueId: v.id, usePin: false })}
                 title={v.name}
-                subtitle={formatDistance(v.distanceM, locale, miles)}
+                subtitle={formatList([formatDistance(v.distanceM, locale, miles), ...(v.address ? [v.address] : [])], locale)}
+                lead={<SportGlyphBadge sport={draft.sport && v.sports.includes(draft.sport) ? draft.sport : (v.sports[0] ?? 'football')} size={40} variant="tint" squircle />}
+                userContent
               />
             ))}
             {preselected.data && !(venues.data ?? []).some((v) => v.id === preselected.data?.id) ? (
-              <SelectableRow testID={`game.create.venue.${preselected.data.id}`} selected title={preselected.data.name} subtitle={preselected.data.address ?? ''} onPress={() => undefined} />
+              <ChoiceCard testID={`game.create.venue.${preselected.data.id}`} selected title={preselected.data.name} subtitle={preselected.data.address ?? ''} icon="MapPin" onPress={() => undefined} userContent />
             ) : null}
-            <SelectableRow
+            <ChoiceCard
               testID="game.create.pin"
               selected={draft.usePin}
               onPress={() => update({ usePin: true, venueId: null })}
               title={t('games:wizard.where.dropPin')}
               subtitle={t('games:wizard.where.pinHere')}
-              icon="map-marker-plus-outline"
+              icon="MapPinPlus"
             />
             {draft.usePin ? (
               <TextField
@@ -400,142 +488,239 @@ export default function CreateGameScreen() {
                 required
               />
             ) : null}
-          </Stack>
+          </View>
           <ToggleRow
             testID="game.create.hideExact"
+            icon="LockSimple"
             label={t('games:wizard.where.hideExactLabel')}
             help={t('games:wizard.where.hideExactHelp')}
             value={draft.hideExact}
             onChange={(hideExact) => update({ hideExact })}
           />
-        </Stack>
+        </>
       ) : null}
 
       {step === 2 ? (
-        <Stack gap="lg">
-          <Text variant="title2">{t('games:wizard.when.title')}</Text>
-          <Stack gap="xs">
-            <Text variant="label">{t('games:wizard.when.date')}</Text>
-            <Row gap="sm" wrap accessibilityRole="radiogroup">
-              {DAYS.map((d) => {
-                const iso = startIso(d, '12:00');
-                return (
-                  <ChoiceChip key={d} testID={`game.create.day.${d}`} label={formatDate(iso, locale)} selectionRole="radio" selected={draft.day === d} onToggle={() => update({ day: d })} />
-                );
-              })}
-            </Row>
-          </Stack>
-          <TimeSelect value={draft.time} onChange={(time) => update({ time })} label={t('games:wizard.when.start')} />
-          <Stack gap="xs">
-            <Text variant="label">{t('games:wizard.when.duration')}</Text>
-            <Row gap="sm" wrap accessibilityRole="radiogroup">
-              {DURATIONS.map((m) => (
-                <ChoiceChip key={m} testID={`game.create.duration.${m}`} label={formatDuration(m, locale)} selectionRole="radio" selected={draft.duration === m} onToggle={() => update({ duration: m })} />
-              ))}
-            </Row>
-          </Stack>
-          <View style={{ opacity: 0.6 }}>
-            <ToggleRow label={t('games:wizard.when.repeatWeekly')} help={t('games:wizard.when.comingSoon')} value={false} onChange={() => undefined} disabled />
+        <>
+          <StepTitle title={t('games:wizard.when.title')} subtitle={t('games:wizard.when.subtitle')} />
+          <View style={{ gap: spacing.sm }}>
+            <Text variant="label" color="textSecondary">
+              {t('games:wizard.when.date')}
+            </Text>
+            <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{ gap: spacing.sm, paddingEnd: spacing.lg }} style={{ marginEnd: -spacing.lg }}>
+              <View role="radiogroup" aria-label={t('games:wizard.when.date')} style={{ flexDirection: 'row', gap: spacing.sm }}>
+                {DAYS.map((d) => (
+                  <DayTile key={d} day={d} selected={draft.day === d} onPress={() => update({ day: d })} />
+                ))}
+              </View>
+            </ScrollView>
           </View>
-        </Stack>
+          <View style={{ gap: spacing.sm }}>
+            <TimeSelect value={draft.time} onChange={(time) => update({ time })} label={t('games:wizard.when.start')} />
+            <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: spacing.sm }}>
+              {QUICK_TIMES.map((qt) => (
+                <ChoiceChip
+                  key={qt}
+                  size="sm"
+                  selectionRole="radio"
+                  testID={`game.create.quickTime.${qt}`}
+                  label={timeLabel(qt, locale)}
+                  selected={draft.time === qt}
+                  onToggle={() => update({ time: qt })}
+                />
+              ))}
+            </View>
+          </View>
+          <View style={{ gap: spacing.sm }}>
+            <Text variant="label" color="textSecondary">
+              {t('games:wizard.when.duration')}
+            </Text>
+            <Segmented
+              label={t('games:wizard.when.duration')}
+              value={String(draft.duration)}
+              onChange={(v) => update({ duration: Number(v) })}
+              options={DURATIONS.map((m) => ({ value: String(m), label: compactMinutes(m, locale), testID: `game.create.duration.${m}` }))}
+            />
+          </View>
+          <ToggleRow
+            icon="ArrowClockwise"
+            label={t('games:wizard.when.repeatWeekly')}
+            help={t('games:wizard.when.comingSoon')}
+            value={false}
+            onChange={() => undefined}
+            disabled
+          />
+        </>
       ) : null}
 
       {step === 3 ? (
-        <Stack gap="lg">
-          <Text variant="title2">{t('games:wizard.who.title')}</Text>
-          <Stack gap="xs">
-            <Text variant="label">{t('games:wizard.who.capacity')}</Text>
-            <Row gap="md">
-              <StepperButton testID="game.create.capacity.dec" icon="minus" label={t('games:wizard.who.fewer')} disabled={draft.capacity <= cap.min} onPress={() => update({ capacity: Math.max(cap.min, draft.capacity - 1) })} />
-              <Text variant="numeric" testID="game.create.capacity.value" accessibilityLiveRegion="polite">
-                {isolate(String(draft.capacity), 'ltr')}
-              </Text>
-              <StepperButton testID="game.create.capacity.inc" icon="plus" label={t('games:wizard.who.more')} disabled={draft.capacity >= cap.max} onPress={() => update({ capacity: Math.min(cap.max, draft.capacity + 1) })} />
-            </Row>
-            <Text variant="caption" color="textTertiary">
-              {t('games:wizard.who.capacityRange', { min: cap.min, max: cap.max })}
+        <>
+          <StepTitle title={t('games:wizard.who.title')} subtitle={t('games:wizard.who.subtitle')} />
+          <Card padding="lg">
+            <View style={{ gap: spacing.lg }}>
+              <Stepper
+                id="capacity"
+                label={t('games:wizard.who.capacity')}
+                help={t('games:wizard.who.capacityRange', { min: cap.min, max: cap.max })}
+                value={draft.capacity}
+                decLabel={t('games:wizard.who.fewer')}
+                incLabel={t('games:wizard.who.more')}
+                canDec={draft.capacity > cap.min}
+                canInc={draft.capacity < cap.max}
+                onDec={() => update({ capacity: Math.max(cap.min, draft.capacity - 1) })}
+                onInc={() => update({ capacity: Math.min(cap.max, draft.capacity + 1) })}
+              />
+              <View aria-hidden style={{ height: 1, backgroundColor: theme.colors.border }} />
+              <Stepper
+                id="minPlayers"
+                label={t('games:wizard.who.minPlayers')}
+                help={t('games:wizard.who.minPlayersHelp', { count: minPlayers })}
+                value={minPlayers}
+                decLabel={t('games:wizard.who.fewerMin')}
+                incLabel={t('games:wizard.who.moreMin')}
+                canDec={minPlayers > 2}
+                canInc={minPlayers < draft.capacity}
+                onDec={() => update({ minPlayers: minPlayers - 1 })}
+                onInc={() => update({ minPlayers: minPlayers + 1 })}
+              />
+            </View>
+          </Card>
+          <View style={{ gap: spacing.sm }}>
+            <Text variant="label" color="textSecondary">
+              {t('games:wizard.who.visibility')}
             </Text>
-          </Stack>
-          <Stack gap="xs">
-            <Text variant="label">{t('games:wizard.who.minPlayers')}</Text>
-            <Row gap="md">
-              <StepperButton testID="game.create.minPlayers.dec" icon="minus" label={t('games:wizard.who.fewerMin')} disabled={minPlayers <= 2} onPress={() => update({ minPlayers: minPlayers - 1 })} />
-              <Text variant="numeric" testID="game.create.minPlayers.value" accessibilityLiveRegion="polite">
-                {isolate(String(minPlayers), 'ltr')}
-              </Text>
-              <StepperButton testID="game.create.minPlayers.inc" icon="plus" label={t('games:wizard.who.moreMin')} disabled={minPlayers >= draft.capacity} onPress={() => update({ minPlayers: minPlayers + 1 })} />
-            </Row>
-            <Text variant="caption" color="textTertiary">
-              {t('games:wizard.who.minPlayersHelp', { count: minPlayers })}
-            </Text>
-          </Stack>
-          <Stack gap="xs">
-            <Text variant="label">{t('games:wizard.who.visibility')}</Text>
-            <SelectableRow testID="game.create.visibility.public" selected={draft.visibility === 'public'} onPress={() => update({ visibility: 'public' })} title={t('games:wizard.who.public')} subtitle={t('games:wizard.who.publicHelp')} icon="earth" />
-            <SelectableRow testID="game.create.visibility.private" selected={draft.visibility === 'private'} onPress={() => update({ visibility: 'private' })} title={t('games:wizard.who.private')} subtitle={t('games:wizard.who.privateHelp')} icon="lock-outline" />
-          </Stack>
+            <View role="radiogroup" aria-label={t('games:wizard.who.visibility')} style={{ gap: spacing.sm }}>
+              <ChoiceCard testID="game.create.visibility.public" selected={draft.visibility === 'public'} onPress={() => update({ visibility: 'public' })} title={t('games:wizard.who.public')} subtitle={t('games:wizard.who.publicHelp')} icon="GlobeHemisphereWest" />
+              <ChoiceCard testID="game.create.visibility.private" selected={draft.visibility === 'private'} onPress={() => update({ visibility: 'private' })} title={t('games:wizard.who.private')} subtitle={t('games:wizard.who.privateHelp')} icon="LockSimple" />
+            </View>
+          </View>
           <ToggleRow
             testID="game.create.womenOnly"
+            icon="GenderFemale"
             label={t('games:wizard.who.womenOnly')}
             help={t('games:wizard.who.womenOnlyHelp')}
             value={draft.womenOnly}
             onChange={(womenOnly) => update({ womenOnly, hideExact: womenOnly ? true : draft.hideExact })}
           />
-          <Text variant="caption" color="textTertiary">
-            {t('games:wizard.who.approvalManual')}
-          </Text>
-        </Stack>
+          <Banner tone="info" icon="Handshake" text={t('games:wizard.who.approvalManual')} />
+        </>
       ) : null}
 
       {step === 4 ? (
-        <Stack gap="lg">
-          <Text variant="title2">{t('games:wizard.deposit.title')}</Text>
-          <ToggleRow testID="game.create.deposit.toggle" label={t('games:wizard.deposit.toggle')} value={draft.depositOn} onChange={(depositOn) => update({ depositOn })} />
-          {draft.depositOn ? (
-            <Stack gap="sm">
-              <TextField
-                testID="game.create.deposit.amount"
-                label={t('games:wizard.deposit.amount')}
-                value={draft.deposit}
-                onChangeText={(deposit) => update({ deposit: deposit.replace(/[^\d.,]/g, '') })}
-                keyboardType="decimal-pad"
-                inputDirection="ltr"
-                start={<Text variant="body" color="textSecondary">{currency}</Text>}
-                error={showErrors && errors.deposit ? errors.deposit : undefined}
-              />
-              {depositMinor > 0 ? (
-                <Text variant="callout" color="textSecondary">
-                  {t('games:wizard.deposit.explain', { amount: formatMoney(depositMinor, currency, locale) })}
-                </Text>
-              ) : null}
-              <Text variant="caption" color="textTertiary">
-                {t('games:wizard.deposit.currencyNote')}
-              </Text>
-            </Stack>
+        <>
+          <StepTitle title={t('games:wizard.deposit.title')} subtitle={t('games:wizard.deposit.subtitle')} />
+          <Segmented
+            testID="game.create.deposit.toggle"
+            label={t('games:wizard.deposit.toggle')}
+            value={depositTier}
+            onChange={(v) => {
+              if (v === 'none') {
+                setCustomDeposit(false);
+                update({ depositOn: false });
+              } else if (v === 'custom') {
+                setCustomDeposit(true);
+                update({ depositOn: true, deposit: DEPOSIT_TIERS.includes(draft.deposit) ? '' : draft.deposit });
+              } else {
+                setCustomDeposit(false);
+                update({ depositOn: true, deposit: v });
+              }
+            }}
+            options={[
+              { value: 'none', label: t('games:wizard.deposit.none'), testID: 'game.create.deposit.tier.none' },
+              ...DEPOSIT_TIERS.map((v) => ({ value: v, label: money(Number(v)), testID: `game.create.deposit.tier.${v}` })),
+              { value: 'custom', label: t('games:wizard.deposit.custom'), testID: 'game.create.deposit.tier.custom' },
+            ]}
+          />
+          {depositTier === 'custom' ? (
+            <TextField
+              testID="game.create.deposit.amount"
+              label={t('games:wizard.deposit.amount')}
+              value={draft.deposit}
+              onChangeText={(deposit) => update({ deposit: deposit.replace(/[^\d.,]/g, '') })}
+              keyboardType="decimal-pad"
+              inputDirection="ltr"
+              icon="Coins"
+              start={<Text variant="body" weight="medium" color="textSecondary">{currency}</Text>}
+              error={showErrors && errors.deposit ? errors.deposit : undefined}
+            />
           ) : null}
-        </Stack>
+          <Card variant="filled" padding="lg">
+            <View style={{ flexDirection: 'row', gap: spacing.md }}>
+              <View aria-hidden style={{ width: 40, height: 40, borderRadius: 14, alignItems: 'center', justifyContent: 'center', backgroundColor: theme.colors.warningSubtle }}>
+                <Icon name="Coins" size={22} weight="duotone" color="warningText" />
+              </View>
+              <View style={{ flex: 1, gap: spacing.xs }}>
+                <Text variant="headline">{depositMinor > 0 ? formatMoney(depositMinor, currency, locale) : t('games:wizard.review.noDeposit')}</Text>
+                <Text variant="footnote" color="textSecondary">
+                  {depositMinor > 0 ? t('games:wizard.deposit.explain', { amount: formatMoney(depositMinor, currency, locale) }) : t('games:wizard.deposit.noneHelp')}
+                </Text>
+                <Text variant="caption" color="textTertiary">
+                  {t('games:wizard.deposit.currencyNote')}
+                </Text>
+              </View>
+            </View>
+          </Card>
+        </>
       ) : null}
 
       {isReview ? (
-        <Stack gap="md" testID="game.create.review">
-          <ReviewRow label={t('games:wizard.stepName.sport')} value={draft.sport ? t(`common:sports.${draft.sport}`) : '—'} onEdit={() => goTo(0)} />
-          <ReviewRow label={t('games:wizard.stepName.where')} value={venue?.name ?? (draft.pinName || '—')} onEdit={() => goTo(1)} />
-          <ReviewRow
-            label={t('games:wizard.stepName.when')}
-            value={t('games:wizard.review.whenValue', { start: isolate(formatDateTime(startsAt, locale), 'ltr'), duration: formatDuration(draft.duration, locale) })}
-            onEdit={() => goTo(2)}
-          />
-          <ReviewRow
-            label={t('games:wizard.stepName.who')}
-            value={t('games:wizard.review.whoValue', { capacity: draft.capacity, min: minPlayers, visibility: t(`games:wizard.who.${draft.visibility}`) })}
-            onEdit={() => goTo(3)}
-          />
-          <ReviewRow
-            label={t('games:wizard.stepName.deposit')}
-            value={depositMinor > 0 ? formatMoney(depositMinor, currency, locale) : t('games:wizard.review.noDeposit')}
-            onEdit={() => goTo(4)}
-          />
-        </Stack>
+        <View style={{ gap: spacing.xl }} testID="game.create.review">
+          <StepTitle title={t('games:wizard.review.title')} subtitle={t('games:wizard.review.subtitle')} />
+          {draft.sport ? (
+            <GameCard
+              now={Date.now()}
+              venueName={venue?.name ?? (draft.pinName.trim() || undefined)}
+              game={{
+                id: 'draft',
+                hostId: profile?.id ?? 'me',
+                sport: draft.sport,
+                title: draft.title.trim() || t('games:wizard.defaultTitle', { sport: t(`common:sports.${draft.sport}`) }),
+                notes: null,
+                visibility: draft.visibility,
+                venueId: draft.venueId,
+                location: null,
+                approxLocation: center,
+                hideExactLocation: draft.hideExact,
+                capacity: draft.capacity,
+                minPlayers,
+                startsAt,
+                endsAt,
+                depositMinor,
+                currency,
+                depositForfeitTo: 'host',
+                womenOnly: draft.womenOnly,
+                status: 'scheduled',
+                teamCount: draft.teamCount,
+                inviteToken: null,
+                createdAt: startsAt,
+                approvedCount: 1,
+                waitlistCount: 0,
+              }}
+            />
+          ) : null}
+          <ListGroup>
+            <ReviewRow icon="SoccerBall" label={t('games:wizard.stepName.sport')} value={draft.sport ? t(`common:sports.${draft.sport}`) : '—'} onEdit={() => goTo(0)} />
+            <ReviewRow icon="MapPin" label={t('games:wizard.stepName.where')} value={venue?.name ?? (draft.pinName || '—')} onEdit={() => goTo(1)} />
+            <ReviewRow
+              icon="CalendarDots"
+              label={t('games:wizard.stepName.when')}
+              value={t('games:wizard.review.whenValue', { start: isolate(formatDateTime(startsAt, locale), 'ltr'), duration: formatDuration(draft.duration, locale) })}
+              onEdit={() => goTo(2)}
+            />
+            <ReviewRow
+              icon="UsersThree"
+              label={t('games:wizard.stepName.who')}
+              value={t('games:wizard.review.whoValue', { capacity: draft.capacity, min: minPlayers, visibility: t(`games:wizard.who.${draft.visibility}`) })}
+              onEdit={() => goTo(3)}
+            />
+            <ReviewRow
+              icon="Coins"
+              label={t('games:wizard.stepName.deposit')}
+              value={depositMinor > 0 ? formatMoney(depositMinor, currency, locale) : t('games:wizard.review.noDeposit')}
+              onEdit={() => goTo(4)}
+            />
+          </ListGroup>
+        </View>
       ) : null}
 
       <ConfirmDialog
@@ -546,6 +731,7 @@ export default function CreateGameScreen() {
         confirmLabel={t('games:wizard.discard.discard')}
         cancelLabel={t('games:wizard.discard.keep')}
         destructive
+        icon="Trash"
         onConfirm={async () => {
           setDiscard(false);
           await setPref(PrefKeys.createGameDraft, null);
@@ -557,57 +743,102 @@ export default function CreateGameScreen() {
   );
 }
 
-function SelectableRow({
+function StepTitle({ title, subtitle }: { title: string; subtitle?: string }) {
+  return (
+    <View style={{ gap: spacing.xs }}>
+      <Text variant="title1" role="heading" aria-level={2}>
+        {title}
+      </Text>
+      {subtitle ? (
+        <Text variant="callout" color="textSecondary">
+          {subtitle}
+        </Text>
+      ) : null}
+    </View>
+  );
+}
+
+/** Selectable card (radio): icon well or custom lead, title (bidi-safe for venues), subtitle, check disc. */
+function ChoiceCard({
   title,
   subtitle,
   selected,
   onPress,
   testID,
   icon,
+  lead,
+  userContent,
 }: {
   title: string;
   subtitle?: string;
   selected: boolean;
   onPress: () => void;
   testID?: string;
-  icon?: Parameters<typeof Icon>[0]['name'];
+  icon?: IconName;
+  lead?: ReactNode;
+  userContent?: boolean;
 }) {
-  const { colors } = useTheme();
+  const theme = useTheme();
+  const c = theme.colors;
+  const press = usePressScale(0.985);
   return (
-    <Pressable
-      testID={testID}
-      accessibilityRole="radio"
-      accessibilityState={{ checked: selected }}
-      accessibilityLabel={subtitle ? `${title}, ${subtitle}` : title}
-      onPress={onPress}
-      style={({ pressed }) => ({
-        flexDirection: 'row',
-        alignItems: 'center',
-        gap: spacing.md,
-        minHeight: 56,
-        padding: spacing.md,
-        borderRadius: radius.md,
-        borderWidth: selected ? 2 : 1,
-        borderColor: selected ? colors.primary : colors.border,
-        backgroundColor: selected ? colors.primarySubtle : pressed ? colors.surfaceSunken : colors.surface,
-      })}
-    >
-      {icon ? <Icon name={icon} color={selected ? 'onPrimarySubtle' : 'textSecondary'} /> : null}
-      <Stack gap="xxs" style={{ flex: 1 }}>
-        <BidiText variant="callout" color={selected ? 'onPrimarySubtle' : 'text'}>
-          {title}
-        </BidiText>
-        {subtitle ? (
-          <Text variant="caption" color={selected ? 'onPrimarySubtle' : 'textSecondary'}>
-            {subtitle}
-          </Text>
-        ) : null}
-      </Stack>
-      {selected ? <Icon name="check-circle" color="primary" /> : null}
-    </Pressable>
+    <Animated.View style={press.style}>
+      <Pressable
+        testID={testID}
+        role="radio"
+        aria-checked={selected}
+        aria-label={subtitle ? `${title}, ${subtitle}` : title}
+        onPress={() => {
+          Haptics.trigger('chipToggle');
+          onPress();
+        }}
+        onPressIn={press.onPressIn}
+        onPressOut={press.onPressOut}
+        style={({ pressed }) => ({
+          flexDirection: 'row',
+          alignItems: 'center',
+          gap: spacing.md,
+          minHeight: 72,
+          padding: spacing.md,
+          paddingEnd: spacing.lg,
+          borderRadius: radius.lg,
+          borderWidth: 2,
+          borderColor: selected ? c.primary : theme.scheme === 'dark' ? c.border : 'transparent',
+          backgroundColor: selected ? c.primarySubtle : pressed ? c.surfaceSunken : c.surface,
+          ...(selected ? null : theme.elevation(1)),
+        })}
+      >
+        {lead ??
+          (icon ? (
+            <View style={{ width: 40, height: 40, borderRadius: 14, alignItems: 'center', justifyContent: 'center', backgroundColor: selected ? c.surface : c.surfaceSunken }}>
+              <Icon name={icon} size={22} weight="duotone" color={selected ? 'primary' : 'textSecondary'} />
+            </View>
+          ) : null)}
+        <View style={{ flex: 1, gap: 2 }}>
+          {userContent ? (
+            <BidiText variant="headline" color={selected ? 'onPrimarySubtle' : 'text'} numberOfLines={2}>
+              {title}
+            </BidiText>
+          ) : (
+            <Text variant="headline" color={selected ? 'onPrimarySubtle' : 'text'} numberOfLines={2}>
+              {title}
+            </Text>
+          )}
+          {subtitle ? (
+            <Text variant="footnote" color={selected ? 'onPrimarySubtle' : 'textSecondary'} numberOfLines={2}>
+              {subtitle}
+            </Text>
+          ) : null}
+        </View>
+        <View style={{ width: 24, height: 24, borderRadius: 12, alignItems: 'center', justifyContent: 'center', backgroundColor: selected ? c.primary : 'transparent', borderWidth: selected ? 0 : 1.5, borderColor: c.borderStrong }}>
+          {selected ? <Icon name="Check" size={14} weight="bold" color="onPrimary" /> : null}
+        </View>
+      </Pressable>
+    </Animated.View>
   );
 }
 
+/** Explained switch row in a card: icon well, label, help text, Switch. */
 function ToggleRow({
   label,
   help,
@@ -615,6 +846,7 @@ function ToggleRow({
   onChange,
   testID,
   disabled,
+  icon,
 }: {
   label: string;
   help?: string;
@@ -622,55 +854,136 @@ function ToggleRow({
   onChange: (v: boolean) => void;
   testID?: string;
   disabled?: boolean;
+  icon?: IconName;
 }) {
   const { colors } = useTheme();
+  const { t } = useT();
   return (
-    <Row gap="md" style={{ minHeight: 56 }}>
-      <Stack gap="xxs" style={{ flex: 1 }}>
-        <Text variant="callout">{label}</Text>
-        {help ? (
-          <Text variant="caption" color="textSecondary">
-            {help}
-          </Text>
+    <Card padding="lg" style={disabled ? { opacity: 0.6 } : undefined}>
+      <View style={{ flexDirection: 'row', alignItems: 'center', gap: spacing.md }}>
+        {icon ? (
+          <View aria-hidden style={{ width: 40, height: 40, borderRadius: 14, alignItems: 'center', justifyContent: 'center', backgroundColor: value ? colors.primarySubtle : colors.surfaceSunken }}>
+            <Icon name={icon} size={22} weight="duotone" color={value ? 'onPrimarySubtle' : 'textSecondary'} />
+          </View>
         ) : null}
-      </Stack>
-      <Switch
-        testID={testID}
-        accessibilityLabel={label}
-        value={value}
-        onValueChange={onChange}
-        disabled={disabled}
-        trackColor={{ true: colors.primary, false: colors.borderStrong }}
-        thumbColor={colors.surface}
-      />
-    </Row>
+        <View style={{ flex: 1, gap: 2 }}>
+          <View style={{ flexDirection: 'row', alignItems: 'center', gap: spacing.sm, flexWrap: 'wrap' }}>
+            <Text variant="headline">{label}</Text>
+            {disabled ? <StatusPill label={t('games:wizard.when.comingSoon')} /> : null}
+          </View>
+          {help && !disabled ? (
+            <Text variant="footnote" color="textSecondary">
+              {help}
+            </Text>
+          ) : null}
+        </View>
+        <Switch
+          testID={testID}
+          aria-label={label}
+          value={value}
+          onValueChange={(v) => {
+            Haptics.trigger('chipToggle');
+            onChange(v);
+          }}
+          disabled={disabled}
+          trackColor={{ true: colors.primary, false: colors.borderStrong }}
+          thumbColor="#FFFFFF"
+          {...(Platform.OS === 'web' ? ({ activeThumbColor: '#FFFFFF' } as object) : null)}
+        />
+      </View>
+    </Card>
   );
 }
 
-function StepperButton({ icon, label, onPress, disabled, testID }: { icon: 'plus' | 'minus'; label: string; onPress: () => void; disabled?: boolean; testID?: string }) {
-  const { colors } = useTheme();
+/** Big stepper: tonal −/+ (selection haptic) around a statLarge tabular value. */
+function Stepper({
+  id,
+  label,
+  help,
+  value,
+  decLabel,
+  incLabel,
+  canDec,
+  canInc,
+  onDec,
+  onInc,
+}: {
+  id: string;
+  label: string;
+  help: string;
+  value: number;
+  decLabel: string;
+  incLabel: string;
+  canDec: boolean;
+  canInc: boolean;
+  onDec: () => void;
+  onInc: () => void;
+}) {
+  return (
+    <View style={{ flexDirection: 'row', alignItems: 'center', gap: spacing.md }}>
+      <View style={{ flex: 1, gap: 2 }}>
+        <Text variant="headline">{label}</Text>
+        <Text variant="footnote" color="textSecondary">
+          {help}
+        </Text>
+      </View>
+      <IconButton testID={`game.create.${id}.dec`} icon="Minus" weight="bold" variant="tonal" size="lg" haptic="scorePlusMinus" label={decLabel} disabled={!canDec} onPress={onDec} />
+      <Text variant="statLarge" testID={`game.create.${id}.value`} aria-live="polite" align="center" style={{ minWidth: 64, fontSize: 36, lineHeight: 42 }}>
+        {isolate(String(value), 'ltr')}
+      </Text>
+      <IconButton testID={`game.create.${id}.inc`} icon="Plus" weight="bold" variant="tonal" size="lg" haptic="scorePlusMinus" label={incLabel} disabled={!canInc} onPress={onInc} />
+    </View>
+  );
+}
+
+/** Calendar day tile: weekday short + big date number; "Today"/"Tomorrow" as the weekday line. */
+function DayTile({ day, selected, onPress }: { day: number; selected: boolean; onPress: () => void }) {
+  const { t, locale } = useT();
+  const theme = useTheme();
+  const c = theme.colors;
+  const iso = startIso(day, '12:00');
+  const top = day === 0 ? t('games:my.section.today') : day === 1 ? t('games:my.section.tomorrow') : formatDate(iso, locale, { weekday: 'short' });
+  const num = formatDate(iso, locale, { day: 'numeric' });
+  const month = formatDate(iso, locale, { month: 'short' });
   return (
     <Pressable
-      testID={testID}
-      accessibilityRole="button"
-      accessibilityLabel={label}
-      accessibilityState={{ disabled: !!disabled }}
-      disabled={disabled}
-      onPress={onPress}
+      testID={`game.create.day.${day}`}
+      role="radio"
+      aria-checked={selected}
+      aria-label={formatDate(iso, locale, { weekday: 'long', day: 'numeric', month: 'long' })}
+      onPress={() => {
+        Haptics.trigger('chipToggle');
+        onPress();
+      }}
       style={({ pressed }) => ({
-        width: 48,
-        height: 48,
-        borderRadius: 24,
+        width: 76,
+        paddingTop: spacing.md,
+        paddingBottom: spacing.md,
+        borderRadius: radius.lg,
         alignItems: 'center',
-        justifyContent: 'center',
-        borderWidth: 1.5,
-        borderColor: colors.borderStrong,
-        backgroundColor: disabled ? colors.disabledBg : pressed ? colors.surfaceSunken : colors.surface,
+        gap: 2,
+        backgroundColor: selected ? c.surfaceInverse : pressed ? c.surfaceSunken : c.surface,
+        ...(selected ? null : theme.elevation(1)),
       })}
     >
-      <Icon name={icon} color={disabled ? 'disabledText' : 'text'} />
+      <Text variant="caption" weight="semibold" color={selected ? 'textInverse' : 'textSecondary'} numberOfLines={1}>
+        {top}
+      </Text>
+      <Text variant="numeric" color={selected ? 'textInverse' : 'text'} style={{ fontSize: 26, lineHeight: 32 }}>
+        {num}
+      </Text>
+      <Text variant="caption" color={selected ? 'textInverse' : 'textTertiary'} numberOfLines={1} style={{ opacity: selected ? 0.8 : 1 }}>
+        {month}
+      </Text>
     </Pressable>
   );
+}
+
+function timeLabel(v: string, locale: string): string {
+  const [h, m] = v.split(':').map(Number);
+  const d = new Date();
+  d.setHours(h ?? 0, m ?? 0, 0, 0);
+  return formatTime(d.toISOString(), locale);
 }
 
 function TimeSelect({ value, onChange, label }: { value: string; onChange: (v: string) => void; label: string }) {
@@ -681,29 +994,28 @@ function TimeSelect({ value, onChange, label }: { value: string; onChange: (v: s
         const h = 6 + Math.floor(i / 2);
         const m = i % 2 ? 30 : 0;
         const v = `${String(h).padStart(2, '0')}:${String(m).padStart(2, '0')}`;
-        const d = new Date();
-        d.setHours(h, m, 0, 0);
-        return { value: v, label: formatTime(d.toISOString(), locale) };
+        return { value: v, label: timeLabel(v, locale) };
       }),
     [locale],
   );
-  const all = options.some((o) => o.value === value) ? options : [{ value, label: value }, ...options];
-  return <SelectField testID="game.create.time" label={label} placeholder={label} value={value} options={all} onChange={onChange} />;
+  const all = options.some((o) => o.value === value) ? options : [{ value, label: timeLabel(value, locale) }, ...options];
+  return <SelectField testID="game.create.time" icon="Clock" label={label} placeholder={label} value={value} options={all} onChange={onChange} />;
 }
 
-function ReviewRow({ label, value, onEdit }: { label: string; value: string; onEdit: () => void }): ReactNode {
+function ReviewRow({ icon, label, value, onEdit }: { icon: IconName; label: string; value: string; onEdit: () => void }) {
   const { t } = useT();
   return (
-    <Card outlined>
-      <Row gap="md">
-        <Stack gap="xxs" style={{ flex: 1 }}>
-          <Text variant="caption" color="textSecondary">
-            {label}
-          </Text>
-          <BidiText variant="callout">{value}</BidiText>
-        </Stack>
-        <Button variant="ghost" size="sm" label={t('games:wizard.review.edit')} accessibilityLabel={t('games:wizard.review.editA11y', { section: label })} onPress={onEdit} />
-      </Row>
-    </Card>
+    <ListItem
+      icon={icon}
+      title={value}
+      subtitle={label}
+      onPress={onEdit}
+      aria-label={t('games:wizard.review.editA11y', { section: label })}
+      trailing={
+        <Text variant="label" weight="semibold" color="primaryText">
+          {t('games:wizard.review.edit')}
+        </Text>
+      }
+    />
   );
 }

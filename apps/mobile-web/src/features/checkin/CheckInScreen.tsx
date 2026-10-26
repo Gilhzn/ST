@@ -167,7 +167,8 @@ export function CheckInScreen({ gameId }: { gameId: string }) {
   const opensAt = new Date(Date.parse(g.startsAt) - DEFAULT_TRUST_CONFIG.checkInOpensMinutesBeforeStart * 60_000).toISOString();
   const approved = me?.status === 'approved';
   const rejected = verdict?.outcome === 'rejected' ? verdict : null;
-  const fallbacks: readonly CheckInMethod[] = rejected ? rejected.fallbacks : [];
+  // Badge the other ways the server offers, never the one that just failed.
+  const fallbacks: readonly CheckInMethod[] = rejected ? rejected.fallbacks.filter((f) => f !== rejected.method) : [];
   const teammates: ParticipantView[] = (participants.data ?? []).filter((p) => p.status === 'approved' && p.attendance !== 'verified' && p.userId !== me?.userId);
   const busy = phase === 'sampling' || phase === 'submitting' || submit.busy;
   const step = verified ? 3 : busy || verdict || method !== 'gps' || phase === 'disclosure' ? 2 : 1;
@@ -297,7 +298,7 @@ export function CheckInScreen({ gameId }: { gameId: string }) {
                     variant="secondary"
                     icon="Check"
                     label={t('checkin:peer.confirm')}
-                    accessibilityLabel={t('checkin:peer.confirmA11y', { name: p.profile.displayName })}
+                    aria-label={t('checkin:peer.confirmA11y', { name: p.profile.displayName })}
                     onPress={async () => {
                       const r = await confirm.run(p.userId);
                       if (r) {
@@ -371,10 +372,10 @@ function MethodGrid({ value, fallbacks, onChange }: { value: Method; fallbacks: 
                 paddingStart: spacing.md,
                 paddingEnd: spacing.md,
                 borderRadius: radius.lg,
-                borderWidth: 2,
-                borderColor: sel ? c.primary : hint ? c.warning : 'transparent',
-                backgroundColor: sel ? c.primarySubtle : pressed ? c.surfaceSunken : c.surface,
                 ...(sel ? null : theme.elevation(1)),
+                borderWidth: 2,
+                borderColor: sel ? c.primary : hint ? c.warning : theme.scheme === 'dark' ? c.border : 'transparent',
+                backgroundColor: sel ? c.primarySubtle : pressed ? c.surfaceSunken : c.surface,
                 ...(focused ? { outlineColor: c.focusRing, outlineWidth: 3, outlineStyle: 'solid', outlineOffset: 2 } : null),
               } as never;
             }}

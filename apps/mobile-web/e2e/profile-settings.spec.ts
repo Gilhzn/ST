@@ -52,8 +52,13 @@ test.describe("PRF-01 profile", () => {
     await expect(card).toBeVisible();
     await expect(page.getByTestId("profile.reliability.percent")).toContainText("%");
     await expect(page.getByTestId("profile.reliability.meter")).toHaveAttribute("aria-valuenow", /^\d+$/);
-    // Status is a glyph + label, not only a colour (Dana has an active yellow card: "!").
-    await expect(card).toContainText(/[✓!✕✦]/);
+    // Status is a glyph + label, not only a colour (Dana has an active yellow card): the v2 status
+    // badge is one labelled image (aria-label, e.g. "Caution") holding a Phosphor icon and visible text.
+    const badge = card.locator('[role="img"]:has(svg)').first();
+    await expect(badge).toBeVisible();
+    await expect(badge).toHaveAttribute("aria-label", /\S/);
+    await expect(badge.locator("svg")).toHaveCount(1);
+    await expect(badge).toHaveText(/\p{L}{2,}/u);
     await expect(page.getByTestId("profile.reliability.cards")).toBeVisible(); // 1 active yellow card
 
     await expect(page.getByTestId("profile.stat.played")).toBeVisible();

@@ -126,6 +126,7 @@ export default function OtpScreen() {
             variant="ghost"
             icon="ArrowClockwise"
             label={t('auth:otp.resend')}
+            style={{ alignSelf: 'center' }}
             loading={resend.busy}
             onPress={async () => {
               const r = await resend.run();
@@ -138,7 +139,7 @@ export default function OtpScreen() {
             }}
           />
         )}
-        <Button testID="auth.otp.change" variant="ghost" icon="PencilSimple" label={t('auth:otp.changeNumber')} onPress={() => router.replace('/phone')} />
+        <Button testID="auth.otp.change" variant="ghost" icon="PencilSimple" label={t('auth:otp.changeNumber')} style={{ alignSelf: 'center' }} onPress={() => router.replace('/phone')} />
       </View>
       {resend.error ? <InlineError error={resend.error} /> : null}
       <View style={{ height: 1, backgroundColor: colors.border, marginTop: spacing.sm }} aria-hidden />

@@ -1,8 +1,10 @@
 /**
- * Game details (design §13.6): header (sport, title, time, venue or hidden
- * location, host), facts, participants (host also sees requests and waitlist
- * with approve/reject), and a sticky primary action that follows the viewer's
- * state: request / waitlist / waiting / check in + chat + can't make it / host tools.
+ * Game details (design v2 §15.4): sport-gradient hero (back/share, sport, title, big tabular
+ * time, day · relative), an overlapping facts strip (players ring, starts, duration + deposit /
+ * waitlist / women-only / private pills), the venue with a mini map chip, the host card with a
+ * reliability ring, and players (AvatarStack that expands). Hosts also see requests with quick
+ * approve/reject and the waitlist. A blurred sticky footer carries the one primary action for the
+ * viewer's state plus labelled secondary actions (chat, directions, share, teams, QR…).
  */
 import {
   DEFAULT_TRUST_CONFIG,
@@ -10,30 +12,29 @@ import {
   isCheckInOpen,
   isLateCancel,
   type GameDetail,
-  type ParticipantView,
 } from '@st/domain';
-import { Avatar, BidiText, Button, Card, Divider, isolate, Row, SportDot, Stack, Text, useTheme } from '@st/ui';
+import { BidiText, Button, Card, Haptics, Icon, isolate, spacing, Text, useTheme, type IconName, type PillTone } from '@st/ui';
 import * as Clipboard from 'expo-clipboard';
 import { router, useFocusEffect, useLocalSearchParams } from 'expo-router';
 import { useCallback, useRef, useState, type ReactNode } from 'react';
-import { Linking, Platform, View } from 'react-native';
+import { Linking, Platform, Share, View } from 'react-native';
 
+import { ActionTile } from '@/components/ActionTile';
 import { ConfirmDialog } from '@/components/ConfirmDialog';
 import { gameTiming } from '@/components/GameCard';
-import { Icon } from '@/components/Icon';
-import { ParticipantRow } from '@/components/ParticipantRow';
-import { ReliabilityBadge } from '@/components/ReliabilityBadge';
 import { Screen } from '@/components/Screen';
 import { Banner, ErrorView, InlineError, Skeleton } from '@/components/States';
-import { Tag } from '@/components/Tag';
 import { useToast } from '@/components/Toast';
 import { useData } from '@/data/DataProvider';
+import { FactsStrip, GameHero, HostCard, PlayersSection, RequestsSection, VenueCardRow, WaitlistSection } from '@/features/game/DetailsParts';
 import { hasActiveOffer, WaitlistOffer } from '@/features/game/WaitlistOffer';
 import { directionsUrl } from '@/features/map/VenueDetails';
 import { useAction, useAsync } from '@/hooks/useAsync';
 import { useNow } from '@/hooks/useNow';
 import { useT } from '@/i18n';
-import { formatDateTime, formatMoney, formatRelative, formatTime } from '@/lib/format';
+import { formatDateTime, formatMoney, formatTime } from '@/lib/format';
+
+const ORIGIN = Platform.OS === 'web' && typeof window !== 'undefined' ? window.location.origin : 'https://sporttalent.app';
 
 export default function GameDetailsScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
@@ -42,7 +43,7 @@ export default function GameDetailsScreen() {
   const port = useData();
   const toast = useToast();
   const now = useNow(30_000);
-  const theme = useTheme();
+  const { colors } = useTheme();
 
   const game = useAsync(() => port.getGame(gameId), [port, gameId]);
   const participants = useAsync(() => port.listParticipants(gameId), [port, gameId], !!game.data);
@@ -75,7 +76,7 @@ export default function GameDetailsScreen() {
   if (game.loading && !game.data) {
     return (
       <Screen testID="screen.game" backFallback="/map">
-        <Skeleton rows={4} />
+        <Skeleton kind="hero" />
       </Screen>
     );
   }
@@ -97,7 +98,6 @@ export default function GameDetailsScreen() {
   const ended = Date.parse(g.endsAt) <= now;
   const cancelled = g.status === 'cancelled';
   const full = g.approvedCount >= g.capacity;
-  const sport = t(`common:sports.${g.sport}`);
   const depositAmount = g.depositMinor > 0 ? formatMoney(g.depositMinor, g.currency, locale) : null;
   const list = participants.data ?? [];
   const approved = list.filter((p) => p.status === 'approved');
@@ -107,14 +107,30 @@ export default function GameDetailsScreen() {
   const lateNow = isLateCancel(g.startsAt, new Date(now).toISOString(), DEFAULT_TRUST_CONFIG);
   const freeUntil = new Date(Date.parse(g.startsAt) - DEFAULT_TRUST_CONFIG.lateCancelWindowHours * 3600_000).toISOString();
   const location = g.location ?? g.approxLocation;
-  const inviteUrl = g.inviteToken
-    ? `${Platform.OS === 'web' && typeof window !== 'undefined' ? window.location.origin : 'https://sporttalent.app'}/invite/${g.inviteToken}`
-    : null;
+  const inviteUrl = g.inviteToken ? `${ORIGIN}/invite/${g.inviteToken}` : null;
+  const shareUrl = inviteUrl ?? `${ORIGIN}/game/${g.id}`;
+  const offer = me?.status === 'waitlisted' && hasActiveOffer(me, now);
+
+  const openDirections = () => void Linking.openURL(directionsUrl(location.lat, location.lng, g.venue?.name ?? g.title));
+  const share = async () => {
+    const message = `${g.title} · ${formatDateTime(g.startsAt, locale)}`;
+    if (Platform.OS !== 'web') {
+      await Share.share({ message: `${message}\n${shareUrl}`, url: shareUrl }).catch(() => undefined);
+      return;
+    }
+    const nav = typeof navigator !== 'undefined' ? (navigator as Navigator & { share?: (d: ShareData) => Promise<void> }) : null;
+    if (nav?.share) {
+      await nav.share({ title: g.title, text: message, url: shareUrl }).catch(() => undefined);
+      return;
+    }
+    await Clipboard.setStringAsync(shareUrl);
+    toast(t('games:wizard.published.linkCopied'), 'success');
+  };
 
   const onJoin = async () => {
     const res = await join.run(g);
     if (!res) return;
-    toast(t('games:details.outcome.requestSent'));
+    toast(t('games:details.outcome.requestSent'), 'success');
     if (res.deposit) setDeposit({ amount: formatMoney(res.deposit.amount.amountMinor, res.deposit.amount.currency, locale) });
     await refresh();
   };
@@ -130,12 +146,15 @@ export default function GameDetailsScreen() {
   const onDecide = async (userId: string, decision: 'approve' | 'reject') => {
     const res = await decide.run(userId, decision);
     if (res) {
+      if (decision === 'approve') Haptics.success();
+      else Haptics.selection();
       toast(
         decision === 'reject'
           ? t('games:details.host.rejected')
           : res.status === 'waitlisted'
             ? t('games:details.host.waitlisted')
             : t('games:details.host.approved'),
+        decision === 'approve' ? 'success' : 'neutral',
       );
       await refresh();
     }
@@ -152,223 +171,208 @@ export default function GameDetailsScreen() {
 
   const actionError = join.error ?? cancel.error ?? decide.error ?? cancelGame.error;
 
-  // ------------------------------------------------------------------ primary action
+  // ------------------------------------------------------------------ hero status pill
+  const heroStatus: { label: string; tone?: PillTone; icon?: IconName } | null = cancelled
+    ? { label: t('games:my.state.cancelled'), icon: 'XCircle' }
+    : live
+      ? { label: t('map:card.live'), tone: 'live' }
+      : ended
+        ? { label: t('games:details.facts.over'), icon: 'Flag' }
+        : g.isHost
+          ? { label: t('games:my.state.hosting'), icon: 'Strategy' }
+          : me?.status === 'approved'
+            ? { label: t('games:my.state.going'), icon: 'CheckCircle' }
+            : full
+              ? { label: t('map:card.badge.full'), icon: 'LockSimple' }
+              : null;
+
+  // ------------------------------------------------------------------ sticky footer
+  const actionsRow = (children: ReactNode) => <View style={{ flexDirection: 'row', justifyContent: 'space-around', gap: spacing.xs }}>{children}</View>;
+  const statusLine = (icon: IconName, text: string, testID: string, action: ReactNode) => (
+    <View style={{ flexDirection: 'row', alignItems: 'center', gap: spacing.md }}>
+      <View style={{ width: 40, height: 40, borderRadius: 14, alignItems: 'center', justifyContent: 'center', backgroundColor: colors.primarySubtle }}>
+        <Icon name={icon} size={22} weight="duotone" color="onPrimarySubtle" />
+      </View>
+      <Text variant="headline" style={{ flex: 1 }} testID={testID} aria-live="polite">
+        {text}
+      </Text>
+      {action}
+    </View>
+  );
+
   let footer: ReactNode = null;
   if (!cancelled && !ended) {
     if (g.isHost) {
       footer = (
-        <Row gap="sm" wrap>
-          <Button testID="game.host.qr" label={t('games:details.host.showQr')} startIcon={<Icon name="qrcode-scan" size={20} color="onPrimary" />} onPress={() => router.push(`/game/${g.id}/qr`)} />
-          <Button testID="game.host.teams" variant="secondary" label={t('games:details.host.teams')} onPress={() => router.push(`/game/${g.id}/teams`)} />
-          <Button testID="game.chat" variant="secondary" label={t('games:details.action.chat')} onPress={() => router.push(`/game/${g.id}/chat`)} />
-        </Row>
+        <>
+          <Button testID="game.host.qr" size="lg" fullWidth icon="QrCode" label={t('games:details.host.showQr')} onPress={() => router.push(`/game/${g.id}/qr`)} />
+          {actionsRow(
+            <>
+              <ActionTile testID="game.host.teams" icon="UsersThree" label={t('games:details.host.teams')} onPress={() => router.push(`/game/${g.id}/teams`)} />
+              <ActionTile testID="game.chat" icon="ChatsCircle" label={t('games:details.action.chat')} onPress={() => router.push(`/game/${g.id}/chat`)} />
+              <ActionTile testID="game.footer.share" icon="ShareNetwork" label={t('common:actions.share')} onPress={() => void share()} />
+              <ActionTile testID="game.directions" icon="NavigationArrow" label={t('games:details.action.directions')} onPress={openDirections} />
+            </>,
+          )}
+        </>
       );
     } else if (!me || me.status === 'cancelled') {
       footer = (
-        <Stack gap="xs">
+        <>
           {depositAmount ? (
-            <Text variant="caption" color="textSecondary" testID="game.deposit.disclosure">
-              {t('games:details.deposit.disclosure', { amount: depositAmount })}
-            </Text>
+            <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: spacing.xs }}>
+              <Icon name="Coins" size={16} weight="fill" color="warningText" />
+              <Text variant="footnote" color="textSecondary" testID="game.deposit.disclosure">
+                {t('games:details.deposit.disclosure', { amount: depositAmount })}
+              </Text>
+            </View>
           ) : null}
           <Button
             testID="game.join"
             size="lg"
             fullWidth
+            icon={full ? 'Hourglass' : 'Lightning'}
+            haptic="joinGame"
             loading={join.busy}
             label={full ? t('games:details.action.joinWaitlist', { position: g.waitlistCount + 1 }) : t('games:details.action.request')}
             accessibilityHint={t('games:details.action.requestHint')}
             onPress={() => void onJoin()}
             disabled={live}
           />
-        </Stack>
+        </>
       );
     } else if (me.status === 'requested') {
-      footer = (
-        <Row gap="sm" align="center">
-          <Text variant="bodyStrong" style={{ flex: 1 }} testID="game.status.requested" accessibilityLiveRegion="polite">
-            {t('games:details.action.waitingForHost')}
-          </Text>
-          <Button testID="game.cancelRequest" variant="secondary" label={t('games:details.action.cancelRequest')} loading={cancel.busy} onPress={() => void onCancelSpot()} />
-        </Row>
+      footer = statusLine(
+        'Hourglass',
+        t('games:details.action.waitingForHost'),
+        'game.status.requested',
+        <Button testID="game.cancelRequest" variant="outline" label={t('games:details.action.cancelRequest')} loading={cancel.busy} onPress={() => void onCancelSpot()} />,
       );
-    } else if (me.status === 'waitlisted' && hasActiveOffer(me, now)) {
-      footer = <WaitlistOffer gameId={g.id} participant={me} onAccepted={() => void refresh()} />;
     } else if (me.status === 'waitlisted') {
-      footer = (
-        <Row gap="sm" align="center">
-          <Text variant="bodyStrong" style={{ flex: 1 }} testID="game.waitlist.position" accessibilityLiveRegion="polite">
-            {t('games:details.action.waitlistPosition', { position: me.waitlistRank ?? 1 })}
-          </Text>
-          <Button testID="game.leaveWaitlist" variant="secondary" label={t('games:details.action.leaveWaitlist')} loading={cancel.busy} onPress={() => void onCancelSpot()} />
-        </Row>
+      footer = offer ? (
+        <Button testID="game.leaveWaitlist" variant="ghost" fullWidth label={t('games:details.action.leaveWaitlist')} loading={cancel.busy} onPress={() => void onCancelSpot()} />
+      ) : (
+        statusLine(
+          'Hourglass',
+          t('games:details.action.waitlistPosition', { position: me.waitlistRank ?? 1 }),
+          'game.waitlist.position',
+          <Button testID="game.leaveWaitlist" variant="outline" label={t('games:details.action.leaveWaitlist')} loading={cancel.busy} onPress={() => void onCancelSpot()} />,
+        )
       );
     } else if (me.status === 'approved') {
+      const checkedIn = me.attendance === 'verified';
       footer = (
-        <Stack gap="sm">
+        <>
           <Button
             testID="game.checkin"
             size="lg"
             fullWidth
-            variant={live ? 'accent' : 'primary'}
-            label={checkInOpen ? t('games:details.action.checkIn') : t('games:details.action.checkInOpens', { time: isolate(formatTime(new Date(Date.parse(g.startsAt) - DEFAULT_TRUST_CONFIG.checkInOpensMinutesBeforeStart * 60_000).toISOString(), locale), 'ltr') })}
-            disabled={!checkInOpen || me.attendance === 'verified'}
-            startIcon={<Icon name="map-marker-check" size={20} color={checkInOpen ? (live ? 'onAccent' : 'onPrimary') : 'disabledText'} />}
+            variant={live && checkInOpen && !checkedIn ? 'accent' : 'primary'}
+            icon={checkedIn ? 'CheckCircle' : 'MapPin'}
+            label={
+              checkedIn
+                ? t('games:details.checkedIn')
+                : checkInOpen
+                  ? t('games:details.action.checkIn')
+                  : t('games:details.action.checkInOpens', { time: isolate(formatTime(new Date(Date.parse(g.startsAt) - DEFAULT_TRUST_CONFIG.checkInOpensMinutesBeforeStart * 60_000).toISOString(), locale), 'ltr') })
+            }
+            disabled={!checkInOpen || checkedIn}
             onPress={() => router.push(`/game/${g.id}/checkin`)}
           />
-          <Row gap="sm" wrap>
-            <Button testID="game.chat" variant="secondary" label={t('games:details.action.chat')} onPress={() => router.push(`/game/${g.id}/chat`)} />
-            <Button testID="game.directions" variant="secondary" label={t('games:details.action.directions')} onPress={() => void Linking.openURL(directionsUrl(location.lat, location.lng, g.venue?.name ?? g.title))} />
-            <Button testID="game.cantMakeIt" variant="ghost" label={t('games:details.action.cantMakeIt')} onPress={() => setConfirmCancel(true)} />
-          </Row>
-        </Stack>
+          {actionsRow(
+            <>
+              <ActionTile testID="game.chat" icon="ChatsCircle" label={t('games:details.action.chat')} onPress={() => router.push(`/game/${g.id}/chat`)} />
+              <ActionTile testID="game.directions" icon="NavigationArrow" label={t('games:details.action.directions')} onPress={openDirections} />
+              <ActionTile testID="game.footer.share" icon="ShareNetwork" label={t('common:actions.share')} onPress={() => void share()} />
+              <ActionTile testID="game.cantMakeIt" icon="SignOut" tone="danger" label={t('games:details.action.cantMakeIt')} onPress={() => setConfirmCancel(true)} />
+            </>,
+          )}
+        </>
       );
     }
   } else if (ended && !cancelled && (g.isHost || me?.status === 'approved') && canSubmitResult(g, now, DEFAULT_TRUST_CONFIG)) {
-    footer = <Button testID="game.result" size="lg" fullWidth label={t('games:details.host.enterResult')} onPress={() => router.push(`/game/${g.id}/result`)} />;
+    footer = <Button testID="game.result" size="lg" fullWidth icon="Trophy" label={t('games:details.host.enterResult')} onPress={() => router.push(`/game/${g.id}/result`)} />;
   }
 
-  const renderList = (title: string, items: ParticipantView[], testID: string, trailing?: (p: ParticipantView) => ReactNode) =>
-    items.length ? (
-      <Stack gap="xs" testID={testID}>
-        <Text variant="title3">{title}</Text>
-        {items.map((p, i) => (
-          <View key={p.userId}>
-            {i > 0 ? <Divider insetStart={52} /> : null}
-            <ParticipantRow p={p} isHost={p.userId === g.hostId} trailing={trailing?.(p)} />
-          </View>
-        ))}
-      </Stack>
-    ) : null;
-
   return (
-    <Screen testID="screen.game" backFallback="/map" footer={footer}>
-      <Stack gap="lg">
-        {cancelled ? <Banner testID="game.banner.cancelled" tone="warning" text={t('games:details.banner.cancelledNoReason')} /> : null}
-        {ended && !cancelled ? <Banner testID="game.banner.ended" text={t('games:details.banner.ended')} /> : null}
+    <Screen
+      testID="screen.game"
+      backFallback="/map"
+      footer={footer}
+      hero={<GameHero game={g} now={now} live={live} status={heroStatus} onShare={() => void share()} />}
+      contentStyle={{ gap: spacing.xl, marginTop: -(spacing.xxl + spacing.xs) }}
+    >
+      <FactsStrip game={g} now={now} live={live} depositAmount={depositAmount} />
 
-        <Stack gap="sm">
-          <Row gap="sm">
-            <SportDot sport={g.sport} size={18} />
-            <Text variant="label" color="textSecondary">
-              {sport}
-            </Text>
-            {live ? <Tag label={t('map:card.live')} tone="info" icon="Broadcast" /> : null}
-          </Row>
-          <BidiText variant="title1" accessibilityRole="header" testID="game.title">
-            {g.title}
-          </BidiText>
-          <Text variant="body" color="textSecondary" testID="game.time">
-            {t('games:details.when', { relative: formatRelative(g.startsAt, locale, now), absolute: isolate(formatDateTime(g.startsAt, locale), 'ltr') })}
-          </Text>
-          <Row gap="xs" align="start">
-            <Icon name={g.location ? 'map-marker-radius' : 'lock-outline'} size={20} />
-            {g.venue ? (
-              <Stack gap="xxs" style={{ flex: 1 }}>
-                <BidiText variant="callout">{g.venue.name}</BidiText>
-                {g.venue.address ? (
-                  <BidiText variant="caption" color="textSecondary">
-                    {g.venue.address}
-                  </BidiText>
-                ) : null}
-              </Stack>
-            ) : (
-              <Text variant="callout" color="textSecondary" style={{ flex: 1 }} testID="game.location.hidden">
-                {t('games:details.hiddenLocation')}
-              </Text>
-            )}
-          </Row>
-        </Stack>
+      {cancelled ? <Banner testID="game.banner.cancelled" tone="danger" icon="CalendarX" text={t('games:details.banner.cancelledNoReason')} /> : null}
+      {ended && !cancelled ? <Banner testID="game.banner.ended" icon="Flag" text={t('games:details.banner.ended')} /> : null}
+      {offer && me ? <WaitlistOffer gameId={g.id} participant={me} onAccepted={() => void refresh()} /> : null}
+      {g.isHost && requested.length ? (
+        <Banner testID="game.host.pending" tone="brand" icon="UserPlus" text={t('games:details.host.pendingCount', { count: requested.length })} />
+      ) : null}
+      <InlineError error={actionError} />
 
-        <View testID="game.host">
-        <Card outlined>
-          <Row gap="md">
-            <Avatar name={g.host.displayName} uri={g.host.avatarUrl} size="lg" decorative />
-            <Stack gap="xs" style={{ flex: 1 }}>
-              <Text variant="callout">
-                {t('games:details.host.hostedBy', { name: isolate(g.host.displayName) })}
-              </Text>
-              <Row gap="xs" wrap>
-                <ReliabilityBadge status={g.host.reliabilityStatus} score={g.host.reliabilityScore} />
-                {g.host.verifiedHost ? <Tag icon="check-decagram" label={t('games:details.host.verified')} tone="info" /> : null}
-              </Row>
-            </Stack>
-          </Row>
+      <VenueCardRow game={g} onDirections={openDirections} />
+      <HostCard game={g} />
+
+      {g.notes ? (
+        <Card variant="filled" padding="lg">
+          <View style={{ flexDirection: 'row', gap: spacing.md }}>
+            <Icon name="ChatCircleText" size={20} weight="duotone" color="textSecondary" />
+            <BidiText variant="callout" mode="block" style={{ flex: 1 }}>
+              {g.notes}
+            </BidiText>
+          </View>
         </Card>
+      ) : null}
+
+      {g.isHost && inviteUrl ? (
+        <Card padding="lg">
+          <View style={{ gap: spacing.md }}>
+            <View style={{ flexDirection: 'row', alignItems: 'center', gap: spacing.md }}>
+              <View style={{ width: 40, height: 40, borderRadius: 14, alignItems: 'center', justifyContent: 'center', backgroundColor: colors.primarySubtle }}>
+                <Icon name="LinkSimple" size={22} weight="bold" color="onPrimarySubtle" />
+              </View>
+              <View style={{ flex: 1, gap: 2 }}>
+                <Text variant="headline">{t('games:wizard.published.shareTitle')}</Text>
+                <BidiText variant="footnote" color="textSecondary" direction="ltr" numberOfLines={1} testID="game.invite.url">
+                  {inviteUrl}
+                </BidiText>
+              </View>
+            </View>
+            <Button
+              testID="game.invite.copy"
+              variant="secondary"
+              icon="Copy"
+              fullWidth
+              label={t('games:wizard.published.copyLink')}
+              onPress={async () => {
+                await Clipboard.setStringAsync(inviteUrl);
+                Haptics.selection();
+                toast(t('games:wizard.published.linkCopied'), 'success');
+              }}
+            />
+          </View>
+        </Card>
+      ) : null}
+
+      {participants.loading && !participants.data ? (
+        <Skeleton kind="row" rows={3} />
+      ) : (
+        <View style={{ gap: spacing.xl }}>
+          {g.isHost ? <RequestsSection requests={requested} busy={decide.busy} onDecide={(u, d) => void onDecide(u, d)} /> : null}
+          <PlayersSection
+            game={g}
+            players={approved}
+            hint={!g.isHost && me?.status !== 'approved' && approved.length <= 1 ? t('games:details.playersAfterJoin') : null}
+          />
+          <WaitlistSection waitlist={waitlisted} />
         </View>
+      )}
 
-        <Row gap="xs" wrap testID="game.facts">
-          <Tag icon="account-group" label={t('games:details.facts.players', { joined: g.approvedCount, capacity: g.capacity })} />
-          {g.waitlistCount ? <Tag icon="timer-sand" tone="warning" label={t('games:details.facts.waitlist', { count: g.waitlistCount })} /> : null}
-          {depositAmount ? <Tag icon="shield-lock-outline" label={t('games:details.facts.deposit', { amount: depositAmount })} /> : null}
-          {g.womenOnly ? <Tag icon="gender-female" label={t('games:details.facts.womenOnly')} /> : null}
-          {g.visibility === 'private' ? <Tag icon="lock-outline" label={t('games:details.facts.private')} /> : null}
-        </Row>
-
-        {g.notes ? (
-          <BidiText variant="body" mode="block">
-            {g.notes}
-          </BidiText>
-        ) : null}
-
-        {g.isHost && inviteUrl ? (
-          <Card outlined>
-            <Stack gap="sm">
-              <Text variant="bodyStrong">{t('games:wizard.published.shareTitle')}</Text>
-              <BidiText variant="caption" color="textSecondary" direction="ltr" testID="game.invite.url">
-                {inviteUrl}
-              </BidiText>
-              <Button
-                testID="game.invite.copy"
-                variant="secondary"
-                size="sm"
-                label={t('games:wizard.published.copyLink')}
-                onPress={async () => {
-                  await Clipboard.setStringAsync(inviteUrl);
-                  toast(t('games:wizard.published.linkCopied'));
-                }}
-              />
-            </Stack>
-          </Card>
-        ) : null}
-
-        <InlineError error={actionError} />
-
-        {participants.loading && !participants.data ? (
-          <Skeleton rows={2} height={56} />
-        ) : (
-          <Stack gap="lg">
-            {g.isHost && requested.length ? (
-              <Text variant="callout" color="primaryText" testID="game.host.pending" accessibilityLiveRegion="polite">
-                {t('games:details.host.pendingCount', { count: requested.length })}
-              </Text>
-            ) : null}
-            {g.isHost
-              ? renderList(t('games:details.sections.requests'), requested, 'game.requests', (p) => (
-                  <Row gap="xs">
-                    <Button testID={`game.host.approve.${p.userId}`} size="sm" label={t('games:details.host.approve')} loading={decide.busy} onPress={() => void onDecide(p.userId, 'approve')} />
-                    <Button testID={`game.host.reject.${p.userId}`} size="sm" variant="secondary" label={t('games:details.host.reject')} onPress={() => void onDecide(p.userId, 'reject')} />
-                  </Row>
-                ))
-              : null}
-            {renderList(t('games:details.sections.players'), approved, 'game.players')}
-            {renderList(t('games:details.sections.waitlist'), waitlisted, 'game.waitlist')}
-            {!g.isHost && me?.status !== 'approved' && approved.length <= 1 ? (
-              <Text variant="caption" color="textTertiary">
-                {t('games:details.playersAfterJoin')}
-              </Text>
-            ) : null}
-          </Stack>
-        )}
-
-        {g.isHost && !cancelled && !ended ? (
-          <Stack gap="sm">
-            <Divider />
-            <Button testID="game.host.cancel" variant="ghost" label={t('games:details.host.cancelGame')} onPress={() => setConfirmCancelGame(true)} />
-          </Stack>
-        ) : null}
-        <View style={{ height: theme.tokens.spacing.lg }} />
-      </Stack>
+      {g.isHost && !cancelled && !ended ? (
+        <Button testID="game.host.cancel" variant="ghost" icon="CalendarX" fullWidth label={t('games:details.host.cancelGame')} onPress={() => setConfirmCancelGame(true)} />
+      ) : null}
 
       <ConfirmDialog
         testID="game.cancelDialog"
@@ -394,6 +398,7 @@ export default function GameDetailsScreen() {
         confirmLabel={t('games:details.host.cancelConfirm')}
         cancelLabel={t('common:actions.cancel')}
         destructive
+        icon="CalendarX"
         busy={cancelGame.busy}
         onConfirm={() => void onCancelGame()}
         onCancel={() => setConfirmCancelGame(false)}
@@ -401,13 +406,14 @@ export default function GameDetailsScreen() {
       <ConfirmDialog
         testID="payment.deposit"
         visible={!!deposit}
+        icon="Coins"
         title={t('games:details.deposit.sheetTitle')}
         body={deposit ? t('games:details.deposit.body', { amount: deposit.amount, time: isolate(formatDateTime(new Date(Date.parse(g.startsAt) - DEFAULT_TRUST_CONFIG.depositHoldLeadHours * 3600_000).toISOString(), locale), 'ltr') }) : undefined}
         confirmLabel={t('games:details.deposit.continue')}
         cancelLabel={t('common:actions.notNow')}
         onConfirm={() => {
           setDeposit(null);
-          toast(t('games:details.deposit.saved'));
+          toast(t('games:details.deposit.saved'), 'success');
         }}
         onCancel={() => setDeposit(null)}
       />

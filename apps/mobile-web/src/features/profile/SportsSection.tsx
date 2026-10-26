@@ -1,58 +1,65 @@
-/** Sports with self-assessed level and positions (design §13.12 "Positions"). */
+/**
+ * Sports with positions and self-assessed level (design v2 §15.13): grouped rows with the
+ * sport glyph in its tinted well, positions (primary first) and a five-dot skill meter.
+ */
 import type { PositionId, Stars, UserSport } from '@st/domain';
-import { Card, Row, Stack, Text } from '@st/ui';
+import { ListGroup, ListItem, spacing, SportGlyphBadge, Text, useTheme } from '@st/ui';
+import { View } from 'react-native';
 
-import { SportIcon } from '@/components/Icon';
-import { Tag } from '@/components/Tag';
 import { useT } from '@/i18n';
+import { formatList } from '@/lib/format';
+
+function SkillDots({ value, color }: { value: number; color: string }) {
+  const { colors } = useTheme();
+  return (
+    <View aria-hidden style={{ flexDirection: 'row', gap: 3 }}>
+      {[1, 2, 3, 4, 5].map((i) => (
+        <View key={i} style={{ width: 6, height: 14, borderRadius: 3, backgroundColor: i <= value ? color : colors.surfaceSunken }} />
+      ))}
+    </View>
+  );
+}
 
 export function SportsSection({ sports }: { sports: readonly UserSport[] }) {
-  const { t } = useT();
+  const { t, locale } = useT();
+  const theme = useTheme();
   return (
-    <Stack gap="sm" testID="profile.sports">
-      <Text variant="title3">{t('profile:sportsTitle')}</Text>
+    <View testID="profile.sports" style={{ gap: spacing.sm }}>
       {sports.length === 0 ? (
-        <Text variant="body" color="textSecondary" testID="profile.sports.empty">
-          {t('profile:positions.none')}
-        </Text>
+        <>
+          <Text variant="overline" color="textTertiary" role="heading" style={{ paddingStart: spacing.lg }}>
+            {t('profile:sportsTitle')}
+          </Text>
+          <Text variant="callout" color="textSecondary" testID="profile.sports.empty" style={{ paddingStart: spacing.lg }}>
+            {t('profile:positions.none')}
+          </Text>
+        </>
       ) : (
-        sports.map((s) => {
-          const [primary, ...secondary] = s.positions as readonly PositionId[];
-          return (
-            <Card key={s.sport} outlined elevation={0}>
-              <Stack gap="sm" testID={`profile.sport.${s.sport}`}>
-                <Row gap="sm">
-                  <SportIcon sport={s.sport} />
-                  <Text variant="bodyStrong" style={{ flex: 1 }}>
-                    {t(`common:sports.${s.sport}`)}
-                  </Text>
-                  <Text variant="callout" color="textSecondary">
-                    {t(`auth:profileSetup.skill.${s.selfSkill as Stars}`)}
-                  </Text>
-                </Row>
-                {primary ? (
-                  <Row gap="xs" wrap>
-                    <Text variant="caption" color="textSecondary">
-                      {t('profile:positions.primary')}
+        <ListGroup title={t('profile:sportsTitle')}>
+          {sports.map((s) => {
+            const positions = (s.positions as readonly PositionId[]).map((p) => t(`common:positions.${p}`));
+            const skill = t(`auth:profileSetup.skill.${s.selfSkill as Stars}`);
+            return (
+              <ListItem
+                key={s.sport}
+                testID={`profile.sport.${s.sport}`}
+                aria-label={[t(`common:sports.${s.sport}`), positions.length ? formatList(positions, locale) : null, skill].filter(Boolean).join('. ')}
+                leading={<SportGlyphBadge sport={s.sport} size={40} squircle />}
+                title={t(`common:sports.${s.sport}`)}
+                subtitle={positions.length ? formatList(positions, locale) : t('profile:positions.none')}
+                trailing={
+                  <View style={{ alignItems: 'flex-end', gap: 4 }}>
+                    <SkillDots value={s.selfSkill} color={theme.sport(s.sport).color} />
+                    <Text variant="caption" color="textSecondary" numberOfLines={1}>
+                      {skill}
                     </Text>
-                    <Tag label={t(`common:positions.${primary}`)} tone="info" />
-                  </Row>
-                ) : null}
-                {secondary.length > 0 ? (
-                  <Row gap="xs" wrap>
-                    <Text variant="caption" color="textSecondary">
-                      {t('profile:positions.secondary')}
-                    </Text>
-                    {secondary.map((p) => (
-                      <Tag key={p} label={t(`common:positions.${p}`)} />
-                    ))}
-                  </Row>
-                ) : null}
-              </Stack>
-            </Card>
-          );
-        })
+                  </View>
+                }
+              />
+            );
+          })}
+        </ListGroup>
       )}
-    </Stack>
+    </View>
   );
 }

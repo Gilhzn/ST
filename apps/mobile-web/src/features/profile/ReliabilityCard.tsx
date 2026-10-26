@@ -1,20 +1,19 @@
 /**
- * Reliability card, the profile's hero (design §13.12): big percentage, status
- * badge (glyph + label), a meter that mirrors with threshold ticks at the red
- * and green limits, the 90-day basis, active yellow cards with expiry and an
- * inline "How this works" explanation.
+ * Reliability card, the profile's centrepiece (design v2 §4, §15.13): a status-colored ring
+ * with the big tabular % (the meter: role=progressbar with aria-valuenow), the status badge
+ * (icon + label, never color alone) with a one-line explanation, the 90-day basis, active
+ * yellow cards with expiry and an inline "How this works" with every status explained.
  */
-import { DEFAULT_TRUST_CONFIG, type ReliabilitySnapshot, type Sanction } from '@st/domain';
-import { Button, Card, isolate, radius, Row, Stack, Text, useTheme } from '@st/ui';
+import { DEFAULT_TRUST_CONFIG, type ReliabilitySnapshot, type ReliabilityStatus, type Sanction } from '@st/domain';
+import { Button, Icon, isolate, ProgressRing, radius, Row, spacing, Stack, StatusBadge, Text, useTheme } from '@st/ui';
 import { useState } from 'react';
 import { View } from 'react-native';
 
-import { Icon } from '@/components/Icon';
-import { ReliabilityBadge } from '@/components/ReliabilityBadge';
 import { useT } from '@/i18n';
 import { formatDate, formatPercent } from '@/lib/format';
 
 const CFG = DEFAULT_TRUST_CONFIG;
+const STATUSES: ReliabilityStatus[] = ['green', 'yellow', 'red', 'new'];
 
 /** Yellow cards currently in force, soonest expiry first. */
 export function activeYellowCards(sanctions: readonly Sanction[], now: number): Sanction[] {
@@ -23,112 +22,136 @@ export function activeYellowCards(sanctions: readonly Sanction[], now: number): 
     .sort((a, b) => (a.expiresAt ?? '').localeCompare(b.expiresAt ?? ''));
 }
 
-function Meter({ reliability }: { reliability: ReliabilitySnapshot }) {
-  const theme = useTheme();
-  const { t, locale } = useT();
-  const token = theme.reliability[reliability.status];
-  const score = reliability.score ?? 0;
-  const pct = Math.round(score * 100);
-  const red = formatPercent(CFG.reliabilityRedBelow, locale);
-  const green = formatPercent(CFG.reliabilityGreenMin, locale);
-  return (
-    <View
-      testID="profile.reliability.meter"
-      accessible
-      accessibilityRole="progressbar"
-      accessibilityLabel={t('trust:reliability.meter.a11y', { percent: formatPercent(score, locale), red, green })}
-      accessibilityValue={{ min: 0, max: 100, now: pct }}
-      aria-valuemin={0}
-      aria-valuemax={100}
-      aria-valuenow={pct}
-      style={{ gap: 6 }}
-    >
-      <View style={{ height: 12, borderRadius: radius.pill, backgroundColor: theme.colors.surfaceSunken, overflow: 'hidden', flexDirection: 'row' }}>
-        <View style={{ width: `${pct}%`, backgroundColor: token.solid, borderRadius: radius.pill }} />
-      </View>
-      {/* Threshold ticks use logical `start`, so they mirror with the bar. */}
-      <View pointerEvents="none" style={{ position: 'absolute', top: -3, start: 0, end: 0, height: 18 }}>
-        {[CFG.reliabilityRedBelow, CFG.reliabilityGreenMin].map((limit) => (
-          <View key={limit} style={{ position: 'absolute', start: `${limit * 100}%`, width: 2, height: 18, backgroundColor: theme.colors.textSecondary }} />
-        ))}
-      </View>
-      <Row justify="between" gap="sm" wrap>
-        <Text variant="caption" color="textSecondary">
-          {t('trust:reliability.meter.restrictedBelow', { percent: isolate(red, 'ltr') })}
-        </Text>
-        <Text variant="caption" color="textSecondary">
-          {t('trust:reliability.meter.reliableFrom', { percent: isolate(green, 'ltr') })}
-        </Text>
-      </Row>
-    </View>
-  );
+function explain(status: ReliabilityStatus, t: ReturnType<typeof useT>['t'], locale: string): string {
+  if (status === 'green') return t('trust:reliability.how.green', { percent: isolate(formatPercent(CFG.reliabilityGreenMin, locale), 'ltr') });
+  if (status === 'red') return t('trust:reliability.how.red', { percent: isolate(formatPercent(CFG.reliabilityRedBelow, locale), 'ltr') });
+  return t(`trust:reliability.how.${status}`);
 }
 
 export function ReliabilityCard({ reliability, sanctions, now }: { reliability: ReliabilitySnapshot; sanctions: readonly Sanction[]; now: number }) {
   const { t, locale } = useT();
+  const theme = useTheme();
   const [open, setOpen] = useState(false);
   const isNew = reliability.status === 'new' || reliability.score === null;
   const cards = activeYellowCards(sanctions, now);
   const firstExpiry = cards[0]?.expiresAt;
+  const tone = theme.reliability[reliability.status];
+  const score = reliability.score ?? 0;
+  const pct = Math.round(score * 100);
+  const label = t(`common:reliability.status.${reliability.status}`);
+  const percentText = formatPercent(score, locale);
+
+  const ringContent = (
+    <View style={{ alignItems: 'center' }}>
+      <Text testID={isNew ? undefined : 'profile.reliability.percent'} variant="numeric" allowFontScaling={false} style={{ fontSize: 32, lineHeight: 38 }}>
+        {isNew ? '—' : isolate(percentText, 'ltr')}
+      </Text>
+    </View>
+  );
 
   return (
-    <View testID="profile.reliability">
-      <Card accessibilityLabel={t('profile:reliabilityCard.a11y')}>
-        <Stack gap="md">
-          <Row gap="sm" justify="between" wrap>
-            <Text variant="title3">{t('trust:reliability.title')}</Text>
-            <ReliabilityBadge status={reliability.status} score={reliability.score} size="md" />
-          </Row>
-          {isNew ? (
-            <Text variant="body" color="textSecondary" testID="profile.reliability.new">
-              {t('trust:reliability.newPlayer', { games: CFG.reliabilityMinGames })}
-            </Text>
-          ) : (
-            <>
-              <Text variant="display" testID="profile.reliability.percent" style={{ fontVariant: ['tabular-nums'] }}>
-                {isolate(formatPercent(reliability.score ?? 0, locale), 'ltr')}
-              </Text>
-              <Meter reliability={reliability} />
-              <Text variant="body" color="textSecondary">
-                {t('trust:reliability.basedOn', {
-                  days: CFG.reliabilityWindowDays,
-                  games: Math.round(reliability.commitmentCount),
-                  checkIns: reliability.verifiedCount,
-                  lateCancels: reliability.lateCancelCount,
-                })}
-              </Text>
-            </>
-          )}
-          {cards.length > 0 && firstExpiry ? (
-            <Row gap="xs" align="start" testID="profile.reliability.cards">
-              <Icon name="alert-outline" size={18} color="warningText" />
-              <Text variant="callout" color="warningText" style={{ flex: 1 }}>
-                {t('trust:reliability.yellowCards', { count: cards.length, date: formatDate(firstExpiry, locale, { day: 'numeric', month: 'short' }) })}
+    <View
+      testID="profile.reliability"
+      role="group"
+      aria-label={t('profile:reliabilityCard.a11y')}
+      style={{ padding: spacing.xl, gap: spacing.lg, borderRadius: radius.xl, ...theme.elevation(2) }}
+    >
+      <Row gap="lg" align="center">
+        {isNew ? (
+          <ProgressRing progress={0} size={116} thickness={10}>
+            {ringContent}
+          </ProgressRing>
+        ) : (
+          <View
+            testID="profile.reliability.meter"
+            role="progressbar"
+            aria-label={t('trust:reliability.meter.a11y', {
+              percent: percentText,
+              red: formatPercent(CFG.reliabilityRedBelow, locale),
+              green: formatPercent(CFG.reliabilityGreenMin, locale),
+            })}
+            aria-valuemin={0}
+            aria-valuemax={100}
+            aria-valuenow={pct}
+            aria-valuetext={`${percentText}, ${label}`}
+          >
+            <ProgressRing progress={score} size={116} thickness={10} color={tone.solid}>
+              {ringContent}
+            </ProgressRing>
+          </View>
+        )}
+        <Stack gap="sm" style={{ flex: 1 }}>
+          <Text variant="overline" color="textTertiary">
+            {t('trust:reliability.title')}
+          </Text>
+          <View testID="profile.reliability.status">
+            <StatusBadge status={reliability.status} label={label} />
+          </View>
+          <Text variant="footnote" color="textSecondary">
+            {explain(reliability.status, t, locale)}
+          </Text>
+        </Stack>
+      </Row>
+
+      {isNew ? (
+        <Text variant="callout" color="textSecondary" testID="profile.reliability.new">
+          {t('trust:reliability.newPlayer', { games: CFG.reliabilityMinGames })}
+        </Text>
+      ) : (
+        <Text variant="callout" color="textSecondary">
+          {t('trust:reliability.basedOn', {
+            days: CFG.reliabilityWindowDays,
+            games: Math.round(reliability.commitmentCount),
+            checkIns: reliability.verifiedCount,
+            lateCancels: reliability.lateCancelCount,
+          })}
+        </Text>
+      )}
+
+      {cards.length > 0 && firstExpiry ? (
+        <Row gap="md" testID="profile.reliability.cards" style={{ padding: spacing.md, borderRadius: radius.md, backgroundColor: theme.colors.warningSubtle }}>
+          <View aria-hidden style={{ width: 22, height: 28, borderRadius: 4, backgroundColor: theme.colors.warning, transform: [{ rotate: '-8deg' }] }} />
+          <Text variant="callout" weight="medium" color="warningText" style={{ flex: 1 }}>
+            {t('trust:reliability.yellowCards', { count: cards.length, date: formatDate(firstExpiry, locale, { day: 'numeric', month: 'short' }) })}
+          </Text>
+        </Row>
+      ) : null}
+
+      <View style={{ height: 1, backgroundColor: theme.colors.border, marginStart: -spacing.xl, marginEnd: -spacing.xl }} aria-hidden />
+      <Button
+        testID="profile.reliability.how"
+        variant="ghost"
+        size="sm"
+        icon="Question"
+        iconEnd={open ? 'CaretUp' : 'CaretDown'}
+        label={t('trust:reliability.howItWorks')}
+        aria-expanded={open}
+        onPress={() => setOpen((v) => !v)}
+        style={{ alignSelf: 'flex-start', marginStart: -spacing.md, marginTop: -spacing.xs, marginBottom: -spacing.xs }}
+      />
+      {open ? (
+        <Stack gap="md" testID="profile.reliability.explain">
+          <Text variant="callout" color="textSecondary">
+            {t('trust:reliability.how.body', { days: CFG.reliabilityWindowDays, games: CFG.reliabilityMinGames })}
+          </Text>
+          {STATUSES.map((st) => (
+            <Row key={st} gap="md" align="start">
+              <View style={{ width: 112 }}>
+                <StatusBadge size="sm" status={st} label={t(`common:reliability.status.${st}`)} />
+              </View>
+              <Text variant="footnote" style={{ flex: 1 }}>
+                {explain(st, t, locale)}
               </Text>
             </Row>
-          ) : null}
-          <Button
-            testID="profile.reliability.how"
-            variant="ghost"
-            label={t('trust:reliability.howItWorks')}
-            accessibilityState={{ expanded: open }}
-            aria-expanded={open}
-            endIcon={<Icon name={open ? 'chevron-up' : 'chevron-down'} size={20} color="primaryText" />}
-            onPress={() => setOpen((v) => !v)}
-          />
-          {open ? (
-            <Stack gap="xs" testID="profile.reliability.explain">
-              <Text variant="body" color="textSecondary">
-                {t('trust:reliability.how.body', { days: CFG.reliabilityWindowDays, games: CFG.reliabilityMinGames })}
-              </Text>
-              <Text variant="callout">{t('trust:reliability.how.green', { percent: isolate(formatPercent(CFG.reliabilityGreenMin, locale), 'ltr') })}</Text>
-              <Text variant="callout">{t('trust:reliability.how.yellow')}</Text>
-              <Text variant="callout">{t('trust:reliability.how.red', { percent: isolate(formatPercent(CFG.reliabilityRedBelow, locale), 'ltr') })}</Text>
-              <Text variant="callout">{t('trust:reliability.how.new')}</Text>
-            </Stack>
-          ) : null}
+          ))}
+          <Row gap="xs">
+            <Icon name="Info" size={16} color="textTertiary" />
+            <Text variant="footnote" color="textTertiary" style={{ flex: 1 }}>
+              {t('trust:sanctions.statement.askPerson')}
+            </Text>
+          </Row>
         </Stack>
-      </Card>
+      ) : null}
     </View>
   );
 }

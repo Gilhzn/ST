@@ -3,14 +3,13 @@
  * title and actions. Used for check-in windows, chat expiry, moderation and result
  * windows. Never full-screen red; always pairs the tone with an icon and text.
  */
-import { Icon, radius, spacing, Text, useTheme, type IconName } from '@st/ui';
+import { Icon, radius, spacing, Text, useTheme, type IconName, type SemanticColors } from '@st/ui';
 import type { ReactNode } from 'react';
 import { View, type StyleProp, type ViewStyle } from 'react-native';
 
 export type NoticeTone = 'info' | 'warning' | 'success' | 'danger' | 'neutral' | 'brand';
 
-export function useToneColors(tone: NoticeTone) {
-  const { colors: c } = useTheme();
+export function toneColorsFor(c: SemanticColors, tone: NoticeTone) {
   const map: Record<NoticeTone, { bg: string; fg: string; well: string }> = {
     info: { bg: c.infoSubtle, fg: c.infoText, well: c.surface },
     warning: { bg: c.warningSubtle, fg: c.warningText, well: c.surface },
@@ -20,6 +19,10 @@ export function useToneColors(tone: NoticeTone) {
     brand: { bg: c.primarySubtle, fg: c.onPrimarySubtle, well: c.surface },
   };
   return map[tone];
+}
+
+export function useToneColors(tone: NoticeTone) {
+  return toneColorsFor(useTheme().colors, tone);
 }
 
 export function Notice({

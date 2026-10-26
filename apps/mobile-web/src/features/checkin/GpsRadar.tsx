@@ -53,7 +53,7 @@ export function GpsRadar({
   const theme = useTheme();
   const c = theme.colors;
   const ring = 12;
-  const inner = size - ring * 2 - 16;
+  const inner = size - ring * 2 - 10;
   const r = inner / 2;
   const allowed = DEFAULT_TRUST_CONFIG.gpsBaseRadiusM;
   const pulse = useRef(new Animated.Value(0)).current;

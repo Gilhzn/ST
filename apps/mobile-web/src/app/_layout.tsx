@@ -9,9 +9,10 @@ import { router, Stack, usePathname } from 'expo-router';
 import * as SplashScreen from 'expo-splash-screen';
 import { StatusBar } from 'expo-status-bar';
 import { useEffect, useRef } from 'react';
-import { View } from 'react-native';
+import { Platform, View } from 'react-native';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 
+import { installFocusVisible } from '@/components/focusVisible';
 import { ToastProvider } from '@/components/Toast';
 import { createDataPort, resolveDataMode } from '@/data';
 import { DataProvider } from '@/data/DataProvider';
@@ -28,6 +29,18 @@ void SplashScreen.preventAutoHideAsync().catch(() => undefined);
 configureNotificationHandler();
 
 const DATA_MODE = resolveDataMode();
+
+/**
+ * Web: decorative icons (Phosphor <svg aria-hidden tabindex="-1">) must not take focus or the
+ * click from their pressable parent; otherwise Chrome draws its default focus ring around them.
+ */
+if (Platform.OS === 'web' && typeof document !== 'undefined' && !document.getElementById('st-global-css')) {
+  const style = document.createElement('style');
+  style.id = 'st-global-css';
+  style.textContent = 'svg[aria-hidden="true"]{pointer-events:none}svg[tabindex="-1"]:focus{outline:none}';
+  document.head.appendChild(style);
+}
+installFocusVisible();
 
 export default function RootLayout() {
   return (

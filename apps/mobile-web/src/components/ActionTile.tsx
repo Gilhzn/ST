@@ -5,6 +5,8 @@
 import { borderWidth, Icon, radius, spacing, Text, usePressScale, useTheme, type IconName } from '@st/ui';
 import { Animated, Pressable, View, type ViewStyle } from 'react-native';
 
+import { focusVisible } from './focusVisible';
+
 export function ActionTile({
   icon,
   label,
@@ -46,7 +48,7 @@ export function ActionTile({
             paddingBottom: spacing.xs,
             borderRadius: radius.md,
             opacity: disabled ? 0.45 : 1,
-            ...(focused ? { outlineColor: c.focusRing, outlineWidth: borderWidth.focus, outlineStyle: 'solid', outlineOffset: 2 } : null),
+            ...(focusVisible(focused) ? { outlineColor: c.focusRing, outlineWidth: borderWidth.focus, outlineStyle: 'solid', outlineOffset: 2 } : null),
           } as ViewStyle;
         }}
       >

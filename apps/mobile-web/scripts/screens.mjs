@@ -208,8 +208,34 @@ const FLOWS = [
       { name: 'game', run: async () => {} },
       { run: async (p) => { await click(p, 'game.chat'); await visible(p, 'chat.list'); } },
       { name: 'chat', run: async () => {} },
+      // Extra chat states (Developer B): moderation nudge, server block, translation, options sheet.
+      {
+        name: 'chat-nudge',
+        run: async (p) => {
+          await tid(p, 'chat.input').fill('ref was an idiot today');
+          await click(p, 'chat.send');
+          await visible(p, 'chat.nudge');
+        },
+      },
+      {
+        name: 'chat-block',
+        run: async (p) => {
+          await click(p, 'chat.nudge.sendAnyway');
+          await visible(p, 'chat.nudge.server');
+          await tid(p, 'chat.input').fill('I will kill you');
+          await click(p, 'chat.send');
+          await visible(p, 'chat.block');
+          await click(p, 'chat.message.m-seed-3.translate');
+          await visible(p, 'chat.message.m-seed-3.translated');
+        },
+      },
+      { name: 'chat-menu', run: async (p) => { await click(p, 'chat.message.m-seed-3.options'); await visible(p, 'chat.menu'); } },
+      { run: async (p) => { await p.keyboard.press('Escape'); await settle(p, 300); if (await isVisible(p, 'chat.menu')) await p.mouse.click(200, 80); await settle(p, 300); } },
       { run: async (p) => { await back(p); await click(p, 'game.checkin'); await visible(p, 'checkin.gps'); } },
       { name: 'checkin', run: async () => {} },
+      // Extra check-in states (Developer B): a GPS verdict, then the code panel.
+      { name: 'checkin-verdict', run: async (p) => { await click(p, 'checkin.gps.start'); await visible(p, 'checkin.status', 30000); await settle(p, 900); } },
+      { name: 'checkin-code', run: async (p) => { await click(p, 'checkin.qr.enter'); await visible(p, 'checkin.qr.input'); } },
       { run: async (p) => { await backToTabs(p); await click(p, 'nav.tab.games'); await visible(p, 'screen.games'); } },
       { name: 'games', run: async () => {} },
       {
@@ -225,6 +251,9 @@ const FLOWS = [
       { name: 'inbox', run: async () => {} },
       { run: async (p) => { await click(p, 'nav.tab.profile'); await visible(p, 'screen.profile'); } },
       { name: 'profile', run: async () => {} },
+      // Extra profile/settings states (Developer B).
+      { name: 'profile-edit', run: async (p) => { await click(p, 'profile.edit'); await visible(p, 'screen.profile.edit'); await settle(p, 500); } },
+      { run: async (p) => { await click(p, 'profile.edit.cancel'); await settle(p, 400); } },
       {
         run: async (p) => {
           const s = p.locator('[data-testid^="profile.sanction."]').first();
@@ -238,6 +267,10 @@ const FLOWS = [
       { name: 'settings', run: async () => {} },
       { run: async (p) => { await click(p, 'settings.language.open'); await visible(p, 'settings.language'); } },
       { name: 'language', run: async () => {} },
+      { name: 'settings-notifications', run: async (p) => { await back(p); await click(p, 'settings.notifications.open'); await visible(p, 'settings.notifications'); } },
+      { name: 'settings-privacy', run: async (p) => { await back(p); await click(p, 'settings.privacy.open'); await visible(p, 'settings.privacy.location'); } },
+      { name: 'settings-delete', run: async (p) => { await back(p); await click(p, 'settings.delete.open'); await visible(p, 'settings.delete.review'); } },
+      { name: 'legal', run: async (p) => { await back(p); await click(p, 'settings.legal.terms'); await visible(p, 'screen.legal.terms'); } },
       {
         run: async (p) => {
           await backToTabs(p);
@@ -270,6 +303,19 @@ const FLOWS = [
       { name: 'host-qr', run: async () => {} },
       { run: async (p) => { await back(p); await click(p, 'game.host.teams'); await visible(p, 'teams.balance'); } },
       { name: 'teams', run: async () => {} },
+      // Developer B: the host's own check-in (already verified in the seed) shows the success state.
+      {
+        name: 'checkin-success',
+        run: async (p) => {
+          // No check-in button for hosts: navigate in-app via the History API (a reload would reset the mock data).
+          await p.evaluate(() => {
+            window.history.pushState({}, '', '/game/g-tlv-1/checkin');
+            window.dispatchEvent(new PopStateEvent('popstate'));
+          });
+          await visible(p, 'screen.game.checkin');
+          await settle(p, 900);
+        },
+      },
     ],
   },
   {

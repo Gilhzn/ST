@@ -85,7 +85,8 @@
       "formatVs": "{a}対{b}",
       "singles": "シングルス",
       "doubles": "ダブルス",
-      "teamCount": "チーム数"
+      "teamCount": "チーム数",
+      "subtitle": "1つ選んでください。形式は次で決めます。"
     },
     "where": {
       "title": "どこでプレーしますか？",
@@ -96,7 +97,8 @@
       "venueNameHint": "プレイヤーが見つけやすいように、場所の名前を付けてください。",
       "hideExactLabel": "参加を承認するまで正確な場所を非表示にする",
       "hideExactHelp": "プレイヤーにはまずエリアだけが表示されます。承認した人にだけ正確な場所を共有します。",
-      "pinHere": "現在の地図の範囲を集合場所にする"
+      "pinHere": "現在の地図の範囲を集合場所にする",
+      "subtitle": "近くの会場を選ぶか、ピンを置いてください。"
     },
     "when": {
       "title": "いつですか？",
@@ -104,7 +106,8 @@
       "start": "開始時刻",
       "duration": "所要時間",
       "repeatWeekly": "毎週繰り返す",
-      "comingSoon": "近日公開"
+      "comingSoon": "近日公開",
+      "subtitle": "日付と開始時刻を選んでください。"
     },
     "who": {
       "title": "誰が参加できますか？",
@@ -129,14 +132,19 @@
       "minPlayers": "最少催行人数",
       "minPlayersHelp": "{count, plural, other {#人以上集まれば、試合は開催されます。}}",
       "fewerMin": "最少人数を減らす",
-      "moreMin": "最少人数を増やす"
+      "moreMin": "最少人数を増やす",
+      "subtitle": "人数と、試合を見つけられる人を設定します。"
     },
     "deposit": {
       "title": "デポジット（任意）",
       "toggle": "デポジットを求める",
       "amount": "デポジット額",
       "explain": "プレイヤーは{amount}の返金可能なデポジットを仮押さえします。チェックイン後に解除され、来なかった場合は返金されません。",
-      "currencyNote": "通貨は会場のある国・地域によって決まります。"
+      "currencyNote": "通貨は会場のある国・地域によって決まります。",
+      "subtitle": "少額の返金されるデポジットで、ドタキャンはほとんどなくなります。",
+      "none": "なし",
+      "custom": "その他",
+      "noneHelp": "デポジットなしで参加できます。信頼度は引き続き確認できます。"
     },
     "review": {
       "title": "内容を確認",
@@ -147,7 +155,8 @@
       "whenValue": "{start} · {duration}",
       "whoValue": "{capacity, plural, other {#人のプレイヤー}}（最少{min}人）· {visibility}",
       "noDeposit": "デポジットなし",
-      "editA11y": "{section}を編集"
+      "editA11y": "{section}を編集",
+      "subtitle": "参加者にはこのように表示されます。"
     },
     "published": {
       "title": "試合を公開しました",
@@ -156,7 +165,8 @@
       "copyLink": "リンクをコピー",
       "linkCopied": "リンクをコピーしました。",
       "showQr": "QRコードを表示",
-      "viewGame": "試合を見る"
+      "viewGame": "試合を見る",
+      "body": "近くのプレーヤーがすでに見つけられます。シェアすると早く埋まります。"
     },
     "discard": {
       "title": "下書きを破棄しますか？",
@@ -204,7 +214,11 @@
       "badge": "主催者",
       "approved": "プレイヤーを承認しました。",
       "waitlisted": "試合が満員のため、プレイヤーはキャンセル待ちになりました。",
-      "rejected": "リクエストを辞退しました。"
+      "rejected": "リクエストを辞退しました。",
+      "title": "主催者",
+      "since": "{date}から利用",
+      "approveA11y": "{name}さんを承認",
+      "rejectA11y": "{name}さんを見送る"
     },
     "facts": {
       "players": "{capacity}人中{joined}人",
@@ -212,7 +226,13 @@
       "deposit": "デポジット{amount}",
       "womenOnly": "女性限定",
       "private": "非公開の試合",
-      "format": "形式：{format}"
+      "format": "形式：{format}",
+      "liveNow": "開催中",
+      "over": "終了",
+      "playersLabel": "参加者",
+      "starts": "開始",
+      "duration": "時間",
+      "startsIn": "開始まで"
     },
     "sections": {
       "players": "参加者",
@@ -278,7 +298,12 @@
       "flash": "試合がまもなく始まるため、キャンセル待ちの全員にこのオファーが届いています。最初に受け取った人が枠を得ます。",
       "acceptWithin": "{duration}以内に受け取ってください（{time}まで）。",
       "accept": "枠を受け取る",
-      "accepted": "参加が決まりました。当日お会いしましょう。"
+      "accepted": "参加が決まりました。当日お会いしましょう。",
+      "flashTag": "フラッシュオファー"
+    },
+    "until": "{time}まで",
+    "players": {
+      "toggle": "{count, plural, other {参加者 #人。リストを表示または非表示にします。}}"
     }
   },
   "invite": {
@@ -286,7 +311,9 @@
     "join": "参加する",
     "signUpToJoin": "登録して参加",
     "expired": "この招待は期限切れです。主催者に新しいリンクをお願いしてください。",
-    "signedOutBody": "この試合を見て参加するには、ログインまたはアカウント作成をしてください。"
+    "signedOutBody": "この試合を見て参加するには、ログインまたはアカウント作成をしてください。",
+    "from": "{name}さんから試合の招待が届きました",
+    "hint": "主催者が1人ずつ承認します。承認されたらすぐにお知らせします。"
   },
   "teams": {
     "title": "チーム",
@@ -354,6 +381,19 @@
       "cancelled": "中止",
       "checkedIn": "チェックイン済み",
       "noShow": "無断欠席"
+    },
+    "subtitle": "{count, plural, =0 {予定している試合はまだありません} other {予定の試合 #件}}",
+    "section": {
+      "today": "今日",
+      "tomorrow": "明日",
+      "thisWeek": "今週",
+      "later": "それ以降",
+      "pastWeek": "今週",
+      "earlier": "それ以前"
     }
+  },
+  "card": {
+    "areaOnly": "正確な場所は承認後に表示",
+    "pinnedSpot": "地図上の集合場所"
   }
 }

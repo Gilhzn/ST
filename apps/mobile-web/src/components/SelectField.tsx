@@ -12,7 +12,7 @@ import { SelectShell } from './SelectShell';
 export type { SelectFieldProps, SelectOption } from './SelectField.types';
 
 export function SelectField(props: SelectFieldProps) {
-  const { label, placeholder, value, options, onChange, testID } = props;
+  const { label, value, options, onChange, testID } = props;
   const theme = useTheme();
   const c = theme.colors;
   const { t } = useT();

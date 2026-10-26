@@ -1,6 +1,6 @@
 /**
- * Edit profile (design §13.12): display name, bio, sports with positions and
- * self-assessed level. Birth date and gender are not editable here.
+ * Edit profile as a sheet (design v2 §15.13): display name, bio, sports (sport chips) with
+ * positions and a self-assessed level. Birth date and gender are not editable here.
  */
 import {
   SPORT_IDS,
@@ -13,16 +13,14 @@ import {
   type UserSport,
   type UserSportInput,
 } from '@st/domain';
-import { Button, Card, Row, Stack, Text, TextField } from '@st/ui';
+import { Avatar, Button, Chip, Row, spacing, SportGlyphBadge, Stack, Text, TextField, useTheme } from '@st/ui';
 import { useState } from 'react';
 import { View } from 'react-native';
 
-import { ChoiceChip } from '@/components/ChoiceChip';
-import { SportIcon } from '@/components/Icon';
-import { Screen } from '@/components/Screen';
 import { InlineError } from '@/components/States';
 import { useToast } from '@/components/Toast';
 import { useData } from '@/data/DataProvider';
+import { SheetModal } from '@/features/kit/SheetModal';
 import { useAction } from '@/hooks/useAsync';
 import { useT } from '@/i18n';
 import { useSession } from '@/state/session';
@@ -55,6 +53,7 @@ export function EditProfile({
   onCancel: () => void;
 }) {
   const { t } = useT();
+  const theme = useTheme();
   const port = useData();
   const session = useSession();
   const toast = useToast();
@@ -113,13 +112,18 @@ export function EditProfile({
     });
 
   return (
-    <Screen
+    <SheetModal
+      visible
       testID="screen.profile.edit"
       title={t('profile:editForm.title')}
-      back={false}
-      edges={['top']}
-      headerEnd={<Button testID="profile.edit.cancel" variant="ghost" label={t('common:actions.cancel')} onPress={onCancel} />}
+      onClose={onCancel}
+      closeLabel={t('common:actions.cancel')}
+      start={<Button testID="profile.edit.cancel" variant="ghost" size="sm" label={t('common:actions.cancel')} onPress={onCancel} />}
+      footer={<Button testID="profile.edit.save" label={t('common:actions.save')} icon="Check" loading={save.busy} onPress={submit} fullWidth size="lg" />}
     >
+      <View style={{ alignItems: 'center' }}>
+        <Avatar name={name.trim() || profile.displayName} uri={profile.avatarUrl} size="xl" decorative />
+      </View>
       <Stack gap="xl">
         <TextField
           testID="profile.edit.name"
@@ -131,6 +135,7 @@ export function EditProfile({
             if (nameError) setNameError(false);
           }}
           autoComplete="name"
+          inputDirection="auto"
           textContentType="nickname"
           error={nameError ? t('common:validation.required') : undefined}
           required
@@ -145,9 +150,10 @@ export function EditProfile({
             multiline
             numberOfLines={4}
             textAlignVertical="top"
+            inputDirection="auto"
             onChangeText={setBio}
           />
-          <Text variant="caption" color="textTertiary">
+          <Text variant="caption" color="textTertiary" style={{ alignSelf: 'flex-end', fontVariant: ['tabular-nums'] }}>
             {t('trust:sanctions.appeal.counter', { count: bio.length, max: BIO_MAX })}
           </Text>
         </Stack>
@@ -159,7 +165,7 @@ export function EditProfile({
           </Text>
           <Row gap="sm" wrap>
             {SPORT_IDS.map((s) => (
-              <ChoiceChip
+              <Chip
                 key={s}
                 testID={`profile.edit.sport.${s}`}
                 sport={s}
@@ -176,10 +182,10 @@ export function EditProfile({
           const positions = SPORT_POSITIONS[s] as readonly PositionId[];
           return (
             <View key={s} testID={`profile.edit.sportCard.${s}`}>
-              <Card outlined>
+              <View style={{ padding: spacing.lg, borderRadius: 20, ...theme.elevation(1) }}>
                 <Stack gap="md">
-                  <Row gap="sm">
-                    <SportIcon sport={s} />
+                  <Row gap="md">
+                    <SportGlyphBadge sport={s} size={40} squircle />
                     <Text variant="title3">{t(`common:sports.${s}`)}</Text>
                   </Row>
                   {positions.length ? (
@@ -187,7 +193,7 @@ export function EditProfile({
                       <Text variant="label">{t('auth:profileSetup.positionsLabel')}</Text>
                       <Row gap="sm" wrap>
                         {positions.map((p) => (
-                          <ChoiceChip
+                          <Chip
                             key={p}
                             testID={`profile.edit.position.${s}.${p}`}
                             label={t(`common:positions.${p}`)}
@@ -200,9 +206,9 @@ export function EditProfile({
                   ) : null}
                   <Stack gap="xs">
                     <Text variant="label">{t('auth:profileSetup.skillLabel')}</Text>
-                    <Row gap="sm" wrap accessibilityRole="radiogroup">
+                    <Row gap="sm" wrap role="radiogroup">
                       {SKILLS.map((n) => (
-                        <ChoiceChip
+                        <Chip
                           key={n}
                           testID={`profile.edit.skill.${s}.${n}`}
                           label={t(`auth:profileSetup.skill.${n}`)}
@@ -214,14 +220,13 @@ export function EditProfile({
                     </Row>
                   </Stack>
                 </Stack>
-              </Card>
+              </View>
             </View>
           );
         })}
 
         <InlineError error={save.error} />
-        <Button testID="profile.edit.save" label={t('common:actions.save')} loading={save.busy} onPress={submit} fullWidth size="lg" />
       </Stack>
-    </Screen>
+    </SheetModal>
   );
 }

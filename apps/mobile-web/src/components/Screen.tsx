@@ -14,6 +14,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { useBreakpoint } from '@/hooks/useBreakpoint';
 import { useT } from '@/i18n';
+import { focusVisible } from './focusVisible';
 
 export function goBack(fallback: Href = '/map') {
   if (router.canGoBack()) router.back();
@@ -76,7 +77,7 @@ export function MediaIconButton({
             backgroundColor: pressed ? 'rgba(255, 255, 255, 0.32)' : 'rgba(255, 255, 255, 0.18)',
             borderWidth: 1,
             borderColor: 'rgba(255, 255, 255, 0.28)',
-            ...(focused ? { outlineColor: '#FFFFFF', outlineWidth: 3, outlineStyle: 'solid', outlineOffset: 2 } : null),
+            ...(focusVisible(focused) ? { outlineColor: '#FFFFFF', outlineWidth: 3, outlineStyle: 'solid', outlineOffset: 2 } : null),
           } as ViewStyle;
         }}
       >
@@ -113,8 +114,10 @@ export interface ScreenProps {
   /** Max content width (design: reading width 720). */
   maxWidth?: number;
   edges?: ('top' | 'bottom')[];
-  /** Replaces the header entirely (hero screens draw their own). */
+  /** Scrolls with the content and replaces the header (hero screens draw their own). */
   hero?: ReactNode;
+  /** Sticky custom header under the safe area, replacing the compact header (wizards). */
+  header?: ReactNode;
   refreshControl?: ReactElement<RefreshControlProps>;
 }
 
@@ -136,6 +139,7 @@ export function Screen({
   maxWidth = sizing.maxContentWidth,
   edges = ['top', 'bottom'],
   hero,
+  header,
   refreshControl,
 }: ScreenProps) {
   const { colors } = useTheme();
@@ -164,7 +168,7 @@ export function Screen({
   ) : null;
 
   const compactHeader =
-    !large && !hero && (title || back || headerEnd) ? (
+    header ?? (!large && !hero && (title || back || headerEnd) ? (
       <View
         style={{
           flexDirection: 'row',
@@ -188,7 +192,7 @@ export function Screen({
         </View>
         {headerEnd ? <View style={{ flexDirection: 'row', alignItems: 'center', gap: spacing.xs }}>{headerEnd}</View> : null}
       </View>
-    ) : null;
+    ) : null);
 
   return (
     <SafeAreaView testID={testID} edges={hero ? [] : footer ? ['top'] : edges} style={{ flex: 1, backgroundColor: colors.background }}>

@@ -85,7 +85,8 @@
       "formatVs": "{a} contro {b}",
       "singles": "Singolo",
       "doubles": "Doppio",
-      "teamCount": "Numero di squadre"
+      "teamCount": "Numero di squadre",
+      "subtitle": "Scegline uno. Il formato lo imposti dopo."
     },
     "where": {
       "title": "Dove giocherete?",
@@ -96,7 +97,8 @@
       "venueNameHint": "Dai un nome al posto, così i giocatori lo trovano.",
       "hideExactLabel": "Nascondi la posizione esatta finché non approvo i giocatori",
       "hideExactHelp": "I giocatori vedono prima solo la zona. Condividi il punto esatto dopo averli approvati.",
-      "pinHere": "Usa l’area attuale della mappa come punto di ritrovo"
+      "pinHere": "Usa l’area attuale della mappa come punto di ritrovo",
+      "subtitle": "Scegli un campo vicino o metti un segnaposto."
     },
     "when": {
       "title": "Quando?",
@@ -104,7 +106,8 @@
       "start": "Ora di inizio",
       "duration": "Durata",
       "repeatWeekly": "Ripeti ogni settimana",
-      "comingSoon": "Presto disponibile"
+      "comingSoon": "Presto disponibile",
+      "subtitle": "Scegli un giorno e un orario di inizio."
     },
     "who": {
       "title": "Chi può partecipare?",
@@ -129,14 +132,19 @@
       "minPlayers": "Numero minimo di giocatori",
       "minPlayersHelp": "{count, plural, one {La partita si gioca con almeno # giocatore.} many {La partita si gioca con almeno # di giocatori.} other {La partita si gioca con almeno # giocatori.}}",
       "fewerMin": "Abbassa il minimo",
-      "moreMin": "Alza il minimo"
+      "moreMin": "Alza il minimo",
+      "subtitle": "Imposta i numeri e chi può trovare la tua partita."
     },
     "deposit": {
       "title": "Cauzione (facoltativa)",
       "toggle": "Richiedi una cauzione",
       "amount": "Importo della cauzione",
       "explain": "I giocatori bloccano {amount} sulla carta, importo rimborsabile. Il blocco viene rimosso dopo il check-in e trattenuto se non si presentano.",
-      "currencyNote": "La valuta dipende dal paese del campo."
+      "currencyNote": "La valuta dipende dal paese del campo.",
+      "subtitle": "Una piccola preautorizzazione rimborsabile rende rare le assenze.",
+      "none": "Nessuno",
+      "custom": "Altro",
+      "noneHelp": "I giocatori si uniscono senza preautorizzazione. Vedi comunque la loro affidabilità."
     },
     "review": {
       "title": "Controlla la tua partita",
@@ -147,7 +155,8 @@
       "whenValue": "{start} · {duration}",
       "whoValue": "{capacity, plural, one {# giocatore} many {# di giocatori} other {# giocatori}} (min. {min}) · {visibility}",
       "noDeposit": "Nessuna cauzione",
-      "editA11y": "Modifica: {section}"
+      "editA11y": "Modifica: {section}",
+      "subtitle": "Ecco come i giocatori vedranno la tua partita."
     },
     "published": {
       "title": "La tua partita è online",
@@ -156,7 +165,8 @@
       "copyLink": "Copia il link",
       "linkCopied": "Link copiato.",
       "showQr": "Mostra il codice QR",
-      "viewGame": "Vedi la partita"
+      "viewGame": "Vedi la partita",
+      "body": "I giocatori vicini possono già trovarla. Condividila per riempire prima i posti."
     },
     "discard": {
       "title": "Eliminare la bozza?",
@@ -204,7 +214,11 @@
       "badge": "Organizzatore",
       "approved": "Giocatore approvato.",
       "waitlisted": "La partita è al completo, quindi il giocatore è in lista d’attesa.",
-      "rejected": "Richiesta rifiutata."
+      "rejected": "Richiesta rifiutata.",
+      "title": "Chi organizza",
+      "since": "Membro da {date}",
+      "approveA11y": "Approva {name}",
+      "rejectA11y": "Rifiuta {name}"
     },
     "facts": {
       "players": "{joined} giocatori su {capacity}",
@@ -212,7 +226,13 @@
       "deposit": "Cauzione di {amount}",
       "womenOnly": "Solo donne",
       "private": "Partita privata",
-      "format": "Formato: {format}"
+      "format": "Formato: {format}",
+      "liveNow": "In corso",
+      "over": "Terminata",
+      "playersLabel": "Giocatori",
+      "starts": "Inizio",
+      "duration": "Durata",
+      "startsIn": "Inizia tra"
     },
     "sections": {
       "players": "Giocatori",
@@ -278,7 +298,12 @@
       "flash": "La partita inizia a breve, quindi tutti quelli in lista d’attesa hanno ricevuto questa offerta. Chi accetta per primo ottiene il posto.",
       "acceptWithin": "Accetta entro {duration} (fino alle {time}).",
       "accept": "Prendi il posto",
-      "accepted": "Ci sei. Ci vediamo lì."
+      "accepted": "Ci sei. Ci vediamo lì.",
+      "flashTag": "Offerta lampo"
+    },
+    "until": "fino alle {time}",
+    "players": {
+      "toggle": "{count, plural, one {# giocatore. Mostra o nascondi l’elenco.} many {# di giocatori. Mostra o nascondi l’elenco.} other {# giocatori. Mostra o nascondi l’elenco.}}"
     }
   },
   "invite": {
@@ -286,7 +311,9 @@
     "join": "Partecipa",
     "signUpToJoin": "Registrati per partecipare",
     "expired": "Questo invito è scaduto. Chiedi un nuovo link all’organizzatore.",
-    "signedOutBody": "Accedi o crea un account per vedere questa partita e partecipare."
+    "signedOutBody": "Accedi o crea un account per vedere questa partita e partecipare.",
+    "from": "{name} ti ha invitato a giocare",
+    "hint": "Chi organizza approva ogni giocatore. Ti avvisiamo appena sei dentro."
   },
   "teams": {
     "title": "Squadre",
@@ -354,6 +381,19 @@
       "cancelled": "Annullata",
       "checkedIn": "Check-in fatto",
       "noShow": "Assente"
+    },
+    "subtitle": "{count, plural, =0 {Ancora nessuna partita in programma} one {# partita in programma} many {# di partite in programma} other {# partite in programma}}",
+    "section": {
+      "today": "Oggi",
+      "tomorrow": "Domani",
+      "thisWeek": "Questa settimana",
+      "later": "Più avanti",
+      "pastWeek": "Questa settimana",
+      "earlier": "Precedenti"
     }
+  },
+  "card": {
+    "areaOnly": "Posizione esatta dopo l’approvazione",
+    "pinnedSpot": "Punto d’incontro sulla mappa"
   }
 }

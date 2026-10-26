@@ -7,6 +7,8 @@ import type { SportId } from '@st/domain';
 import { borderWidth, Haptics, Icon, radius, spacing, SportGlyphBadge, sportColors, Text, usePressScale, useTheme } from '@st/ui';
 import { Animated, Pressable, View, type ViewStyle } from 'react-native';
 
+import { focusVisible } from './focusVisible';
+
 export function SportTile({
   sport,
   label,
@@ -58,11 +60,29 @@ export function SportTile({
             backgroundColor: selected ? s.tint : pressed ? c.surfaceSunken : c.surface,
             opacity: disabled ? 0.5 : 1,
             ...(selected ? null : theme.elevation(1)),
-            ...(focused ? { outlineColor: c.focusRing, outlineWidth: borderWidth.focus, outlineStyle: 'solid', outlineOffset: 2 } : null),
+            ...(focusVisible(focused) ? { outlineColor: c.focusRing, outlineWidth: borderWidth.focus, outlineStyle: 'solid', outlineOffset: 2 } : null),
           } as ViewStyle;
         }}
       >
-        <SportGlyphBadge sport={sport} size={44} variant={selected ? 'solid' : 'tint'} squircle />
+        {/* Flex (not absolute start/end) so the check disc sits at the end edge in RTL on web too. */}
+        <View style={{ flexDirection: 'row', alignItems: 'flex-start', justifyContent: 'space-between' }}>
+          <SportGlyphBadge sport={sport} size={44} variant={selected ? 'solid' : 'tint'} squircle />
+          <View
+            aria-hidden
+            style={{
+              width: 24,
+              height: 24,
+              borderRadius: 12,
+              alignItems: 'center',
+              justifyContent: 'center',
+              backgroundColor: selected ? accent : 'transparent',
+              borderWidth: selected ? 0 : 1.5,
+              borderColor: c.borderStrong,
+            }}
+          >
+            {selected ? <Icon name="Check" size={14} weight="bold" color={theme.scheme === 'dark' ? '#08071A' : '#FFFFFF'} /> : null}
+          </View>
+        </View>
         <View style={{ gap: 2 }}>
           <Text variant="headline" color={selected ? s.text : 'text'} numberOfLines={1}>
             {label}
@@ -72,24 +92,6 @@ export function SportTile({
               {caption}
             </Text>
           ) : null}
-        </View>
-        <View
-          aria-hidden
-          style={{
-            position: 'absolute',
-            top: spacing.md,
-            end: spacing.md,
-            width: 24,
-            height: 24,
-            borderRadius: 12,
-            alignItems: 'center',
-            justifyContent: 'center',
-            backgroundColor: selected ? accent : 'transparent',
-            borderWidth: selected ? 0 : 1.5,
-            borderColor: c.borderStrong,
-          }}
-        >
-          {selected ? <Icon name="Check" size={14} weight="bold" color={theme.scheme === 'dark' ? '#08071A' : '#FFFFFF'} /> : null}
         </View>
       </Pressable>
     </Animated.View>

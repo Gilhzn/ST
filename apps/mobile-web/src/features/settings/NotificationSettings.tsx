@@ -1,18 +1,26 @@
 /**
- * Notification preferences (design §13.14): a switch per category, safety notices
- * locked on (legal notice), and the OS permission state with a way to fix it.
+ * Notification preferences (design v2 §15.15): a grouped switch per category with tinted
+ * icons, safety notices locked on (legal notice), and the OS permission state with a fix.
  */
-import { Button, Divider, Stack, Text } from '@st/ui';
+import { Button, ListGroup, Stack, type IconName, type ListItemLeadTone } from '@st/ui';
 import { useCallback, useEffect, useState } from 'react';
 import { Linking, Platform } from 'react-native';
 
-import { Banner } from '@/components/States';
 import { useData } from '@/data/DataProvider';
+import { Notice } from '@/features/kit/Notice';
 import { useT } from '@/i18n';
 import { getPushPermission, registerForPush, type PushPermission } from '@/platform/push';
 
-import { NOTIFICATION_CATEGORIES, useNotificationPrefs } from './notificationPrefs';
+import { NOTIFICATION_CATEGORIES, useNotificationPrefs, type NotificationCategory } from './notificationPrefs';
 import { SwitchRow } from './SwitchRow';
+
+const ICONS: Record<NotificationCategory, [IconName, ListItemLeadTone]> = {
+  joinRequests: ['UserPlus', 'brand'],
+  approvals: ['CheckCircle', 'success'],
+  waitlist: ['Hourglass', 'info'],
+  reminders: ['CalendarDots', 'warning'],
+  chat: ['ChatsCircle', 'brand'],
+};
 
 export function NotificationSettings() {
   const { t } = useT();
@@ -37,43 +45,45 @@ export function NotificationSettings() {
   };
 
   return (
-    <Stack gap="md" testID="settings.notifications">
+    <Stack gap="xl" testID="settings.notifications">
       {permission === 'denied' ? (
         <Stack gap="sm">
-          <Banner tone="warning" text={t('settings:notifications.osOff')} testID="settings.notifications.osOff" />
+          <Notice tone="warning" icon="BellSlash" text={t('settings:notifications.osOff')} testID="settings.notifications.osOff" />
           {Platform.OS !== 'web' ? (
-            <Button testID="settings.notifications.openSettings" variant="secondary" label={t('settings:notifications.osOffAction')} onPress={() => void Linking.openSettings()} />
+            <Button testID="settings.notifications.openSettings" variant="secondary" icon="GearSix" label={t('settings:notifications.osOffAction')} onPress={() => void Linking.openSettings()} />
           ) : null}
         </Stack>
       ) : permission === 'undetermined' ? (
-        <Button testID="settings.notifications.enable" label={t('auth:permissions.notifications.allow')} loading={busy} onPress={() => void turnOn()} />
+        <Button testID="settings.notifications.enable" size="lg" fullWidth icon="Bell" label={t('auth:permissions.notifications.allow')} loading={busy} onPress={() => void turnOn()} />
       ) : permission === 'unavailable' ? (
-        <Banner tone="info" text={t('settings:notifications.unavailable')} testID="settings.notifications.unavailable" />
+        <Notice tone="info" icon="Info" text={t('settings:notifications.unavailable')} testID="settings.notifications.unavailable" />
       ) : null}
 
-      <Stack gap="xxs" accessibilityRole="list">
+      <ListGroup title={t('settings:notifications.groupTitle')} footer={t('settings:notifications.deviceNote')}>
         {NOTIFICATION_CATEGORIES.map((c) => (
           <SwitchRow
             key={c}
             testID={`settings.notifications.${c}`}
+            icon={ICONS[c][0]}
+            tone={ICONS[c][1]}
             label={t(`settings:notifications.${c}`)}
             value={prefs[c]}
             onChange={(on) => setCategory(c, on)}
           />
         ))}
-        <Divider />
+      </ListGroup>
+      <ListGroup>
         <SwitchRow
           testID="settings.notifications.safety"
+          icon="ShieldCheck"
+          tone="success"
           label={t('settings:notifications.safety')}
           help={t('settings:notifications.safetyLocked')}
           value
           disabled
           onChange={() => undefined}
         />
-      </Stack>
-      <Text variant="caption" color="textSecondary">
-        {t('settings:notifications.deviceNote')}
-      </Text>
+      </ListGroup>
     </Stack>
   );
 }

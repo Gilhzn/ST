@@ -1,11 +1,13 @@
 /**
- * Game chat (design §13.11, architecture §5.3). Realtime events are merged by id;
+ * Game chat (design v2 §15.7, architecture §5.3). Realtime events are merged by id;
  * sends go through the moderation pipeline. UX:
- * - nudge: a client blocklist hit shows an inline card before sending (Edit / Send
- *   anyway); a server nudge is delivered with an explanation.
- * - block: nothing is sent, the text stays in the composer, the reason is shown with
- *   a link to the rules; a mute replaces the composer with "Chat paused until …".
- * - translate per message, report message (kept 90 days), block the author.
+ * - header: sport badge, game title, day and time; a "messages disappear" info pill.
+ * - bubbles grouped by author (avatar + name on the first, tail on the last) with day separators.
+ * - nudge: a client blocklist hit raises an inline amber sheet above the composer (Edit /
+ *   Send anyway); a server nudge is delivered with a short explanation.
+ * - block: nothing is sent, the text stays in the composer, a calm card explains why and
+ *   links to the rules; a mute replaces the composer with "Chat paused until …".
+ * - translate per message, report (long press or ⋯ → options sheet), block the author.
  * - expired chat: read-only banner.
  */
 import {
@@ -18,32 +20,76 @@ import {
   type StError,
   type UserReportCategory,
 } from '@st/domain';
-import { BidiText, Button, isolate, radius, Row, sizing, spacing, Stack, Text, TextField, useTheme } from '@st/ui';
+import {
+  BidiText,
+  Button,
+  Chip,
+  EmptyState,
+  Haptics,
+  Icon,
+  IconButton,
+  isolate,
+  ListGroup,
+  ListItem,
+  radius,
+  Row,
+  Skeleton,
+  spacing,
+  SportGlyphBadge,
+  Stack,
+  StatusPill,
+  Text,
+  TextField,
+  useTheme,
+} from '@st/ui';
 import * as Crypto from 'expo-crypto';
 import { router } from 'expo-router';
 import { useCallback, useEffect, useMemo, useState, type ReactNode } from 'react';
-import { FlatList, KeyboardAvoidingView, Modal, Platform, Pressable, View } from 'react-native';
+import { FlatList, KeyboardAvoidingView, Modal, Platform, Pressable, TextInput, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
-import { Card } from '@/components/CardView';
-import { ChoiceChip } from '@/components/ChoiceChip';
 import { ConfirmDialog } from '@/components/ConfirmDialog';
-import { Icon } from '@/components/Icon';
 import { BackButton } from '@/components/Screen';
-import { Banner, ErrorView, InlineError, Skeleton } from '@/components/States';
+import { ErrorView, InlineError } from '@/components/States';
 import { useToast } from '@/components/Toast';
 import { useData } from '@/data/DataProvider';
 import { toStError } from '@/data/errors';
 import { useGame } from '@/features/game/useGame';
+import { Notice } from '@/features/kit/Notice';
 import { useAction, useAsync } from '@/hooks/useAsync';
 import { useNow } from '@/hooks/useNow';
-import { useT } from '@/i18n';
-import { formatTime } from '@/lib/format';
+import { useT, type TFunction } from '@/i18n';
+import { formatDate, formatDay, formatTime } from '@/lib/format';
 import { useSession } from '@/state/session';
 
 import { MessageBubble, type Translation } from './MessageBubble';
 
 const REPORT_CATEGORIES: UserReportCategory[] = ['harassment', 'violence', 'unsportsmanlike', 'spam', 'other'];
+/** Messages from one author within this gap form a visual group. */
+const GROUP_GAP_MS = 5 * 60_000;
+
+function dayKey(iso: string): string {
+  const d = new Date(iso);
+  return `${d.getFullYear()}-${d.getMonth()}-${d.getDate()}`;
+}
+
+function dayLabel(iso: string, now: number, t: TFunction, locale: string): string {
+  const start = (ms: number) => {
+    const d = new Date(ms);
+    d.setHours(0, 0, 0, 0);
+    return d.getTime();
+  };
+  const diff = Math.round((start(now) - start(Date.parse(iso))) / 86_400_000);
+  if (diff === 0) return t('chat:day.today');
+  if (diff === 1) return t('chat:day.yesterday');
+  return formatDate(iso, locale, { weekday: 'long', day: 'numeric', month: 'long' });
+}
+
+/** "Today" / "Yesterday" (capitalized catalog strings), else the localized relative day or date. */
+function headerDay(iso: string, now: number, t: TFunction, locale: string): string {
+  const label = dayLabel(iso, now, t, locale);
+  return label === t('chat:day.today') || label === t('chat:day.yesterday') ? label : formatDay(iso, locale, now);
+}
 
 export function ChatScreen({ gameId }: { gameId: string }) {
   const { t, locale } = useT();
@@ -97,16 +143,14 @@ export function ChatScreen({ gameId }: { gameId: string }) {
   const g = game.data;
   if ((game.loading && !g) || (history.loading && !history.data)) {
     return (
-      <Frame title={t('chat:title')}>
-        <View style={{ padding: spacing.lg }}>
-          <Skeleton rows={4} height={56} />
-        </View>
+      <Frame>
+        <ChatSkeleton />
       </Frame>
     );
   }
   if (!g || history.error) {
     return (
-      <Frame title={t('chat:title')}>
+      <Frame>
         <ErrorView error={game.error ?? history.error} onRetry={() => void history.reload()} />
       </Frame>
     );
@@ -116,6 +160,7 @@ export function ChatScreen({ gameId }: { gameId: string }) {
   const expired = now >= Date.parse(expiresAt);
   const muted = !!mutedUntil && Date.parse(mutedUntil) > now;
   const hours = DEFAULT_TRUST_CONFIG.chatTtlHoursAfterEnd;
+  const canSend = !!text.trim() && !sending;
 
   const doSend = async (body: string) => {
     setSending(true);
@@ -129,6 +174,7 @@ export function ChatScreen({ gameId }: { gameId: string }) {
         const profile = await port.getMyProfile().catch(() => null);
         setMutedUntil(profile?.chatMutedUntil ?? new Date(Date.now() + 3600_000).toISOString());
       } else setSendError(err);
+      Haptics.trigger('actionFailed');
       return;
     } finally {
       setSending(false);
@@ -136,9 +182,11 @@ export function ChatScreen({ gameId }: { gameId: string }) {
     setNudge(false);
     if (res.mutedUntil) setMutedUntil(res.mutedUntil);
     if (res.verdict.decision === 'block' || !res.message) {
+      Haptics.warning();
       setBlocked(res.verdict); // the text stays in the composer
       return;
     }
+    Haptics.light();
     setBlocked(null);
     setServerNudge(res.verdict.decision === 'nudge' ? res.verdict.reasonKey : null);
     merge([res.message]);
@@ -151,6 +199,7 @@ export function ChatScreen({ gameId }: { gameId: string }) {
     setBlocked(null);
     // Client blocklist: instant, untrusted feedback before the server decides.
     if (!nudge && matchBlocklist(body, locale).matched) {
+      Haptics.warning();
       setNudge(true);
       return;
     }
@@ -182,18 +231,37 @@ export function ChatScreen({ gameId }: { gameId: string }) {
 
   return (
     <Frame
-      title={t('chat:title')}
-      subtitle={g.title}
-      chip={
-        <Text variant="caption" color="infoText" testID="chat.infoChip" accessibilityHint={t('chat:infoDetail', { hours, days: DEFAULT_TRUST_CONFIG.moderationRetentionDays })}>
-          {t('chat:infoChip', { hours })}
-        </Text>
+      header={
+        <Row gap="md" style={{ flex: 1 }}>
+          <SportGlyphBadge sport={g.sport} size={36} variant="solid" squircle />
+          <Stack gap="xxs" style={{ flex: 1 }}>
+            <BidiText variant="headline" numberOfLines={1} role="heading">
+              {g.title}
+            </BidiText>
+            <Row gap="xs">
+              <Text variant="footnote" color="textSecondary" numberOfLines={1}>
+                {headerDay(g.startsAt, now, t, locale)}
+              </Text>
+              <Text variant="footnote" color="textTertiary" aria-hidden>
+                ·
+              </Text>
+              <Text variant="footnote" color="textSecondary" style={{ fontVariant: ['tabular-nums'] }}>
+                {isolate(formatTime(g.startsAt, locale), 'ltr')}
+              </Text>
+            </Row>
+          </Stack>
+        </Row>
       }
     >
       <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : undefined} style={{ flex: 1 }}>
+        <View style={{ alignItems: 'center', paddingTop: spacing.sm, paddingBottom: spacing.xs, paddingStart: spacing.lg, paddingEnd: spacing.lg }}>
+          <View testID="chat.infoChip" accessible aria-label={t('chat:infoDetail', { hours, days: DEFAULT_TRUST_CONFIG.moderationRetentionDays })}>
+            <StatusPill tone="info" icon="Timer" label={t('chat:infoChip', { hours })} />
+          </View>
+        </View>
         {expired ? (
-          <View style={{ padding: spacing.lg }}>
-            <Banner testID="chat.expired" text={t('chat:expired')} />
+          <View style={{ paddingStart: spacing.lg, paddingEnd: spacing.lg, paddingTop: spacing.sm }}>
+            <Notice testID="chat.expired" tone="neutral" icon="ChatSlash" text={t('chat:expired')} />
           </View>
         ) : null}
         <FlatList
@@ -201,35 +269,44 @@ export function ChatScreen({ gameId }: { gameId: string }) {
           inverted={visible.length > 0}
           data={visible}
           keyExtractor={(m) => m.id}
-          contentContainerStyle={{ paddingStart: spacing.lg, paddingEnd: spacing.lg, paddingTop: spacing.md, paddingBottom: spacing.md, flexGrow: 1 }}
+          contentContainerStyle={{ paddingStart: spacing.md, paddingEnd: spacing.md, paddingTop: spacing.md, paddingBottom: spacing.md, flexGrow: 1 }}
           ListEmptyComponent={
-            <View style={{ flex: 1, justifyContent: 'center', padding: spacing.xl }} testID="chat.empty">
-              <Text variant="body" color="textSecondary" align="center">
-                {t('chat:empty', { hours })}
-              </Text>
+            <View style={{ flex: 1, justifyContent: 'center' }} testID="chat.empty">
+              <EmptyState illustration="noChat" title={t('chat:title')} body={t('chat:empty', { hours })} />
             </View>
           }
           renderItem={({ item, index }) => {
             const older = visible[index + 1];
+            const newer = visible[index - 1];
+            const newDay = !older || dayKey(older.createdAt) !== dayKey(item.createdAt);
+            const groupStart = newDay || !older || older.senderId !== item.senderId || Date.parse(item.createdAt) - Date.parse(older.createdAt) > GROUP_GAP_MS;
+            const groupEnd =
+              !newer || newer.senderId !== item.senderId || dayKey(newer.createdAt) !== dayKey(item.createdAt) || Date.parse(newer.createdAt) - Date.parse(item.createdAt) > GROUP_GAP_MS;
             return (
-              <MessageBubble
-                message={item}
-                own={item.senderId === meId}
-                author={people.get(item.senderId) ?? null}
-                showAuthor={!older || older.senderId !== item.senderId}
-                translation={translations[item.id]}
-                onTranslate={() => void translate(item)}
-                onOptions={() => setMenuFor(item)}
-              />
+              <View>
+                {newDay ? <DaySeparator label={dayLabel(item.createdAt, now, t, locale)} /> : null}
+                <MessageBubble
+                  message={item}
+                  own={item.senderId === meId}
+                  author={people.get(item.senderId) ?? null}
+                  groupStart={groupStart}
+                  groupEnd={groupEnd}
+                  translation={translations[item.id]}
+                  onTranslate={() => void translate(item)}
+                  onOptions={() => setMenuFor(item)}
+                />
+              </View>
             );
           }}
         />
 
         {!expired ? (
-          <View style={{ borderTopWidth: 1, borderTopColor: theme.colors.border, backgroundColor: theme.colors.surface, padding: spacing.md, gap: spacing.sm }}>
+          <View style={{ borderTopWidth: 1, borderTopColor: theme.colors.border, backgroundColor: theme.colors.surface }}>
             {muted ? (
-              <Row gap="sm" testID="chat.muted" accessibilityLiveRegion="polite">
-                <Icon name="timer-sand" />
+              <Row gap="md" testID="chat.muted" aria-live="polite" style={{ padding: spacing.lg }}>
+                <View aria-hidden style={{ width: 36, height: 36, borderRadius: radius.sm, alignItems: 'center', justifyContent: 'center', backgroundColor: theme.colors.warningSubtle }}>
+                  <Icon name="Hourglass" size={20} weight="fill" color="warningText" />
+                </View>
                 <Text variant="callout" style={{ flex: 1 }}>
                   {t('chat:moderation.muted', { time: isolate(formatTime(mutedUntil as string, locale), 'ltr') })}
                 </Text>
@@ -248,77 +325,113 @@ export function ChatScreen({ gameId }: { gameId: string }) {
             ) : (
               <>
                 {nudge ? (
-                  <Card outlined testID="chat.nudge" style={{ borderColor: theme.colors.warning }}>
-                    <Stack gap="sm" accessibilityLiveRegion="polite">
-                      <Text variant="bodyStrong">{t('chat:moderation.nudge.title')}</Text>
-                      <Text variant="callout" color="textSecondary">
-                        {t('chat:moderation.nudge.body')}
-                      </Text>
-                      <Row gap="sm" wrap>
-                        <Button testID="chat.nudge.edit" variant="secondary" size="sm" label={t('chat:moderation.nudge.edit')} onPress={() => setNudge(false)} />
-                        <Button testID="chat.nudge.sendAnyway" variant="ghost" size="sm" label={t('chat:moderation.nudge.sendAnyway')} onPress={() => void doSend(text.trim())} />
-                      </Row>
-                    </Stack>
-                  </Card>
-                ) : null}
-                {blocked ? (
-                  <Card outlined testID="chat.block" style={{ borderColor: theme.colors.danger }}>
-                    <Stack gap="xs" accessibilityLiveRegion="assertive">
-                      <Text variant="callout" color="dangerText">
-                        {blockReason}
-                      </Text>
-                      <Pressable accessibilityRole="link" onPress={() => router.push('/legal/terms')} style={{ minHeight: 32, justifyContent: 'center' }}>
-                        <Text variant="caption" color="primaryText">
-                          {t('chat:moderation.block.rulesLink')}
-                        </Text>
-                      </Pressable>
-                    </Stack>
-                  </Card>
-                ) : null}
-                {serverNudge ? (
-                  <Text variant="caption" color="warningText" testID="chat.nudge.server" accessibilityLiveRegion="polite">
-                    {t(`chat:${serverNudge}`)}
-                  </Text>
-                ) : null}
-                <InlineError error={sendError} />
-                <Row gap="sm" align="end">
-                  <View style={{ flex: 1 }}>
-                    <TextField
-                      testID="chat.input"
-                      label={t('chat:composer.placeholder')}
-                      placeholder={t('chat:composer.placeholder')}
-                      value={text}
-                      onChangeText={(v) => {
-                        setText(v);
-                        if (nudge) setNudge(false);
-                      }}
-                      inputDirection="auto"
-                      multiline
-                      maxLength={1000}
-                      onSubmitEditing={onSend}
-                      blurOnSubmit={false}
-                      containerStyle={{ gap: 0 }}
-                    />
-                  </View>
-                  <Pressable
-                    testID="chat.send"
-                    accessibilityRole="button"
-                    accessibilityLabel={t('chat:composer.send')}
-                    aria-disabled={!text.trim() || sending}
-                    disabled={!text.trim() || sending}
-                    onPress={onSend}
-                    style={({ pressed }) => ({
-                      width: sizing.touchTarget,
-                      height: sizing.touchTarget,
-                      borderRadius: radius.pill,
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                      backgroundColor: !text.trim() ? theme.colors.disabledBg : pressed ? theme.colors.primaryPressed : theme.colors.primary,
-                    })}
+                  <View
+                    testID="chat.nudge"
+                    aria-live="polite"
+                    style={{ gap: spacing.md, padding: spacing.lg, backgroundColor: theme.colors.warningSubtle, borderBottomWidth: 1, borderBottomColor: theme.colors.border }}
                   >
-                    <Icon name="send" color={text.trim() ? 'onPrimary' : 'disabledText'} directional />
-                  </Pressable>
-                </Row>
+                    <Row gap="md" align="start">
+                      <View aria-hidden style={{ width: 36, height: 36, borderRadius: radius.sm, alignItems: 'center', justifyContent: 'center', backgroundColor: theme.colors.surface }}>
+                        <Icon name="HandWaving" size={20} weight="fill" color="warningText" />
+                      </View>
+                      <Stack gap="xxs" style={{ flex: 1 }}>
+                        <Text variant="headline" color="warningText">
+                          {t('chat:moderation.nudge.title')}
+                        </Text>
+                        <Text variant="callout">{t('chat:moderation.nudge.body')}</Text>
+                      </Stack>
+                    </Row>
+                    <Row gap="sm" style={{ paddingStart: 36 + spacing.md }}>
+                      <Button testID="chat.nudge.edit" variant="outline" size="sm" icon="PencilSimple" label={t('chat:moderation.nudge.edit')} onPress={() => setNudge(false)} />
+                      <Button testID="chat.nudge.sendAnyway" variant="ghost" size="sm" label={t('chat:moderation.nudge.sendAnyway')} onPress={() => void doSend(text.trim())} />
+                    </Row>
+                  </View>
+                ) : null}
+                <View style={{ padding: spacing.md, gap: spacing.sm }}>
+                  {blocked ? (
+                    <View
+                      testID="chat.block"
+                      aria-live="assertive"
+                      style={{ flexDirection: 'row', alignItems: 'flex-start', gap: spacing.md, padding: spacing.md, borderRadius: radius.lg, backgroundColor: theme.colors.surfaceSunken }}
+                    >
+                      <View aria-hidden style={{ width: 36, height: 36, borderRadius: radius.sm, alignItems: 'center', justifyContent: 'center', backgroundColor: theme.colors.dangerSubtle }}>
+                        <Icon name="ShieldWarning" size={20} weight="fill" color="dangerText" />
+                      </View>
+                      <Stack gap="xxs" style={{ flex: 1 }}>
+                        <Text variant="callout">{blockReason}</Text>
+                        <Pressable role="link" onPress={() => router.push('/legal/terms')} hitSlop={8} style={{ minHeight: 32, flexDirection: 'row', alignItems: 'center', gap: spacing.xs }}>
+                          <Text variant="footnote" weight="semibold" color="primaryText">
+                            {t('chat:moderation.block.rulesLink')}
+                          </Text>
+                          <Icon name="ArrowSquareOut" size={14} color="primaryText" />
+                        </Pressable>
+                      </Stack>
+                    </View>
+                  ) : null}
+                  {serverNudge ? (
+                    <Row gap="xs" testID="chat.nudge.server" aria-live="polite" align="start">
+                      <Icon name="Info" size={16} weight="fill" color="warningText" />
+                      <Text variant="footnote" color="warningText" style={{ flex: 1 }}>
+                        {t(`chat:${serverNudge}`)}
+                      </Text>
+                    </Row>
+                  ) : null}
+                  <InlineError error={sendError} />
+                  <Row gap="sm" align="end">
+                    <View
+                      style={{
+                        flex: 1,
+                        minHeight: 44,
+                        justifyContent: 'center',
+                        borderRadius: 22,
+                        backgroundColor: theme.colors.surfaceSunken,
+                        borderWidth: 1,
+                        borderColor: nudge ? theme.colors.warning : 'transparent',
+                        paddingStart: spacing.lg,
+                        paddingEnd: spacing.lg,
+                      }}
+                    >
+                      <TextInput
+                        testID="chat.input"
+                        aria-label={t('chat:composer.placeholder')}
+                        placeholder={t('chat:composer.placeholder')}
+                        placeholderTextColor={theme.colors.textTertiary}
+                        value={text}
+                        onChangeText={(v) => {
+                          setText(v);
+                          if (nudge) setNudge(false);
+                        }}
+                        multiline
+                        numberOfLines={1}
+                        maxLength={1000}
+                        onSubmitEditing={onSend}
+                        blurOnSubmit={false}
+                        style={{
+                          minHeight: 24,
+                          maxHeight: 120,
+                          paddingTop: 10,
+                          paddingBottom: 10,
+                          fontSize: 16,
+                          lineHeight: 22,
+                          color: theme.colors.text,
+                          fontFamily: theme.fontFamily('regular'),
+                          textAlign: 'auto',
+                          ...(Platform.OS === 'web' ? ({ outlineStyle: 'none', dir: 'auto' } as object) : null),
+                        }}
+                      />
+                    </View>
+                    <IconButton
+                      testID="chat.send"
+                      icon="PaperPlaneRight"
+                      weight="fill"
+                      variant="filled"
+                      size="md"
+                      label={t('chat:composer.send')}
+                      disabled={!canSend}
+                      onPress={onSend}
+                    />
+                  </Row>
+                </View>
               </>
             )}
           </View>
@@ -327,28 +440,42 @@ export function ChatScreen({ gameId }: { gameId: string }) {
 
       {/* Message options (also the accessible alternative to long press). */}
       <Modal visible={!!menuFor} transparent animationType="fade" onRequestClose={() => setMenuFor(null)}>
-        <Pressable accessibilityRole="button" accessibilityLabel={t('common:actions.close')} onPress={() => setMenuFor(null)} style={{ flex: 1, backgroundColor: theme.colors.scrim, justifyContent: 'flex-end' }}>
-          <SafeAreaView edges={['bottom']} style={{ backgroundColor: theme.colors.surfaceRaised, borderTopStartRadius: radius.xl, borderTopEndRadius: radius.xl }}>
-            <Stack padding="lg" gap="xs" testID="chat.menu">
+        <View style={{ flex: 1, justifyContent: 'flex-end' }}>
+          <Pressable role="button" aria-label={t('common:actions.close')} onPress={() => setMenuFor(null)} style={{ position: 'absolute', top: 0, bottom: 0, start: 0, end: 0, backgroundColor: theme.colors.scrim }} />
+          <SafeAreaView edges={['bottom']} style={{ backgroundColor: theme.colors.background, borderTopStartRadius: radius.xl, borderTopEndRadius: radius.xl, ...theme.elevation(3) }}>
+            <Stack padding="lg" gap="lg" testID="chat.menu" style={{ width: '100%', maxWidth: 560, alignSelf: 'center' }}>
+              <View aria-hidden style={{ alignSelf: 'center', width: 36, height: 5, borderRadius: 3, backgroundColor: theme.colors.textTertiary, opacity: 0.4 }} />
+              {menuFor && menuFor.body ? (
+                <View style={{ paddingStart: spacing.md, borderStartWidth: 3, borderStartColor: theme.colors.primary }}>
+                  <Text variant="caption" weight="semibold" color="textSecondary">
+                    {menuAuthor}
+                  </Text>
+                  <BidiText variant="callout" mode="block" numberOfLines={2} color="textSecondary">
+                    {menuFor.body}
+                  </BidiText>
+                </View>
+              ) : null}
               {menuFor && menuFor.senderId !== meId ? (
-                <>
-                  <MenuItem testID={`chat.message.${menuFor.id}.menuTranslate`} icon="translate" label={t('chat:message.translate')} onPress={() => { const m = menuFor; setMenuFor(null); void translate(m); }} />
-                  <MenuItem testID={`chat.message.${menuFor.id}.report`} icon="flag-outline" label={t('chat:message.report')} onPress={() => { setReportFor(menuFor); setMenuFor(null); }} />
-                  <MenuItem
+                <ListGroup>
+                  <ListItem testID={`chat.message.${menuFor.id}.menuTranslate`} icon="Translate" iconTone="info" title={t('chat:message.translate')} chevron={false} onPress={() => { const m = menuFor; setMenuFor(null); void translate(m); }} />
+                  <ListItem testID={`chat.message.${menuFor.id}.report`} icon="Flag" iconTone="warning" title={t('chat:message.report')} chevron={false} onPress={() => { setReportFor(menuFor); setMenuFor(null); }} />
+                  <ListItem
                     testID={`chat.message.${menuFor.id}.block`}
-                    icon="account-cancel"
-                    label={t('chat:message.block', { name: isolate(menuAuthor) })}
+                    icon="UserMinus"
+                    destructive
+                    chevron={false}
+                    title={t('chat:message.block', { name: isolate(menuAuthor) })}
                     onPress={() => {
                       setBlockTarget({ id: menuFor.senderId, name: menuAuthor });
                       setMenuFor(null);
                     }}
                   />
-                </>
+                </ListGroup>
               ) : null}
-              <MenuItem icon="close" label={t('common:actions.close')} onPress={() => setMenuFor(null)} />
+              <Button variant="outline" size="lg" fullWidth label={t('common:actions.close')} onPress={() => setMenuFor(null)} />
             </Stack>
           </SafeAreaView>
-        </Pressable>
+        </View>
       </Modal>
 
       {reportFor ? (
@@ -377,6 +504,7 @@ export function ChatScreen({ gameId }: { gameId: string }) {
         onConfirm={async () => {
           if (!blockTarget) return;
           await block.run(blockTarget.id);
+          Haptics.trigger('destructiveConfirm');
           setHidden((h) => new Set(h).add(blockTarget.id));
           toast(t('chat:block.done', { name: isolate(blockTarget.name) }));
           setBlockTarget(null);
@@ -386,41 +514,50 @@ export function ChatScreen({ gameId }: { gameId: string }) {
   );
 }
 
-function Frame({ title, subtitle, chip, children }: { title: string; subtitle?: string; chip?: ReactNode; children: ReactNode }) {
+function DaySeparator({ label }: { label: string }) {
+  const { colors } = useTheme();
+  return (
+    <View role="heading" aria-level={2} style={{ alignItems: 'center', marginTop: spacing.lg, marginBottom: spacing.xs }}>
+      <View style={{ paddingStart: spacing.md, paddingEnd: spacing.md, paddingTop: 3, paddingBottom: 3, borderRadius: radius.pill, backgroundColor: colors.surfaceSunken }}>
+        <Text variant="caption" weight="semibold" color="textSecondary">
+          {label}
+        </Text>
+      </View>
+    </View>
+  );
+}
+
+function Frame({ header, children }: { header?: ReactNode; children: ReactNode }) {
+  const { t } = useT();
   const { colors } = useTheme();
   return (
     <SafeAreaView edges={['top', 'bottom']} style={{ flex: 1, backgroundColor: colors.background }} testID="screen.game.chat">
-      <Row gap="sm" style={{ minHeight: 56, paddingStart: spacing.sm, paddingEnd: spacing.md, borderBottomWidth: 1, borderBottomColor: colors.border }}>
+      <Row gap="xs" style={{ minHeight: 64, paddingStart: spacing.sm, paddingEnd: spacing.lg, borderBottomWidth: 1, borderBottomColor: colors.border, backgroundColor: colors.surface }}>
         <BackButton />
-        <Stack gap="xxs" style={{ flex: 1 }}>
-          <Text variant="title3" numberOfLines={1}>
-            {title}
+        {header ?? (
+          <Text variant="headline" role="heading" style={{ flex: 1 }}>
+            {t('chat:title')}
           </Text>
-          {subtitle ? (
-            <BidiText variant="caption" color="textSecondary" numberOfLines={1}>
-              {subtitle}
-            </BidiText>
-          ) : null}
-        </Stack>
-        {chip ? <View style={{ maxWidth: 180, padding: spacing.xs, borderRadius: radius.md, backgroundColor: colors.infoSubtle }}>{chip}</View> : null}
+        )}
       </Row>
       <View style={{ flex: 1, width: '100%', maxWidth: 820, alignSelf: 'center' }}>{children}</View>
     </SafeAreaView>
   );
 }
 
-function MenuItem({ icon, label, onPress, testID }: { icon: Parameters<typeof Icon>[0]['name']; label: string; onPress: () => void; testID?: string }) {
-  const { colors } = useTheme();
+function ChatSkeleton() {
   return (
-    <Pressable
-      testID={testID}
-      accessibilityRole="button"
-      onPress={onPress}
-      style={({ pressed }) => ({ minHeight: 52, flexDirection: 'row', alignItems: 'center', gap: spacing.md, paddingStart: spacing.sm, borderRadius: radius.md, backgroundColor: pressed ? colors.surfaceSunken : 'transparent' })}
-    >
-      <Icon name={icon} />
-      <Text variant="body">{label}</Text>
-    </Pressable>
+    <View aria-busy testID="state.loading" style={{ padding: spacing.lg, gap: spacing.md, flex: 1, justifyContent: 'flex-end' }}>
+      {[180, 240, 140].map((w, i) => (
+        <Row key={i} gap="sm" align="end">
+          <Skeleton width={32} height={32} radius={16} />
+          <Skeleton width={w} height={44} radius={radius.lg} />
+        </Row>
+      ))}
+      <View style={{ alignItems: 'flex-end' }}>
+        <Skeleton width={200} height={44} radius={radius.lg} />
+      </View>
+    </View>
   );
 }
 
@@ -446,14 +583,16 @@ function ReportDialog({ message, onClose, onReported }: { message: ChatMessage; 
         if (await report.run()) onReported();
       }}
     >
-      <Stack gap="sm">
-        <Text variant="label">{t('chat:report.reasonsTitle')}</Text>
-        <Row gap="sm" wrap accessibilityRole="radiogroup">
+      <Stack gap="md">
+        <Text variant="label" color="textSecondary">
+          {t('chat:report.reasonsTitle')}
+        </Text>
+        <Row gap="sm" wrap role="radiogroup" aria-label={t('chat:report.reasonsTitle')}>
           {REPORT_CATEGORIES.map((c) => (
-            <ChoiceChip key={c} testID={`chat.report.category.${c}`} selectionRole="radio" label={t(`chat:report.category.${c}`)} selected={category === c} onToggle={() => setCategory(c)} />
+            <Chip key={c} testID={`chat.report.category.${c}`} selectionRole="radio" label={t(`chat:report.category.${c}`)} selected={category === c} onToggle={() => setCategory(c)} />
           ))}
         </Row>
-        <TextField testID="chat.report.note" label={t('chat:report.detailsLabel')} value={note} onChangeText={setNote} maxLength={500} multiline />
+        <TextField testID="chat.report.note" label={t('chat:report.detailsLabel')} value={note} onChangeText={setNote} maxLength={500} multiline inputDirection="auto" />
         <InlineError error={report.error} />
       </Stack>
     </ConfirmDialog>

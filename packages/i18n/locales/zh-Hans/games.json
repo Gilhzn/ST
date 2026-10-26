@@ -85,7 +85,8 @@
       "formatVs": "{a} 对 {b}",
       "singles": "单打",
       "doubles": "双打",
-      "teamCount": "队伍数量"
+      "teamCount": "队伍数量",
+      "subtitle": "选择一项运动，下一步再设置赛制。"
     },
     "where": {
       "title": "在哪里打？",
@@ -96,7 +97,8 @@
       "venueNameHint": "给这个地点起个名字，方便玩家找到。",
       "hideExactLabel": "在我批准玩家之前隐藏确切位置",
       "hideExactHelp": "玩家会先看到大致区域。你批准后，再分享确切地点。",
-      "pinHere": "将当前地图区域用作集合地点"
+      "pinHere": "将当前地图区域用作集合地点",
+      "subtitle": "选择附近的场地，或在地图上放置标记。"
     },
     "when": {
       "title": "什么时候？",
@@ -104,7 +106,8 @@
       "start": "开始时间",
       "duration": "时长",
       "repeatWeekly": "每周重复",
-      "comingSoon": "即将推出"
+      "comingSoon": "即将推出",
+      "subtitle": "选择日期和开始时间。"
     },
     "who": {
       "title": "谁可以加入？",
@@ -129,14 +132,19 @@
       "minPlayers": "最少人数",
       "minPlayersHelp": "{count, plural, other {至少有 # 名玩家时，比赛才会进行。}}",
       "fewerMin": "降低最少人数",
-      "moreMin": "提高最少人数"
+      "moreMin": "提高最少人数",
+      "subtitle": "设置人数，以及谁能找到你的球局。"
     },
     "deposit": {
       "title": "押金（选填）",
       "toggle": "收取押金",
       "amount": "押金金额",
       "explain": "玩家会预授权 {amount} 的可退还押金。签到后释放，如果玩家爽约则会扣留。",
-      "currencyNote": "币种由场地所在国家或地区决定。"
+      "currencyNote": "币种由场地所在国家或地区决定。",
+      "subtitle": "少量可退还的预授权能让爽约变得很少见。",
+      "none": "无",
+      "custom": "其他",
+      "noneHelp": "球员无需预授权即可加入，你仍可看到他们的可靠度。"
     },
     "review": {
       "title": "确认比赛信息",
@@ -147,7 +155,8 @@
       "whenValue": "{start} · {duration}",
       "whoValue": "{capacity, plural, other {# 名玩家}}（最少 {min} 名）· {visibility}",
       "noDeposit": "无押金",
-      "editA11y": "编辑{section}"
+      "editA11y": "编辑{section}",
+      "subtitle": "球员看到的球局就是这样。"
     },
     "published": {
       "title": "你的比赛已发布",
@@ -156,7 +165,8 @@
       "copyLink": "复制链接",
       "linkCopied": "链接已复制。",
       "showQr": "显示二维码",
-      "viewGame": "查看比赛"
+      "viewGame": "查看比赛",
+      "body": "附近的球员现在就能找到它。分享出去，名额会满得更快。"
     },
     "discard": {
       "title": "放弃草稿？",
@@ -204,7 +214,11 @@
       "badge": "组织者",
       "approved": "已批准该玩家。",
       "waitlisted": "比赛已满员，该玩家已进入候补名单。",
-      "rejected": "已拒绝该申请。"
+      "rejected": "已拒绝该申请。",
+      "title": "发起人",
+      "since": "{date} 加入",
+      "approveA11y": "批准 {name}",
+      "rejectA11y": "拒绝 {name}"
     },
     "facts": {
       "players": "{joined}/{capacity} 名玩家",
@@ -212,7 +226,13 @@
       "deposit": "押金 {amount}",
       "womenOnly": "仅限女性",
       "private": "私密比赛",
-      "format": "赛制：{format}"
+      "format": "赛制：{format}",
+      "liveNow": "正在进行",
+      "over": "已结束",
+      "playersLabel": "球员",
+      "starts": "开始",
+      "duration": "时长",
+      "startsIn": "距离开始"
     },
     "sections": {
       "players": "玩家",
@@ -278,7 +298,12 @@
       "flash": "比赛即将开始，所以候补名单中的所有人都收到了这个邀请。最先接受的人将获得名额。",
       "acceptWithin": "请在{duration}内接受（截止 {time}）。",
       "accept": "占下名额",
-      "accepted": "你已加入，到时见。"
+      "accepted": "你已加入，到时见。",
+      "flashTag": "闪电邀约"
+    },
+    "until": "至 {time}",
+    "players": {
+      "toggle": "{count, plural, other {# 名球员。显示或隐藏列表。}}"
     }
   },
   "invite": {
@@ -286,7 +311,9 @@
     "join": "加入",
     "signUpToJoin": "注册后加入",
     "expired": "此邀请已过期，请向组织者索取新的链接。",
-    "signedOutBody": "登录或创建账号，即可查看并加入这场比赛。"
+    "signedOutBody": "登录或创建账号，即可查看并加入这场比赛。",
+    "from": "{name} 邀请你来打球",
+    "hint": "发起人会逐一批准球员。你一通过我们就会通知你。"
   },
   "teams": {
     "title": "分队",
@@ -354,6 +381,19 @@
       "cancelled": "已取消",
       "checkedIn": "已签到",
       "noShow": "未到场"
+    },
+    "subtitle": "{count, plural, =0 {暂无即将开始的球局} other {# 场即将开始的球局}}",
+    "section": {
+      "today": "今天",
+      "tomorrow": "明天",
+      "thisWeek": "本周",
+      "later": "以后",
+      "pastWeek": "本周",
+      "earlier": "更早"
     }
+  },
+  "card": {
+    "areaOnly": "获批准后显示具体位置",
+    "pinnedSpot": "地图上的集合点"
   }
 }

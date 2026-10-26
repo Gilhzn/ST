@@ -1,6 +1,12 @@
-/** Invite landing (design §13.18): preview + Join, or Sign up to join when signed out. */
-import { Button, EmptyState, Stack, Text } from '@st/ui';
+/**
+ * Invite landing (design v2 §15, share-ready): the night-stadium AuthHero ("You're invited",
+ * "<host> invited you to play"), the game's hero card overlapping it, and one primary action —
+ * Join, or Sign up to join when signed out. Expired links get a calm empty state.
+ */
+import { AuthHero, Button, EmptyState, isolate, spacing, Text } from '@st/ui';
 import { router, useLocalSearchParams } from 'expo-router';
+import { View } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { GameCard } from '@/components/GameCard';
 import { Screen } from '@/components/Screen';
@@ -17,6 +23,7 @@ export default function InviteScreen() {
   const { t } = useT();
   const port = useData();
   const { status } = useSession();
+  const insets = useSafeAreaInsets();
   const now = useNow();
   const ready = status === 'ready';
   const game = useAsync(() => port.resolveInvite(inviteToken), [port, inviteToken], ready);
@@ -27,52 +34,86 @@ export default function InviteScreen() {
     return g.id;
   });
 
+  const g = game.data;
+  const hero = (
+    <AuthHero
+      title={t('games:invite.title')}
+      subtitle={g ? t('games:invite.from', { name: isolate(g.host.displayName) }) : t('games:invite.signedOutBody')}
+      sports={g ? [g.sport] : undefined}
+      topInset={insets.top}
+      height={g ? 340 : 380}
+    />
+  );
+
   if (!ready) {
     return (
-      <Screen testID="screen.invite" title={t('games:invite.title')} back={false}>
-        <Stack gap="lg">
-          <Text variant="body" color="textSecondary">
-            {t('games:invite.signedOutBody')}
-          </Text>
+      <Screen
+        testID="screen.invite"
+        back={false}
+        hero={hero}
+        contentStyle={{ paddingTop: spacing.xl, gap: spacing.lg }}
+        footer={
           <Button
             testID="invite.signup"
             size="lg"
             fullWidth
+            iconEnd="ArrowRight"
             label={t('games:invite.signUpToJoin')}
             onPress={() => {
               setPostAuthRedirect(`/invite/${inviteToken}`);
               router.replace(status === 'needsProfile' ? '/age-gate' : '/phone');
             }}
           />
-        </Stack>
+        }
+      >
+        <Text variant="callout" color="textSecondary" align="center">
+          {t('auth:welcome.subtitle')}
+        </Text>
       </Screen>
     );
   }
 
+  const canJoin = !!g && !game.error;
   return (
-    <Screen testID="screen.invite" title={t('games:invite.title')} backFallback="/map">
-      {game.loading && !game.data ? (
-        <Skeleton rows={1} height={180} />
+    <Screen
+      testID="screen.invite"
+      backFallback="/map"
+      hero={hero}
+      contentStyle={{ gap: spacing.lg, marginTop: g ? -spacing.xxl : spacing.lg }}
+      footer={
+        canJoin ? (
+          <>
+            <InlineError error={join.error} />
+            <Button
+              testID="invite.accept"
+              size="lg"
+              fullWidth
+              icon="Lightning"
+              haptic="joinGame"
+              label={t('games:invite.join')}
+              loading={join.busy}
+              onPress={async () => {
+                const id = await join.run();
+                if (id) router.replace(`/game/${id}`);
+              }}
+            />
+          </>
+        ) : undefined
+      }
+    >
+      {game.loading && !g ? (
+        <Skeleton kind="game" rows={1} />
       ) : game.error ? (
         <ErrorView error={game.error} onRetry={() => void game.reload()} />
-      ) : !game.data ? (
-        <EmptyState tone="empty" title={t('games:invite.expired')} actionLabel={t('common:nav.map')} onAction={() => router.replace('/map')} />
+      ) : !g ? (
+        <EmptyState tone="empty" illustration="error" title={t('games:invite.expired')} actionLabel={t('common:nav.map')} actionIcon="MapTrifold" onAction={() => router.replace('/map')} />
       ) : (
-        <Stack gap="lg">
-          <GameCard game={game.data} host={game.data.host} now={now} testID={`invite.card.${game.data.id}`} />
-          <InlineError error={join.error} />
-          <Button
-            testID="invite.accept"
-            size="lg"
-            fullWidth
-            label={t('games:invite.join')}
-            loading={join.busy}
-            onPress={async () => {
-              const id = await join.run();
-              if (id) router.replace(`/game/${id}`);
-            }}
-          />
-        </Stack>
+        <View style={{ gap: spacing.lg }}>
+          <GameCard game={g} host={g.host} now={now} testID={`invite.card.${g.id}`} />
+          <Text variant="footnote" color="textTertiary" align="center">
+            {t('games:invite.hint')}
+          </Text>
+        </View>
       )}
     </Screen>
   );

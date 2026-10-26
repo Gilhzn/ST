@@ -255,7 +255,7 @@ export function HostQrScreen({ gameId }: { gameId: string }) {
                               size="sm"
                               variant="secondary"
                               label={t('checkin:host.present')}
-                              accessibilityLabel={t('checkin:host.markPresent', { name: p.profile.displayName })}
+                              aria-label={t('checkin:host.markPresent', { name: p.profile.displayName })}
                               loading={mark.busy}
                               onPress={async () => {
                                 const v = await mark.run(p.userId);

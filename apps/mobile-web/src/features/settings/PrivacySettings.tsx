@@ -1,54 +1,54 @@
 /**
- * Privacy and safety (design §13.14): what location is used for, how to change
- * the OS permission, blocked players and how to ask for a copy of your data.
+ * Privacy and safety (design v2 §15.15): what location is used for and how to change the OS
+ * permission, blocked players, and how to ask for a copy of your data.
  */
-import { Button, Card, Divider, Row, Stack, Text } from '@st/ui';
+import { Button, Icon, ListGroup, ListItem, radius, Row, spacing, Stack, Text, useTheme } from '@st/ui';
 import { router } from 'expo-router';
-import { Linking, Platform } from 'react-native';
+import { Linking, Platform, View } from 'react-native';
 
-import { Icon } from '@/components/Icon';
 import { useT } from '@/i18n';
 
 import { BlockedList } from './BlockedList';
-import { SettingsRow } from './SettingsRow';
 
 export function PrivacySettings() {
   const { t } = useT();
+  const theme = useTheme();
   return (
-    <Stack gap="lg" testID="settings.privacy">
-      <Card outlined elevation={0}>
-        <Stack gap="sm" testID="settings.privacy.location">
-          <Row gap="sm">
-            <Icon name="crosshairs-gps" color="primary" />
-            <Text variant="title3" style={{ flex: 1 }}>
-              {t('settings:privacy.location.title')}
-            </Text>
-          </Row>
-          <Text variant="body" color="textSecondary">
-            {t('auth:permissions.location.disclosure')}
+    <Stack gap="xl" testID="settings.privacy">
+      <View testID="settings.privacy.location" style={{ padding: spacing.lg, gap: spacing.md, borderRadius: radius.lg, ...theme.elevation(1) }}>
+        <Row gap="md">
+          <View aria-hidden style={{ width: 44, height: 44, borderRadius: 14, alignItems: 'center', justifyContent: 'center', backgroundColor: theme.colors.successSubtle }}>
+            <Icon name="GpsFix" size={24} weight="duotone" color="successText" />
+          </View>
+          <Text variant="title3" style={{ flex: 1 }}>
+            {t('settings:privacy.location.title')}
           </Text>
-          <Text variant="callout" color="textSecondary">
+        </Row>
+        <Text variant="callout">{t('auth:permissions.location.disclosure')}</Text>
+        <Row gap="xs" align="start">
+          <Icon name="Info" size={16} color="textTertiary" />
+          <Text variant="footnote" color="textSecondary" style={{ flex: 1 }}>
             {t('settings:privacy.location.preciseHelp')}
           </Text>
-          {Platform.OS !== 'web' ? (
-            <Button testID="settings.privacy.openSettings" variant="secondary" label={t('common:actions.openSettings')} onPress={() => void Linking.openSettings()} />
-          ) : null}
-        </Stack>
-      </Card>
-      <Divider />
+        </Row>
+        {Platform.OS !== 'web' ? (
+          <Button testID="settings.privacy.openSettings" variant="secondary" icon="GearSix" label={t('common:actions.openSettings')} onPress={() => void Linking.openSettings()} />
+        ) : null}
+      </View>
       <BlockedList />
-      <Divider />
-      <Stack gap="xs" testID="settings.privacy.data">
-        <Text variant="title3">{t('settings:privacy.data.title')}</Text>
-        <SettingsRow
-          testID="settings.privacy.dataRequest"
-          icon="download-outline"
-          title={t('settings:privacy.data.download')}
-          value={t('settings:privacy.data.contact')}
-          onPress={() => router.push('/legal/contact')}
-        />
-        <SettingsRow testID="settings.privacy.policy" icon="file-document-outline" title={t('legal:privacy.title')} onPress={() => router.push('/legal/privacy')} />
-      </Stack>
+      <View testID="settings.privacy.data">
+        <ListGroup title={t('settings:privacy.data.title')} footer={t('settings:privacy.data.help')}>
+          <ListItem
+            testID="settings.privacy.dataRequest"
+            icon="DownloadSimple"
+            iconTone="info"
+            title={t('settings:privacy.data.download')}
+            subtitle={t('settings:privacy.data.contact')}
+            onPress={() => router.push('/legal/contact')}
+          />
+          <ListItem testID="settings.privacy.policy" icon="FileText" iconTone="neutral" title={t('legal:privacy.title')} onPress={() => router.push('/legal/privacy')} />
+        </ListGroup>
+      </View>
     </Stack>
   );
 }

@@ -1,16 +1,17 @@
 /**
- * Settings hub (design §13.14): account, language, theme, notifications, privacy
- * and safety, legal, about, sign out and the delete-account danger zone.
+ * Settings hub (design v2 §15.15): iOS-style grouped rows with tinted icon wells —
+ * account, preferences (language, theme, notifications), privacy and safety, legal,
+ * sign out, and the delete-account danger zone (two-step flow on its own screen).
  */
 import { nativeNameOf } from '@st/i18n';
-import { Button, Divider, isolate, Stack, Text } from '@st/ui';
+import { Haptics, isolate, ListGroup, ListItem, Text } from '@st/ui';
 import Constants from 'expo-constants';
 import { router } from 'expo-router';
 import { useState } from 'react';
+import { View } from 'react-native';
 
 import { ConfirmDialog } from '@/components/ConfirmDialog';
-import { Screen } from '@/components/Screen';
-import { SettingsRow } from '@/features/settings/SettingsRow';
+import { SettingsFrame } from '@/features/settings/SettingsFrame';
 import { ThemeSection } from '@/features/settings/ThemeSection';
 import { useLanguage, useT } from '@/i18n';
 import { useSession } from '@/state/session';
@@ -23,68 +24,64 @@ export default function SettingsScreen() {
   const version = Constants.expoConfig?.version ?? '1.0.0';
 
   return (
-    <Screen title={t('settings:title')} testID="screen.settings" backFallback="/profile">
-      <Stack gap="lg">
-        <Stack gap="xxs" testID="settings.section.account">
-          <Text variant="title3">{t('settings:section.account')}</Text>
-          <SettingsRow
-            testID="settings.account.phone"
-            icon="phone-outline"
-            title={t('settings:account.phone')}
-            value={session.user?.phone ? isolate(session.user.phone, 'ltr') : undefined}
-          />
-        </Stack>
-        <Divider />
-        <Stack gap="xxs">
-          <SettingsRow
-            testID="settings.language.open"
-            icon="translate"
-            title={t('settings:language.title')}
-            value={lang.followsDevice ? t('settings:language.useDevice') : nativeNameOf(lang.locale)}
-            onPress={() => router.push('/settings/language')}
-          />
-          <SettingsRow
-            testID="settings.notifications.open"
-            icon="bell-outline"
-            title={t('settings:notifications.title')}
-            onPress={() => router.push('/settings/notifications')}
-          />
-          <SettingsRow
-            testID="settings.privacy.open"
-            icon="shield-lock-outline"
-            title={t('settings:privacy.title')}
-            onPress={() => router.push('/settings/privacy')}
-          />
-        </Stack>
-        <Divider />
+    <SettingsFrame title={t('settings:title')} testID="screen.settings" backFallback="/profile">
+      <ListGroup title={t('settings:section.account')} testID="settings.section.account">
+        <ListItem
+          testID="settings.account.phone"
+          icon="Phone"
+          iconTone="brand"
+          title={t('settings:account.phone')}
+          value={session.user?.phone ? isolate(session.user.phone, 'ltr') : undefined}
+          aria-label={session.user?.phone ? `${t('settings:account.phone')}: ${session.user.phone}` : t('settings:account.phone')}
+        />
+      </ListGroup>
+
+      <ListGroup title={t('settings:section.preferences')}>
+        <ListItem
+          testID="settings.language.open"
+          icon="Translate"
+          iconTone="info"
+          title={t('settings:language.title')}
+          value={lang.followsDevice ? t('settings:language.useDevice') : nativeNameOf(lang.locale)}
+          onPress={() => router.push('/settings/language')}
+        />
         <ThemeSection />
-        <Divider />
-        <Stack gap="xxs" testID="settings.section.legal">
-          <Text variant="title3">{t('settings:section.legal')}</Text>
-          <SettingsRow testID="settings.legal.privacy" icon="file-document-outline" title={t('legal:privacy.title')} onPress={() => router.push('/legal/privacy')} />
-          <SettingsRow testID="settings.legal.terms" icon="file-document-outline" title={t('legal:terms.title')} onPress={() => router.push('/legal/terms')} />
-          <SettingsRow testID="settings.legal.contact" icon="email-outline" title={t('legal:contact.title')} onPress={() => router.push('/legal/contact')} />
-        </Stack>
-        <Divider />
-        <Stack gap="sm">
-          <Button testID="settings.signOut" variant="secondary" size="lg" fullWidth label={t('settings:account.signOut')} onPress={() => setConfirmSignOut(true)} />
-        </Stack>
-        <Stack gap="xxs" testID="settings.section.danger">
-          <Text variant="title3" color="dangerText">
-            {t('settings:delete.dangerZone')}
-          </Text>
-          <SettingsRow
-            testID="settings.delete.open"
-            icon="delete-outline"
-            danger
-            title={t('settings:delete.title')}
-            onPress={() => router.push('/settings/delete-account')}
-          />
-        </Stack>
-        <Text variant="caption" color="textSecondary" align="center" testID="settings.version">
+        <ListItem testID="settings.notifications.open" icon="Bell" iconTone="warning" title={t('settings:notifications.title')} onPress={() => router.push('/settings/notifications')} />
+      </ListGroup>
+
+      <ListGroup title={t('settings:section.privacy')}>
+        <ListItem testID="settings.privacy.open" icon="ShieldCheck" iconTone="success" title={t('settings:privacy.title')} onPress={() => router.push('/settings/privacy')} />
+        <ListItem testID="settings.blocked.open" icon="UserMinus" iconTone="neutral" title={t('settings:privacy.blocked.title')} onPress={() => router.push('/settings/privacy')} />
+      </ListGroup>
+
+      <ListGroup title={t('settings:section.legal')} testID="settings.section.legal">
+        <ListItem testID="settings.legal.privacy" icon="FileText" iconTone="neutral" title={t('legal:privacy.title')} onPress={() => router.push('/legal/privacy')} />
+        <ListItem testID="settings.legal.terms" icon="FileText" iconTone="neutral" title={t('legal:terms.title')} onPress={() => router.push('/legal/terms')} />
+        <ListItem testID="settings.legal.contact" icon="EnvelopeSimple" iconTone="neutral" title={t('legal:contact.title')} onPress={() => router.push('/legal/contact')} />
+      </ListGroup>
+
+      <ListGroup>
+        <ListItem testID="settings.signOut" icon="SignOut" destructive chevron={false} title={t('settings:account.signOut')} onPress={() => setConfirmSignOut(true)} />
+      </ListGroup>
+
+      <ListGroup title={t('settings:delete.dangerZone')} testID="settings.section.danger">
+        <ListItem
+          testID="settings.delete.open"
+          icon="Trash"
+          destructive
+          title={t('settings:delete.title')}
+          onPress={() => {
+            Haptics.warning();
+            router.push('/settings/delete-account');
+          }}
+        />
+      </ListGroup>
+
+      <View style={{ alignItems: 'center' }}>
+        <Text variant="caption" color="textTertiary" align="center" testID="settings.version">
           {t('settings:about.version', { version: isolate(version, 'ltr') })}
         </Text>
-      </Stack>
+      </View>
       <ConfirmDialog
         testID="settings.signOut.dialog"
         visible={confirmSignOut}
@@ -98,6 +95,6 @@ export default function SettingsScreen() {
           void session.signOut();
         }}
       />
-    </Screen>
+    </SettingsFrame>
   );
 }

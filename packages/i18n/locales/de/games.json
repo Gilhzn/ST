@@ -85,7 +85,8 @@
       "formatVs": "{a} gegen {b}",
       "singles": "Einzel",
       "doubles": "Doppel",
-      "teamCount": "Anzahl der Teams"
+      "teamCount": "Anzahl der Teams",
+      "subtitle": "Wähle eine Sportart. Das Format legst du als Nächstes fest."
     },
     "where": {
       "title": "Wo spielt ihr?",
@@ -96,7 +97,8 @@
       "venueNameHint": "Gib dem Ort einen Namen, damit ihn die Spieler:innen finden.",
       "hideExactLabel": "Genauen Standort verbergen, bis ich Spieler:innen bestätige",
       "hideExactHelp": "Spieler:innen sehen zuerst nur die Gegend. Den genauen Ort teilst du, nachdem du sie bestätigt hast.",
-      "pinHere": "Aktuellen Kartenausschnitt als Treffpunkt verwenden"
+      "pinHere": "Aktuellen Kartenausschnitt als Treffpunkt verwenden",
+      "subtitle": "Wähle einen Platz in der Nähe oder setze eine Markierung."
     },
     "when": {
       "title": "Wann?",
@@ -104,7 +106,8 @@
       "start": "Startzeit",
       "duration": "Dauer",
       "repeatWeekly": "Jede Woche wiederholen",
-      "comingSoon": "Demnächst"
+      "comingSoon": "Demnächst",
+      "subtitle": "Wähle einen Tag und eine Startzeit."
     },
     "who": {
       "title": "Wer darf mitspielen?",
@@ -129,14 +132,19 @@
       "minPlayers": "Mindestanzahl Spieler:innen",
       "minPlayersHelp": "{count, plural, one {Das Spiel findet mit mindestens # Person statt.} other {Das Spiel findet mit mindestens # Personen statt.}}",
       "fewerMin": "Mindestanzahl verringern",
-      "moreMin": "Mindestanzahl erhöhen"
+      "moreMin": "Mindestanzahl erhöhen",
+      "subtitle": "Lege die Zahlen fest und wer dein Spiel finden kann."
     },
     "deposit": {
       "title": "Kaution (optional)",
       "toggle": "Kaution verlangen",
       "amount": "Höhe der Kaution",
       "explain": "Spieler:innen reservieren {amount} auf ihrer Karte, erstattbar. Die Reservierung wird nach dem Check-in aufgehoben und einbehalten, wenn sie nicht erscheinen.",
-      "currencyNote": "Die Währung richtet sich nach dem Land des Spielorts."
+      "currencyNote": "Die Währung richtet sich nach dem Land des Spielorts.",
+      "subtitle": "Eine kleine, erstattbare Vormerkung sorgt dafür, dass kaum jemand fehlt.",
+      "none": "Keine",
+      "custom": "Anderer",
+      "noneHelp": "Spieler:innen kommen ohne Vormerkung dazu. Ihre Zuverlässigkeit siehst du trotzdem."
     },
     "review": {
       "title": "Spiel prüfen",
@@ -147,7 +155,8 @@
       "whenValue": "{start} · {duration}",
       "whoValue": "{capacity, plural, one {# Spieler:in} other {# Spieler:innen}} (mind. {min}) · {visibility}",
       "noDeposit": "Keine Kaution",
-      "editA11y": "{section} bearbeiten"
+      "editA11y": "{section} bearbeiten",
+      "subtitle": "So sehen andere dein Spiel."
     },
     "published": {
       "title": "Dein Spiel ist online",
@@ -156,7 +165,8 @@
       "copyLink": "Link kopieren",
       "linkCopied": "Link kopiert.",
       "showQr": "QR-Code anzeigen",
-      "viewGame": "Spiel ansehen"
+      "viewGame": "Spiel ansehen",
+      "body": "Spieler:innen in der Nähe finden es ab jetzt. Teile es, damit die Plätze schneller voll werden."
     },
     "discard": {
       "title": "Entwurf verwerfen?",
@@ -204,7 +214,11 @@
       "badge": "Organisation",
       "approved": "Spieler:in bestätigt.",
       "waitlisted": "Das Spiel ist voll, deshalb steht die Person auf der Warteliste.",
-      "rejected": "Anfrage abgelehnt."
+      "rejected": "Anfrage abgelehnt.",
+      "title": "Deine Gastgeber:in",
+      "since": "Dabei seit {date}",
+      "approveA11y": "{name} annehmen",
+      "rejectA11y": "{name} ablehnen"
     },
     "facts": {
       "players": "{joined} von {capacity} Spieler:innen",
@@ -212,7 +226,13 @@
       "deposit": "{amount} Kaution",
       "womenOnly": "Nur Frauen",
       "private": "Privates Spiel",
-      "format": "Format: {format}"
+      "format": "Format: {format}",
+      "liveNow": "Jetzt live",
+      "over": "Beendet",
+      "playersLabel": "Spieler:innen",
+      "starts": "Beginn",
+      "duration": "Dauer",
+      "startsIn": "Beginnt in"
     },
     "sections": {
       "players": "Spieler:innen",
@@ -278,7 +298,12 @@
       "flash": "Das Spiel beginnt bald, deshalb haben alle auf der Warteliste dieses Angebot bekommen. Wer zuerst zusagt, bekommt den Platz.",
       "acceptWithin": "Nimm den Platz innerhalb von {duration} an (bis {time}).",
       "accept": "Platz annehmen",
-      "accepted": "Du bist dabei. Bis dann!"
+      "accepted": "Du bist dabei. Bis dann!",
+      "flashTag": "Blitzangebot"
+    },
+    "until": "bis {time}",
+    "players": {
+      "toggle": "{count, plural, one {# Spieler:in. Liste ein- oder ausblenden.} other {# Spieler:innen. Liste ein- oder ausblenden.}}"
     }
   },
   "invite": {
@@ -286,7 +311,9 @@
     "join": "Mitspielen",
     "signUpToJoin": "Registrieren und mitspielen",
     "expired": "Diese Einladung ist abgelaufen. Bitte die Organisation um einen neuen Link.",
-    "signedOutBody": "Melde dich an oder erstelle ein Konto, um dieses Spiel zu sehen und beizutreten."
+    "signedOutBody": "Melde dich an oder erstelle ein Konto, um dieses Spiel zu sehen und beizutreten.",
+    "from": "{name} hat dich zum Spielen eingeladen",
+    "hint": "Die Gastgeber:in bestätigt alle Spieler:innen. Wir melden uns, sobald du dabei bist."
   },
   "teams": {
     "title": "Teams",
@@ -354,6 +381,19 @@
       "cancelled": "Abgesagt",
       "checkedIn": "Eingecheckt",
       "noShow": "Nicht erschienen"
+    },
+    "subtitle": "{count, plural, =0 {Noch keine anstehenden Spiele} one {# anstehendes Spiel} other {# anstehende Spiele}}",
+    "section": {
+      "today": "Heute",
+      "tomorrow": "Morgen",
+      "thisWeek": "Diese Woche",
+      "later": "Später",
+      "pastWeek": "Diese Woche",
+      "earlier": "Früher"
     }
+  },
+  "card": {
+    "areaOnly": "Genauer Ort nach Bestätigung",
+    "pinnedSpot": "Treffpunkt auf der Karte"
   }
 }
