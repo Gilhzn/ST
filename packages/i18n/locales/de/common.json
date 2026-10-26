@@ -1,0 +1,117 @@
+{
+  "app": {
+    "name": "Sport Talent",
+    "tagline": "Spiel finden. Auftauchen. Loslegen."
+  },
+  "actions": {
+    "continue": "Weiter",
+    "back": "Zurück",
+    "next": "Weiter",
+    "done": "Fertig",
+    "cancel": "Abbrechen",
+    "close": "Schließen",
+    "save": "Speichern",
+    "edit": "Bearbeiten",
+    "delete": "Löschen",
+    "retry": "Erneut versuchen",
+    "confirm": "Bestätigen",
+    "share": "Teilen",
+    "copy": "Kopieren",
+    "search": "Suchen",
+    "clear": "Zurücksetzen",
+    "apply": "Anwenden",
+    "skip": "Überspringen",
+    "notNow": "Nicht jetzt",
+    "learnMore": "Mehr erfahren",
+    "viewAll": "Alle anzeigen",
+    "dismiss": "Ausblenden",
+    "undo": "Rückgängig",
+    "report": "Melden",
+    "block": "Blockieren",
+    "unblock": "Blockierung aufheben",
+    "openSettings": "Einstellungen öffnen",
+    "send": "Senden",
+    "gotIt": "Verstanden"
+  },
+  "status": {
+    "loading": "Wird geladen …",
+    "saving": "Wird gespeichert …",
+    "offlineBanner": "Du bist offline. Gespeicherte Infos werden angezeigt.",
+    "offlineHint": "Dafür brauchst du eine Internetverbindung.",
+    "savedAgo": "Vor {minutes, plural, one {# Minute} other {# Minuten}} gespeichert",
+    "savedJustNow": "Gerade eben gespeichert"
+  },
+  "errorState": {
+    "title": "Laden nicht möglich",
+    "body": "Prüfe deine Verbindung und versuche es noch einmal."
+  },
+  "a11y": {
+    "back": "Zurück",
+    "close": "Schließen",
+    "moreOptions": "Weitere Optionen"
+  },
+  "validation": {
+    "required": "Dieses Feld ist erforderlich.",
+    "tooShort": "Gib mindestens {min, plural, one {# Zeichen} other {# Zeichen}} ein.",
+    "tooLong": "Verwende höchstens {max, plural, one {# Zeichen} other {# Zeichen}}."
+  },
+  "players": {
+    "count": "{count, plural, one {# Spieler:in} other {# Spieler:innen}}",
+    "spotsLeft": "{count, plural, =0 {Voll} one {Noch # Platz frei} other {Noch # Plätze frei}}"
+  },
+  "sports": {
+    "football": "Fußball",
+    "basketball": "Basketball",
+    "tennis": "Tennis",
+    "padel": "Padel",
+    "running": "Laufen",
+    "volleyball": "Volleyball"
+  },
+  "positions": {
+    "goalkeeper": "Torwart",
+    "defender": "Abwehr",
+    "midfielder": "Mittelfeld",
+    "forward": "Sturm",
+    "point_guard": "Point Guard",
+    "shooting_guard": "Shooting Guard",
+    "small_forward": "Small Forward",
+    "power_forward": "Power Forward",
+    "center": "Center",
+    "left_side": "Linke Seite",
+    "right_side": "Rechte Seite",
+    "setter": "Zuspieler",
+    "outside_hitter": "Außenangreifer",
+    "opposite": "Diagonalangreifer",
+    "middle_blocker": "Mittelblocker",
+    "libero": "Libero"
+  },
+  "positionsShort": {
+    "goalkeeper": "TW",
+    "defender": "ABW",
+    "midfielder": "MF",
+    "forward": "ST",
+    "point_guard": "PG",
+    "shooting_guard": "SG",
+    "small_forward": "SF",
+    "power_forward": "PF",
+    "center": "C",
+    "left_side": "L",
+    "right_side": "R",
+    "setter": "ZU",
+    "outside_hitter": "AA",
+    "opposite": "DI",
+    "middle_blocker": "MB",
+    "libero": "LIB"
+  },
+  "reliability": {
+    "status": {
+      "green": "Zuverlässig",
+      "yellow": "Achtung",
+      "red": "Eingeschränkt",
+      "new": "Neu dabei"
+    },
+    "withPercent": "{status} · {percent}",
+    "a11y": "Zuverlässigkeit: {status}, {percent}",
+    "a11yNew": "Zuverlässigkeit: neu dabei"
+  }
+}

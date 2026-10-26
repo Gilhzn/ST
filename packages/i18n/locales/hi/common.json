@@ -1,0 +1,117 @@
+{
+  "app": {
+    "name": "Sport Talent",
+    "tagline": "मैच ढूँढें। पहुँचें। खेलें।"
+  },
+  "actions": {
+    "continue": "जारी रखें",
+    "back": "वापस",
+    "next": "आगे",
+    "done": "हो गया",
+    "cancel": "रद्द करें",
+    "close": "बंद करें",
+    "save": "सहेजें",
+    "edit": "संपादित करें",
+    "delete": "हटाएँ",
+    "retry": "फिर कोशिश करें",
+    "confirm": "पुष्टि करें",
+    "share": "साझा करें",
+    "copy": "कॉपी करें",
+    "search": "खोजें",
+    "clear": "साफ़ करें",
+    "apply": "लागू करें",
+    "skip": "छोड़ें",
+    "notNow": "अभी नहीं",
+    "learnMore": "और जानें",
+    "viewAll": "सभी देखें",
+    "dismiss": "हटाएँ",
+    "undo": "पूर्ववत करें",
+    "report": "रिपोर्ट करें",
+    "block": "ब्लॉक करें",
+    "unblock": "अनब्लॉक करें",
+    "openSettings": "सेटिंग खोलें",
+    "send": "भेजें",
+    "gotIt": "समझ गया"
+  },
+  "status": {
+    "loading": "लोड हो रहा है…",
+    "saving": "सहेजा जा रहा है…",
+    "offlineBanner": "आप ऑफ़लाइन हैं। सहेजी गई जानकारी दिखाई जा रही है।",
+    "offlineHint": "यह करने के लिए इंटरनेट से जुड़ें।",
+    "savedAgo": "{minutes, plural, one {# मिनट} other {# मिनट}} पहले सहेजा गया",
+    "savedJustNow": "अभी सहेजा गया"
+  },
+  "errorState": {
+    "title": "लोड नहीं हो सका",
+    "body": "अपना कनेक्शन जाँचें और फिर कोशिश करें।"
+  },
+  "a11y": {
+    "back": "वापस जाएँ",
+    "close": "बंद करें",
+    "moreOptions": "और विकल्प"
+  },
+  "validation": {
+    "required": "यह फ़ील्ड ज़रूरी है।",
+    "tooShort": "कम से कम {min, plural, one {# अक्षर} other {# अक्षर}} दर्ज करें।",
+    "tooLong": "अधिकतम {max, plural, one {# अक्षर} other {# अक्षर}} का उपयोग करें।"
+  },
+  "players": {
+    "count": "{count, plural, one {# खिलाड़ी} other {# खिलाड़ी}}",
+    "spotsLeft": "{count, plural, =0 {भर चुका है} one {# जगह बाकी है} other {# जगहें बाकी हैं}}"
+  },
+  "sports": {
+    "football": "फ़ुटबॉल",
+    "basketball": "बास्केटबॉल",
+    "tennis": "टेनिस",
+    "padel": "पैडल",
+    "running": "दौड़",
+    "volleyball": "वॉलीबॉल"
+  },
+  "positions": {
+    "goalkeeper": "गोलकीपर",
+    "defender": "डिफ़ेंडर",
+    "midfielder": "मिडफ़ील्डर",
+    "forward": "फ़ॉरवर्ड",
+    "point_guard": "पॉइंट गार्ड",
+    "shooting_guard": "शूटिंग गार्ड",
+    "small_forward": "स्मॉल फ़ॉरवर्ड",
+    "power_forward": "पावर फ़ॉरवर्ड",
+    "center": "सेंटर",
+    "left_side": "बायाँ ओर",
+    "right_side": "दायाँ ओर",
+    "setter": "सेटर",
+    "outside_hitter": "आउटसाइड हिटर",
+    "opposite": "अपोज़िट",
+    "middle_blocker": "मिडिल ब्लॉकर",
+    "libero": "लिबेरो"
+  },
+  "positionsShort": {
+    "goalkeeper": "GK",
+    "defender": "DEF",
+    "midfielder": "MID",
+    "forward": "FWD",
+    "point_guard": "PG",
+    "shooting_guard": "SG",
+    "small_forward": "SF",
+    "power_forward": "PF",
+    "center": "C",
+    "left_side": "बाएँ",
+    "right_side": "दाएँ",
+    "setter": "S",
+    "outside_hitter": "OH",
+    "opposite": "OPP",
+    "middle_blocker": "MB",
+    "libero": "L"
+  },
+  "reliability": {
+    "status": {
+      "green": "भरोसेमंद",
+      "yellow": "सावधानी",
+      "red": "प्रतिबंधित",
+      "new": "नया खिलाड़ी"
+    },
+    "withPercent": "{status} · {percent}",
+    "a11y": "विश्वसनीयता: {status}, {percent}",
+    "a11yNew": "विश्वसनीयता: नया खिलाड़ी"
+  }
+}

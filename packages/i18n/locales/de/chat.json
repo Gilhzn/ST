@@ -1,0 +1,94 @@
+{
+  "title": "Spiel-Chat",
+  "infoChip": "Nachrichten verschwinden {hours, plural, one {# Stunde} other {# Stunden}} nach dem Spiel",
+  "infoDetail": "Der Chat schließt, wenn das Spiel endet. Nachrichten werden {hours, plural, one {# Stunde} other {# Stunden}} später gelöscht, außer gemeldete Nachrichten: Die bewahren wir {days, plural, one {# Tag} other {# Tage}} lang zur Prüfung auf.",
+  "empty": "Sag deinem Team Hallo. Nachrichten verschwinden {hours, plural, one {# Stunde} other {# Stunden}} nach dem Spiel.",
+  "expired": "Dieser Chat ist beendet.",
+  "composer": {
+    "placeholder": "Nachricht",
+    "send": "Nachricht senden"
+  },
+  "message": {
+    "reply": "Antworten",
+    "copy": "Kopieren",
+    "translate": "Übersetzen",
+    "report": "Nachricht melden",
+    "block": "{name} blockieren",
+    "moreOptions": "Nachrichtenoptionen",
+    "checking": "Wird geprüft …",
+    "notSent": "Nicht gesendet. Tippen, um es erneut zu versuchen",
+    "queued": "Wartet auf Senden"
+  },
+  "translate": {
+    "translatedFrom": "Übersetzt aus: {language}",
+    "showOriginal": "Original anzeigen",
+    "showTranslation": "Übersetzung anzeigen",
+    "autoTranslate": "Diesen Chat automatisch übersetzen",
+    "failed": "Diese Nachricht konnte nicht übersetzt werden. Versuche es noch einmal."
+  },
+  "moderation": {
+    "nudge": {
+      "title": "Das könnte verletzend wirken.",
+      "body": "Überlege, es anders zu formulieren, damit sich alle willkommen fühlen.",
+      "edit": "Nachricht bearbeiten",
+      "sendAnyway": "Trotzdem senden",
+      "harassment": "Das könnte verletzend wirken oder gegen jemanden gerichtet sein. Überlege, es anders zu formulieren.",
+      "hate": "Das könnte eine Gruppe von Menschen verletzen. Überlege, es anders zu formulieren.",
+      "threat": "Das könnte wie eine Drohung wirken. Überlege, es anders zu formulieren.",
+      "violence": "Hier geht es um Gewalt. Überlege, es anders zu formulieren.",
+      "sexual": "Das passt vielleicht nicht in einen Sport-Chat. Überlege, es anders zu formulieren.",
+      "sexual_minors": "Diese Nachricht kann nicht gesendet werden. Bitte formuliere sie um.",
+      "self_harm": "Wenn es dir gerade schlecht geht, bist du nicht allein. Sprich mit einer vertrauten Person oder einer Hilfsstelle in deiner Nähe.",
+      "profanity": "Hier steckt deutliche Sprache drin, die andere stören könnte. Überlege, es anders zu formulieren.",
+      "spam": "Das sieht nach Spam oder Werbung aus. Überlege, es anders zu formulieren.",
+      "personal_data": "Hier scheinen persönliche Daten zu stehen, etwa eine Telefonnummer oder Adresse. Teile sie nur mit Menschen, denen du vertraust.",
+      "other": "Das passt vielleicht nicht zu den Regeln unserer Community. Überlege, es anders zu formulieren."
+    },
+    "block": {
+      "title": "Diese Nachricht verstößt gegen die Regeln unserer Community. Bearbeite sie, um sie zu senden.",
+      "rulesLink": "Community-Regeln",
+      "oneMoreWarning": "Bei einem weiteren Verstoß wird der Chat für {hours, plural, one {# Stunde} other {# Stunden}} pausiert.",
+      "harassment": "Diese Nachricht verstößt gegen die Regeln unserer Community (Belästigung). Bearbeite sie, um sie zu senden.",
+      "hate": "Diese Nachricht verstößt gegen die Regeln unserer Community (Hass). Bearbeite sie, um sie zu senden.",
+      "threat": "Diese Nachricht verstößt gegen die Regeln unserer Community (Drohungen). Bearbeite sie, um sie zu senden.",
+      "violence": "Diese Nachricht verstößt gegen die Regeln unserer Community (Gewalt). Bearbeite sie, um sie zu senden.",
+      "sexual": "Diese Nachricht verstößt gegen die Regeln unserer Community (sexuelle Inhalte). Bearbeite sie, um sie zu senden.",
+      "sexual_minors": "Diese Nachricht verstößt gegen die Regeln unserer Community und kann nicht gesendet werden.",
+      "self_harm": "Diese Nachricht kann nicht gesendet werden. Wenn es dir gerade schlecht geht, sprich mit einer vertrauten Person oder einer Hilfsstelle in deiner Nähe.",
+      "profanity": "Diese Nachricht verstößt gegen die Regeln unserer Community (beleidigende Sprache). Bearbeite sie, um sie zu senden.",
+      "spam": "Diese Nachricht verstößt gegen die Regeln unserer Community (Spam). Bearbeite sie, um sie zu senden.",
+      "personal_data": "Diese Nachricht enthält persönliche Daten, die im Chat nicht geteilt werden dürfen. Bearbeite sie, um sie zu senden.",
+      "other": "Diese Nachricht verstößt gegen die Regeln unserer Community. Bearbeite sie, um sie zu senden."
+    },
+    "muted": "Chat pausiert bis {time}",
+    "mutedWhy": "Warum?"
+  },
+  "report": {
+    "title": "Nachricht melden",
+    "reasonsTitle": "Was ist das Problem?",
+    "category": {
+      "harassment": "Belästigung",
+      "violence": "Gewalt oder Drohungen",
+      "unsportsmanlike": "Unsportliches Verhalten",
+      "spam": "Spam",
+      "other": "Etwas anderes"
+    },
+    "detailsLabel": "Details hinzufügen (optional)",
+    "submit": "Meldung senden",
+    "thanks": "Danke, wir schauen uns das an. Die Nachricht wird {days, plural, one {# Tag} other {# Tage}} lang zur Prüfung aufbewahrt.",
+    "blockOffer": "{name} auch blockieren?"
+  },
+  "block": {
+    "title": "{name} blockieren?",
+    "body": "Du siehst die Nachrichten dieser Person nicht mehr, und sie sieht deine nicht.",
+    "confirm": "{name} blockieren",
+    "done": "{name} ist blockiert."
+  },
+  "inbox": {
+    "title": "Posteingang",
+    "tabChats": "Chats",
+    "tabNotifications": "Mitteilungen",
+    "empty": "Noch keine Nachrichten. Tritt einem Spiel bei, um zu chatten.",
+    "pinned": "Angeheftet, bis du es liest"
+  }
+}

@@ -1,0 +1,70 @@
+{
+  "join_requested": {
+    "title": "Neue Beitrittsanfrage",
+    "body": "{name} möchte bei „{gameTitle}“ mitspielen. Bestätige oder lehne die Anfrage ab."
+  },
+  "join_approved": {
+    "title": "Du bist dabei",
+    "body": "Die Organisation hat dich für „{gameTitle}“ am {time} bestätigt."
+  },
+  "join_rejected": {
+    "title": "Anfrage nicht angenommen",
+    "body": "Die Organisation konnte deine Anfrage für „{gameTitle}“ nicht annehmen. Auf der Karte warten weitere Spiele auf dich."
+  },
+  "join_waitlisted": {
+    "title": "Du stehst auf der Warteliste",
+    "body": "„{gameTitle}“ ist voll. Du bist auf Platz {position} der Warteliste und wir melden uns, wenn ein Platz frei wird."
+  },
+  "waitlist_promoted": {
+    "title": "Ein Platz ist frei geworden",
+    "body": "Du bist jetzt bei „{gameTitle}“ am {time} dabei."
+  },
+  "participant_removed": {
+    "title": "Du wurdest aus einem Spiel entfernt",
+    "body": "Die Organisation hat dich aus „{gameTitle}“ entfernt. Öffne das Spiel für Details."
+  },
+  "game_cancelled": {
+    "title": "Spiel abgesagt",
+    "body": "Die Organisation hat „{gameTitle}“ am {time} abgesagt."
+  },
+  "game_reminder": {
+    "title": "Dein Spiel steht an",
+    "body": "„{gameTitle}“ beginnt {time}. Der Check-in öffnet {minutes, plural, one {# Minute} other {# Minuten}} vorher."
+  },
+  "checkin_open": {
+    "title": "Check-in ist geöffnet",
+    "body": "Checke bei „{gameTitle}“ ein, sobald du ankommst."
+  },
+  "result_requested": {
+    "title": "Wie ist es gelaufen?",
+    "body": "Trag das Ergebnis von „{gameTitle}“ ein. Dir bleiben noch {hours, plural, one {# Stunde} other {# Stunden}}."
+  },
+  "sanction_issued": {
+    "title": "Neuigkeiten zu deinem Konto",
+    "body": "Wir haben eine Entscheidung zu deinem Konto getroffen. Öffne die App, um zu sehen, was passiert ist und wie du Einspruch einlegst."
+  },
+  "sanction_decided": {
+    "title": "Entscheidung zu deinem Konto",
+    "body": "Das Moderationsteam hat dein Konto geprüft. Öffne die App, um Entscheidung und Gründe zu lesen."
+  },
+  "appeal_decided": {
+    "title": "Über deinen Einspruch wurde entschieden",
+    "body": "{outcome, select, overturned {Wir haben die Entscheidung aufgehoben. Öffne die App für Details.} upheld {Die Entscheidung bleibt bestehen. Öffne die App, um die Gründe zu lesen.} other {Öffne die App, um die Entscheidung zu lesen.}}"
+  },
+  "visibility_restricted": {
+    "title": "Dein Profil ist weniger sichtbar",
+    "body": "Für {hours, plural, one {# Stunde} other {# Stunden}} sehen andere Spieler:innen dein Profil seltener. Öffne die App, um den Grund zu erfahren."
+  },
+  "chat_muted": {
+    "title": "Chat pausiert",
+    "body": "Du kannst bis {time} keine Nachrichten senden. Öffne die App, um den Grund zu erfahren."
+  },
+  "venue_hidden": {
+    "title": "Ein Spielort wird geprüft",
+    "body": "{venueName} ist ausgeblendet, während wir Meldungen dazu prüfen."
+  },
+  "deposit_action_required": {
+    "title": "Aktion für deine Kaution nötig",
+    "body": "Bitte bestätige die Reservierung von {amount} als Kaution für „{gameTitle}“. Öffne die App, um fortzufahren."
+  }
+}

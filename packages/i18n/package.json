@@ -6,10 +6,19 @@
   "main": "src/index.ts",
   "types": "src/index.ts",
   "exports": {
-    ".": "./src/index.ts"
+    ".": "./src/index.ts",
+    "./resources": "./src/resources.ts",
+    "./rtl": "./src/rtl.ts",
+    "./format": "./src/format.ts",
+    "./languages": "./src/languages.ts",
+    "./params": "./src/params.ts",
+    "./locales/*": "./locales/*",
+    "./package.json": "./package.json"
   },
   "scripts": {
-    "typecheck": "tsc -p tsconfig.json"
+    "typecheck": "tsc -p tsconfig.json",
+    "check": "node --experimental-strip-types --disable-warning=ExperimentalWarning scripts/check-keys.ts",
+    "test": "vitest run"
   },
   "dependencies": {
     "@formatjs/icu-messageformat-parser": "^3.5.22",

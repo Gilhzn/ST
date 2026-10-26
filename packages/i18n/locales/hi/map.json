@@ -1,0 +1,68 @@
+{
+  "search": {
+    "label": "खोजें",
+    "placeholder": "शहर, मैदान या पता"
+  },
+  "filters": {
+    "sports": "खेल",
+    "limitHint": "आप अधिकतम {max, plural, one {# खेल} other {# खेल}} चुन सकते हैं। दूसरा जोड़ने के लिए किसी एक को हटाएँ।",
+    "limitToast": "दूसरा खेल जोड़ने के लिए किसी एक खेल को हटाएँ।"
+  },
+  "radius": {
+    "label": "खोज की दूरी",
+    "auto": "अपने-आप (GPS)",
+    "a11y": "खोज की दूरी: {distance}"
+  },
+  "sheet": {
+    "title": "{count, plural, =0 {आस-पास कोई मैच नहीं} one {आस-पास # मैच} other {आस-पास # मैच}}",
+    "sortLabel": "इसके अनुसार क्रमबद्ध करें",
+    "sortSoonest": "सबसे जल्दी शुरू होने वाले",
+    "sortNearest": "सबसे नज़दीक",
+    "showList": "सूची",
+    "showMap": "नक्शा"
+  },
+  "card": {
+    "distanceAway": "{distance} दूर",
+    "players": "{joined}/{capacity} खिलाड़ी",
+    "startsSoon": "जल्द शुरू होगा",
+    "live": "अभी चल रहा है",
+    "badge": {
+      "deposit": "जमा राशि",
+      "womenOnly": "सिर्फ़ महिलाएँ",
+      "private": "निजी",
+      "waitlist": "प्रतीक्षा सूची",
+      "full": "भर चुका है"
+    }
+  },
+  "cluster": {
+    "a11y": "{count, plural, one {# मैच} other {# मैच}}: {sports}। ज़ूम करने के लिए दो बार टैप करें।"
+  },
+  "venues": {
+    "sectionTitle": "बिना मैच वाले मैदान",
+    "startOne": "मैच शुरू करें",
+    "pinA11y": "{name}, मैदान"
+  },
+  "locate": {
+    "label": "मेरी लोकेशन दिखाएँ"
+  },
+  "createGame": {
+    "fab": "मैच बनाएँ"
+  },
+  "empty": {
+    "title": "{distance} के भीतर {sports} का कोई मैच नहीं है।",
+    "widen": "{distance} तक बढ़ाएँ",
+    "create": "मैच बनाएँ"
+  },
+  "locationDenied": {
+    "title": "लोकेशन बंद है",
+    "body": "अपने पास के मैच ढूँढने के लिए कोई शहर या पता खोजें।",
+    "search": "जगह खोजें"
+  },
+  "error": {
+    "title": "मैच लोड नहीं हो सके।",
+    "body": "अपना कनेक्शन जाँचें और फिर कोशिश करें।"
+  },
+  "offline": {
+    "cachedNote": "सहेजे हुए मैच दिखाए जा रहे हैं।"
+  }
+}

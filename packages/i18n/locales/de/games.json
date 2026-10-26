@@ -1,0 +1,279 @@
+{
+  "venue": {
+    "sportsHere": "Sportarten hier",
+    "directions": "Route",
+    "overflow": "Weitere Optionen",
+    "rating": {
+      "summary": "{rating} · {count, plural, one {# Bewertung} other {# Bewertungen}}",
+      "none": "Noch keine Bewertungen",
+      "scoreOf5": "{score} von 5",
+      "title": "Bewertungen"
+    },
+    "attribute": {
+      "surface": "Belag",
+      "lighting": "Beleuchtung",
+      "goals_nets": "Tore und Netze",
+      "hoops": "Körbe",
+      "nets": "Netze",
+      "walls": "Wände",
+      "water_access": "Wasserzugang",
+      "net": "Netz"
+    },
+    "attributeValue": {
+      "natural_grass": "Naturrasen",
+      "artificial_turf": "Kunstrasen",
+      "hard": "Hartplatz",
+      "indoor": "Halle",
+      "outdoor_hard": "Hartplatz im Freien",
+      "indoor_wood": "Hallenparkett",
+      "rubber": "Gummi",
+      "clay": "Sandplatz",
+      "grass": "Rasen",
+      "carpet": "Teppich",
+      "glass": "Glas",
+      "masonry": "Mauerwerk",
+      "track": "Laufbahn",
+      "road": "Straße",
+      "trail": "Waldweg",
+      "mixed": "Gemischt",
+      "sand": "Sand"
+    },
+    "upcoming": "Kommende Spiele hier",
+    "noUpcoming": "Hier gibt es noch keine Spiele.",
+    "startGame": "Hier ein Spiel erstellen",
+    "underReview": "Dieser Spielort wird gerade geprüft.",
+    "rate": {
+      "cta": "Spielort bewerten",
+      "onlyAfterPlaying": "Du kannst einen Spielort bewerten, nachdem du dort gespielt hast.",
+      "title": "{venue} bewerten",
+      "overall": "Gesamtbewertung",
+      "optionalHint": "Überspringe, was du nicht beurteilen kannst.",
+      "submit": "Bewertung senden",
+      "thanks": "Danke für deine Bewertung."
+    },
+    "report": {
+      "cta": "Kein Spielort hier? Melde es.",
+      "title": "Was stimmt mit diesem Spielort nicht?",
+      "reason": {
+        "no_venue_here": "Hier gibt es keinen Spielort",
+        "wrong_location": "Der Standort ist falsch",
+        "closed": "Er ist geschlossen",
+        "duplicate": "Er ist doppelt aufgeführt",
+        "unsafe": "Er ist nicht sicher",
+        "other": "Etwas anderes"
+      },
+      "submit": "Meldung senden",
+      "thanks": "Danke, wir prüfen das. Ein Spielort wird während der Prüfung ausgeblendet, sobald {count, plural, one {# Person ihn gemeldet hat} other {# Personen ihn gemeldet haben}}.",
+      "done": "Du hast diesen Spielort bereits gemeldet"
+    }
+  },
+  "wizard": {
+    "title": "Spiel erstellen",
+    "stepOf": "Schritt {current} von {total}",
+    "stepName": {
+      "sport": "Sportart",
+      "where": "Wo",
+      "when": "Wann",
+      "who": "Wer",
+      "deposit": "Kaution"
+    },
+    "sport": {
+      "title": "Welche Sportart?",
+      "gameTitleLabel": "Titel des Spiels",
+      "gameTitleHint": "Optional. Zum Beispiel „Sonntagskick“.",
+      "formatTitle": "Format",
+      "formatVs": "{a} gegen {b}",
+      "singles": "Einzel",
+      "doubles": "Doppel",
+      "teamCount": "Anzahl der Teams"
+    },
+    "where": {
+      "title": "Wo spielt ihr?",
+      "search": "Spielort oder Adresse suchen",
+      "pickOnMap": "Auf der Karte auswählen",
+      "dropPin": "Pin setzen",
+      "venueNameLabel": "Name des Spielorts",
+      "venueNameHint": "Gib dem Ort einen Namen, damit ihn die Spieler:innen finden.",
+      "hideExactLabel": "Genauen Standort verbergen, bis ich Spieler:innen bestätige",
+      "hideExactHelp": "Spieler:innen sehen zuerst nur die Gegend. Den genauen Ort teilst du, nachdem du sie bestätigt hast."
+    },
+    "when": {
+      "title": "Wann?",
+      "date": "Datum",
+      "start": "Startzeit",
+      "duration": "Dauer",
+      "repeatWeekly": "Jede Woche wiederholen",
+      "comingSoon": "Demnächst"
+    },
+    "who": {
+      "title": "Wer darf mitspielen?",
+      "capacity": "Spieler:innen",
+      "capacityRange": "{min} bis {max} Spieler:innen",
+      "visibility": "Sichtbarkeit",
+      "public": "Öffentlich",
+      "publicHelp": "Alle in der Nähe können dieses Spiel finden.",
+      "private": "Privat",
+      "privateHelp": "Nur Personen mit deinem Einladungslink können dieses Spiel sehen.",
+      "womenOnly": "Nur Frauen",
+      "womenOnlyHelp": "Nur Frauen können an diesem Spiel teilnehmen.",
+      "minReliability": "Mindestzuverlässigkeit",
+      "minAny": "Alle",
+      "minCaution": "Achtung oder besser",
+      "minReliable": "Nur Zuverlässige",
+      "approval": "Teilnahme",
+      "approvalAuto": "Spieler:innen automatisch bestätigen",
+      "approvalManual": "Ich bestätige jede Person einzeln"
+    },
+    "deposit": {
+      "title": "Kaution (optional)",
+      "toggle": "Kaution verlangen",
+      "amount": "Höhe der Kaution",
+      "explain": "Spieler:innen reservieren {amount} auf ihrer Karte, erstattbar. Die Reservierung wird nach dem Check-in aufgehoben und einbehalten, wenn sie nicht erscheinen.",
+      "currencyNote": "Die Währung richtet sich nach dem Land des Spielorts."
+    },
+    "review": {
+      "title": "Spiel prüfen",
+      "edit": "Bearbeiten",
+      "publish": "Spiel veröffentlichen",
+      "publishing": "Wird veröffentlicht …",
+      "offlineHint": "Veröffentliche, wenn du wieder online bist."
+    },
+    "published": {
+      "title": "Dein Spiel ist online",
+      "shareTitle": "Spiel teilen",
+      "whatsapp": "Über WhatsApp teilen",
+      "copyLink": "Link kopieren",
+      "linkCopied": "Link kopiert.",
+      "showQr": "QR-Code anzeigen"
+    },
+    "discard": {
+      "title": "Entwurf verwerfen?",
+      "body": "Deine bisherigen Eingaben gehen verloren.",
+      "keep": "Weiter bearbeiten",
+      "discard": "Entwurf verwerfen",
+      "saved": "Entwurf auf diesem Gerät gespeichert."
+    },
+    "validation": {
+      "sportRequired": "Wähle eine Sportart.",
+      "venueRequired": "Wähle einen Spielort oder setze einen Pin.",
+      "startInPast": "Wähle eine Startzeit in der Zukunft.",
+      "capacityRange": "Wähle zwischen {min} und {max} Spieler:innen.",
+      "depositRange": "Gib einen Betrag zwischen {min} und {max} ein."
+    },
+    "hostSuspended": {
+      "title": "Du kannst gerade keine Spiele organisieren",
+      "body": "Das Organisieren ist für dein Konto pausiert. Sieh nach, warum und wann es endet.",
+      "action": "Details ansehen"
+    }
+  },
+  "details": {
+    "hiddenLocation": "Den genauen Ort erfährst du, sobald die Organisation dich bestätigt hat",
+    "host": {
+      "approve": "Bestätigen",
+      "reject": "Ablehnen",
+      "rejectReasonLabel": "Grund (optional)",
+      "rejectTemplate": {
+        "full": "Das Spiel ist voll.",
+        "level": "Dieses Spiel passt nicht so gut.",
+        "unknown": "Wir kennen uns noch nicht. Schreib bitte zuerst in die Gruppe."
+      },
+      "pendingCount": "{count, plural, one {# Anfrage wartet} other {# Anfragen warten}} auf dich",
+      "edit": "Spiel bearbeiten",
+      "cancelGame": "Spiel absagen",
+      "cancelReasonLabel": "Grund",
+      "cancelHelp": "Alle, die dabei sind, werden benachrichtigt.",
+      "cancelConfirm": "Dieses Spiel absagen",
+      "showQr": "Check-in-QR anzeigen",
+      "teams": "Teams",
+      "enterResult": "Ergebnis eintragen"
+    },
+    "facts": {
+      "players": "{joined} von {capacity} Spieler:innen",
+      "waitlist": "{count, plural, one {# Person auf der Warteliste} other {# Personen auf der Warteliste}}",
+      "deposit": "{amount} Kaution",
+      "womenOnly": "Nur Frauen",
+      "private": "Privates Spiel",
+      "format": "Format: {format}"
+    },
+    "sections": {
+      "players": "Spieler:innen",
+      "requests": "Anfragen",
+      "waitlist": "Warteliste"
+    },
+    "noPlayersYet": "Noch keine Spieler:innen. Sei die erste Person, die mitspielt.",
+    "action": {
+      "join": "Mitspielen",
+      "request": "Teilnahme anfragen",
+      "joinWaitlist": "Auf die Warteliste · Platz {position}",
+      "cancelRequest": "Anfrage zurückziehen",
+      "waitingForHost": "Warten auf Bestätigung",
+      "checkIn": "Einchecken",
+      "checkInOpens": "Check-in öffnet {time}",
+      "chat": "Chat",
+      "directions": "Route",
+      "cantMakeIt": "Ich kann nicht kommen",
+      "leaveWaitlist": "Warteliste verlassen",
+      "waitlistPosition": "Du bist auf Platz {position} der Warteliste."
+    },
+    "outcome": {
+      "joined": "Du bist dabei. Bis dann!",
+      "requestSent": "Anfrage gesendet. Die Organisation antwortet bald.",
+      "waitlisted": "Du stehst auf der Warteliste. Wir melden uns, wenn ein Platz frei wird."
+    },
+    "cancel": {
+      "title": "Teilnahme absagen?",
+      "lateWarning": "Eine Absage weniger als {hours, plural, one {# Stunde} other {# Stunden}} vor Beginn zählt als späte Absage und bringt dir eine Gelbe Karte ein.",
+      "freeUntil": "Bis {time} kannst du ohne Folgen absagen.",
+      "confirm": "Meine Teilnahme absagen",
+      "keep": "Platz behalten"
+    },
+    "deposit": {
+      "disclosure": "{amount} reserviert · wird nach dem Check-in aufgehoben",
+      "sheetTitle": "Kautionsreservierung",
+      "body": "Wir reservieren {amount} auf deiner Karte am {time}. Die Reservierung wird nach deinem Check-in aufgehoben. Wenn du nicht kommst und nicht rechtzeitig absagst, wird der Betrag einbehalten.",
+      "continue": "Weiter zur Zahlung",
+      "status": {
+        "held": "Reserviert",
+        "released": "Aufgehoben",
+        "forfeited": "Einbehalten",
+        "failed": "Reservierung fehlgeschlagen"
+      }
+    },
+    "banner": {
+      "cancelled": "Dieses Spiel wurde abgesagt. Grund: {reason}",
+      "cancelledNoReason": "Dieses Spiel wurde abgesagt.",
+      "ended": "Dieses Spiel ist beendet.",
+      "rateHost": "Organisation bewerten"
+    }
+  },
+  "invite": {
+    "title": "Du bist eingeladen",
+    "join": "Mitspielen",
+    "signUpToJoin": "Registrieren und mitspielen",
+    "expired": "Diese Einladung ist abgelaufen. Bitte die Organisation um einen neuen Link."
+  },
+  "teams": {
+    "title": "Teams",
+    "empty": "Teams erscheinen, sobald Spieler:innen einchecken.",
+    "teamName": "Team {letter}",
+    "balance": "Ausgeglichen · Wertungsunterschied {diff}",
+    "coverage": "Positionsabdeckung: {summary}",
+    "reshuffle": "Neu mischen",
+    "movePlayer": "Spieler:in verschieben",
+    "moveTo": "Verschieben zu: {team}",
+    "lock": "Teams sperren",
+    "locked": "Die Teams sind gesperrt. Die Spieler:innen wurden benachrichtigt."
+  },
+  "result": {
+    "title": "Ergebnis eintragen",
+    "window": "Zeit zum Eintragen des Ergebnisses: noch {duration}.",
+    "scoreFor": "Punkte für {team}",
+    "increase": "Einen Punkt für {team} hinzufügen",
+    "decrease": "Einen Punkt von {team} abziehen",
+    "mvpLabel": "Bester Spieler / beste Spielerin (optional)",
+    "didntPlay": "Wir haben nicht gespielt",
+    "submit": "Ergebnis speichern",
+    "saved": "Ergebnis gespeichert. Die Spieler:innen können es {hours, plural, one {# Stunde} other {# Stunden}} lang anfechten.",
+    "closed": "Die Frist für das Ergebnis ist um {time} abgelaufen."
+  }
+}

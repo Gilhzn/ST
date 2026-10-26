@@ -1,0 +1,96 @@
+{
+  "title": "Impostazioni",
+  "section": {
+    "account": "Account",
+    "language": "Lingua",
+    "theme": "Tema",
+    "notifications": "Notifiche",
+    "privacy": "Privacy e sicurezza",
+    "legal": "Informazioni legali",
+    "about": "Informazioni"
+  },
+  "account": {
+    "phone": "Numero di telefono",
+    "linkedLogins": "Accessi collegati",
+    "signOut": "Esci",
+    "signOutConfirm": "Uscire da Sport Talent su questo dispositivo?"
+  },
+  "language": {
+    "title": "Lingua",
+    "useDevice": "Usa la lingua del dispositivo",
+    "deviceNow": "Lingua del dispositivo: {language}",
+    "current": "Lingua attuale",
+    "restart": {
+      "title": "Riavviare per passare a questa lingua: {language}?",
+      "body": "L’app deve riavviarsi per cambiare il verso di lettura. Prima salveremo le tue bozze.",
+      "restartNow": "Riavvia ora",
+      "later": "Più tardi",
+      "pending": "La nuova lingua sarà usata dopo il riavvio."
+    }
+  },
+  "theme": {
+    "title": "Tema",
+    "system": "Sistema",
+    "light": "Chiaro",
+    "dark": "Scuro",
+    "preview": "Anteprima"
+  },
+  "notifications": {
+    "title": "Notifiche",
+    "joinRequests": "Richieste di partecipazione",
+    "approvals": "Approvazioni",
+    "waitlist": "Posti dalla lista d’attesa",
+    "reminders": "Promemoria delle partite",
+    "chat": "Messaggi della chat",
+    "safety": "Account e sicurezza",
+    "safetyLocked": "Sempre attive. Siamo tenuti a informarti sulle decisioni riguardanti il tuo account.",
+    "osOff": "Le notifiche sono disattivate nelle impostazioni del dispositivo.",
+    "osOffAction": "Apri le impostazioni del dispositivo"
+  },
+  "privacy": {
+    "title": "Privacy e sicurezza",
+    "profileVisibility": "Chi può vedere il mio profilo",
+    "visibilityEveryone": "Tutti",
+    "visibilityParticipants": "I giocatori delle mie partite",
+    "showReliability": "Mostra la mia affidabilità",
+    "showReliabilityHelp": "Gli organizzatori vedono sempre la tua affidabilità quando chiedi di partecipare alla loro partita.",
+    "location": {
+      "title": "Posizione",
+      "precise": "Posizione precisa",
+      "approximate": "Posizione approssimativa",
+      "preciseHelp": "Usata solo quando l’app è aperta, per il tuo check-in e per mostrarti le partite vicine."
+    },
+    "background": {
+      "title": "Check-in automatico",
+      "help": "Permette a Sport Talent di usare la tua posizione in background per capire quando arrivi a una partita a cui hai aderito. Controlla solo vicino al campo, intorno all’orario della partita."
+    },
+    "blocked": {
+      "title": "Giocatori bloccati",
+      "empty": "Non hai bloccato nessuno.",
+      "unblockConfirm": "Sbloccare {name}?"
+    },
+    "data": {
+      "download": "Scarica i miei dati",
+      "help": "Richiedi una copia dei tuoi dati. Ti avviseremo quando sarà pronta."
+    }
+  },
+  "delete": {
+    "title": "Elimina account",
+    "dangerZone": "Zona pericolosa",
+    "intro": "L’eliminazione dell’account è permanente. Non si può annullare.",
+    "deletedTitle": "Cosa eliminiamo",
+    "deleted": "Il tuo profilo, la foto, il numero di telefono, i messaggi in chat e le partite che non hai ancora giocato.",
+    "keptTitle": "Cosa conserviamo",
+    "kept": "Conserviamo i registri di avvertimenti e blocchi in una forma che non ti identifica, perché le regole restino eque per tutti. Li teniamo solo per il tempo consentito dalla legge.",
+    "confirmTyped": "Scrivi {word} per confermare.",
+    "confirmOtp": "Oppure conferma con un codice che invieremo via SMS al numero {phone}.",
+    "button": "Elimina il mio account",
+    "deleting": "Eliminazione dell’account…",
+    "done": "Il tuo account è stato eliminato.",
+    "webLink": "Puoi eliminare l’account anche dal web: {url}"
+  },
+  "about": {
+    "version": "Versione {version}",
+    "diagnosticsOn": "Diagnostica attivata."
+  }
+}

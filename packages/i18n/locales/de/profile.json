@@ -1,0 +1,58 @@
+{
+  "title": "Profil",
+  "edit": "Profil bearbeiten",
+  "homeCity": "Wohnort: {city}",
+  "memberSince": "Dabei seit {date}",
+  "sportsTitle": "Sportarten",
+  "stats": {
+    "title": "Statistik",
+    "gamesPlayed": "Gespielte Spiele",
+    "gamesHosted": "Organisierte Spiele",
+    "checkInRate": "Check-in-Quote",
+    "favoriteVenue": "Lieblingsspielort",
+    "none": "Noch keine"
+  },
+  "positions": {
+    "title": "Positionen",
+    "primary": "Hauptposition",
+    "secondary": "Nebenposition",
+    "none": "Keine Positionen festgelegt"
+  },
+  "history": {
+    "title": "Verlauf",
+    "empty": "Noch keine Spiele. Tritt einem bei, um loszulegen.",
+    "result": "Ergebnis: {score}",
+    "noResult": "Kein Ergebnis"
+  },
+  "reliabilityCard": {
+    "a11y": "Zuverlässigkeitskarte"
+  },
+  "other": {
+    "report": "Spieler:in melden",
+    "block": "Spieler:in blockieren",
+    "overflow": "Weitere Optionen",
+    "blocked": "Du hast diese Person blockiert."
+  },
+  "report": {
+    "title": "{name} melden",
+    "category": {
+      "violence": "Gewalt oder Drohungen",
+      "unsportsmanlike": "Unsportliches Verhalten",
+      "harassment": "Belästigung",
+      "spam": "Spam",
+      "other": "Etwas anderes"
+    },
+    "noteLabel": "Details hinzufügen (optional)",
+    "submit": "Meldung senden",
+    "thanks": "Danke, wir schauen uns das an."
+  },
+  "editForm": {
+    "title": "Profil bearbeiten",
+    "displayNameLabel": "Anzeigename",
+    "bioLabel": "Über dich",
+    "bioHint": "Optional. Erzähl, was du gern spielst.",
+    "changePhoto": "Foto ändern",
+    "removePhoto": "Foto entfernen",
+    "saved": "Profil gespeichert."
+  }
+}

@@ -1,0 +1,94 @@
+{
+  "title": "Chat della partita",
+  "infoChip": "I messaggi scompaiono {hours, plural, one {# ora} many {# di ore} other {# ore}} dopo la partita",
+  "infoDetail": "La chat si chiude al termine della partita. I messaggi vengono eliminati {hours, plural, one {# ora} many {# di ore} other {# ore}} dopo, tranne quelli segnalati, che conserviamo per {days, plural, one {# giorno} many {# di giorni} other {# giorni}} per poterli esaminare.",
+  "empty": "Saluta i tuoi compagni di squadra. I messaggi scompaiono {hours, plural, one {# ora} many {# di ore} other {# ore}} dopo la partita.",
+  "expired": "Questa chat è terminata.",
+  "composer": {
+    "placeholder": "Messaggio",
+    "send": "Invia messaggio"
+  },
+  "message": {
+    "reply": "Rispondi",
+    "copy": "Copia",
+    "translate": "Traduci",
+    "report": "Segnala il messaggio",
+    "block": "Blocca {name}",
+    "moreOptions": "Opzioni del messaggio",
+    "checking": "Verifica…",
+    "notSent": "Non inviato. Tocca per riprovare",
+    "queued": "In attesa di invio"
+  },
+  "translate": {
+    "translatedFrom": "Tradotto da: {language}",
+    "showOriginal": "Mostra originale",
+    "showTranslation": "Mostra traduzione",
+    "autoTranslate": "Traduci automaticamente questa chat",
+    "failed": "Impossibile tradurre questo messaggio. Riprova."
+  },
+  "moderation": {
+    "nudge": {
+      "title": "Questo messaggio potrebbe risultare offensivo.",
+      "body": "Valuta di riformularlo, così tutti si sentono i benvenuti.",
+      "edit": "Modifica il messaggio",
+      "sendAnyway": "Invia comunque",
+      "harassment": "Questo messaggio potrebbe risultare offensivo o rivolto contro qualcuno. Valuta di riformularlo.",
+      "hate": "Questo messaggio potrebbe offendere un gruppo di persone. Valuta di riformularlo.",
+      "threat": "Questo messaggio potrebbe sembrare una minaccia. Valuta di riformularlo.",
+      "violence": "Questo messaggio parla di violenza. Valuta di riformularlo.",
+      "sexual": "Questo messaggio potrebbe non essere adatto a una chat sportiva. Valuta di riformularlo.",
+      "sexual_minors": "Questo messaggio non può essere inviato. Riformulalo, per favore.",
+      "self_harm": "Se stai attraversando un momento difficile, non sei solo. Valuta di parlarne con una persona di fiducia o con un servizio di supporto locale.",
+      "profanity": "Questo messaggio contiene un linguaggio forte che altri potrebbero non apprezzare. Valuta di riformularlo.",
+      "spam": "Questo messaggio sembra spam o pubblicità. Valuta di riformularlo.",
+      "personal_data": "Questo messaggio sembra contenere dati personali, come un numero di telefono o un indirizzo. Condividili solo con persone di fiducia.",
+      "other": "Questo messaggio potrebbe non rispettare le regole della nostra community. Valuta di riformularlo."
+    },
+    "block": {
+      "title": "Questo messaggio viola le regole della nostra community. Modificalo per inviarlo.",
+      "rulesLink": "Regole della community",
+      "oneMoreWarning": "Se succede ancora, la chat verrà sospesa per {hours, plural, one {# ora} many {# di ore} other {# ore}}.",
+      "harassment": "Questo messaggio viola le regole della nostra community (molestie). Modificalo per inviarlo.",
+      "hate": "Questo messaggio viola le regole della nostra community (odio). Modificalo per inviarlo.",
+      "threat": "Questo messaggio viola le regole della nostra community (minacce). Modificalo per inviarlo.",
+      "violence": "Questo messaggio viola le regole della nostra community (violenza). Modificalo per inviarlo.",
+      "sexual": "Questo messaggio viola le regole della nostra community (contenuti sessuali). Modificalo per inviarlo.",
+      "sexual_minors": "Questo messaggio viola le regole della nostra community e non può essere inviato.",
+      "self_harm": "Questo messaggio non può essere inviato. Se stai attraversando un momento difficile, parlane con una persona di fiducia o con un servizio di supporto locale.",
+      "profanity": "Questo messaggio viola le regole della nostra community (linguaggio offensivo). Modificalo per inviarlo.",
+      "spam": "Questo messaggio viola le regole della nostra community (spam). Modificalo per inviarlo.",
+      "personal_data": "Questo messaggio contiene dati personali che non si possono condividere in chat. Modificalo per inviarlo.",
+      "other": "Questo messaggio viola le regole della nostra community. Modificalo per inviarlo."
+    },
+    "muted": "Chat sospesa fino alle {time}",
+    "mutedWhy": "Perché?"
+  },
+  "report": {
+    "title": "Segnala il messaggio",
+    "reasonsTitle": "Qual è il problema?",
+    "category": {
+      "harassment": "Molestie",
+      "violence": "Violenza o minacce",
+      "unsportsmanlike": "Comportamento antisportivo",
+      "spam": "Spam",
+      "other": "Altro"
+    },
+    "detailsLabel": "Aggiungi dettagli (facoltativo)",
+    "submit": "Invia segnalazione",
+    "thanks": "Grazie, lo esamineremo. Il messaggio viene conservato per {days, plural, one {# giorno} many {# di giorni} other {# giorni}} per la revisione.",
+    "blockOffer": "Bloccare anche {name}?"
+  },
+  "block": {
+    "title": "Bloccare {name}?",
+    "body": "Non vedrai i suoi messaggi e questa persona non vedrà i tuoi.",
+    "confirm": "Blocca {name}",
+    "done": "{name} è stato bloccato."
+  },
+  "inbox": {
+    "title": "Posta in arrivo",
+    "tabChats": "Chat",
+    "tabNotifications": "Notifiche",
+    "empty": "Ancora nessun messaggio. Partecipa a una partita per iniziare a chattare.",
+    "pinned": "Fissato finché non lo leggi"
+  }
+}

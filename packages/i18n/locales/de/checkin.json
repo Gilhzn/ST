@@ -1,0 +1,87 @@
+{
+  "title": "Check-in",
+  "opensAt": "Der Check-in öffnet {time}.",
+  "closed": "Der Check-in für dieses Spiel ist beendet.",
+  "alreadyCheckedIn": "Du bist bereits eingecheckt.",
+  "gps": {
+    "title": "Standort wird geprüft",
+    "progress": "Standort wird geprüft … {done} von {total}",
+    "accuracy": "Genauigkeit: {accuracy}",
+    "retry": "Erneut versuchen"
+  },
+  "success": {
+    "title": "Du bist eingecheckt",
+    "method": "{method, select, gps {Per GPS bestätigt} qr {Per QR-Code bestätigt} peer {Von Mitspieler:innen bestätigt} host {Von der Organisation bestätigt} other {Bestätigt}}"
+  },
+  "unconfirmed": {
+    "title": "Wir können noch nicht bestätigen, dass du vor Ort bist",
+    "body": "Geh an einen offenen Platz oder probiere einen anderen Weg."
+  },
+  "reject": {
+    "not_participant": "Du stehst nicht auf der Spielerliste dieses Spiels.",
+    "already_checked_in": "Du bist bereits eingecheckt.",
+    "outside_window": "Der Check-in ist gerade nicht geöffnet. Er öffnet {minutes, plural, one {# Minute} other {# Minuten}} vor Beginn.",
+    "insufficient_samples": "Wir brauchen noch ein paar Standortmessungen. Bleib, wo du bist, und versuche es noch einmal.",
+    "samples_too_close": "Wir brauchen etwas mehr Zeit, um deinen Standort zu prüfen. Warte ein paar Sekunden und versuche es noch einmal.",
+    "low_accuracy": "Dein Standort ist noch nicht genau genug. Geh an einen offenen Platz oder probiere einen anderen Weg.",
+    "too_far": "Wir können noch nicht bestätigen, dass du vor Ort bist. Komm näher heran oder probiere einen anderen Weg.",
+    "spread_too_large": "Die Standortmessungen lagen zu weit auseinander. Bleib an einer Stelle und versuche es noch einmal.",
+    "suspected_spoofing": "Wir können deinen Standort so nicht bestätigen. Probiere einen anderen Weg zum Einchecken.",
+    "invalid_qr": "Dieser Code hat nicht funktioniert. Prüfe ihn und versuche es noch einmal.",
+    "expired_qr": "Dieser Code ist abgelaufen. Bitte die Organisation um den aktuellen Code.",
+    "not_host": "Das kann nur die Organisation tun.",
+    "insufficient_peers": "Wir brauchen mehr Bestätigungen von Mitspieler:innen. Frag eine weitere Person, die bereits eingecheckt ist.",
+    "reciprocal_only": "Mitspieler:innen, die du bestätigt hast, dürfen nicht die Einzigen sein, die dich bestätigen. Frag jemand anderen.",
+    "blocked_pair": "Diese Bestätigung konnte nicht verwendet werden. Frag eine andere Person."
+  },
+  "other": {
+    "title": "Weitere Wege zum Einchecken"
+  },
+  "qr": {
+    "scan": "QR-Code der Organisation scannen",
+    "hint": "Richte die Kamera auf den Code auf dem Bildschirm der Organisation.",
+    "enterCode": "Stattdessen Code eingeben",
+    "codeLabel": "6-stelliger Code",
+    "scanInstead": "Stattdessen QR-Code scannen"
+  },
+  "peer": {
+    "ask": "Mitspieler:in fragen",
+    "hint": "Wir bitten Spieler:innen, die schon eingecheckt sind, zu bestätigen, dass du da bist.",
+    "waiting": "Warten auf {needed, plural, one {# Bestätigung} other {# Bestätigungen}} · Erhalten: {received}",
+    "sent": "Anfrage an deine Mitspieler:innen gesendet."
+  },
+  "permission": {
+    "location": {
+      "title": "Der Standort hilft zu bestätigen, dass du da bist",
+      "body": "Wir prüfen deinen Standort einige Male, während du am Spielort bist. Danach verfolgen wir dich nicht.",
+      "allow": "Standort erlauben",
+      "denied": "Der Standort ist aus. Scanne den QR-Code der Organisation oder frag eine Mitspielerin oder einen Mitspieler."
+    },
+    "camera": {
+      "title": "Kamerazugriff",
+      "body": "Wir nutzen die Kamera nur, um den QR-Code der Organisation zu scannen.",
+      "allow": "Kamera erlauben",
+      "denied": "Die Kamera ist aus. Gib stattdessen den 6-stelligen Code ein."
+    },
+    "background": {
+      "title": "Automatisch einchecken",
+      "body": "Wenn du das aktivierst, nutzt Sport Talent deinen Standort im Hintergrund, um zu erkennen, wann du bei einem Spiel ankommst, dem du beigetreten bist. Die App sucht nur in der Nähe des Spielorts und rund um die Spielzeit. Du kannst das jederzeit in den Einstellungen ausschalten.",
+      "enable": "Aktivieren",
+      "decline": "Nein, danke"
+    }
+  },
+  "offline": {
+    "queued": "Wir bestätigen, sobald du wieder online bist."
+  },
+  "host": {
+    "title": "Check-in-Code",
+    "instruction": "Spieler:innen scannen diesen Code zum Einchecken. Der Code erneuert sich alle {seconds, plural, one {# Sekunde} other {# Sekunden}}.",
+    "fallbackCode": "Oder gib diesen Code ein",
+    "counter": "{checkedIn} von {total} eingecheckt",
+    "markManually": "Spieler:innen manuell markieren",
+    "manualTitle": "Spieler:innen markieren",
+    "markPresent": "{name} als anwesend markieren",
+    "present": "Anwesend",
+    "notHere": "Nicht da"
+  }
+}

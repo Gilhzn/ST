@@ -1,0 +1,157 @@
+{
+  "reliability": {
+    "title": "Affidabilità",
+    "basedOn": "Calcolata {days, plural, one {sull’ultimo giorno} many {sugli ultimi # giorni} other {sugli ultimi # giorni}}: {games, plural, one {# partita} many {# di partite} other {# partite}}, {checkIns, plural, one {# check-in} many {# di check-in} other {# check-in}}, {lateCancels, plural, one {# cancellazione tardiva} many {# di cancellazioni tardive} other {# cancellazioni tardive}}.",
+    "newPlayer": "Nuovo giocatore · gioca {games, plural, one {# partita} many {# di partite} other {# partite}} per ottenere un punteggio di affidabilità.",
+    "meter": {
+      "restrictedBelow": "Limitato sotto il {percent}",
+      "reliableFrom": "Affidabile dal {percent}",
+      "a11y": "La tua affidabilità è {percent}. Limitato sotto il {red}, affidabile dal {green}."
+    },
+    "yellowCards": "{count, plural, one {# cartellino giallo · scade il {date}} many {# di cartellini gialli · il primo scade il {date}} other {# cartellini gialli · il primo scade il {date}}}",
+    "howItWorks": "Come funziona",
+    "how": {
+      "title": "Come funziona l’affidabilità",
+      "body": "Il punteggio mostra quanto spesso ti presenti alle partite a cui hai aderito {days, plural, one {nell’ultimo giorno} many {negli ultimi # giorni} other {negli ultimi # giorni}}. Il check-in conta a tuo favore. Un’assenza conta contro di te e una cancellazione tardiva vale mezza assenza. Mostriamo un punteggio dopo che hai giocato {games, plural, one {# partita} many {# di partite} other {# partite}}.",
+      "green": "Affidabile: {percent} o più, senza cartellini gialli attivi.",
+      "yellow": "Attenzione: sotto il livello di affidabilità, oppure con un cartellino giallo attivo.",
+      "red": "Limitato: sotto il {percent}, oppure con la partecipazione alle partite sospesa.",
+      "new": "Nuovo giocatore: non ci sono ancora abbastanza partite per un punteggio."
+    }
+  },
+  "sanctions": {
+    "title": "Stato dell’account",
+    "kind": {
+      "yellow_card": {
+        "name": "Cartellino giallo",
+        "effect": "È un avvertimento. Non limita ciò che puoi fare.",
+        "stillAllowed": "Puoi continuare a partecipare, organizzare e chattare."
+      },
+      "join_ban": {
+        "name": "Partecipazione sospesa",
+        "effect": "Non puoi chiedere di partecipare alle partite.",
+        "stillAllowed": "Puoi comunque chattare nelle partite a cui partecipi."
+      },
+      "chat_mute": {
+        "name": "Chat sospesa",
+        "effect": "Non puoi inviare messaggi nelle chat delle partite. Puoi comunque leggerli.",
+        "stillAllowed": "Puoi comunque partecipare alle partite e giocare."
+      },
+      "visibility_restriction": {
+        "name": "Visibilità ridotta",
+        "effect": "Il tuo profilo è meno visibile agli altri giocatori.",
+        "stillAllowed": "Puoi comunque partecipare alle partite e chattare."
+      },
+      "host_suspension": {
+        "name": "Organizzazione sospesa",
+        "effect": "Non puoi creare nuove partite.",
+        "stillAllowed": "Puoi comunque partecipare alle partite come giocatore."
+      },
+      "permanent_ban": {
+        "name": "Account chiuso",
+        "effect": "Non puoi usare Sport Talent con questo account.",
+        "stillAllowed": "Puoi presentare ricorso contro questa decisione."
+      }
+    },
+    "status": {
+      "active": "In vigore",
+      "disputed": "Contestazione presentata. Resta in vigore fino alla decisione.",
+      "upheld": "Decisione confermata",
+      "overturned": "Decisione annullata",
+      "expired": "Terminata"
+    },
+    "since": "Dal {date}",
+    "until": "Termina il {date}",
+    "endsIn": "Termina tra {duration}",
+    "ended": "Questa misura è terminata il {date}.",
+    "noEndDate": "Questa decisione non ha una data di fine. È stata presa da un moderatore.",
+    "statement": {
+      "title": "Perché è successo",
+      "ruleLabel": "Regola",
+      "automated": "Questa decisione è stata presa automaticamente in base ai registri dei check-in. Una persona la esaminerà se presenti ricorso.",
+      "human": "Questa decisione è stata presa da un moderatore.",
+      "askPerson": "Puoi chiedere che una persona esamini qualsiasi decisione.",
+      "affectsTitle": "Cosa comporta",
+      "stillAllowedTitle": "Cosa puoi ancora fare"
+    },
+    "rule": {
+      "late_cancel": "Regola sulle cancellazioni tardive",
+      "no_show": "Regola sulla presenza",
+      "chat_blocks": "Regole della chat",
+      "escalation_two_cards": "Regola sugli avvertimenti ripetuti",
+      "escalation_three_cards": "Regola sugli avvertimenti ripetuti",
+      "toxicity_reports": "Regola su rispetto e sicurezza",
+      "fake_venue": "Regola sull’accuratezza dei campi",
+      "low_host_rating": "Regola sulla qualità dell’organizzazione",
+      "moderator_decision": "Revisione di un moderatore"
+    },
+    "reason": {
+      "late_cancel": "Il {date} hai annullato «{gameTitle}» meno di {hours, plural, one {# ora} many {# di ore} other {# ore}} prima dell’inizio. Secondo la regola sulle cancellazioni tardive, questo comporta un cartellino giallo.",
+      "no_show": "Non hai fatto il check-in a «{gameTitle}» il {date}, e questo conta come assenza. Secondo la regola sulla presenza, un’assenza comporta un cartellino giallo.",
+      "chat_blocks": "{count, plural, one {# tuo messaggio è stato bloccato} many {# dei tuoi messaggi sono stati bloccati} other {# tuoi messaggi sono stati bloccati}} nelle chat delle partite in {days, plural, one {# giorno} many {# di giorni} other {# giorni}} perché violavano le regole della nostra community. Secondo le regole della chat, i messaggi bloccati ripetuti comportano un cartellino giallo e una breve sospensione della chat.",
+      "escalation_two_cards": "Hai {cards, plural, one {# cartellino giallo attivo} many {# di cartellini gialli attivi} other {# cartellini gialli attivi}} {days, plural, one {nell’ultimo giorno} many {negli ultimi # giorni} other {negli ultimi # giorni}}. Secondo la regola sugli avvertimenti ripetuti, questo sospende per un periodo definito la possibilità di chiedere di partecipare alle partite.",
+      "escalation_three_cards": "Hai {cards, plural, one {# cartellino giallo attivo} many {# di cartellini gialli attivi} other {# cartellini gialli attivi}} {days, plural, one {nell’ultimo giorno} many {negli ultimi # giorni} other {negli ultimi # giorni}}. Secondo la regola sugli avvertimenti ripetuti, questo sospende per un periodo più lungo la possibilità di chiedere di partecipare alle partite.",
+      "toxicity_reports": "{reporters, plural, one {# giocatore ha segnalato} many {# di giocatori hanno segnalato} other {# giocatori hanno segnalato}} il tuo comportamento {days, plural, one {nell’ultimo giorno} many {negli ultimi # giorni} other {negli ultimi # giorni}}, e le nostre verifiche hanno ritenuto credibili le segnalazioni. Secondo la regola su rispetto e sicurezza, il tuo profilo viene mostrato meno agli altri giocatori per un breve periodo.",
+      "fake_venue": "Altri giocatori hanno segnalato il campo «{venueName}» che hai aggiunto e non siamo riusciti a confermare che sia un posto reale dove giocare. Secondo la regola sull’accuratezza dei campi, aggiungere posti che non esistono può comportare una limitazione.",
+      "low_host_rating": "{count, plural, one {La tua ultima valutazione} many {Le tue ultime # valutazioni} other {Le tue ultime # valutazioni}} come organizzatore hanno una media di {average} su 5, sotto il livello richiesto per organizzare. Secondo la regola sulla qualità dell’organizzazione, l’organizzazione è sospesa mentre esaminiamo il tuo account.",
+      "moderator_decision": "Un moderatore ha esaminato il tuo account e preso questa decisione. La sua nota: {reason}"
+    },
+    "fix": {
+      "title": "Come tornare in carreggiata",
+      "late_cancel": "La prossima volta annulla più di {hours, plural, one {# ora} many {# di ore} other {# ore}} prima dell’inizio della partita. La tua affidabilità risale man mano che ti presenti alle partite.",
+      "no_show": "Fai il check-in alle prossime partite. Se non puoi venire, annulla dall’app il prima possibile. La tua affidabilità risale man mano che ti presenti.",
+      "chat_blocks": "Riformula i messaggi che violano le regole e leggi le regole della community se hai dubbi. La chat riapre alla fine della sospensione.",
+      "escalation_two_cards": "Quando la sospensione termina, presentati alle prossime {games, plural, one {# partita} many {# di partite} other {# partite}} per tornare al verde. I cartellini gialli scadono da soli dopo {days, plural, one {# giorno} many {# di giorni} other {# giorni}}.",
+      "escalation_three_cards": "Quando la sospensione termina, presentati alle prossime {games, plural, one {# partita} many {# di partite} other {# partite}} per tornare al verde. I cartellini gialli scadono da soli dopo {days, plural, one {# giorno} many {# di giorni} other {# giorni}}.",
+      "toxicity_reports": "Mantieni un clima amichevole nelle chat e nelle partite. La visibilità ridotta termina da sola e non devi fare nulla.",
+      "fake_venue": "Aggiungi solo posti dove si può davvero giocare. Se abbiamo sbagliato, presenta ricorso e dicci come trovare il campo.",
+      "low_host_rating": "Leggi i commenti nelle tue valutazioni come organizzatore. Potrai organizzare di nuovo alla fine della revisione.",
+      "moderator_decision": "Leggi la nota qui sopra. Se non sei d’accordo, puoi presentare ricorso.",
+      "expiresOn": "Questo cartellino giallo scade il {date}.",
+      "communityRules": "Regole della community"
+    },
+    "dispute": {
+      "cta": "Contesta questo cartellino",
+      "window": "Puoi contestare questo cartellino fino al {date}.",
+      "windowClosed": "Il termine per contestare è scaduto, ma puoi ancora presentare ricorso."
+    },
+    "appeal": {
+      "cta": "Presenta ricorso contro la decisione",
+      "title": "Raccontaci cos’è successo",
+      "reasonLabel": "Motivo",
+      "reason": {
+        "was_present": "Ero presente alla partita",
+        "cancelled_in_time": "Ho annullato in tempo",
+        "technical_problem": "Il GPS o l’app non ha funzionato",
+        "not_my_message": "Non l’ho scritto io",
+        "disagree": "Non credo di aver violato la regola",
+        "other": "Altro"
+      },
+      "messageLabel": "Cos’è successo?",
+      "messageHint": "Scrivi almeno {min, plural, one {# carattere} many {# di caratteri} other {# caratteri}}.",
+      "counter": "{count} / {max}",
+      "evidenceLabel": "Aggiungi uno screenshot (facoltativo)",
+      "contactLanguage": "Lingua della nostra risposta",
+      "submit": "Invia il ricorso",
+      "received": "Ricorso ricevuto. Una persona lo esaminerà, di solito entro {hours, plural, one {# ora} many {# di ore} other {# ore}}. Ti avviseremo.",
+      "draftSaved": "Bozza salvata. La conserveremo finché non sarai di nuovo online.",
+      "timeline": {
+        "received": "Ricevuto",
+        "inReview": "In esame",
+        "decided": "Deciso"
+      },
+      "outcome": {
+        "upheld": "La decisione è confermata.",
+        "overturned": "La decisione è stata annullata."
+      },
+      "reviewerNote": "Nota di chi ha esaminato"
+    }
+  },
+  "hostRestriction": {
+    "title": "Al momento non puoi organizzare partite",
+    "body": "L’organizzazione di partite è sospesa sul tuo account fino al {date}.",
+    "gamesStay": "Le partite che organizzi già restano attive.",
+    "gamesCancelled": "Le partite che organizzavi e che non erano ancora iniziate sono state annullate e i giocatori sono stati avvisati.",
+    "seeDetails": "Scopri perché"
+  }
+}

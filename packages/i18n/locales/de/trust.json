@@ -1,0 +1,157 @@
+{
+  "reliability": {
+    "title": "Zuverlässigkeit",
+    "basedOn": "Basierend auf {days, plural, one {dem letzten Tag} other {den letzten # Tagen}}: {games, plural, one {# Spiel} other {# Spiele}}, {checkIns, plural, one {# Check-in} other {# Check-ins}}, {lateCancels, plural, one {# späte Absage} other {# späte Absagen}}.",
+    "newPlayer": "Neu dabei · Spiele {games, plural, one {# Spiel} other {# Spiele}}, um einen Zuverlässigkeitswert zu bekommen.",
+    "meter": {
+      "restrictedBelow": "Eingeschränkt unter {percent}",
+      "reliableFrom": "Zuverlässig ab {percent}",
+      "a11y": "Deine Zuverlässigkeit liegt bei {percent}. Eingeschränkt unter {red}, zuverlässig ab {green}."
+    },
+    "yellowCards": "{count, plural, one {# Gelbe Karte · läuft am {date} ab} other {# Gelbe Karten · die erste läuft am {date} ab}}",
+    "howItWorks": "So funktioniert es",
+    "how": {
+      "title": "So funktioniert die Zuverlässigkeit",
+      "body": "Dein Wert zeigt, wie oft du bei Spielen erscheinst, denen du beigetreten bist – {days, plural, one {am letzten Tag} other {in den letzten # Tagen}}. Ein Check-in zählt für dich. Ein Nichterscheinen zählt gegen dich, und eine späte Absage zählt wie ein halbes Nichterscheinen. Einen Wert zeigen wir, sobald du {games, plural, one {# Spiel} other {# Spiele}} gespielt hast.",
+      "green": "Zuverlässig: {percent} oder höher, ohne aktive Gelbe Karte.",
+      "yellow": "Achtung: unter dem zuverlässigen Niveau oder mit aktiver Gelber Karte.",
+      "red": "Eingeschränkt: unter {percent} oder Beitritt zu Spielen pausiert.",
+      "new": "Neu dabei: noch nicht genug Spiele für einen Wert."
+    }
+  },
+  "sanctions": {
+    "title": "Kontostatus",
+    "kind": {
+      "yellow_card": {
+        "name": "Gelbe Karte",
+        "effect": "Das ist eine Verwarnung. Sie schränkt nicht ein, was du tun kannst.",
+        "stillAllowed": "Du kannst weiter Spielen beitreten, Spiele organisieren und chatten."
+      },
+      "join_ban": {
+        "name": "Beitritt pausiert",
+        "effect": "Du kannst keine Teilnahme an Spielen anfragen.",
+        "stillAllowed": "In Spielen, bei denen du dabei bist, kannst du weiter chatten."
+      },
+      "chat_mute": {
+        "name": "Chat pausiert",
+        "effect": "Du kannst keine Nachrichten in Spiel-Chats senden. Lesen kannst du sie weiterhin.",
+        "stillAllowed": "Du kannst weiter Spielen beitreten und mitspielen."
+      },
+      "visibility_restriction": {
+        "name": "Eingeschränkte Sichtbarkeit",
+        "effect": "Dein Profil ist für andere Spieler:innen schlechter sichtbar.",
+        "stillAllowed": "Du kannst weiter Spielen beitreten und chatten."
+      },
+      "host_suspension": {
+        "name": "Organisieren pausiert",
+        "effect": "Du kannst keine neuen Spiele erstellen.",
+        "stillAllowed": "Du kannst weiterhin als Spieler:in an Spielen teilnehmen."
+      },
+      "permanent_ban": {
+        "name": "Konto geschlossen",
+        "effect": "Du kannst Sport Talent mit diesem Konto nicht nutzen.",
+        "stillAllowed": "Du kannst gegen diese Entscheidung Einspruch einlegen."
+      }
+    },
+    "status": {
+      "active": "In Kraft",
+      "disputed": "Widerspruch eingelegt. Bleibt bis zur Entscheidung in Kraft.",
+      "upheld": "Entscheidung bestätigt",
+      "overturned": "Entscheidung aufgehoben",
+      "expired": "Beendet"
+    },
+    "since": "Seit {date}",
+    "until": "Endet am {date}",
+    "endsIn": "Endet in {duration}",
+    "ended": "Das endete am {date}.",
+    "noEndDate": "Diese Entscheidung hat kein Enddatum. Sie wurde vom Moderationsteam getroffen.",
+    "statement": {
+      "title": "Warum das passiert ist",
+      "ruleLabel": "Regel",
+      "automated": "Das wurde automatisch auf Grundlage der Check-in-Daten entschieden. Ein Mensch prüft es, wenn du Einspruch einlegst.",
+      "human": "Das Moderationsteam hat diese Entscheidung getroffen.",
+      "askPerson": "Du kannst jede Entscheidung von einem Menschen prüfen lassen.",
+      "affectsTitle": "Was das betrifft",
+      "stillAllowedTitle": "Was du weiterhin tun kannst"
+    },
+    "rule": {
+      "late_cancel": "Regel zu späten Absagen",
+      "no_show": "Anwesenheitsregel",
+      "chat_blocks": "Chat-Regeln",
+      "escalation_two_cards": "Regel zu wiederholten Verwarnungen",
+      "escalation_three_cards": "Regel zu wiederholten Verwarnungen",
+      "toxicity_reports": "Regel für Respekt und Sicherheit",
+      "fake_venue": "Regel zur Richtigkeit von Spielorten",
+      "low_host_rating": "Regel zur Qualität der Organisation",
+      "moderator_decision": "Prüfung durch das Moderationsteam"
+    },
+    "reason": {
+      "late_cancel": "Am {date} hast du „{gameTitle}“ weniger als {hours, plural, one {# Stunde} other {# Stunden}} vor Beginn abgesagt. Nach der Regel zu späten Absagen führt das zu einer Gelben Karte.",
+      "no_show": "Du bist bei „{gameTitle}“ am {date} nicht eingecheckt, das zählt als Nichterscheinen. Nach der Anwesenheitsregel führt ein Nichterscheinen zu einer Gelben Karte.",
+      "chat_blocks": "{count, plural, one {# deiner Nachrichten wurde} other {# deiner Nachrichten wurden}} innerhalb von {days, plural, one {# Tag} other {# Tagen}} in Spiel-Chats blockiert, weil sie gegen die Regeln unserer Community verstießen. Nach den Chat-Regeln führen wiederholt blockierte Nachrichten zu einer Gelben Karte und einer kurzen Chat-Pause.",
+      "escalation_two_cards": "Du hast {cards, plural, one {# aktive Gelbe Karte} other {# aktive Gelbe Karten}} aus {days, plural, one {dem letzten Tag} other {den letzten # Tagen}}. Nach der Regel zu wiederholten Verwarnungen pausiert das für eine bestimmte Zeit deine Möglichkeit, die Teilnahme an Spielen anzufragen.",
+      "escalation_three_cards": "Du hast {cards, plural, one {# aktive Gelbe Karte} other {# aktive Gelbe Karten}} aus {days, plural, one {dem letzten Tag} other {den letzten # Tagen}}. Nach der Regel zu wiederholten Verwarnungen pausiert das für eine längere Zeit deine Möglichkeit, die Teilnahme an Spielen anzufragen.",
+      "toxicity_reports": "{reporters, plural, one {# Person hat} other {# Personen haben}} dein Verhalten {days, plural, one {am letzten Tag} other {in den letzten # Tagen}} gemeldet, und unsere Prüfung hat die Meldungen als glaubwürdig eingestuft. Nach der Regel für Respekt und Sicherheit wird dein Profil anderen Spieler:innen für kurze Zeit weniger angezeigt.",
+      "fake_venue": "Andere Spieler:innen haben den von dir hinzugefügten Spielort „{venueName}“ gemeldet, und wir konnten nicht bestätigen, dass es ein echter Ort zum Spielen ist. Nach der Regel zur Richtigkeit von Spielorten kann das Hinzufügen nicht existierender Orte zu einer Einschränkung führen.",
+      "low_host_rating": "{count, plural, one {Deine letzte Bewertung} other {Deine letzten # Bewertungen}} als Organisator:in lagen im Schnitt bei {average} von 5 und damit unter dem Niveau, das wir fürs Organisieren brauchen. Nach der Regel zur Qualität der Organisation ist das Organisieren pausiert, während wir dein Konto prüfen.",
+      "moderator_decision": "Das Moderationsteam hat dein Konto geprüft und diese Entscheidung getroffen. Anmerkung: {reason}"
+    },
+    "fix": {
+      "title": "So kommst du zurück in die Spur",
+      "late_cancel": "Sag beim nächsten Mal mehr als {hours, plural, one {# Stunde} other {# Stunden}} vor Beginn ab. Deine Zuverlässigkeit steigt, wenn du zu Spielen erscheinst.",
+      "no_show": "Checke bei deinen nächsten Spielen ein. Wenn du nicht kommen kannst, sag so früh wie möglich in der App ab. Deine Zuverlässigkeit steigt, wenn du erscheinst.",
+      "chat_blocks": "Formuliere Nachrichten um, die gegen die Regeln verstoßen, und lies die Community-Regeln, wenn du unsicher bist. Der Chat öffnet wieder, wenn die Pause endet.",
+      "escalation_two_cards": "Wenn die Pause endet, erscheine bei deinen nächsten {games, plural, one {# Spiel} other {# Spiele}}, um wieder auf Grün zu kommen. Gelbe Karten laufen nach {days, plural, one {# Tag} other {# Tage}} von selbst ab.",
+      "escalation_three_cards": "Wenn die Pause endet, erscheine bei deinen nächsten {games, plural, one {# Spiel} other {# Spiele}}, um wieder auf Grün zu kommen. Gelbe Karten laufen nach {days, plural, one {# Tag} other {# Tage}} von selbst ab.",
+      "toxicity_reports": "Halte Chats und Spiele freundlich. Die eingeschränkte Sichtbarkeit endet von selbst, du musst nichts tun.",
+      "fake_venue": "Füge nur Orte hinzu, an denen man wirklich spielen kann. Falls wir uns geirrt haben, lege Einspruch ein und sag uns, wie wir den Spielort finden.",
+      "low_host_rating": "Lies das Feedback in deinen Bewertungen als Organisator:in. Wenn die Prüfung endet, kannst du wieder organisieren.",
+      "moderator_decision": "Lies die Anmerkung oben. Wenn du nicht einverstanden bist, kannst du Einspruch einlegen.",
+      "expiresOn": "Diese Gelbe Karte läuft am {date} ab.",
+      "communityRules": "Community-Regeln"
+    },
+    "dispute": {
+      "cta": "Gelbe Karte anfechten",
+      "window": "Du kannst diese Gelbe Karte bis {date} anfechten.",
+      "windowClosed": "Die Frist zum Anfechten ist vorbei, aber du kannst weiterhin Einspruch einlegen."
+    },
+    "appeal": {
+      "cta": "Einspruch einlegen",
+      "title": "Erzähl uns, was passiert ist",
+      "reasonLabel": "Grund",
+      "reason": {
+        "was_present": "Ich war beim Spiel",
+        "cancelled_in_time": "Ich habe rechtzeitig abgesagt",
+        "technical_problem": "GPS oder App haben nicht funktioniert",
+        "not_my_message": "Das habe ich nicht geschrieben",
+        "disagree": "Ich glaube nicht, gegen die Regel verstoßen zu haben",
+        "other": "Etwas anderes"
+      },
+      "messageLabel": "Was ist passiert?",
+      "messageHint": "Schreibe mindestens {min, plural, one {# Zeichen} other {# Zeichen}}.",
+      "counter": "{count} / {max}",
+      "evidenceLabel": "Screenshot hinzufügen (optional)",
+      "contactLanguage": "Sprache für unsere Antwort",
+      "submit": "Einspruch senden",
+      "received": "Einspruch erhalten. Ein Mensch prüft ihn, in der Regel innerhalb von {hours, plural, one {# Stunde} other {# Stunden}}. Wir melden uns bei dir.",
+      "draftSaved": "Entwurf gespeichert. Wir bewahren ihn auf, bis du wieder online bist.",
+      "timeline": {
+        "received": "Erhalten",
+        "inReview": "In Prüfung",
+        "decided": "Entschieden"
+      },
+      "outcome": {
+        "upheld": "Die Entscheidung bleibt bestehen.",
+        "overturned": "Die Entscheidung wurde aufgehoben."
+      },
+      "reviewerNote": "Anmerkung der prüfenden Person"
+    }
+  },
+  "hostRestriction": {
+    "title": "Du kannst gerade keine Spiele organisieren",
+    "body": "Das Organisieren ist für dein Konto bis {date} pausiert.",
+    "gamesStay": "Spiele, die du bereits organisierst, bleiben aktiv.",
+    "gamesCancelled": "Spiele, die du organisiert hast und die noch nicht begonnen hatten, wurden abgesagt, und die Spieler:innen wurden benachrichtigt.",
+    "seeDetails": "Grund ansehen"
+  }
+}

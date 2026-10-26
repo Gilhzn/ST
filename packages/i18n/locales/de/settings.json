@@ -1,0 +1,96 @@
+{
+  "title": "Einstellungen",
+  "section": {
+    "account": "Konto",
+    "language": "Sprache",
+    "theme": "Darstellung",
+    "notifications": "Mitteilungen",
+    "privacy": "Datenschutz und Sicherheit",
+    "legal": "Rechtliches",
+    "about": "Über die App"
+  },
+  "account": {
+    "phone": "Telefonnummer",
+    "linkedLogins": "Verknüpfte Anmeldungen",
+    "signOut": "Abmelden",
+    "signOutConfirm": "Auf diesem Gerät von Sport Talent abmelden?"
+  },
+  "language": {
+    "title": "Sprache",
+    "useDevice": "Gerätesprache verwenden",
+    "deviceNow": "Gerätesprache: {language}",
+    "current": "Aktuelle Sprache",
+    "restart": {
+      "title": "Neu starten, um zu dieser Sprache zu wechseln: {language}?",
+      "body": "Die App muss neu starten, um die Leserichtung zu ändern. Vorher speichern wir deine Entwürfe.",
+      "restartNow": "Jetzt neu starten",
+      "later": "Später",
+      "pending": "Die neue Sprache wird nach dem Neustart verwendet."
+    }
+  },
+  "theme": {
+    "title": "Darstellung",
+    "system": "System",
+    "light": "Hell",
+    "dark": "Dunkel",
+    "preview": "Vorschau"
+  },
+  "notifications": {
+    "title": "Mitteilungen",
+    "joinRequests": "Beitrittsanfragen",
+    "approvals": "Bestätigungen",
+    "waitlist": "Plätze von der Warteliste",
+    "reminders": "Spielerinnerungen",
+    "chat": "Chat-Nachrichten",
+    "safety": "Konto und Sicherheit",
+    "safetyLocked": "Immer aktiv. Wir sind verpflichtet, dich über Entscheidungen zu deinem Konto zu informieren.",
+    "osOff": "Mitteilungen sind in den Geräteeinstellungen ausgeschaltet.",
+    "osOffAction": "Geräteeinstellungen öffnen"
+  },
+  "privacy": {
+    "title": "Datenschutz und Sicherheit",
+    "profileVisibility": "Wer mein Profil sehen darf",
+    "visibilityEveryone": "Alle",
+    "visibilityParticipants": "Spieler:innen meiner Spiele",
+    "showReliability": "Meine Zuverlässigkeit anzeigen",
+    "showReliabilityHelp": "Organisator:innen sehen deine Zuverlässigkeit immer, wenn du die Teilnahme an ihrem Spiel anfragst.",
+    "location": {
+      "title": "Standort",
+      "precise": "Genauer Standort",
+      "approximate": "Ungefährer Standort",
+      "preciseHelp": "Wird nur bei geöffneter App genutzt, um dich einzuchecken und Spiele in deiner Nähe zu zeigen."
+    },
+    "background": {
+      "title": "Automatisch einchecken",
+      "help": "Erlaubt Sport Talent, deinen Standort im Hintergrund zu nutzen, um zu erkennen, wann du bei einem Spiel ankommst, dem du beigetreten bist. Die App sucht nur in der Nähe des Spielorts und rund um die Spielzeit."
+    },
+    "blocked": {
+      "title": "Blockierte Spieler:innen",
+      "empty": "Du hast niemanden blockiert.",
+      "unblockConfirm": "Blockierung von {name} aufheben?"
+    },
+    "data": {
+      "download": "Meine Daten herunterladen",
+      "help": "Fordere eine Kopie deiner Daten an. Wir sagen dir Bescheid, wenn sie bereit ist."
+    }
+  },
+  "delete": {
+    "title": "Konto löschen",
+    "dangerZone": "Gefahrenbereich",
+    "intro": "Das Löschen deines Kontos ist endgültig. Du kannst es nicht rückgängig machen.",
+    "deletedTitle": "Was wir löschen",
+    "deleted": "Dein Profil, dein Foto, deine Telefonnummer, deine Chat-Nachrichten und Spiele, die du noch nicht gespielt hast.",
+    "keptTitle": "Was wir behalten",
+    "kept": "Aufzeichnungen zu Verwarnungen und Sperren bewahren wir in einer Form auf, die dich nicht identifiziert, damit die Regeln für alle fair bleiben. Wir behalten sie nur so lange, wie es das Gesetz erlaubt.",
+    "confirmTyped": "Gib zur Bestätigung {word} ein.",
+    "confirmOtp": "Oder bestätige mit einem Code, den wir per SMS an {phone} senden.",
+    "button": "Mein Konto löschen",
+    "deleting": "Dein Konto wird gelöscht …",
+    "done": "Dein Konto wurde gelöscht.",
+    "webLink": "Du kannst dein Konto auch im Web löschen: {url}"
+  },
+  "about": {
+    "version": "Version {version}",
+    "diagnosticsOn": "Diagnose aktiviert."
+  }
+}

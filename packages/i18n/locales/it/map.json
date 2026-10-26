@@ -1,0 +1,68 @@
+{
+  "search": {
+    "label": "Cerca",
+    "placeholder": "Città, campo o indirizzo"
+  },
+  "filters": {
+    "sports": "Sport",
+    "limitHint": "Puoi sceglierne fino a {max, plural, one {# sport} many {# di sport} other {# sport}}. Deseleziona uno sport per aggiungerne un altro.",
+    "limitToast": "Deseleziona uno sport per aggiungerne un altro."
+  },
+  "radius": {
+    "label": "Raggio di ricerca",
+    "auto": "Auto (GPS)",
+    "a11y": "Raggio di ricerca: {distance}"
+  },
+  "sheet": {
+    "title": "{count, plural, =0 {Nessuna partita nelle vicinanze} one {# partita nelle vicinanze} many {# di partite nelle vicinanze} other {# partite nelle vicinanze}}",
+    "sortLabel": "Ordina per",
+    "sortSoonest": "Più imminenti",
+    "sortNearest": "Più vicine",
+    "showList": "Elenco",
+    "showMap": "Mappa"
+  },
+  "card": {
+    "distanceAway": "A {distance}",
+    "players": "{joined}/{capacity} giocatori",
+    "startsSoon": "Inizia a breve",
+    "live": "In corso",
+    "badge": {
+      "deposit": "Cauzione",
+      "womenOnly": "Solo donne",
+      "private": "Privata",
+      "waitlist": "Lista d’attesa",
+      "full": "Al completo"
+    }
+  },
+  "cluster": {
+    "a11y": "{count, plural, one {# partita} many {# di partite} other {# partite}}: {sports}. Tocca due volte per ingrandire."
+  },
+  "venues": {
+    "sectionTitle": "Campi senza partite",
+    "startOne": "Crea una partita",
+    "pinA11y": "{name}, campo"
+  },
+  "locate": {
+    "label": "Mostra la mia posizione"
+  },
+  "createGame": {
+    "fab": "Crea partita"
+  },
+  "empty": {
+    "title": "Nessuna partita entro {distance} per {sports}.",
+    "widen": "Amplia a {distance}",
+    "create": "Crea una partita"
+  },
+  "locationDenied": {
+    "title": "La posizione è disattivata",
+    "body": "Cerca una città o un indirizzo per trovare partite vicino a te.",
+    "search": "Cerca un luogo"
+  },
+  "error": {
+    "title": "Impossibile caricare le partite.",
+    "body": "Controlla la connessione e riprova."
+  },
+  "offline": {
+    "cachedNote": "Vengono mostrate le partite salvate."
+  }
+}
