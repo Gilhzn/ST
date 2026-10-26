@@ -18,3 +18,4 @@ test-results/
 .DS_Store
 supabase/.temp/
 supabase/functions/_shared/domain.mjs
+dist-artifact/

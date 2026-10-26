@@ -74,7 +74,8 @@
     "web": "expo start --web",
     "typecheck": "tsc --noEmit",
     "export:web": "expo export --platform web --output-dir dist",
-    "e2e": "playwright test"
+    "e2e": "playwright test",
+    "export:artifact": "EXPO_PUBLIC_DATA=mock expo export --platform web --output-dir dist && node scripts/build-artifact.mjs"
   },
   "private": true
 }
