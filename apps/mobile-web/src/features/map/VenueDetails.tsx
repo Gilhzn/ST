@@ -4,7 +4,7 @@
  * "No venue here? Report it." flow (one report per person).
  */
 import { DEFAULT_TRUST_CONFIG, isStError, type NearbyGame, type NearbyVenue, type VenueReportReason } from '@st/domain';
-import { BidiText, Button, Divider, Icon, IconButton, isolate, radius, Row, spacing, SportGlyphBadge, Stack, Text, useTheme } from '@st/ui';
+import { BidiText, Button, Divider, Icon, IconButton, isolate, radius, Row, Segmented, spacing, SportGlyphBadge, Stack, Text, useTheme } from '@st/ui';
 import { router } from 'expo-router';
 import { useState } from 'react';
 import { Linking, Platform, View } from 'react-native';
@@ -14,6 +14,7 @@ import { GameCard } from '@/components/GameCard';
 import { InlineError } from '@/components/States';
 import { useToast } from '@/components/Toast';
 import { useData } from '@/data/DataProvider';
+import { VenuePhotos } from '@/features/vault/VenuePhotos';
 import { useAction } from '@/hooks/useAsync';
 import { useT } from '@/i18n';
 import { formatDistance, formatList, formatNumber } from '@/lib/format';
@@ -47,6 +48,7 @@ export function VenueDetails({
   const [reporting, setReporting] = useState(false);
   const [reason, setReason] = useState<VenueReportReason | null>(null);
   const [reported, setReported] = useState(false);
+  const [tab, setTab] = useState<'games' | 'photos'>('games');
   const report = useAction(async (r: VenueReportReason) => port.reportVenue(venue.id, r));
   const here = games.filter((g) => g.venueId === venue.id);
   const distance = formatDistance(venue.distanceM, locale, miles);
@@ -148,15 +150,31 @@ export function VenueDetails({
       </View>
 
       <Stack gap="md">
-        <Text variant="title3">{t('games:venue.upcoming')}</Text>
-        {here.length ? (
-          here.map((g) => (
-            <GameCard key={g.id} game={g} distanceM={g.distanceM} now={now} miles={miles} testID={`map.venue.game.${g.id}`} onPress={() => router.push(`/game/${g.id}`)} />
-          ))
+        <Segmented
+          testID="map.venue.tabs"
+          label={t('vault:venue.tabsA11y')}
+          value={tab}
+          onChange={setTab}
+          options={[
+            { value: 'games', label: t('vault:venue.tabGames'), icon: 'CalendarStar', count: here.length || undefined, testID: 'map.venue.tab.games' },
+            { value: 'photos', label: t('vault:venue.tabPhotos'), icon: 'Images', testID: 'map.venue.tab.photos' },
+          ]}
+        />
+        {tab === 'photos' ? (
+          <VenuePhotos venueId={venue.id} />
         ) : (
-          <Text variant="callout" color="textSecondary">
-            {t('games:venue.noUpcoming')}
-          </Text>
+          <>
+            <Text variant="title3">{t('games:venue.upcoming')}</Text>
+            {here.length ? (
+              here.map((g) => (
+                <GameCard key={g.id} game={g} distanceM={g.distanceM} now={now} miles={miles} testID={`map.venue.game.${g.id}`} onPress={() => router.push(`/game/${g.id}`)} />
+              ))
+            ) : (
+              <Text variant="callout" color="textSecondary">
+                {t('games:venue.noUpcoming')}
+              </Text>
+            )}
+          </>
         )}
       </Stack>
       <Divider />

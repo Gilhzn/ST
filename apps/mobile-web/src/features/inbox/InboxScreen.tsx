@@ -33,6 +33,7 @@ import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context'
 
 import { ErrorView } from '@/components/States';
 import { useData } from '@/data/DataProvider';
+import { InboxRequests, useInboxRequests } from '@/features/inbox/InboxRequests';
 import { toneColorsFor, type NoticeTone } from '@/features/kit/Notice';
 import { statementValues } from '@/features/sanctions/SanctionScreen';
 import { useAsync } from '@/hooks/useAsync';
@@ -60,6 +61,25 @@ const KIND: Partial<Record<NotificationKind, { icon: IconName; tone: NoticeTone 
   venue_hidden: { icon: 'MapPin', tone: 'neutral' },
   deposit_action_required: { icon: 'Coins', tone: 'warning' },
 };
+
+/** Phase 1.5 kinds (contract v3 `Phase15NotificationKind`; stored in the same inbox). */
+const KIND15: Record<string, { icon: IconName; tone: NoticeTone }> = {
+  roster_added: { icon: 'UsersThree', tone: 'brand' },
+  series_reconfirm: { icon: 'CalendarCheck', tone: 'warning' },
+  series_auto_released: { icon: 'CalendarX', tone: 'neutral' },
+  roster_leave_offer: { icon: 'SignOut', tone: 'neutral' },
+  occurrence_skipped: { icon: 'SkipForward', tone: 'warning' },
+  occurrence_updated: { icon: 'PencilSimple', tone: 'info' },
+  occurrence_rescheduled: { icon: 'CalendarDots', tone: 'warning' },
+  peer_rating_open: { icon: 'Star', tone: 'brand' },
+  friend_request: { icon: 'UserPlus', tone: 'brand' },
+  friend_accepted: { icon: 'UserCheck', tone: 'success' },
+  media_tag_request: { icon: 'Tag', tone: 'brand' },
+  media_blocked: { icon: 'ShieldWarning', tone: 'warning' },
+};
+
+/** Requests are acted on in the Requests section above the list. */
+const HIDDEN_KINDS = new Set(['friend_request', 'media_tag_request']);
 
 const PINNED: NotificationKind[] = ['sanction_issued', 'sanction_decided', 'visibility_restricted', 'chat_muted'];
 
@@ -111,14 +131,19 @@ export function InboxScreen() {
   const [refreshing, setRefreshing] = useState(false);
   const notifications = useAsync(() => port.listNotifications({ limit: 100 }), [port]);
   const games = useAsync(() => port.listMyGames(), [port]);
+  const requests = useInboxRequests();
   const reload = notifications.reload;
+  // `requests.reload` is a fresh closure each render; the focus effect reads the latest via a ref.
+  const reloadRequests = useRef(requests.reload);
+  reloadRequests.current = requests.reload;
   useFocusEffect(
     useCallback(() => {
       void reload();
+      void reloadRequests.current();
     }, [reload]),
   );
 
-  const list = useMemo(() => notifications.data ?? [], [notifications.data]);
+  const list = useMemo(() => (notifications.data ?? []).filter((n) => !HIDDEN_KINDS.has(n.kind as string)), [notifications.data]);
   const sections = useMemo(() => sectionsFor(list, now, t, locale), [list, now, t, locale]);
   const unread = list.filter((n) => !n.readAt);
 
@@ -131,6 +156,15 @@ export function InboxScreen() {
 
   const open = (n: Notification) => {
     markRead(n.readAt ? [] : [n.id]);
+    const kind = n.kind as string;
+    const seriesId = typeof n.params.seriesId === 'string' ? n.params.seriesId : null;
+    if (kind === 'roster_added' || kind === 'roster_leave_offer') {
+      if (seriesId) router.push(`/series/${seriesId}`);
+      return;
+    }
+    if (kind === 'peer_rating_open' && n.gameId) return router.push(`/game/${n.gameId}/rate`);
+    if ((kind === 'media_blocked' || kind === 'media_tag_request') && n.gameId) return router.push(`/game/${n.gameId}/gallery`);
+    if (kind === 'friend_accepted') return router.push('/players');
     if (n.sanctionId) router.push(`/sanctions/${n.sanctionId}`);
     else if (n.gameId) router.push(n.kind === 'result_requested' ? `/game/${n.gameId}/result` : n.kind === 'checkin_open' ? `/game/${n.gameId}/checkin` : `/game/${n.gameId}`);
   };
@@ -140,7 +174,7 @@ export function InboxScreen() {
   const onRefresh = async () => {
     setRefreshing(true);
     Haptics.trigger('pullToRefresh');
-    await Promise.all([notifications.reload(), games.reload()]);
+    await Promise.all([notifications.reload(), games.reload(), requests.reload()]);
     setRefreshing(false);
   };
 
@@ -176,11 +210,14 @@ export function InboxScreen() {
 
         <View style={{ width: '100%', maxWidth: 720, alignSelf: 'center', paddingStart: spacing.lg, paddingEnd: spacing.lg, gap: spacing.xl }}>
           {tab === 'notifications' ? (
+            <InboxRequests friends={requests.friends.data ?? []} tags={requests.tags.data ?? []} onChanged={requests.reload} />
+          ) : null}
+          {tab === 'notifications' ? (
             notifications.loading && !notifications.data ? (
               <RowsSkeleton />
             ) : notifications.error && !notifications.data ? (
               <ErrorView error={notifications.error} onRetry={() => void notifications.reload()} />
-            ) : sections.length === 0 ? (
+            ) : sections.length === 0 && requests.count === 0 ? (
               <EmptyState testID="inbox.empty" illustration="noNotifications" title={t('chat:inbox.tabNotifications')} body={t('chat:inbox.caughtUp')} />
             ) : (
               sections.map((s) => (
@@ -260,7 +297,7 @@ function NotificationRow({ n, pinned, onPress, relative, onMarkRead }: { n: Noti
   const theme = useTheme();
   const params = statementValues(n.params, locale);
   const unread = !n.readAt;
-  const kind = KIND[n.kind] ?? { icon: 'Bell' as IconName, tone: 'neutral' as NoticeTone };
+  const kind = KIND[n.kind] ?? KIND15[n.kind as string] ?? { icon: 'Bell' as IconName, tone: 'neutral' as NoticeTone };
   const tc = toneColorsFor(theme.colors, kind.tone);
   const title = t(`notifications:${n.kind}.title`, params);
   return (

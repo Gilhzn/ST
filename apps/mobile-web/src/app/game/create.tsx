@@ -6,7 +6,7 @@
  * success illustration with the game card and share actions (success haptic). Inline validation
  * per step, a local autosaved draft and a discard prompt.
  */
-import { SPORT_IDS, type GameDetail, type LatLng, type NearbyVenue, type SportId } from '@st/domain';
+import { SPORT_IDS, type GameDetail, type GameSeriesDetail, type LatLng, type NearbyVenue, type SeriesRecurrence, type SportId, type Weekday } from '@st/domain';
 import {
   BidiText,
   Button,
@@ -46,6 +46,9 @@ import { useToast } from '@/components/Toast';
 import { useData } from '@/data/DataProvider';
 import { DEFAULT_MAP_CENTER } from '@/features/map/cities';
 import { compactMinutes } from '@/features/game/DetailsParts';
+import { cadenceLabel, deviceTimeZone } from '@/features/series/format';
+import { PriorityWindowCard } from '@/features/series/SeriesScreen';
+import { SeriesCard } from '@/features/series/SeriesParts';
 import { useAction, useAsync } from '@/hooks/useAsync';
 import { useT } from '@/i18n';
 import { currencyForCountry } from '@/lib/currency';
@@ -95,6 +98,10 @@ interface Draft {
   womenOnly: boolean;
   depositOn: boolean;
   deposit: string;
+  /** Recurring series (GAME-010): `none` for a one-off game. */
+  repeat: 'none' | SeriesRecurrence;
+  /** Regulars-only window after each date opens, 6–72 h. */
+  priorityHours: number;
 }
 
 function defaultTime(): string {
@@ -129,7 +136,20 @@ const EMPTY: Draft = {
   womenOnly: false,
   depositOn: false,
   deposit: '',
+  repeat: 'none',
+  priorityHours: 24,
 };
+
+/** Local calendar date (YYYY-MM-DD) and ISO weekday of the wizard's day offset. */
+function localDateOf(day: number): { date: string; weekday: Weekday } {
+  const d = new Date();
+  d.setDate(d.getDate() + day);
+  const js = d.getDay();
+  return {
+    date: `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`,
+    weekday: (((js + 6) % 7) + 1) as Weekday,
+  };
+}
 
 export default function CreateGameScreen() {
   const { t, locale } = useT();
@@ -144,6 +164,7 @@ export default function CreateGameScreen() {
   const [discard, setDiscard] = useState(false);
   const [center, setCenter] = useState<LatLng>(DEFAULT_MAP_CENTER);
   const [published, setPublished] = useState<GameDetail | null>(null);
+  const [publishedSeries, setPublishedSeries] = useState<GameSeriesDetail | null>(null);
   const [customDeposit, setCustomDeposit] = useState(false);
   const restored = useRef(false);
   const miles = useMemo(() => usesMiles(deviceRegion()), []);
@@ -168,8 +189,8 @@ export default function CreateGameScreen() {
   }, [params.venueId]);
 
   useEffect(() => {
-    if (restored.current && !published) void setPref(PrefKeys.createGameDraft, draft);
-  }, [draft, published]);
+    if (restored.current && !published && !publishedSeries) void setPref(PrefKeys.createGameDraft, draft);
+  }, [draft, published, publishedSeries]);
 
   const update = (patch: Partial<Draft>) => setDraft((d) => ({ ...d, ...patch }));
 
@@ -214,6 +235,36 @@ export default function CreateGameScreen() {
       const created = await port.createVenue({ name: draft.pinName.trim(), location: center, sports: [sport] });
       venueId = created.id;
       location = created.location;
+    }
+    if (draft.repeat !== 'none') {
+      const { date, weekday } = localDateOf(draft.day);
+      const detail = await port.createSeries({
+        sport,
+        title: draft.title.trim() || t('games:wizard.defaultTitle', { sport: t(`common:sports.${sport}`) }),
+        notes: null,
+        visibility: draft.visibility,
+        venueId,
+        location,
+        hideExactLocation: draft.hideExact,
+        capacity: draft.capacity,
+        minPlayers,
+        depositMinor,
+        currency,
+        womenOnly: draft.womenOnly,
+        teamCount: Math.min(draft.teamCount, draft.capacity),
+        recurrence: draft.repeat,
+        weekday,
+        startTime: draft.time,
+        timeZone: deviceTimeZone(),
+        durationMinutes: draft.duration,
+        startDate: date,
+        rosterPriorityHours: draft.priorityHours,
+      });
+      const first = detail.upcoming.find((o) => o.status === 'scheduled');
+      const firstGame = first ? await port.getGame(first.gameId) : null;
+      await setPref(PrefKeys.createGameDraft, null);
+      setPublishedSeries(detail);
+      return firstGame;
     }
     const game = await port.createGame({
       sport,
@@ -269,6 +320,41 @@ export default function CreateGameScreen() {
           actionLabel={t('games:wizard.hostSuspended.action')}
           onAction={() => router.replace('/profile')}
         />
+      </Screen>
+    );
+  }
+
+  if (publishedSeries) {
+    const ps = publishedSeries;
+    return (
+      <Screen
+        testID="screen.game.create.done"
+        back={false}
+        contentStyle={{ gap: spacing.xl, paddingTop: spacing.xl }}
+        footer={
+          <>
+            <Button testID="game.create.series.invite" size="lg" fullWidth icon="WhatsappLogo" label={t('series:host.inviteGroup')} onPress={() => router.replace(`/series/${ps.series.id}/invite`)} />
+            <Button testID="game.create.view" variant="ghost" fullWidth iconEnd="ArrowRight" label={t('series:created.view')} onPress={() => router.replace(`/series/${ps.series.id}`)} />
+          </>
+        }
+      >
+        <View style={{ alignItems: 'center', gap: spacing.md }}>
+          <Illustration name="success" size={160} />
+          <Text variant="title1" align="center" role="heading" aria-level={1}>
+            {t('series:created.title', { recurrence: ps.series.recurrence })}
+          </Text>
+          <Text variant="callout" color="textSecondary" align="center" style={{ maxWidth: 360 }}>
+            {t('series:created.body', { hours: ps.series.rosterPriorityHours })}
+          </Text>
+        </View>
+        <SeriesCard
+          testID="game.create.series.card"
+          series={ps.series}
+          regulars={ps.rosterCount}
+          nextLabel={t('series:created.dates', { count: ps.upcoming.length })}
+          onPress={() => router.replace(`/series/${ps.series.id}`)}
+        />
+        {published ? <GameCard game={published} now={Date.now()} onPress={() => router.replace(`/game/${published.id}`)} /> : null}
       </Screen>
     );
   }
@@ -383,7 +469,7 @@ export default function CreateGameScreen() {
               fullWidth
               icon="Confetti"
               haptic="publishGame"
-              label={t('games:wizard.review.publish')}
+              label={draft.repeat === 'none' ? t('games:wizard.review.publish') : t('series:wizard.publish')}
               loading={publish.busy}
               loadingLabel={t('games:wizard.review.publishing')}
               onPress={async () => {
@@ -515,7 +601,23 @@ export default function CreateGameScreen() {
           <StepTitle title={t('games:wizard.when.title')} subtitle={t('games:wizard.when.subtitle')} />
           <View style={{ gap: spacing.sm }}>
             <Text variant="label" color="textSecondary">
-              {t('games:wizard.when.date')}
+              {t('series:wizard.repeats')}
+            </Text>
+            <Segmented
+              testID="game.create.repeat"
+              label={t('series:wizard.repeats')}
+              value={draft.repeat}
+              onChange={(repeat) => update({ repeat })}
+              options={[
+                { value: 'none', label: t('series:wizard.once'), testID: 'game.create.repeat.none' },
+                { value: 'weekly', label: t('series:wizard.weekly'), icon: 'Repeat', testID: 'game.create.repeat.weekly' },
+                { value: 'biweekly', label: t('series:wizard.biweekly'), testID: 'game.create.repeat.biweekly' },
+              ]}
+            />
+          </View>
+          <View style={{ gap: spacing.sm }}>
+            <Text variant="label" color="textSecondary">
+              {draft.repeat === 'none' ? t('games:wizard.when.date') : t('series:wizard.firstDate')}
             </Text>
             <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{ gap: spacing.sm, paddingEnd: spacing.lg }} style={{ marginEnd: -spacing.lg }}>
               <View role="radiogroup" aria-label={t('games:wizard.when.date')} style={{ flexDirection: 'row', gap: spacing.sm }}>
@@ -552,6 +654,24 @@ export default function CreateGameScreen() {
               options={DURATIONS.map((m) => ({ value: String(m), label: compactMinutes(m, locale), testID: `game.create.duration.${m}` }))}
             />
           </View>
+          {draft.repeat !== 'none' ? (
+            <>
+              <View testID="game.create.repeat.summary" style={{ flexDirection: 'row', alignItems: 'center', gap: spacing.md, padding: spacing.md, paddingEnd: spacing.lg, borderRadius: radius.lg, backgroundColor: theme.colors.primarySubtle }}>
+                <View aria-hidden style={{ width: 40, height: 40, borderRadius: 14, alignItems: 'center', justifyContent: 'center', backgroundColor: theme.colors.surface }}>
+                  <Icon name="Repeat" size={22} weight="bold" color="primary" />
+                </View>
+                <View style={{ flex: 1, gap: 2 }}>
+                  <Text variant="headline" color="onPrimarySubtle">
+                    {cadenceLabel({ recurrence: draft.repeat, weekday: localDateOf(draft.day).weekday, startTime: draft.time }, t, locale)}
+                  </Text>
+                  <Text variant="footnote" color="onPrimarySubtle">
+                    {t('series:wizard.summaryHelp', { date: formatDate(startsAt, locale, { weekday: 'short', day: 'numeric', month: 'short' }) })}
+                  </Text>
+                </View>
+              </View>
+              <PriorityWindowCard value={draft.priorityHours} onChange={(priorityHours) => update({ priorityHours })} testID="game.create.priority" />
+            </>
+          ) : null}
         </>
       ) : null}
 
@@ -707,6 +827,19 @@ export default function CreateGameScreen() {
               icon="CalendarDots"
               label={t('games:wizard.stepName.when')}
               value={t('games:wizard.review.whenValue', { start: isolate(formatDateTime(startsAt, locale), 'ltr'), duration: compactMinutes(draft.duration, locale) })}
+              onEdit={() => goTo(2)}
+            />
+            <ReviewRow
+              icon="Repeat"
+              label={t('series:wizard.repeats')}
+              value={
+                draft.repeat === 'none'
+                  ? t('series:wizard.noRepeat')
+                  : t('series:wizard.reviewValue', {
+                      cadence: cadenceLabel({ recurrence: draft.repeat, weekday: localDateOf(draft.day).weekday, startTime: draft.time }, t, locale),
+                      window: compactMinutes(draft.priorityHours * 60, locale),
+                    })
+              }
               onEdit={() => goTo(2)}
             />
             <ReviewRow
