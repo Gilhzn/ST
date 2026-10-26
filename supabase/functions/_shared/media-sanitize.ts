@@ -7,14 +7,16 @@
  * byte for byte, so the result decodes exactly like the original.
  *
  * - JPEG: keeps the segments a decoder needs (DQT, SOFn, DHT, DRI, SOS + scans,
- *   APP0/JFIF, APP2/ICC_PROFILE, APP14/Adobe) and drops APP1 (EXIF, XMP),
- *   APP3..APP13, APP15, COM and everything after EOI (MPF secondary images and
+ *   APP2/ICC_PROFILE, APP14/Adobe, and APP0 rewritten to a bare 16-byte JFIF header
+ *   without thumbnail) and drops APP1 (EXIF, XMP), JFXX, APP3..APP13, APP15, COM,
+ *   JPGn (0xF0–0xFD) and everything after EOI (MPF secondary images and
  *   vendor trailers, which carry their own EXIF). The EXIF Orientation is the
  *   only value kept, re-emitted as a minimal one-entry EXIF block, so photos
  *   taken in portrait still display upright.
  * - PNG: allow-list of rendering chunks; drops tEXt, zTXt, iTXt, eXIf, tIME and
  *   unknown ancillary chunks; validates every CRC; rejects unknown critical chunks.
- * - WebP: drops EXIF and XMP chunks and clears the matching VP8X flags.
+ * - WebP: drops EXIF and XMP chunks (also inside animation frames: ANMF keeps only
+ *   ALPH/VP8/VP8L sub-chunks) and clears the matching VP8X flags.
  *
  * Anything malformed throws {@link MediaFormatError}: the pipeline then blocks the
  * item instead of publishing bytes it could not sanitise.
@@ -229,10 +231,25 @@ function encodeSegment(seg: JpegSegment): Uint8Array {
   return seg.scan ? concat([head, seg.payload, seg.scan]) : concat([head, seg.payload]);
 }
 
+/**
+ * APP0 is kept only as a bare JFIF header: version, units and density, with the
+ * embedded thumbnail dropped (Xthumb = Ythumb = 0). A JFIF thumbnail, a JFXX
+ * extension or trailing bytes can carry a whole second image with its own EXIF.
+ * Returns the 14-byte payload (a 16-byte segment), or `null` to drop the segment.
+ */
+export function minimalJfif(payload: Uint8Array): Uint8Array | null {
+  if (payload.length < 12 || ascii(payload, 0, 5) !== 'JFIF\0') return null;
+  const out = new Uint8Array(14);
+  out.set(payload.subarray(0, 12)); // "JFIF\0", version (2), units (1), Xdensity (2), Ydensity (2)
+  return out; // Xthumb = Ythumb = 0
+}
+
 function keepJpegSegment(seg: JpegSegment): boolean {
   const m = seg.marker;
   if (m === COM) return false;
-  if (m === APP0 || m === APP14) return true;
+  if (m >= 0xf0 && m <= 0xfd) return false; // JPGn extensions: no baseline decoder needs them
+  if (m === APP0) return minimalJfif(seg.payload) !== null;
+  if (m === APP14) return true;
   if (m === APP2) return isIccApp2(seg.payload);
   if (m >= 0xe0 && m <= 0xef) return false; // APP1 (EXIF/XMP), APP3..APP13 (IPTC, Photoshop), APP15
   return true;
@@ -245,8 +262,15 @@ export function stripJpegMetadata(b: Uint8Array): StripResult {
   const kept: JpegSegment[] = [];
   for (const seg of segments) {
     if (seg.marker === APP1 && orientation === null) orientation = exifOrientation(seg.payload);
-    if (keepJpegSegment(seg)) kept.push(seg);
-    else removed.push(jpegMarkerName(seg.marker));
+    if (!keepJpegSegment(seg)) {
+      removed.push(jpegMarkerName(seg.marker));
+    } else if (seg.marker === APP0) {
+      const jfif = minimalJfif(seg.payload) as Uint8Array;
+      if (jfif.length !== seg.payload.length) removed.push('APP0-thumbnail');
+      kept.push({ marker: APP0, payload: jfif });
+    } else {
+      kept.push(seg);
+    }
   }
   if (trailingBytes > 0) removed.push('trailer');
   if (orientation !== null && orientation !== 1) {
@@ -369,6 +393,39 @@ export function parseWebp(b: Uint8Array): WebpChunk[] {
   return chunks;
 }
 
+const ANMF_KEEP = new Set(['ALPH', 'VP8 ', 'VP8L']);
+const ANMF_HEADER = 16;
+
+/** Rebuilds an ANMF chunk keeping only its frame header and image sub-chunks. */
+function filterAnmf(raw: Uint8Array, removed: string[]): Uint8Array {
+  const size = u32le(raw, 4);
+  if (size < ANMF_HEADER || 8 + size > raw.length) fail('bad ANMF chunk');
+  const end = 8 + size;
+  const parts: Uint8Array[] = [raw.subarray(8, 8 + ANMF_HEADER)];
+  let i = 8 + ANMF_HEADER;
+  let image = false;
+  while (i < end) {
+    if (i + 8 > end) fail('truncated ANMF sub-chunk');
+    const fourcc = ascii(raw, i, 4);
+    const sub = u32le(raw, i + 4);
+    if (i + 8 + sub > end) fail('bad ANMF sub-chunk size');
+    const total = Math.min(8 + sub + (sub & 1), end - i);
+    if (ANMF_KEEP.has(fourcc)) {
+      parts.push(raw.subarray(i, i + total));
+      if (fourcc !== 'ALPH') image = true;
+    } else {
+      removed.push(`ANMF/${fourcc.trim()}`);
+    }
+    i += 8 + sub + (sub & 1);
+  }
+  if (!image) fail('ANMF frame without image data');
+  const body = concat(parts);
+  const head = new Uint8Array(8);
+  head.set([0x41, 0x4e, 0x4d, 0x46]); // ANMF
+  head.set([body.length & 0xff, (body.length >> 8) & 0xff, (body.length >> 16) & 0xff, (body.length >>> 24) & 0xff], 4);
+  return body.length & 1 ? concat([head, body, new Uint8Array(1)]) : concat([head, body]);
+}
+
 export function stripWebpMetadata(b: Uint8Array): StripResult {
   const chunks = parseWebp(b);
   const removed: string[] = [];
@@ -378,7 +435,9 @@ export function stripWebpMetadata(b: Uint8Array): StripResult {
       removed.push(c.fourcc.trim());
       continue;
     }
-    if (c.fourcc === 'VP8X' && c.raw.length >= 9) {
+    if (c.fourcc === 'ANMF') {
+      kept.push(filterAnmf(c.raw, removed));
+    } else if (c.fourcc === 'VP8X' && c.raw.length >= 9) {
       const copy = c.raw.slice();
       copy[8] = (copy[8] as number) & ~(VP8X_EXIF | VP8X_XMP);
       kept.push(copy);

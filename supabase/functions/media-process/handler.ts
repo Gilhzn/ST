@@ -428,7 +428,7 @@ class Pipeline {
     const reportInput = { mediaId: item.id, uploaderId: item.uploaderId, matchId: match.matchId, matchSource: match.source, sha256, evidence, mimeType: item.mimeType, uploadedAt: item.createdAt, detectedAt };
     const report = await this.vendor('report', () => deps.reporter.report(reportInput, item.id));
 
-    // 3. Restrict the account pending human review (temporary, reversible) and 4. queue the review.
+    // 3. Hold the account pending human review and 4. queue the review.
     // A durable account hold (not a sanction): `apply_effects` turns it into an `account_review_holds`
     // row that suspends joining, hosting, chat and uploads until a moderator decides, and survives
     // account re-creation. Effects mirror the domain `vault` module.

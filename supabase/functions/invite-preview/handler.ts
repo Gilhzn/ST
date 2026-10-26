@@ -33,6 +33,8 @@ export interface InvitePreviewDeps {
   /** Public web app origin (https), e.g. `https://app.sporttalent.example`. */
   ogBaseUrl: string;
   rateLimiter: RateLimiter;
+  /** `TRUSTED_PROXY_HOPS`: proxies we control that append to X-Forwarded-For (default 1). */
+  trustedProxyHops?: number;
   log: Logger;
 }
 
@@ -138,9 +140,20 @@ export function renderPage(p: PreviewPage): string {
   ].join('\n');
 }
 
-function clientKey(req: Request): string {
-  const fwd = req.headers.get('x-forwarded-for')?.split(',')[0]?.trim();
-  return `invite-preview:${fwd || req.headers.get('cf-connecting-ip') || 'unknown'}`;
+const IP_RE = /^[0-9A-Fa-f:.]{2,45}$/;
+
+/**
+ * Rate-limit key. `cf-connecting-ip` (set by Cloudflare in front of the Edge runtime) wins.
+ * Otherwise the client is the entry `trustedProxyHops` from the *right* of X-Forwarded-For:
+ * entries to the left of what our own proxies appended are client-controlled and never trusted.
+ */
+export function clientIp(req: Request, trustedProxyHops = 1): string {
+  const cf = req.headers.get('cf-connecting-ip')?.trim();
+  if (cf && IP_RE.test(cf)) return cf;
+  const hops = (req.headers.get('x-forwarded-for') ?? '').split(',').map((h) => h.trim()).filter(Boolean);
+  const n = Math.max(1, Math.trunc(trustedProxyHops));
+  const candidate = hops.length > 0 ? hops[Math.max(0, hops.length - n)] : undefined;
+  return candidate && IP_RE.test(candidate) ? candidate : 'unknown';
 }
 
 export async function handle(req: Request, deps: InvitePreviewDeps): Promise<Response> {
@@ -156,7 +169,7 @@ export async function handle(req: Request, deps: InvitePreviewDeps): Promise<Res
     return req.method === 'HEAD' ? new Response(null, { status: res.status, headers: res.headers }) : res;
   };
 
-  const limit = await deps.rateLimiter.hit(clientKey(req), 120, 60_000);
+  const limit = await deps.rateLimiter.hit(`invite-preview:${clientIp(req, deps.trustedProxyHops)}`, 120, 60_000);
   if (!limit.allowed) {
     return new Response('Too many requests', { status: 429, headers: { 'retry-after': String(Math.ceil(limit.retryAfterMs / 1000)), 'content-type': 'text/plain; charset=utf-8' } });
   }

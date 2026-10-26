@@ -3,7 +3,7 @@ import type { InvitePreview } from '@st/domain';
 import { escapeHtml, safeHttpUrl } from '#shared/html';
 import { createInviteLocalizer, matchLocale, negotiateLocale, type InviteCatalogs } from '#shared/invite-copy';
 import { allowAll, memoryLogger } from '../_test/helpers';
-import { buildPage, handle, tokenFrom, type InvitePreviewDeps } from './handler';
+import { buildPage, clientIp, handle, tokenFrom, type InvitePreviewDeps } from './handler';
 
 const TOKEN = 'AbCdEf123456_-xyz';
 const OG = 'https://app.sporttalent.test';
@@ -179,5 +179,23 @@ describe('invite-preview', () => {
     const r = await limited.get(`invite-preview/${TOKEN}`);
     expect(r.status).toBe(429);
     expect(r.headers.get('retry-after')).toBe('2');
+  });
+
+  it('L6: rate-limit key ignores spoofable X-Forwarded-For hops (cf-connecting-ip, else the trusted proxy hop)', async () => {
+    const req = (h: Record<string, string>) => new Request('https://fn.test/invite-preview/x', { headers: h });
+    expect(clientIp(req({ 'cf-connecting-ip': '203.0.113.7', 'x-forwarded-for': '1.1.1.1, 198.51.100.2' }))).toBe('203.0.113.7');
+    // The client prepends whatever it likes; only the hop our proxy appended counts.
+    expect(clientIp(req({ 'x-forwarded-for': '6.6.6.6, 198.51.100.2' }))).toBe('198.51.100.2');
+    expect(clientIp(req({ 'x-forwarded-for': '6.6.6.6, 198.51.100.2, 10.0.0.1' }), 2)).toBe('198.51.100.2');
+    expect(clientIp(req({ 'x-forwarded-for': '198.51.100.2' }), 3)).toBe('198.51.100.2');
+    expect(clientIp(req({ 'x-forwarded-for': '<script>' }))).toBe('unknown');
+    expect(clientIp(req({}))).toBe('unknown');
+
+    // Rotating a forged first hop does not escape the limit.
+    const keys: string[] = [];
+    const t = setup();
+    t.deps.rateLimiter = { hit: async (k) => { keys.push(k); return { allowed: true, remaining: 1, retryAfterMs: 0 }; } };
+    for (const fake of ['1.1.1.1', '2.2.2.2', '3.3.3.3']) await t.get(`invite-preview/${TOKEN}`, { 'x-forwarded-for': `${fake}, 198.51.100.2` });
+    expect(new Set(keys)).toEqual(new Set(['invite-preview:198.51.100.2']));
   });
 });

@@ -1,6 +1,6 @@
 import { createHash } from 'node:crypto';
 import { describe, expect, it } from 'vitest';
-import type { Effect, MediaStatus } from '@st/domain';
+import type { Effect, MediaStatus, Phase15Effect } from '@st/domain';
 import { parseJpeg } from '#shared/media-sanitize';
 import { JPEG_WITH_GPS } from '../_test/media-fixtures';
 import { FakeCsamReporter, FakeCsamScanner, FakeImageModerator, FakeVideoProvider, MemoryStorage, fakeRenditions } from '../_test/media-fakes';
@@ -20,7 +20,7 @@ const contains = (hay: Uint8Array, s: string) => Buffer.from(hay).includes(Buffe
 class MediaDb implements MediaProcessStore {
   items = new Map<string, MediaRecord>();
   finalized: FinalizeMediaInput[] = [];
-  effects: Effect[] = [];
+  effects: (Effect | Phase15Effect)[] = [];
   loadMedia = async (id: string) => {
     const it = this.items.get(id);
     return it ? { ...it } : null;
@@ -31,7 +31,7 @@ class MediaDb implements MediaProcessStore {
     if (it.status === 'processing') it.status = input.status;
     return it.status;
   };
-  applyEffects = async (e: readonly Effect[]) => {
+  applyEffects = async (e: readonly (Effect | Phase15Effect)[]) => {
     this.effects.push(...e);
   };
 }
@@ -157,7 +157,7 @@ describe('media-process: photos', () => {
     await m.asUser({ mediaId: PHOTO_ID });
     expect(m.db.effects).toEqual([expect.objectContaining({ type: 'EnqueueReview', item: expect.objectContaining({ priority: 'high', dedupeKey: `media_minors_classifier:${PHOTO_ID}`, subjectUserId: ALICE }) })]);
     expect(m.reporter.calls).toBe(0); // classifier signals go to humans; only hash matches are reported automatically
-    expect(m.db.effects.some((e) => e.type === 'BanJoins')).toBe(false);
+    expect(m.db.effects.some((e) => e.type === 'RestrictAccountPendingReview')).toBe(false);
   });
 
   it('unparseable or oversized files are blocked without reaching any vendor', async () => {
@@ -226,15 +226,13 @@ describe('media-process: CSAM hash match (AC-VAULT-003)', () => {
     // Report filed once, keyed by media id.
     expect([...t.reporter.reports.keys()]).toEqual([PHOTO_ID]);
     expect(t.reporter.reports.get(PHOTO_ID)).toMatchObject({ uploaderId: ALICE, evidence: { bucket: HOLD, path: `quarantine/${PHOTO_ID}/original.jpg` } });
-    // Account restricted (temporary, reversible) and urgent human review.
-    const until = new Date(NOW + 30 * 86_400_000).toISOString();
-    expect(t.db.effects.map((e) => e.type)).toEqual(['BanJoins', 'RestrictVisibility', 'MuteChat', 'EnqueueReview', 'Audit']);
-    expect(t.db.effects.slice(0, 3)).toEqual([
-      { type: 'BanJoins', userId: ALICE, until },
-      { type: 'RestrictVisibility', userId: ALICE, until },
-      { type: 'MuteChat', userId: ALICE, until },
-    ]);
-    expect(t.db.effects[3]).toMatchObject({ type: 'EnqueueReview', item: { kind: 'media_csam', priority: 'high', subjectUserId: ALICE, dedupeKey: `media_csam_hash_match:${PHOTO_ID}`, evidence: { reason: 'csam_hash_match', reportStatus: 'filed', evidencePath: `quarantine/${PHOTO_ID}/original.jpg` } } });
+    // Account on hold pending human review (security review H1): one durable RestrictAccountPendingReview,
+    // never the old time-boxed BanJoins / RestrictVisibility / MuteChat projections.
+    expect(t.db.effects.map((e) => e.type)).toEqual(['PreserveMediaEvidence', 'RestrictAccountPendingReview', 'EnqueueReview', 'Audit']);
+    expect(t.db.effects[0]).toEqual({ type: 'PreserveMediaEvidence', mediaId: PHOTO_ID, uploaderId: ALICE, dedupeKey: `preserve:${PHOTO_ID}` });
+    expect(t.db.effects[1]).toEqual({ type: 'RestrictAccountPendingReview', userId: ALICE, reason: 'csam_match', dedupeKey: `restrict:media_csam:${PHOTO_ID}` });
+    expect(t.db.effects.some((e) => ['BanJoins', 'RestrictVisibility', 'MuteChat'].includes(e.type))).toBe(false);
+    expect(t.db.effects[2]).toMatchObject({ type: 'EnqueueReview', item: { kind: 'media_csam', priority: 'high', subjectUserId: ALICE, dedupeKey: `media_csam:${PHOTO_ID}`, evidence: { reason: 'csam_hash_match', reportStatus: 'filed', evidencePath: `quarantine/${PHOTO_ID}/original.jpg` } } });
     expect(t.db.finalized).toEqual([expect.objectContaining({ status: 'blocked', publishedPath: null, verdict: expect.objectContaining({ decision: 'csam', csamHashMatch: true, source: 'hash' }) })]);
     expect(JSON.stringify(t.log.records)).not.toContain(ALICE);
 
@@ -242,6 +240,21 @@ describe('media-process: CSAM hash match (AC-VAULT-003)', () => {
     expect(await body(await t.asInternal({ mediaId: PHOTO_ID }))).toMatchObject({ status: 'blocked', idempotent: true });
     expect(t.reporter.calls).toBe(1);
     expect(t.db.finalized).toHaveLength(1);
+  });
+
+  it('L5: to the uploader a CSAM block is indistinguishable from a policy block (status, headers, body)', async () => {
+    const policy = setup();
+    policy.moderator.rules.push({ marker: 'JFIF', result: { decision: 'block', categories: ['sexual'], minorsSignal: false } });
+    const csam = setup();
+    csam.csam.matchAll = true;
+    const [a, b] = [await policy.asUser({ mediaId: PHOTO_ID }), await csam.asUser({ mediaId: PHOTO_ID })];
+    expect(b.status).toBe(a.status);
+    expect([...b.headers.entries()]).toEqual([...a.headers.entries()]);
+    const [ta, tb] = [await a.text(), await b.text()];
+    expect(tb).toBe(ta);
+    expect(JSON.parse(tb)).toEqual({ mediaId: PHOTO_ID, status: 'blocked', reasonKey: 'media.blocked.policy', idempotent: false });
+    // Re-asking later is identical too.
+    expect(await (await csam.asUser({ mediaId: PHOTO_ID })).text()).toBe(await (await policy.asUser({ mediaId: PHOTO_ID })).text());
   });
 
   it('a failure mid-way leaves the item unpublished and processing; the retry completes every step once', async () => {
@@ -293,7 +306,7 @@ describe('media-process: videos', () => {
     expect(t.video.removed).toEqual([`stream-${VIDEO_ID}`]);
     expect(t.storage.get(HOLD, `quarantine/${VIDEO_ID}/original.bin`)).not.toBeNull();
     expect(t.reporter.reports.get(VIDEO_ID)).toMatchObject({ sha256: null, mimeType: 'video/mp4' });
-    expect(t.db.effects.map((e) => e.type)).toContain('BanJoins');
+    expect(t.db.effects.map((e) => e.type)).toContain('RestrictAccountPendingReview');
     expect(t.moderator.seen).toHaveLength(0);
   });
 

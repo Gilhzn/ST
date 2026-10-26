@@ -166,6 +166,52 @@ describe('media-sanitize: JPEG', () => {
   });
 });
 
+describe('media-sanitize: JPEG APP0 / JPGn (security review L3)', () => {
+  /** Body segments of a valid 1×1 JPEG (DQT, SOF0, DHT, SOS + scan, EOI) to append after custom headers. */
+  function body(): Uint8Array {
+    const { bytes } = craftedJpeg({ metadata: false });
+    // Skip SOI and the crafted 16-byte APP0 segment.
+    return bytes.subarray(2 + 18);
+  }
+  const app0Of = (b: Uint8Array) => parseJpeg(b).segments.filter((s) => s.marker === 0xe0);
+
+  it('JFIF thumbnail (and bytes smuggled after it, e.g. EXIF GPS) is dropped: APP0 becomes a bare 16-byte JFIF', () => {
+    const thumb = cat(new Uint8Array(2 * 1 * 3).fill(0x7f), craftedExifLE(), enc('GPSLatitude=32.0853'));
+    const jfifWithThumb = cat(enc('JFIF\0'), [1, 2, 1, 0, 72, 0, 72, 2, 1], thumb);
+    const bytes = cat([0xff, 0xd8], seg(0xe0, jfifWithThumb), body());
+    const r = stripJpegMetadata(bytes);
+    expect(r.removed).toContain('APP0-thumbnail');
+    for (const leak of ['GPSLatitude', 'Leak', 'Exif']) expect(contains(r.bytes, leak)).toBe(false);
+    const app0 = app0Of(r.bytes);
+    expect(app0).toHaveLength(1);
+    expect(app0[0]!.payload.length + 2).toBe(16);
+    // Version, units and density kept; Xthumb = Ythumb = 0.
+    expect([...app0[0]!.payload]).toEqual([0x4a, 0x46, 0x49, 0x46, 0, 1, 2, 1, 0, 72, 0, 72, 0, 0]);
+    expect(r.bytes.subarray(0, 4)).toEqual(Uint8Array.from([0xff, 0xd8, 0xff, 0xe0]));
+    expect(r.bytes.subarray(4, 6)).toEqual(Uint8Array.from([0, 16]));
+  });
+
+  it('JFXX extensions and non-JFIF APP0 segments are dropped', () => {
+    const jfxx = seg(0xe0, cat(enc('JFXX\0'), [0x10], [0xff, 0xd8], seg(0xe1, craftedExifLE()), [0xff, 0xd9]));
+    const other = seg(0xe0, enc('AVI1\0GPS 32.08,34.78'));
+    const bytes = cat([0xff, 0xd8], seg(0xe0, cat(enc('JFIF\0'), [1, 1, 0, 0, 1, 0, 1, 0, 0])), jfxx, other, body());
+    const r = stripJpegMetadata(bytes);
+    expect(r.removed.filter((x) => x === 'APP0')).toHaveLength(2);
+    expect(app0Of(r.bytes)).toHaveLength(1);
+    for (const leak of ['JFXX', 'AVI1', 'GPS 32.08', 'Leak']) expect(contains(r.bytes, leak)).toBe(false);
+  });
+
+  it('JPGn segments (0xF0–0xFD) are dropped and the file stays well-formed', () => {
+    const bytes = cat([0xff, 0xd8], seg(0xf1, enc('GPS 32.0853,34.7818')), seg(0xfd, enc('serial=XYZ')), body());
+    const r = stripJpegMetadata(bytes);
+    expect(r.removed).toEqual(['0xf1', '0xfd']);
+    expect(contains(r.bytes, 'GPS 32.0853')).toBe(false);
+    expect(contains(r.bytes, 'serial')).toBe(false);
+    expect(parseJpeg(r.bytes).segments.some((s) => s.marker >= 0xf0 && s.marker <= 0xfd)).toBe(false);
+    expect(parseJpeg(r.bytes).segments.some((s) => s.marker === 0xda)).toBe(true);
+  });
+});
+
 function pngChunk(type: string, data: Uint8Array): Uint8Array {
   const head = new Uint8Array(8);
   new DataView(head.buffer).setUint32(0, data.length);
@@ -228,6 +274,32 @@ describe('media-sanitize: WebP', () => {
     const vp8x = chunks.find((c) => c.fourcc === 'VP8X');
     if (vp8x) expect((vp8x.raw[8] as number) & 0x0c).toBe(0);
     expect(new DataView(r.bytes.buffer, r.bytes.byteOffset).getUint32(4, true)).toBe(r.bytes.length - 8);
+  });
+
+  it('animated WebP: EXIF/XMP sub-chunks inside ANMF frames are removed and sizes rewritten', () => {
+    const le32 = (n: number) => [n & 0xff, (n >> 8) & 0xff, (n >> 16) & 0xff, (n >>> 24) & 0xff];
+    const chunk = (fourcc: string, data: Uint8Array) => cat(enc(fourcc), le32(data.length), data, data.length & 1 ? [0] : []);
+    const vp8l = chunk('VP8L', Uint8Array.from([0x2f, 0, 0, 0, 0x10, 0x07, 0x10, 0x11, 0x11, 0x88]));
+    const frame = chunk('ANMF', cat(new Uint8Array(16), vp8l, chunk('EXIF', cat(enc('Exif\0\0'), enc('GPS 32.0853'))), chunk('XMP ', enc('<x:xmpmeta GPSLatitude="32"/>'))));
+    const vp8x = chunk('VP8X', Uint8Array.from([0x02 | 0x08 | 0x04, 0, 0, 0, 0, 0, 0, 0, 0, 0]));
+    const anim = chunk('ANIM', new Uint8Array(6));
+    const body = cat(enc('WEBP'), vp8x, anim, frame);
+    const file = cat(enc('RIFF'), le32(body.length), body);
+    const r = stripImageMetadata(file);
+    expect(r.removed).toEqual(['ANMF/EXIF', 'ANMF/XMP']);
+    expect(contains(r.bytes, 'GPS')).toBe(false);
+    expect(contains(r.bytes, 'xmpmeta')).toBe(false);
+    const chunks = parseWebp(r.bytes);
+    expect(chunks.map((c) => c.fourcc)).toEqual(['VP8X', 'ANIM', 'ANMF']);
+    const anmf = chunks[2]!.raw;
+    expect(new DataView(anmf.buffer, anmf.byteOffset).getUint32(4, true)).toBe(16 + vp8l.length);
+    expect(Buffer.from(anmf.subarray(8 + 16)).equals(Buffer.from(vp8l))).toBe(true);
+    expect((chunks[0]!.raw[8] as number) & 0x0c).toBe(0);
+    expect((chunks[0]!.raw[8] as number) & 0x02).toBe(0x02); // animation flag kept
+    expect(new DataView(r.bytes.buffer, r.bytes.byteOffset).getUint32(4, true)).toBe(r.bytes.length - 8);
+    // A frame with no image data is rejected rather than passed through.
+    const empty = cat(enc('WEBP'), vp8x, anim, chunk('ANMF', cat(new Uint8Array(16), chunk('EXIF', enc('GPS')))));
+    expect(() => stripImageMetadata(cat(enc('RIFF'), le32(empty.length), empty))).toThrow(MediaFormatError);
   });
 });
 

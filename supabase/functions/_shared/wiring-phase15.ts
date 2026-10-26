@@ -91,3 +91,12 @@ export function ogBaseUrl(env: Env): string {
   if (u.protocol !== 'https:' && u.hostname !== 'localhost') throw new Error('OG_BASE_URL must be https');
   return `${u.origin}${u.pathname.replace(/\/+$/, '')}`;
 }
+
+/** `TRUSTED_PROXY_HOPS` (default 1): proxies we control that append to X-Forwarded-For. */
+export function trustedProxyHops(env: Env): number {
+  const raw = env.get('TRUSTED_PROXY_HOPS');
+  if (raw === undefined || raw === '') return 1;
+  const n = Number(raw);
+  if (!Number.isInteger(n) || n < 1 || n > 10) throw new Error('TRUSTED_PROXY_HOPS must be an integer 1..10');
+  return n;
+}

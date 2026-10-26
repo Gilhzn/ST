@@ -3,7 +3,7 @@ import { createPushDispatcher } from './functions-client';
 import { createCloudflareStream, createOmniImageModerator, createPhotoDnaScanner, imageVerdict, storageTransformRenditions } from './media-providers';
 import { rowToInvitePreview } from './phase15-store';
 import { assertObjectKey, createSupabaseStorage } from './storage';
-import { mediaEnv, ogBaseUrl, pushDispatcher } from './wiring-phase15';
+import { mediaEnv, ogBaseUrl, pushDispatcher, trustedProxyHops } from './wiring-phase15';
 
 type Call = { url: string; init: RequestInit };
 function fakeFetch(responder: (url: string, init: RequestInit) => Response): { fetch: typeof fetch; calls: Call[] } {
@@ -128,6 +128,9 @@ describe('phase15 wiring and row mapping', () => {
     expect(() => ogBaseUrl(env({}))).toThrow();
     expect(pushDispatcher(env({ PUSH_VIA_WEBHOOK: '1' }))).toBeNull();
     expect(pushDispatcher(env({}))).not.toBeNull();
+    expect(trustedProxyHops(env({}))).toBe(1);
+    expect(trustedProxyHops(env({ TRUSTED_PROXY_HOPS: '2' }))).toBe(2);
+    expect(() => trustedProxyHops(env({ TRUSTED_PROXY_HOPS: '0' }))).toThrow();
   });
 
   it('maps get_invite_preview defensively', () => {
