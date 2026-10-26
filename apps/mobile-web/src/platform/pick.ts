@@ -1,18 +1,33 @@
 /**
- * Native media picker for the Media Vault (VAULT-009).
- *
- * TODO(deps): `expo-image-picker` is not installed yet. Add it with
- *   `npx expo install expo-image-picker`
- * plus the `expo-image-picker` config plugin (photo-library + camera usage strings) in
- * app.json, then implement with `ImagePicker.launchImageLibraryAsync({ mediaTypes: ['images',
- * 'videos'], videoMaxDuration: 60, quality: 0.9, exif: false })` and map the asset to
- * `PickedMedia` (uri, mimeType, fileSize, duration / 1000). Until then the gallery explains
- * that uploads are available on the web app.
+ * Native media picker for the Media Vault (VAULT-009): the system photo picker (PHPicker on
+ * iOS, Android Photo Picker), so no broad media permission is requested. EXIF is not requested;
+ * the server strips metadata again before publishing (VAULT-003).
  */
+import * as ImagePicker from 'expo-image-picker';
+
 import type { PickResult } from './pick.types';
 
 export type { PickResult };
 
 export async function pickMedia(): Promise<PickResult> {
-  return { status: 'unavailable' };
+  const result = await ImagePicker.launchImageLibraryAsync({
+    mediaTypes: ['images', 'videos'],
+    videoMaxDuration: 60,
+    quality: 0.9,
+    exif: false,
+    allowsMultipleSelection: false,
+  });
+  const asset = result.canceled ? undefined : result.assets[0];
+  if (!asset) return { status: 'cancelled' };
+  const kind = asset.type === 'video' ? 'video' : 'photo';
+  return {
+    status: 'picked',
+    file: {
+      uri: asset.uri,
+      mimeType: asset.mimeType ?? (kind === 'video' ? 'video/mp4' : 'image/jpeg'),
+      sizeBytes: asset.fileSize ?? 0,
+      kind,
+      durationSeconds: asset.duration != null ? asset.duration / 1000 : null,
+    },
+  };
 }
