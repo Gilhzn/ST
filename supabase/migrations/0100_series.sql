@@ -363,6 +363,19 @@ as $$
       and not public.st_is_regular(s.id, p_uid))
 $$;
 
+-- Security review #2 L2 (caller-relative): the occurrence is inside its roster-only window and the
+-- caller is neither host, regular, moderator nor already a participant — hidden from game_views and
+-- series_occurrences (not just from nearby_games).
+create function public.st_priority_hidden_from_me(p_game_id uuid) returns boolean
+language sql stable security definer set search_path = ''
+as $$
+  select auth.uid() is not null
+     and public.st_roster_priority_blocks(p_game_id, auth.uid(), public.st_now())
+     and not public.st_is_moderator(auth.uid())
+     and not exists (select 1 from public.game_participants gp where gp.game_id = p_game_id and gp.user_id = auth.uid()
+                       and gp.status in ('requested', 'approved', 'waitlisted'))
+$$;
+
 -- The series as the viewer may see it (GameSeries). Exact location, venue and invite token masked.
 create view public.series_views with (security_barrier = true) as
   select s.id,
@@ -469,7 +482,8 @@ create or replace view public.game_views with (security_barrier = true) as
          (select o.priority_until from public.series_occurrences o where o.game_id = g.id and o.status = 'scheduled') as priority_until
   from public.games g
   cross join lateral (select public.st_my_exact(g.id) as exact) x
-  where public.st_my_game_visible(g.id);
+  where public.st_my_game_visible(g.id)
+    and (g.series_id is null or not public.st_priority_hidden_from_me(g.id));
 
 -- Waitlist offers: regulars of the series first (GAME-044; dm_waitlist `regularIds`).
 create or replace function public.st_promote_waitlist(p_game_id uuid) returns int
@@ -1174,6 +1188,14 @@ begin
      set status = case when p_reason = 'skipped' then 'skipped'::public.occurrence_status else 'cancelled'::public.occurrence_status end,
          cancel_reason = p_reason
   where x.occurrence_key = p_key;
+  -- Security review #2 M4: a rescheduled occurrence nobody but the host ever joined leaves no trace
+  -- (no cancelled-game / occurrence rows piling up from repeated reschedules).
+  if p_reason = 'rescheduled' and g.id is not null
+     and not exists (select 1 from public.game_participants gp where gp.game_id = g.id and gp.user_id <> g.host_id)
+     and not exists (select 1 from public.invite_joins j where j.game_id = g.id) then
+    delete from public.series_occurrences x where x.occurrence_key = p_key;
+    delete from public.games x where x.id = g.id;
+  end if;
 end $$;
 
 -- Host-owned series row for update, or ST:not_found / ST:forbidden.
@@ -1311,6 +1333,10 @@ declare
                                                   'rosterPriorityHours', 'autoJoinReconfirmHours', 'endDate'];
 begin
   if p_scope is null or p_scope not in ('this', 'following') then perform public.st_raise('validation', 'scope'); end if;
+  -- Security review #2 M4: at most 10 edits per host per 24 h (append-only audit_log).
+  perform public.st_rate_limit(
+    (select count(*) from public.audit_log a where a.subject_user_id = s.host_id and a.action = 'series.edited'
+       and a.at > t - interval '24 hours'), 10);
   if p_patch is null or jsonb_typeof(p_patch) <> 'object' then perform public.st_raise('validation', 'patch'); end if;
   if s.status = 'ended' then perform public.st_raise('conflict', 'series ended'); end if;
   if exists (select 1 from jsonb_object_keys(p_patch) k
@@ -1433,6 +1459,12 @@ begin
     template_changed := exists (select 1 from jsonb_object_keys(p_patch) k where k = any (template_keys));
     perform public.st_validate_series(ns, cfg);
     if sched_change then
+      -- Security review #2 M4: one schedule change per series per 24 h (no reschedule spam).
+      if exists (select 1 from public.audit_log a where a.subject_user_id = s.host_id and a.action = 'series.edited'
+                   and a.data ->> 'seriesId' = s.id::text and coalesce((a.data ->> 'scheduleChange')::boolean, false)
+                   and a.at > t - interval '24 hours') then
+        perform public.st_raise('rate_limited', 'one schedule change per 24 h');
+      end if;
       if public.st_has_participants(o.game_id) and o.starts_at - t < tcfg.late_cancel_window_hours * interval '1 hour' then
         perform public.st_raise('outside_window', 'inside late-cancel window');
       end if;
@@ -1472,7 +1504,8 @@ begin
     if sched_change then perform public.st_series_generate(s.id, t); end if;
   end if;
   perform public.st_audit('series.edited', s.host_id,
-    jsonb_build_object('seriesId', s.id, 'scope', p_scope, 'occurrenceKey', p_occurrence_key), s.host_id);
+    jsonb_build_object('seriesId', s.id, 'scope', p_scope, 'occurrenceKey', p_occurrence_key,
+                       'scheduleChange', coalesce(sched_change, false)), s.host_id);
   select * into r from public.series_views y where y.id = s.id;
   return r;
 end $$;
@@ -1556,7 +1589,7 @@ begin
   insert into public.invite_joins (kind, series_id, user_id, created_at) values ('series', s.id, me.id, t) on conflict do nothing;
   perform public.st_notify(s.host_id, 'roster_added',
     jsonb_build_object('seriesTitle', s.title, 'via', 'invite_link', 'seriesId', s.id::text), null, null,
-    'roster_added:' || s.id::text || ':' || me.id::text || ':' || public.dm_iso(t));
+    'roster_added:' || s.id::text || ':' || me.id::text); -- first join only (security review #2 M2)
   return rm;
 end $$;
 

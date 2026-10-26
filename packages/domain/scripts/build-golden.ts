@@ -1826,13 +1826,27 @@ const lvl = (r: number) => Math.round(Math.min(7, Math.max(0, (r - 900) / 200)) 
   add({
     name: 'fresh-2v2.win-loss.margin-ignored',
     kind,
-    input: { period: PERIOD, games: [game('1', [[U(1), U(2)], [U(3), U(4)]], [3, 1])], ratings: [], reliability: {} },
+    input: { period: PERIOD, games: [game('1', [[U(1), U(2)], [U(3), U(4)]], [3, 1])], ratings: [], reliability: { [U(1)]: 0.9, [U(2)]: 0.9, [U(3)]: 0.9, [U(4)]: 0.9 } },
     now: iso(now),
     expected: round6deep({
       updates: [upd(U(1), init, win, 1), upd(U(2), init, win, 1), upd(U(3), init, loss, 1), upd(U(4), init, loss, 1)],
       ratings: [newRow(U(1), win, 1, true), newRow(U(2), win, 1, true), newRow(U(3), loss, 1, true), newRow(U(4), loss, 1, true)],
     } as Json),
     tags: ['prd-v5:GLK-002'],
+  });
+
+  // Security review #2 L4: a new account (reliability null) is frozen; the opponent is rated against the initial rating
+  const winVsInit = g2(init, [{ r: init.r, rd: init.rd, s: 1 }], 0.5);
+  add({
+    name: 'new-account.null-reliability.frozen',
+    kind,
+    input: { period: PERIOD, games: [game('5', [[U(1)], [U(2)]], [0, 1])], ratings: [], reliability: { [U(1)]: null, [U(2)]: 0.9 } },
+    now: iso(now),
+    expected: round6deep({
+      updates: [upd(U(1), init, init, 0, true), upd(U(2), init, winVsInit, 1)],
+      ratings: [newRow(U(2), winVsInit, 1, true)],
+    } as Json),
+    tags: ['security-review-2:L4', 'prd-v5:GLK-004'],
   });
 
   // AC-GLK-004: frozen U3 (reliability 0.65) unchanged; U1 rated against U3's fixed rating

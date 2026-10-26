@@ -33,6 +33,7 @@ import { useToast } from '@/components/Toast';
 import { useData } from '@/data/DataProvider';
 import { Notice } from '@/features/kit/Notice';
 import { useGame } from '@/features/game/useGame';
+import { ResultConfirmation } from '@/features/ratings/ResultConfirmation';
 import { useAction, useAsync } from '@/hooks/useAsync';
 import { useNow } from '@/hooks/useNow';
 import { useT } from '@/i18n';
@@ -235,6 +236,7 @@ export function ResultScreen({ gameId }: { gameId: string }) {
         ))}
       </View>
       <InlineError error={submit.error} />
+      {!beforeEnd ? <ResultConfirmation game={g} hasResult={!!existing.data} now={now} /> : null}
     </Screen>
   );
 }

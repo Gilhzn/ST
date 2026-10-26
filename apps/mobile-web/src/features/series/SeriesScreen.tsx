@@ -192,7 +192,7 @@ export function SeriesScreen({ seriesId }: { seriesId: string }) {
                 const res = await alwaysIn.run(v);
                 if (res) {
                   toast(v ? t('series:member.alwaysInOn') : t('series:member.alwaysInOff'), 'success');
-                  detail.setData((prev) => (prev ? { ...prev, myRoster: res } : prev));
+                  detail.setData((prev) => (prev ? { ...prev, myRoster: res } : null));
                 }
               }}
             />

@@ -162,13 +162,24 @@ begin
     if st in ('friends', 'outgoing') then perform public.st_raise('conflict'); end if;
     if st = 'none' then
       if c.games_together < 1 then perform public.st_raise('forbidden', 'not played together'); end if;
+      -- Security review #2 M2: the rate limit counts an append-only source (audit_log), so cancelling
+      -- requests does not refill it; and a declined/cancelled pair cools down for 30 days.
       perform public.st_rate_limit(
-        (select count(*) from public.connections x where x.friend_requested_by = me.id and x.friend_requested_at > t - interval '24 hours'), 30);
+        (select count(*) from public.audit_log x where x.subject_user_id = me.id and x.action = 'friend.requested'
+           and x.at > t - interval '24 hours'), 30);
+      if exists (select 1 from public.audit_log x
+                 where x.action in ('friend.declined', 'friend.cancelled') and x.data ->> 'pair' = a::text || ':' || b::text
+                   and x.at > t - interval '30 days'
+                   and x.subject_user_id in (a, b)) then
+        perform public.st_raise('rate_limited', 'cooldown');
+      end if;
       update public.connections x set friend_status = 'requested', friend_requested_by = me.id, friend_requested_at = t,
              friend_accepted_at = null, updated_at = t
       where x.user_a = a and x.user_b = b returning * into c;
+      perform public.st_audit('friend.requested', me.id, jsonb_build_object('pair', a::text || ':' || b::text), me.id);
+      -- One notice per pair per day (no per-request timestamp in the dedupe key).
       perform public.st_notify(p_other, 'friend_request', jsonb_build_object('userId', me.id), null, null,
-                               'notify:friend_request:' || a::text || ':' || b::text || ':' || public.dm_iso(t));
+                               'notify:friend_request:' || a::text || ':' || b::text || ':' || to_char(t at time zone 'UTC', 'YYYY-MM-DD'));
       return public.st_connection_view(c, me.id);
     end if;
     p_action := 'accept'; -- mutual intent: an incoming request is accepted instead
@@ -178,7 +189,7 @@ begin
     update public.connections x set friend_status = 'accepted', friend_accepted_at = t, updated_at = t
     where x.user_a = a and x.user_b = b returning * into c;
     perform public.st_notify(p_other, 'friend_accepted', jsonb_build_object('userId', me.id), null, null,
-                             'notify:friend_accepted:' || a::text || ':' || b::text || ':' || public.dm_iso(t));
+                             'notify:friend_accepted:' || a::text || ':' || b::text || ':' || to_char(t at time zone 'UTC', 'YYYY-MM-DD'));
     return public.st_connection_view(c, me.id);
   end if;
   if (p_action = 'decline' and st <> 'incoming') or (p_action = 'cancel' and st <> 'outgoing')
@@ -188,11 +199,16 @@ begin
   update public.connections x set friend_status = null, friend_requested_by = null, friend_requested_at = null,
          friend_accepted_at = null, updated_at = t
   where x.user_a = a and x.user_b = b returning * into c;
+  if p_action in ('decline', 'cancel') then
+    perform public.st_audit('friend.' || case when p_action = 'decline' then 'declined' else 'cancelled' end, me.id,
+                            jsonb_build_object('pair', a::text || ':' || b::text), me.id);
+  end if;
   return public.st_connection_view(c, me.id);
 end $$;
 
 -- requestFriend: rejects blocked, conflict (outgoing or friends), forbidden (never played together),
--- rate_limited; an incoming request is accepted instead of duplicating.
+-- rate_limited (30 requests/24 h from audit_log; 30-day cooldown for a pair after a decline or a
+-- cancel); an incoming request is accepted instead of duplicating.
 create function public.request_friend(p_user_id uuid) returns jsonb
 language sql security definer set search_path = ''
 as $$ select public.st_friend_transition(p_user_id, 'request') $$;

@@ -139,7 +139,8 @@ describe('product rules', () => {
     expect(isProvisional({ games: 10, rd: 50 }, null)).toBe(true);
     expect(isFrozen(0.69)).toBe(true);
     expect(isFrozen(0.7)).toBe(false);
-    expect(isFrozen(null)).toBe(false);
+    expect(isFrozen(null)).toBe(true);
+    expect(isFrozen(undefined)).toBe(true);
   });
   it('format families', () => {
     expect(formatFamilyFor('football', 5)).toBe('small_sided');
@@ -193,8 +194,8 @@ describe('processRatingPeriod', () => {
   });
 
   it('team game: winners up, losers down, symmetric for fresh players; margin ignored', () => {
-    const a = processRatingPeriod({ period: P, games: [game('g1', [[U1, U2], [U3, U4]], [1, 0])], ratings: [], reliability: {} }, C, NOW);
-    const b = processRatingPeriod({ period: P, games: [game('g1', [[U1, U2], [U3, U4]], [9, 0])], ratings: [], reliability: {} }, C, NOW);
+    const a = processRatingPeriod({ period: P, games: [game('g1', [[U1, U2], [U3, U4]], [1, 0])], ratings: [], reliability: { [U1]: 0.9, [U2]: 0.9, [U3]: 0.9, [U4]: 0.9 } }, C, NOW);
+    const b = processRatingPeriod({ period: P, games: [game('g1', [[U1, U2], [U3, U4]], [9, 0])], ratings: [], reliability: { [U1]: 0.9, [U2]: 0.9, [U3]: 0.9, [U4]: 0.9 } }, C, NOW);
     expect(a).toEqual(b);
     const r = Object.fromEntries(a.ratings.map((x) => [x.userId, x]));
     expect(r[U1]!.r).toBeGreaterThan(1500);
@@ -207,20 +208,27 @@ describe('processRatingPeriod', () => {
   });
 
   it('draw between equal teams leaves r ≈ unchanged', () => {
-    const out = processRatingPeriod({ period: P, games: [game('g1', [[U1], [U2]], [2, 2])], ratings: [], reliability: {} }, C, NOW);
+    const out = processRatingPeriod({ period: P, games: [game('g1', [[U1], [U2]], [2, 2])], ratings: [], reliability: { [U1]: 0.9, [U2]: 0.9, [U3]: 0.9, [U4]: 0.9 } }, C, NOW);
     for (const x of out.ratings) expect(Math.abs(x.r - 1500)).toBeLessThan(1e-9);
   });
 
   it('frozen player (AC-GLK-004): unchanged, but opponents use the frozen rating', () => {
     const frozen = row(U3, { r: 1700, rd: 80, sigma: 0.06 }, 30, '2026-W44');
-    const out = processRatingPeriod({ period: P, games: [game('g1', [[U1], [U3]], [1, 0])], ratings: [frozen], reliability: { [U3]: 0.65 } }, C, NOW);
+    const out = processRatingPeriod({ period: P, games: [game('g1', [[U1], [U3]], [1, 0])], ratings: [frozen], reliability: { [U3]: 0.65, [U1]: 0.9 } }, C, NOW);
     const up = out.updates.find((u) => u.userId === U3)!;
     expect(up.frozen).toBe(true);
     expect(up.after).toEqual(up.before);
     expect(up.gamesAdded).toBe(0);
     expect(out.ratings.find((x) => x.userId === U3)).toBeUndefined();
-    const vsFresh = processRatingPeriod({ period: P, games: [game('g1', [[U1], [U3]], [1, 0])], ratings: [], reliability: {} }, C, NOW);
+    const vsFresh = processRatingPeriod({ period: P, games: [game('g1', [[U1], [U3]], [1, 0])], ratings: [], reliability: { [U1]: 0.9, [U2]: 0.9, [U3]: 0.9, [U4]: 0.9 } }, C, NOW);
     expect(out.ratings[0]!.r).toBeGreaterThan(vsFresh.ratings.find((x) => x.userId === U1)!.r);
+  });
+
+  it('L4: a null/missing reliability (new account) is frozen but still counts for the opponent', () => {
+    const out = processRatingPeriod({ period: P, games: [game('g1', [[U1], [U2]], [0, 1])], ratings: [], reliability: { [U1]: null, [U2]: 0.9 } }, C, NOW);
+    expect(out.updates.find((u) => u.userId === U1)).toMatchObject({ frozen: true, gamesAdded: 0 });
+    expect(out.ratings.map((x) => x.userId)).toEqual([U2]);
+    expect(out.ratings[0]!.r).toBeGreaterThan(1500);
   });
 
   it('idempotent: players already processed for the period are skipped; idle periods inflate RD', () => {

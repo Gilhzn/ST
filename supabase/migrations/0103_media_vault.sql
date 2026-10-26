@@ -123,13 +123,30 @@ begin
     errcode = case code when 'forbidden' then '42501' when 'validation' then '22023' when 'conflict' then '23505' else 'P0001' end;
 end $$;
 
--- Venue vault eligibility of the item's game (DB guard on top of the consent rule).
+-- Venue vault eligibility of the item's game (DB guard on top of the consent rule): public, not
+-- women-only, with a venue, and the exact location not hidden (security review #2 M1: a venue_public
+-- item must never reveal where a hidden-location game was played). Re-evaluated when the game changes.
 create function public.st_media_game_allows_public(p_game_id uuid) returns boolean
 language sql stable security definer set search_path = ''
 as $$
   select exists (select 1 from public.games g
-                 where g.id = p_game_id and g.visibility = 'public' and not g.women_only and g.venue_id is not null)
+                 where g.id = p_game_id and g.visibility = 'public' and not g.women_only and g.venue_id is not null
+                   and not g.hide_exact_location)
 $$;
+
+create function public.st_games_media_visibility() returns trigger
+language plpgsql security definer set search_path = ''
+as $$
+declare m record;
+begin
+  if (new.visibility, new.women_only, new.hide_exact_location, new.venue_id)
+     is distinct from (old.visibility, old.women_only, old.hide_exact_location, old.venue_id) then
+    for m in select x.id from public.media_items x where x.game_id = new.id and (x.public_opt_in or x.visibility = 'venue_public') loop
+      perform public.st_media_refresh_visibility(m.id);
+    end loop;
+  end if;
+  return null;
+end $$;
 
 -- consentBlockers(): tags still blocking venue_public (requested, declined, removed with a veto).
 create function public.st_media_blockers(p_media_id uuid) returns uuid[]
@@ -239,8 +256,9 @@ begin
   -- DB guards on top of the domain rule: the pipeline cannot sanitise HEIC/HEIF (refused, never
   -- published unsanitised), and an account restricted pending a CSAM review cannot upload.
   if lower(p_mime_type) in ('image/heic', 'image/heif') then perform public.st_media_reject('unsupported_type'); end if;
+  -- Generic refusal (security review #2 L5): no hint that a review is pending.
   if exists (select 1 from public.account_review_holds x where x.user_id = me.id and x.until > t) then
-    perform public.st_raise('forbidden', 'account restricted pending review');
+    perform public.st_raise('forbidden');
   end if;
   path := 'originals/' || g.id::text || '/' || me.id::text || '/' || mid::text || '.' || public.st_media_ext(p_kind, p_mime_type);
   insert into public.media_items (id, game_id, venue_id, uploader_id, kind, status, mime_type, size_bytes, duration_seconds,
@@ -256,8 +274,9 @@ end $$;
 -- finalize_media (service role only; media-process after EXIF strip → CSAM hash → moderation).
 -- Idempotent: only a `processing` item changes; returns the resulting status. `published` stores
 -- the sanitised object paths and applies the effective visibility; `blocked` notifies the uploader
--- with the policy reason, except for a CSAM match (decision `csam`): legal hold, no notice (the
--- function files the report, restricts the account and queues the media_csam review).
+-- with the policy reason; a CSAM match (decision `csam`) is kept under legal hold and gets the same
+-- generic policy notice (the function files the report, restricts the account through
+-- RestrictAccountPendingReview and queues the media_csam review).
 create function public.finalize_media(p_media_id uuid, p_status text, p_verdict jsonb, p_published_path text default null,
                                       p_thumbnail_path text default null, p_mime_type text default null,
                                       p_size_bytes bigint default null, p_duration_seconds numeric default null,
@@ -300,11 +319,12 @@ begin
     update public.media_items x set status = 'blocked', visibility = 'participants', verdict = p_verdict,
            legal_hold = x.legal_hold or csam, published_path = null, thumbnail_path = null
     where x.id = m.id;
-    if not csam then
-      perform public.st_notify(m.uploader_id, 'media_blocked',
-        jsonb_build_object('mediaId', m.id, 'reasonKey', coalesce(p_verdict ->> 'reasonKey', 'media.blocked.policy')),
-        m.game_id, null, 'notify:media_blocked:' || m.id::text);
-    end if;
+    -- Security review #2 L5: a CSAM match gets the same generic policy notice as any block, so the
+    -- uploader cannot tell a hash match from a moderation block.
+    perform public.st_notify(m.uploader_id, 'media_blocked',
+      jsonb_build_object('mediaId', m.id, 'reasonKey', case when csam then 'media.blocked.policy'
+                                                            else coalesce(p_verdict ->> 'reasonKey', 'media.blocked.policy') end),
+      m.game_id, null, 'notify:media_blocked:' || m.id::text);
     perform public.st_audit(case when csam then 'media.csam_blocked' else 'media.blocked' end, m.uploader_id,
       jsonb_build_object('mediaId', m.id, 'gameId', m.game_id), null);
   end if;
@@ -336,8 +356,14 @@ begin
   foreach u in array p_user_ids loop
     if not public.st_is_approved(m.game_id, u) then perform public.st_raise('forbidden', 'not a participant'); end if;
     if public.st_is_blocked(me.id, u) then perform public.st_raise('blocked'); end if;
-    if exists (select 1 from public.media_tags x where x.media_id = m.id and x.user_id = u and x.status <> 'removed') then
+    if exists (select 1 from public.media_tags x where x.media_id = m.id and x.user_id = u and x.status <> 'removed'
+                 and x.status <> 'declined') then
       perform public.st_raise('conflict', 'already tagged');
+    end if;
+    -- Security review #2 M3: a declined or vetoed tag is final; the uploader cannot re-request it.
+    if exists (select 1 from public.media_tags x where x.media_id = m.id and x.user_id = u
+                 and (x.status = 'declined' or x.veto_public)) then
+      perform public.st_raise('forbidden', 'tag declined');
     end if;
   end loop;
   perform public.st_rate_limit(
@@ -391,6 +417,11 @@ declare
 begin
   if target <> uid and not exists (select 1 from public.media_items m where m.id = p_media_id and m.uploader_id = uid) then
     perform public.st_raise('forbidden');
+  end if;
+  -- Security review #2 M3: the uploader cannot turn a decline into a plain removal.
+  if target <> uid and exists (select 1 from public.media_tags x where x.media_id = p_media_id and x.user_id = target
+                                 and x.status = 'declined') then
+    perform public.st_raise('conflict', 'tag declined');
   end if;
   update public.media_tags x set status = 'removed', decided_at = t,
          veto_public = x.veto_public or (target = uid and coalesce(p_remove_from_public, false))
@@ -572,9 +603,12 @@ $$;
 -- Retention (VAULT-007) and account deletion
 -- ---------------------------------------------------------------------------
 
--- Job: items past expires_at (createdAt + 12 months) are removed with their objects (legal hold
--- and blocked evidence excepted); uploads never completed within 24 h are dropped; removed rows
--- are hard-deleted after 30 days. Returns the number removed.
+-- Job: items past expires_at (createdAt + 12 months) are removed with their objects, blocked non-CSAM
+-- items included (legal-hold evidence excepted); upload intents never completed within 24 h are
+-- dropped (their original, if any, is purged); removed rows are hard-deleted after 30 days. Object
+-- deletion goes through the media-purge Edge Function and therefore REQUIRES st_dispatch to be
+-- configured (st.functions_url + Vault `st_functions_key`, see README); otherwise only rows change.
+-- Returns the number removed.
 create function public.purge_media() returns int
 language plpgsql security definer set search_path = ''
 as $$
@@ -585,7 +619,7 @@ declare
 begin
   if not pg_catalog.pg_try_advisory_xact_lock(pg_catalog.hashtext('st:purge_media')) then return 0; end if;
   for m in select x.id from public.media_items x
-           where not x.legal_hold and x.status in ('processing', 'published')
+           where not x.legal_hold and x.status in ('processing', 'published', 'blocked')
              and (x.expires_at <= t or (x.status = 'processing' and x.created_at <= t - interval '24 hours'))
            order by x.expires_at, x.id limit 5000 loop
     perform public.st_remove_media(m.id, null);
@@ -616,4 +650,36 @@ begin
   end loop;
   -- The removed+veto tag rows stay (pseudonymous tombstone id) so the veto keeps blocking venue_public.
   delete from public.media_reports x where x.reporter_id = p_uid;
+end $$;
+
+-- M1: game changes that make the venue vault inappropriate demote its items at once.
+create trigger games_media_visibility after update of visibility, women_only, hide_exact_location, venue_id on public.games
+  for each row execute function public.st_games_media_visibility();
+
+-- Retention: originals in Storage with no live item after 24 h (abandoned or replayed uploads, items
+-- already removed) are handed to media-purge. Guarded: a no-op where the storage schema is absent
+-- (PGlite) and, like every object deletion, only effective when st_dispatch is configured.
+-- Returns the number of orphaned objects found.
+create function public.purge_orphan_originals() returns int
+language plpgsql security definer set search_path = ''
+as $$
+declare
+  t timestamptz := public.st_now();
+  paths jsonb;
+begin
+  if to_regclass('storage.objects') is null then return 0; end if;
+  if not pg_catalog.pg_try_advisory_xact_lock(pg_catalog.hashtext('st:purge_orphan_originals')) then return 0; end if;
+  execute $q$
+    select coalesce(jsonb_agg(o.name), '[]'::jsonb) from (
+      select so.name from storage.objects so
+      where so.bucket_id = 'media' and so.name like 'originals/%' and so.created_at <= $1 - interval '24 hours'
+        and not exists (select 1 from public.media_items m
+                        where m.storage_path = so.name and m.status in ('processing', 'published', 'blocked')
+                          and (m.status <> 'processing' or m.created_at > $1 - interval '24 hours'))
+      order by so.created_at limit 1000) o
+  $q$ into paths using t;
+  if jsonb_array_length(paths) > 0 then
+    perform public.st_dispatch('media-purge', jsonb_build_object('paths', paths, 'reason', 'orphan_original'));
+  end if;
+  return jsonb_array_length(paths);
 end $$;

@@ -2,7 +2,7 @@
  * Building blocks of the game details screen (design v2 §15.4): the sport-gradient hero, the
  * overlapping facts strip, venue / host cards and the participant sections.
  */
-import type { GameDetail, ParticipantView } from '@st/domain';
+import type { GameDetail, ParticipantView, Stars } from '@st/domain';
 import {
   AvatarStack,
   BidiText,
@@ -34,6 +34,7 @@ import { MiniMap } from '@/components/MiniMap';
 import { ParticipantRow } from '@/components/ParticipantRow';
 import { ReliabilityAvatar } from '@/components/ReliabilityBadge';
 import { BackButton, MediaIconButton } from '@/components/Screen';
+import { BandMeter } from '@/features/ratings/BandMeter';
 import { useBreakpoint } from '@/hooks/useBreakpoint';
 import { useT } from '@/i18n';
 import { formatDay, formatRelative, formatTime } from '@/lib/format';
@@ -300,7 +301,18 @@ export function SectionTitle({ title, count, end }: { title: string; count?: str
 }
 
 /** Players: title + count + AvatarStack header that expands to the full list. */
-export function PlayersSection({ game, players, hint }: { game: GameDetail; players: ParticipantView[]; hint?: string | null }) {
+export function PlayersSection({
+  game,
+  players,
+  hint,
+  bands,
+}: {
+  game: GameDetail;
+  players: ParticipantView[];
+  hint?: string | null;
+  /** Host only: 1–5 skill bands for balancing (never shown to players). */
+  bands?: Readonly<Record<string, Stars>> | null;
+}) {
   const { t } = useT();
   const theme = useTheme();
   const [open, setOpen] = useState(players.length <= 3);
@@ -347,7 +359,12 @@ export function PlayersSection({ game, players, hint }: { game: GameDetail; play
       {open ? (
         <ListGroup>
           {players.map((p) => (
-            <ParticipantRow key={p.userId} p={p} isHost={p.userId === game.hostId} />
+            <ParticipantRow
+              key={p.userId}
+              p={p}
+              isHost={p.userId === game.hostId}
+              trailing={bands?.[p.userId] ? <BandMeter band={bands[p.userId] as Stars} testID={`game.band.${p.userId}`} /> : undefined}
+            />
           ))}
         </ListGroup>
       ) : null}

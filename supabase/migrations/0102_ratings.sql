@@ -33,10 +33,13 @@ alter table public.games add column teams_published_at timestamptz;
 -- ---------------------------------------------------------------------------
 
 -- GAME-071: a verified participant's verdict (one row per user; may change until the window closes).
+-- `team_scores` is the result the verdict was given on: only verdicts on the current result count
+-- (security review #2 H2: a host cannot collect confirmations and then swap the score).
 create table public.result_confirmations (
   game_id uuid not null references public.games (id) on delete cascade,
   user_id uuid not null references public.profiles (id) on delete cascade,
   verdict public.result_verdict not null,
+  team_scores int[] not null,
   created_at timestamptz not null default now(),
   primary key (game_id, user_id)
 );
@@ -250,9 +253,10 @@ as $$
               and p_games >= p15.glicko_display_min_games and p_rd < p15.glicko_display_max_rd)
 $$;
 
+-- isFrozen(): below the freeze threshold, or no reliability yet (new account; security review #2 L4).
 create function public.dm_is_frozen(p_reliability double precision, p15 public.phase15_config) returns boolean
 language sql immutable parallel safe set search_path = ''
-as $$ select p_reliability is not null and p_reliability < p15.glicko_freeze_below_reliability $$;
+as $$ select p_reliability is null or p_reliability < p15.glicko_freeze_below_reliability $$;
 
 -- formatFamilyFor(sport, playersPerSide); null for unrated sports (running).
 create function public.dm_format_family(p_sport text, p_per_side int) returns public.format_family
@@ -693,7 +697,8 @@ as $$
       'confirmations', (select coalesce(jsonb_agg(jsonb_build_object('gameId', c.game_id, 'userId', c.user_id, 'verdict', c.verdict,
                                                                     'createdAt', public.dm_iso(c.created_at))
                                                   order by c.created_at, c.user_id), '[]'::jsonb)
-                        from public.result_confirmations c where c.game_id = gr.game_id)),
+                        from public.result_confirmations c
+                        where c.game_id = gr.game_id and c.team_scores = gr.team_scores)),
     p_viewer::text)
   from public.game_results gr where gr.game_id = p_game_id
 $$;
@@ -785,7 +790,8 @@ $$;
 -- Client RPCs
 -- ---------------------------------------------------------------------------
 
--- save_teams stamps teams_published_at (GLK-003 "teams published before kickoff").
+-- save_teams stamps teams_published_at (GLK-003 "teams published before kickoff"); teams can only be
+-- saved for a scheduled game before kickoff (security review #2 L1: no rewriting sides after the result).
 create or replace function public.save_teams(p_game_id uuid, p_assignments jsonb)
 returns setof public.participant_views
 language plpgsql security definer set search_path = ''
@@ -799,6 +805,7 @@ begin
   select * into g from public.games x where x.id = p_game_id for update;
   if g.id is null then perform public.st_raise('not_found'); end if;
   if g.host_id <> uid then perform public.st_raise('forbidden'); end if;
+  if g.status <> 'scheduled' or public.st_now() >= g.starts_at then perform public.st_raise('game_not_open'); end if;
   if p_assignments is null or jsonb_typeof(p_assignments) <> 'object' then perform public.st_raise('validation'); end if;
   for k, v in select * from jsonb_each(p_assignments) loop
     if jsonb_typeof(v) <> 'number' or (v #>> '{}') !~ '^[0-9]+$' or (v #>> '{}')::int >= g.team_count then
@@ -837,8 +844,10 @@ begin
   if t < g.ends_at or t > g.ends_at + (public.st_p15()).peer_rating_window_hours * interval '1 hour' then
     perform public.st_raise('outside_window');
   end if;
-  insert into public.result_confirmations as c (game_id, user_id, verdict, created_at) values (g.id, uid, p_verdict, t)
-  on conflict (game_id, user_id) do update set verdict = excluded.verdict, created_at = excluded.created_at;
+  insert into public.result_confirmations as c (game_id, user_id, verdict, team_scores, created_at)
+  select g.id, uid, p_verdict, gr.team_scores, t from public.game_results gr where gr.game_id = g.id
+  on conflict (game_id, user_id) do update set verdict = excluded.verdict, team_scores = excluded.team_scores,
+                                               created_at = excluded.created_at;
   return public.st_result_summary(g.id, uid);
 end $$;
 

@@ -4,7 +4,7 @@
  * The fill grows from the reading-start edge (mirrors in RTL). One `slider` with value text.
  */
 import { Haptics, IconButton, radius, spacing, useTheme } from '@st/ui';
-import { useRef, useState } from 'react';
+import { useRef, useState, type ComponentRef } from 'react';
 import { PanResponder, Platform, View, type GestureResponderEvent, type LayoutChangeEvent } from 'react-native';
 
 import { focusVisible } from './focusVisible';
@@ -36,7 +36,7 @@ export function RangeSlider({
   const c = theme.colors;
   const [width, setWidth] = useState(0);
   const [focused, setFocused] = useState(false);
-  const track = useRef<View>(null);
+  const track = useRef<ComponentRef<typeof View>>(null);
   const origin = useRef(0);
   const last = useRef(value);
   last.current = value;
@@ -64,7 +64,7 @@ export function RangeSlider({
       onPanResponderTerminationRequest: () => false,
       onPanResponderGrant: (e: GestureResponderEvent) => {
         const pageX = e.nativeEvent.pageX;
-        track.current?.measure((_x, _y, _w, _h, px) => {
+        track.current?.measure((_x: number, _y: number, _w: number, _h: number, px: number) => {
           origin.current = px;
           set(fromXRef.current(pageX));
         });

@@ -27,7 +27,12 @@
         }
       ],
       "ratings": [],
-      "reliability": {}
+      "reliability": {
+        "00000000-0000-4000-8000-000000000001": 0.9,
+        "00000000-0000-4000-8000-000000000002": 0.9,
+        "00000000-0000-4000-8000-000000000003": 0.9,
+        "00000000-0000-4000-8000-000000000004": 0.9
+      }
     },
     "now": "2026-11-08T23:00:00.000Z",
     "expected": {
@@ -166,6 +171,100 @@
     },
     "tags": [
       "prd-v5:GLK-002"
+    ]
+  },
+  {
+    "name": "new-account.null-reliability.frozen",
+    "kind": "rating.glickoPeriod",
+    "input": {
+      "period": "2026-W45",
+      "games": [
+        {
+          "gameId": "00000000-0000-4000-8000-0000000a0005",
+          "sport": "football",
+          "formatFamily": "small_sided",
+          "endsAt": "2026-11-03T21:00:00.000Z",
+          "teams": [
+            [
+              "00000000-0000-4000-8000-000000000001"
+            ],
+            [
+              "00000000-0000-4000-8000-000000000002"
+            ]
+          ],
+          "teamScores": [
+            0,
+            1
+          ]
+        }
+      ],
+      "ratings": [],
+      "reliability": {
+        "00000000-0000-4000-8000-000000000001": null,
+        "00000000-0000-4000-8000-000000000002": 0.9
+      }
+    },
+    "now": "2026-11-08T23:00:00.000Z",
+    "expected": {
+      "updates": [
+        {
+          "userId": "00000000-0000-4000-8000-000000000001",
+          "sport": "football",
+          "formatFamily": "small_sided",
+          "period": "2026-W45",
+          "before": {
+            "r": 1500,
+            "rd": 350,
+            "sigma": 0.06
+          },
+          "after": {
+            "r": 1500,
+            "rd": 350,
+            "sigma": 0.06
+          },
+          "gamesAdded": 0,
+          "frozen": true,
+          "dedupeKey": "rating:00000000-0000-4000-8000-000000000001:football:small_sided:2026-W45"
+        },
+        {
+          "userId": "00000000-0000-4000-8000-000000000002",
+          "sport": "football",
+          "formatFamily": "small_sided",
+          "period": "2026-W45",
+          "before": {
+            "r": 1500,
+            "rd": 350,
+            "sigma": 0.06
+          },
+          "after": {
+            "r": 1662.310894,
+            "rd": 290.318964,
+            "sigma": 0.06
+          },
+          "gamesAdded": 1,
+          "frozen": false,
+          "dedupeKey": "rating:00000000-0000-4000-8000-000000000002:football:small_sided:2026-W45"
+        }
+      ],
+      "ratings": [
+        {
+          "userId": "00000000-0000-4000-8000-000000000002",
+          "sport": "football",
+          "formatFamily": "small_sided",
+          "r": 1662.310894,
+          "rd": 290.318964,
+          "sigma": 0.06,
+          "games": 1,
+          "provisional": true,
+          "level": 3.8,
+          "lastPeriod": "2026-W45",
+          "updatedAt": "2026-11-08T23:00:00.000Z"
+        }
+      ]
+    },
+    "tags": [
+      "security-review-2:L4",
+      "prd-v5:GLK-004"
     ]
   },
   {

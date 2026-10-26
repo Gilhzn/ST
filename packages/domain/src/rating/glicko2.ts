@@ -150,9 +150,15 @@ export function isProvisional(
   );
 }
 
-/** GLK-004: reliability below the freeze threshold excludes a player from updates. `null` (new) is not frozen. */
+/**
+ * GLK-004: reliability below the freeze threshold excludes a player from updates.
+ * A `null`/missing reliability (a new user with fewer than `reliabilityMinGames`
+ * commitments) is frozen too (security review #2 L4): throwaway accounts cannot
+ * move ratings before they have a reliability record. Frozen players still count
+ * for opponents with their fixed (or initial) rating.
+ */
 export function isFrozen(reliability: number | null | undefined, config: Pick<DomainConfig, 'glickoFreezeBelowReliability'> = DEFAULT_DOMAIN_CONFIG): boolean {
-  return reliability != null && reliability < config.glickoFreezeBelowReliability;
+  return reliability == null || reliability < config.glickoFreezeBelowReliability;
 }
 
 /** GLK-001: format family per sport and players per side; `null` for unrated sports (running). */
@@ -226,7 +232,7 @@ export interface RatingPeriodInput {
   games: readonly RatedGameInput[];
   /** Current rows of the involved players (any sport/family; matched by key). */
   ratings: readonly SkillRating[];
-  /** Reliability score 0..1 per user (`null`/missing = new, not frozen). */
+  /** Reliability score 0..1 per user (`null`/missing = new → frozen, L4). */
   reliability: Readonly<Record<UserId, number | null>>;
 }
 

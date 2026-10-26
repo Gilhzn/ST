@@ -47,7 +47,7 @@ grant select on public.series_views to authenticated;
 
 grant select on public.series_occurrences to authenticated;
 create policy series_occurrences_read on public.series_occurrences for select to authenticated
-  using (public.st_my_series_visible(series_id));
+  using (public.st_my_series_visible(series_id) and not public.st_priority_hidden_from_me(game_id));
 
 -- Own row; the host sees the roster; regulars see regulars (blocked/hidden users excluded).
 grant select on public.series_roster to authenticated;
@@ -128,7 +128,8 @@ create policy network_privacy_read_own on public.network_privacy for select to a
 -- Policy/view helpers (caller-relative only) and pure formatting used inside series_views.
 grant execute on function
   public.st_my_series_visible(uuid), public.st_my_series_exact(uuid), public.st_am_series_host(uuid), public.st_am_regular(uuid),
-  public.st_my_media_visible(uuid), public.st_am_media_uploader(uuid), public.st_hhmm(time)
+  public.st_my_media_visible(uuid), public.st_am_media_uploader(uuid), public.st_hhmm(time),
+  public.st_priority_hidden_from_me(uuid)
   to authenticated;
 
 -- Anon: the invite rich preview only (safe public fields; see 0101).

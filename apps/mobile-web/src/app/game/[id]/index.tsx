@@ -7,13 +7,15 @@
  * viewer's state plus labelled secondary actions (chat, directions, share, teams, QR…).
  */
 import {
+  DEFAULT_PHASE15_CONFIG,
   DEFAULT_TRUST_CONFIG,
   canSubmitResult,
   isCheckInOpen,
   isLateCancel,
+  mediaUploadWindow,
   type GameDetail,
 } from '@st/domain';
-import { BidiText, Button, Card, Haptics, Icon, isolate, spacing, Text, useTheme, type IconName, type PillTone } from '@st/ui';
+import { BidiText, Button, Card, Haptics, Icon, isolate, ListGroup, ListItem, spacing, Text, useTheme, type IconName, type PillTone } from '@st/ui';
 import * as Clipboard from 'expo-clipboard';
 import { router, useFocusEffect, useLocalSearchParams } from 'expo-router';
 import { useCallback, useRef, useState, type ReactNode } from 'react';
@@ -29,6 +31,8 @@ import { useData } from '@/data/DataProvider';
 import { FactsStrip, GameHero, HostCard, PlayersSection, RequestsSection, VenueCardRow, WaitlistSection } from '@/features/game/DetailsParts';
 import { hasActiveOffer, WaitlistOffer } from '@/features/game/WaitlistOffer';
 import { directionsUrl } from '@/features/map/VenueDetails';
+import { PriorityBanner, SeriesChip } from '@/features/series/SeriesParts';
+import { clockLabel, useCountdown } from '@/hooks/useCountdown';
 import { useAction, useAsync } from '@/hooks/useAsync';
 import { useNow } from '@/hooks/useNow';
 import { useT } from '@/i18n';
@@ -47,15 +51,23 @@ export default function GameDetailsScreen() {
 
   const game = useAsync(() => port.getGame(gameId), [port, gameId]);
   const participants = useAsync(() => port.listParticipants(gameId), [port, gameId], !!game.data);
+  const seriesId = game.data?.seriesId ?? null;
+  const series = useAsync(() => (seriesId ? port.getSeries(seriesId) : Promise.resolve(null)), [port, seriesId], !!seriesId);
+  const bands = useAsync(() => port.getSkillBands(gameId), [port, gameId], !!game.data?.isHost);
+  const result = useAsync(() => port.getResult(gameId), [port, gameId], !!game.data && Date.parse(game.data.endsAt) <= Date.now());
+  const media = useAsync(() => port.listGameMedia(gameId), [port, gameId], !!game.data && Date.parse(game.data.startsAt) <= Date.now() && (game.data.isHost || game.data.myParticipation?.status === 'approved'));
+  const galleryCloses = game.data ? Date.parse(mediaUploadWindow(game.data, { ...DEFAULT_TRUST_CONFIG, ...DEFAULT_PHASE15_CONFIG }).closesAt) : null;
+  const galleryLeft = useCountdown(galleryCloses);
   const [confirmCancel, setConfirmCancel] = useState(false);
   const [confirmCancelGame, setConfirmCancelGame] = useState(false);
   const [deposit, setDeposit] = useState<{ amount: string } | null>(null);
 
   const reloadGame = game.reload;
   const reloadParticipants = participants.reload;
+  const reloadMedia = media.reload;
   const refresh = useCallback(async () => {
-    await Promise.all([reloadGame(), reloadParticipants()]);
-  }, [reloadGame, reloadParticipants]);
+    await Promise.all([reloadGame(), reloadParticipants(), reloadMedia()]);
+  }, [reloadGame, reloadParticipants, reloadMedia]);
 
   const focused = useRef(false);
   useFocusEffect(
@@ -110,6 +122,15 @@ export default function GameDetailsScreen() {
   const inviteUrl = g.inviteToken ? `${ORIGIN}/invite/${g.inviteToken}` : null;
   const shareUrl = inviteUrl ?? `${ORIGIN}/game/${g.id}`;
   const offer = me?.status === 'waitlisted' && hasActiveOffer(me, now);
+  const sd = series.data ?? null;
+  const occurrence = sd?.upcoming.find((o) => o.gameId === g.id) ?? null;
+  const inPriority = !!occurrence && !cancelled && Date.parse(occurrence.priorityUntil) > now && Date.parse(g.startsAt) > now;
+  const seriesRole = g.isHost ? 'host' : sd?.myRoster?.status === 'regular' ? 'regular' : sd?.myRoster?.status === 'invited' ? 'invited' : 'other';
+  const member = g.isHost || me?.status === 'approved';
+  const started = Date.parse(g.startsAt) <= now;
+  const rateOpen = ended && !cancelled && member && now <= Date.parse(g.endsAt) + DEFAULT_PHASE15_CONFIG.peerRatingWindowHours * 3600_000;
+  const showGallery = started && !cancelled && member;
+  const inviteGroupPath = g.seriesId ? (`/series/${g.seriesId}/invite` as const) : (`/game/${g.id}/invite` as const);
 
   const openDirections = () => void Linking.openURL(directionsUrl(location.lat, location.lng, g.venue?.name ?? g.title));
   const share = async () => {
@@ -303,6 +324,8 @@ export default function GameDetailsScreen() {
       contentStyle={{ gap: spacing.xl, marginTop: -(spacing.xxl + spacing.xs) }}
     >
       <FactsStrip game={g} now={now} live={live} depositAmount={depositAmount} />
+      {sd ? <SeriesChip series={sd.series} onPress={() => router.push(`/series/${sd.series.id}`)} /> : null}
+      {inPriority && occurrence ? <PriorityBanner occurrence={occurrence} timeZone={sd?.series.timeZone} role={seriesRole} /> : null}
 
       {cancelled ? <Banner testID="game.banner.cancelled" tone="danger" icon="CalendarX" text={t('games:details.banner.cancelledNoReason')} /> : null}
       {ended && !cancelled ? <Banner testID="game.banner.ended" icon="Flag" text={t('games:details.banner.ended')} /> : null}
@@ -311,6 +334,44 @@ export default function GameDetailsScreen() {
         <Banner testID="game.host.pending" tone="brand" icon="UserPlus" text={t('games:details.host.pendingCount', { count: requested.length })} />
       ) : null}
       <InlineError error={actionError} />
+
+      {showGallery || (ended && !cancelled && member) ? (
+        <ListGroup title={ended ? t('games:after.title') : t('games:after.liveTitle')} testID="game.after">
+          {ended && !cancelled && member ? (
+            <ListItem
+              testID="game.after.result"
+              icon="Trophy"
+              iconTone="warning"
+              title={result.data ? t('games:after.score', { score: isolate(result.data.teamScores.join('–'), 'ltr') }) : t('games:after.noScore')}
+              subtitle={result.data ? t('games:after.scoreHelp') : t('games:after.noScoreHelp')}
+              chevron
+              onPress={() => router.push(`/game/${g.id}/result`)}
+            />
+          ) : null}
+          {rateOpen ? (
+            <ListItem
+              testID="game.after.rate"
+              icon="Star"
+              iconTone="brand"
+              title={t('games:after.rate')}
+              subtitle={t('games:after.rateHelp', { time: isolate(formatDateTime(new Date(Date.parse(g.endsAt) + DEFAULT_PHASE15_CONFIG.peerRatingWindowHours * 3600_000).toISOString(), locale), 'ltr') })}
+              chevron
+              onPress={() => router.push(`/game/${g.id}/rate`)}
+            />
+          ) : null}
+          {showGallery ? (
+            <ListItem
+              testID="game.after.gallery"
+              icon="Images"
+              iconTone="info"
+              title={t('games:after.gallery', { count: media.data?.length ?? 0 })}
+              subtitle={galleryLeft > 0 ? t('vault:gallery.locksIn', { time: isolate(clockLabel(galleryLeft), 'ltr') }) : t('vault:gallery.locked')}
+              chevron
+              onPress={() => router.push(`/game/${g.id}/gallery`)}
+            />
+          ) : null}
+        </ListGroup>
+      ) : null}
 
       <VenueCardRow game={g} onDirections={openDirections} />
       <HostCard game={g} />
@@ -341,6 +402,14 @@ export default function GameDetailsScreen() {
               </View>
             </View>
             <Button
+              testID="game.invite.group"
+              variant="primary"
+              icon="WhatsappLogo"
+              fullWidth
+              label={t('series:host.inviteGroup')}
+              onPress={() => router.push(inviteGroupPath)}
+            />
+            <Button
               testID="game.invite.copy"
               variant="secondary"
               icon="Copy"
@@ -363,6 +432,7 @@ export default function GameDetailsScreen() {
           {g.isHost ? <RequestsSection requests={requested} busy={decide.busy} onDecide={(u, d) => void onDecide(u, d)} /> : null}
           <PlayersSection
             game={g}
+            bands={g.isHost ? (bands.data ?? null) : null}
             players={approved}
             hint={!g.isHost && me?.status !== 'approved' && approved.length <= 1 ? t('games:details.playersAfterJoin') : null}
           />
