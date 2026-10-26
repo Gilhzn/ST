@@ -54,8 +54,6 @@ test.describe("SMK-01 app boot", () => {
 test.describe("SMK-02 locale direction", () => {
   test("he-IL renders with dir=rtl on <html>", async ({ page }, testInfo) => {
     test.skip(testInfo.project.name !== "rtl-he", "RTL project only");
-    // Enabled once packages/i18n wires `dir` on web (M2c). Tracked in docs/qa-strategy.md (RTL-01).
-    test.fixme(true, "i18n runtime not wired yet");
     await page.goto("/");
     await expect(page.locator("html")).toHaveAttribute("dir", "rtl");
     await expect(page.locator("html")).toHaveAttribute("lang", /^he/);

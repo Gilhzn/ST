@@ -2,6 +2,7 @@
 
 Global, location-based sports super-app — **Web + Android + iOS** from one Expo (React Native) codebase, backed by Supabase (Postgres + PostGIS).
 
+- **Status & next steps: [`docs/STATUS.md`](docs/STATUS.md)**
 - Product spec: [`docs/prd-v5.md`](docs/prd-v5.md) (source v4: [`docs/prd-v4-source.md`](docs/prd-v4-source.md))
 - Research: [`docs/research/findings.md`](docs/research/findings.md)
 - Architecture: [`docs/architecture.md`](docs/architecture.md) · Design system: [`docs/design-system.md`](docs/design-system.md) · QA: [`docs/qa-strategy.md`](docs/qa-strategy.md) · Compliance: [`docs/compliance.md`](docs/compliance.md)
