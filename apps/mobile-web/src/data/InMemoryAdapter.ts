@@ -13,6 +13,7 @@
  */
 import {
   DEFAULT_TRUST_CONFIG,
+  DEFAULT_UPCOMING_GAMES_AUDIENCE,
   LOCALES,
   MAX_SPORT_FILTERS,
   MIN_AGE_YEARS,
@@ -85,6 +86,45 @@ import {
   type VenueReportReason,
   type WaitlistOffer,
   type Effect,
+  type AttendanceFact,
+  type Connection,
+  type ConnectionView,
+  type DomainConfig,
+  type FriendGameCandidate,
+  type FriendUpcomingGame,
+  type GameRatingEligibility,
+  type GameSeries,
+  type GameSeriesCreateInput,
+  type GameSeriesDetail,
+  type InviteLink,
+  type InvitePreview,
+  type InviteTarget,
+  type MediaId,
+  type MediaItem,
+  type MediaItemView,
+  type MediaTag,
+  type MediaUploadIntent,
+  type MediaUploadRequest,
+  type MediaVisibility,
+  type MigrationMember,
+  type MigrationStats,
+  type NetworkPrivacy,
+  type PeerRating,
+  type PeerRatingInput,
+  type PeerSkillSummary,
+  type Phase15Effect,
+  type RatingEligibility,
+  type RatingUpdate,
+  type ResultConfirmationSummary,
+  type ResultVerdict,
+  type RosterMember,
+  type RosterMemberView,
+  type SeriesEdit,
+  type SeriesId,
+  type SeriesOccurrence,
+  type ShareMessage,
+  type SkillRating,
+  type UpcomingGamesAudience,
 } from '@st/domain';
 
 import type { BlockedEntry, BlockedNamesExtension } from './blocked';
@@ -117,10 +157,56 @@ import {
   verifyHost,
   verifyPeer,
   verifyQr,
+  DEFAULT_DOMAIN_CONFIG,
+  acceptRosterInvite as acceptRosterInviteRule,
+  aggregatePeerRatings,
+  applyMediaVerdict,
+  buildOccurrence,
+  buildPeerRatings,
+  buildSeries,
+  buildShareMessage,
+  checkMediaUpload,
+  checkOccurrenceJoinWindow,
+  computeMigrationStats,
+  connectionPair,
+  consentBlockers,
+  currentSkillRating,
+  deleteMedia as deleteMediaRule,
+  derivePlayedWith,
+  editSeries as editSeriesRule,
+  endSeries as endSeriesRule,
+  filterFriendsUpcomingGames,
+  friendState,
+  friendTransition,
+  gameRatingEligibility,
+  inviteUrl,
+  joinRoster,
+  leaveRoster as leaveRosterRule,
+  mediaExpiresAt,
+  mediaRejectErrorCode,
+  onBlockCreated,
+  parseOccurrenceKey,
+  peerRatingEligibility,
+  planSeriesOccurrences,
+  processAutoJoins,
+  reconfirmAutoJoin as reconfirmAutoJoinRule,
+  requestMediaVisibility,
+  respondToMediaTag as respondToMediaTagRule,
+  selfPriorFrom,
+  setAlwaysIn as setAlwaysInRule,
+  skipOccurrence as skipOccurrenceRule,
+  summarizeResultConfirmations,
+  tagMedia as tagMediaRule,
+  untagMe as untagMeRule,
+  validatePeerRatings,
+  validateSeriesCreate,
+  visibleConnections,
   type ChatBlockRecord,
 } from './mock/domain';
+import { applyPhase15Effects } from './mock/effects15';
+import { photoDataUri } from './mock/photos';
 import { buildSeed, DEMO_TRANSLATIONS, MOCK_OTP_CODES } from './mock/seed';
-import type { MockGame, MockState, MockUser } from './mock/state';
+import type { MockGame, MockMedia, MockSeries, MockState, MockUser } from './mock/state';
 
 export interface InMemoryAdapterOptions {
   /** Clock (epoch ms). Defaults to `Date.now`. */
@@ -133,6 +219,20 @@ export interface InMemoryAdapterOptions {
 }
 
 const E164 = /^\+[1-9]\d{6,14}$/;
+/** Public origin of invite links (the app rewrites it to the current web origin when sharing). */
+const INVITE_ORIGIN = 'https://sporttalent.app';
+/** Wall-clock zone of one-off games by venue country (series carry their own). */
+const COUNTRY_TIME_ZONES: Readonly<Record<string, string>> = {
+  IL: 'Asia/Jerusalem',
+  GB: 'Europe/London',
+  ES: 'Europe/Madrid',
+  BR: 'America/Sao_Paulo',
+  JP: 'Asia/Tokyo',
+  US: 'America/New_York',
+  IN: 'Asia/Kolkata',
+  FR: 'Europe/Paris',
+};
+const DEFAULT_TIME_ZONE = 'Asia/Jerusalem';
 const ACTIVE_STATUSES = new Set(['requested', 'approved', 'waitlisted']);
 
 /** Stand-in for the server moderation providers: obvious threats are blocked. */
@@ -144,11 +244,6 @@ function clone<T>(value: T): T {
 
 function fail(code: ConstructorParameters<typeof StError>[0], message?: string): never {
   throw new StError(code, message);
-}
-
-/** Phase 1.5 DataPort methods are stubbed until the adapters implement them (contract v3). */
-function phase15NotImplemented(method: string): StError {
-  return new StError('unavailable', `${method} is not implemented yet (Phase 1.5)`);
 }
 
 export class InMemoryAdapter implements DataPort, BlockedNamesExtension {
@@ -164,11 +259,14 @@ export class InMemoryAdapter implements DataPort, BlockedNamesExtension {
   private readonly clock: () => EpochMs;
   private readonly latencyMs: number;
   private readonly config: TrustConfig;
+  /** Trust + Phase 1.5 thresholds (`DomainConfig`). */
+  private readonly p15: DomainConfig;
 
   constructor(options: InMemoryAdapterOptions = {}) {
     this.clock = options.now ?? (() => Date.now());
     this.latencyMs = options.latencyMs ?? 0;
     this.config = options.config ?? DEFAULT_TRUST_CONFIG;
+    this.p15 = { ...DEFAULT_DOMAIN_CONFIG, ...this.config };
     this.state = (options.seed ?? buildSeed)(this.clock());
   }
 
@@ -280,7 +378,7 @@ export class InMemoryAdapter implements DataPort, BlockedNamesExtension {
   private canSeeGame(g: MockGame, viewer: UserId): boolean {
     if (g.hostId === viewer || this.participant(g.id, viewer)) return true;
     if (this.isBlocked(g.hostId, viewer) || this.isHiddenUser(g.hostId)) return false;
-    return g.visibility === 'public' || this.state.inviteAccess.has(`${g.id}|${viewer}`);
+    return g.visibility === 'public' || this.state.inviteAccess.has(`${g.id}|${viewer}`) || this.isRegular(g.seriesId, viewer);
   }
 
   private canSeeExact(g: MockGame, viewer: UserId): boolean {
@@ -639,6 +737,17 @@ export class InMemoryAdapter implements DataPort, BlockedNamesExtension {
         u.profile.avatarUrl = null;
         u.profile.bio = null;
       }
+      // Phase 1.5: leave rosters, drop friendships, veto and remove every tag of the user.
+      for (const m of this.state.roster.values()) {
+        if (m.userId === u.id && m.status !== 'left') Object.assign(m, { status: 'left', alwaysIn: false, leftAt: toIso(now) });
+      }
+      for (const [k, f] of [...this.state.friendships]) if (f.userA === u.id || f.userB === u.id) this.state.friendships.delete(k);
+      for (const t of this.state.mediaTags) {
+        if (t.userId === u.id && t.status !== 'removed') Object.assign(t, { status: 'removed', vetoPublic: true, decidedAt: toIso(now) });
+      }
+      for (const m of this.state.media.values()) {
+        if (m.visibility === 'venue_public' && consentBlockers(this.tagsOf(m.id)).length) m.visibility = 'participants';
+      }
       u.deleted = true;
       u.phone = null;
       u.privateData = null;
@@ -755,6 +864,7 @@ export class InMemoryAdapter implements DataPort, BlockedNamesExtension {
     return this.run(() => {
       const me = this.me();
       this.validateMapQuery(radiusKm, sports);
+      this.tickSeries();
       const now = this.now();
       const from = options.from ? toEpochMs(options.from) : now;
       const to = options.to ? toEpochMs(options.to) : from + 14 * DAY_MS;
@@ -796,6 +906,7 @@ export class InMemoryAdapter implements DataPort, BlockedNamesExtension {
   listMyGames(): Promise<GameDetail[]> {
     return this.run(() => {
       const me = this.me();
+      this.tickSeries();
       const now = this.now();
       const mine = [...this.state.games.values()].filter((g) => {
         if (g.hostId === me) return true;
@@ -914,6 +1025,13 @@ export class InMemoryAdapter implements DataPort, BlockedNamesExtension {
       if (raw && options.inviteToken && options.inviteToken === raw.inviteToken) this.state.inviteAccess.add(`${gameId}|${me}`);
       const g = this.gameOr404(gameId, me);
       const existing = this.participant(gameId, me) ?? null;
+      // GAME-010: only regulars may join an occurrence inside its roster-only window.
+      const occ = g.seriesId ? this.occurrenceOfGame(g.id) : undefined;
+      const series = g.seriesId ? this.state.series.get(g.seriesId) : undefined;
+      if (occ && series && !existing) {
+        const window = checkOccurrenceJoinWindow(series, occ, this.rosterOf(series.id), me, now);
+        if (!window.ok && window.error === 'roster_priority') fail('roster_priority');
+      }
       const eligible = checkJoinEligibility(
         {
           game: g,
@@ -1127,6 +1245,8 @@ export class InMemoryAdapter implements DataPort, BlockedNamesExtension {
       for (const p of this.participantsOf(gameId)) {
         p.team = p.status === 'approved' && assignments[p.userId] !== undefined ? (assignments[p.userId] as number) : null;
       }
+      // GLK-003: teams count as published when saved by the host (save_teams stamps teams_published_at).
+      this.state.teamsPublishedAt.set(gameId, this.nowIso());
       return this.visibleParticipants(g, me).map((p) => ({ ...this.withOffer(p), profile: this.publicOf(p.userId) }));
     });
   }
@@ -1286,6 +1406,8 @@ export class InMemoryAdapter implements DataPort, BlockedNamesExtension {
       if (userId === me) fail('validation', 'self');
       if (!this.state.users.has(userId)) fail('not_found');
       if (!this.state.blocks.some((b) => b.blockerId === me && b.blockedId === userId)) {
+        // A block deletes any friendship or pending request between the pair.
+        this.applyEffects15(onBlockCreated(this.connectionWith(me, userId), me, userId, this.now()));
         this.state.blocks.push({ blockerId: me, blockedId: userId, createdAt: this.nowIso() });
       }
     });
@@ -1526,149 +1648,1022 @@ export class InMemoryAdapter implements DataPort, BlockedNamesExtension {
     });
   }
 
-  // -------------------------------------------------------------------------
-  // Phase 1.5 (contract v3): not implemented yet. Each stub rejects with
-  // StError('unavailable') so the DataPort contract holds until the app dev
-  // implements it.
-  // -------------------------------------------------------------------------
+  // ===========================================================================
+  // Phase 1.5 (contract v3): series, ratings, Media Vault, network, invites.
+  // Every rule comes from @st/domain (./mock/domain); this section only stores state.
+  // ===========================================================================
+
+  private applyEffects15(effects: readonly Phase15Effect[]): void {
+    applyPhase15Effects(this.state, effects, {
+      now: this.now(),
+      notify: (userId, kind, params, gameId) => this.notify(userId, kind as unknown as NotificationKind, params, gameId),
+      onSeatFreed: (gameId) => {
+        const g = this.state.games.get(gameId);
+        if (g) this.promoteWaitlist(g);
+      },
+    });
+  }
+
+  private isRegular(seriesId: SeriesId | null | undefined, userId: UserId): boolean {
+    return !!seriesId && this.state.roster.get(`${seriesId}|${userId}`)?.status === 'regular';
+  }
+
+  private rosterOf(seriesId: SeriesId): RosterMember[] {
+    return [...this.state.roster.values()].filter((m) => m.seriesId === seriesId);
+  }
+
+  private myRoster(seriesId: SeriesId, userId: UserId): RosterMember | null {
+    return this.state.roster.get(`${seriesId}|${userId}`) ?? null;
+  }
+
+  private occurrencesOf(seriesId: SeriesId): SeriesOccurrence[] {
+    return [...this.state.occurrences.values()].filter((o) => o.seriesId === seriesId).sort((a, b) => a.startsAt.localeCompare(b.startsAt));
+  }
+
+  private occurrenceOfGame(gameId: GameId): SeriesOccurrence | undefined {
+    return [...this.state.occurrences.values()].find((o) => o.gameId === gameId);
+  }
+
+  private canSeeSeries(s: MockSeries, viewer: UserId): boolean {
+    if (s.hostId === viewer) return true;
+    const m = this.myRoster(s.id, viewer);
+    if (m && (m.status === 'regular' || m.status === 'invited')) return true;
+    if (this.isBlocked(s.hostId, viewer) || this.isHiddenUser(s.hostId)) return false;
+    return s.visibility === 'public' || this.state.inviteAccess.has(`series:${s.id}|${viewer}`);
+  }
+
+  private seriesOr404(seriesId: SeriesId, viewer: UserId): MockSeries {
+    const s = this.state.series.get(seriesId);
+    if (!s || !this.canSeeSeries(s, viewer)) fail('not_found');
+    return s;
+  }
+
+  private hostSeries(seriesId: SeriesId): MockSeries {
+    const s = this.seriesOr404(seriesId, this.me());
+    if (s.hostId !== this.me()) fail('forbidden', 'host only');
+    return s;
+  }
+
+  /** `series_views`: exact pin and venue only for host/regulars of a hidden series, token for the host. */
+  private seriesView(s: MockSeries, viewer: UserId): GameSeries {
+    const exact = !s.hideExactLocation || s.hostId === viewer || this.isRegular(s.id, viewer);
+    const { inviteRotatedAt: _rotated, ...rest } = s;
+    return { ...rest, venueId: exact ? s.venueId : null, location: exact ? s.location : null, inviteToken: s.hostId === viewer ? s.inviteToken : null };
+  }
+
+  private seriesDetail(s: MockSeries, viewer: UserId): GameSeriesDetail {
+    const now = this.now();
+    const upcoming = this.occurrencesOf(s.id).filter((o) => o.status !== 'cancelled' && toEpochMs(o.endsAt) > now);
+    return {
+      series: this.seriesView(s, viewer),
+      host: this.publicOf(s.hostId),
+      upcoming,
+      rosterCount: this.rosterOf(s.id).filter((m) => m.status === 'regular').length,
+      myRoster: this.myRoster(s.id, viewer),
+      isHost: s.hostId === viewer,
+    };
+  }
+
+  /** Approved or waitlisted players other than the host, per generated game (SeriesChangeInput.participants). */
+  private seriesParticipants(s: MockSeries): Record<GameId, UserId[]> {
+    const out: Record<GameId, UserId[]> = {};
+    for (const o of this.occurrencesOf(s.id)) {
+      out[o.gameId] = this.participantsOf(o.gameId)
+        .filter((p) => p.userId !== s.hostId && (p.status === 'approved' || p.status === 'waitlisted'))
+        .map((p) => p.userId);
+    }
+    return out;
+  }
+
+  /** Regulars who may not be auto-joined now (bans, blocks with the host, women-only). */
+  private ineligibleRegulars(s: MockSeries): UserId[] {
+    const now = this.now();
+    return this.rosterOf(s.id)
+      .filter((m) => {
+        const u = this.state.users.get(m.userId);
+        if (!u || u.deleted || !u.profile) return true;
+        const p = u.profile;
+        if (p.permanentlyBanned || (p.joinBannedUntil && toEpochMs(p.joinBannedUntil) > now)) return true;
+        if (this.isBlocked(m.userId, s.hostId)) return true;
+        return s.womenOnly && u.privateData?.gender !== 'female';
+      })
+      .map((m) => m.userId);
+  }
+
+  /** The rolling generation and the "always in" reconfirm/release jobs (pg_cron in production). */
+  private tickSeries(): void {
+    const now = this.now();
+    for (const s of this.state.series.values()) {
+      if (s.status !== 'active') continue;
+      const plan = planSeriesOccurrences(
+        { series: s, existing: this.occurrencesOf(s.id), roster: this.rosterOf(s.id), ineligibleUserIds: this.ineligibleRegulars(s) },
+        this.p15,
+        now,
+      );
+      if (plan.effects.length) this.applyEffects15(plan.effects);
+      for (const occ of this.occurrencesOf(s.id)) {
+        if (occ.status !== 'scheduled' || toEpochMs(occ.startsAt) <= now || now < toEpochMs(occ.reconfirmAt)) continue;
+        const autoJoins = [...this.state.autoJoins.values()].filter((r) => r.gameId === occ.gameId);
+        if (!autoJoins.length) continue;
+        const { effects } = processAutoJoins({ series: s, occurrence: occ, autoJoins, roster: this.rosterOf(s.id) }, this.p15, now);
+        if (effects.length) this.applyEffects15(effects);
+      }
+    }
+  }
+
+  private changeInput(s: MockSeries) {
+    return { series: s, occurrences: this.occurrencesOf(s.id), roster: this.rosterOf(s.id), participants: this.seriesParticipants(s), ineligibleUserIds: this.ineligibleRegulars(s) };
+  }
+
+  // ---------------------------------------------------------------------------
   // SeriesApi
-  async createSeries(): Promise<never> {
-    throw phase15NotImplemented('createSeries');
+  // ---------------------------------------------------------------------------
+
+  createSeries(input: GameSeriesCreateInput): Promise<GameSeriesDetail> {
+    return this.run(() => {
+      const me = this.me();
+      const profile = this.myProfile();
+      const now = this.now();
+      if (profile.permanentlyBanned) fail('account_banned');
+      if (profile.hostSuspendedUntil && toEpochMs(profile.hostSuspendedUntil) > now) fail('host_suspended');
+      const bad = validateSeriesCreate(input, this.p15);
+      const title = input.title.trim();
+      if (title.length < 1 || title.length > 80) bad.push('title');
+      if (!(SPORT_IDS as readonly string[]).includes(input.sport)) bad.push('sport');
+      if (input.capacity > 200 || input.teamCount > input.capacity) bad.push('capacity');
+      if (bad.length) fail('validation', bad.join(','));
+      if (input.womenOnly && this.meUser().privateData?.gender !== 'female') fail('women_only');
+      let location: LatLng;
+      if (input.venueId) {
+        const v = this.state.venues.get(input.venueId);
+        if (!v || v.status !== 'active') fail('validation', 'venueId');
+        location = v.location;
+      } else if (input.location) {
+        location = input.location;
+      } else {
+        fail('validation', 'location');
+      }
+      const id = this.nextId('s-new');
+      const token = `ser-${this.state.seq}-${Math.floor(now / 1000).toString(36)}`;
+      const built = buildSeries({ ...input, title }, { id, hostId: me, approxLocation: approximateLocation(location), location, inviteToken: token }, this.p15, now);
+      const stored: MockSeries = { ...built, inviteToken: token, inviteRotatedAt: null };
+      this.state.series.set(id, stored);
+      const plan = planSeriesOccurrences({ series: stored, existing: [], roster: [] }, this.p15, now);
+      this.applyEffects15(plan.effects);
+      return this.seriesDetail(stored, me);
+    });
   }
-  async getSeries(): Promise<never> {
-    throw phase15NotImplemented('getSeries');
+
+  getSeries(seriesId: SeriesId): Promise<GameSeriesDetail | null> {
+    return this.run(() => {
+      const me = this.me();
+      this.tickSeries();
+      const s = this.state.series.get(seriesId);
+      return s && this.canSeeSeries(s, me) ? this.seriesDetail(s, me) : null;
+    });
   }
-  async listMySeries(): Promise<never> {
-    throw phase15NotImplemented('listMySeries');
+
+  listMySeries(): Promise<GameSeries[]> {
+    return this.run(() => {
+      const me = this.me();
+      this.tickSeries();
+      return [...this.state.series.values()]
+        .filter((s) => {
+          if (s.hostId === me) return true;
+          const m = this.myRoster(s.id, me);
+          return !!m && (m.status === 'regular' || m.status === 'invited') && !this.isBlocked(s.hostId, me);
+        })
+        .sort((a, b) => (a.status === 'ended' ? 1 : 0) - (b.status === 'ended' ? 1 : 0) || a.title.localeCompare(b.title))
+        .map((s) => this.seriesView(s, me));
+    });
   }
-  async editSeries(): Promise<never> {
-    throw phase15NotImplemented('editSeries');
+
+  editSeries(seriesId: SeriesId, edit: SeriesEdit): Promise<GameSeriesDetail> {
+    return this.run(() => {
+      const me = this.me();
+      const s = this.hostSeries(seriesId);
+      const res = editSeriesRule(this.changeInput(s), edit, this.p15, this.now());
+      if (!res.ok) fail(res.error);
+      this.applyEffects15(res.value.effects);
+      return this.seriesDetail(s, me);
+    });
   }
-  async endSeries(): Promise<never> {
-    throw phase15NotImplemented('endSeries');
+
+  endSeries(seriesId: SeriesId): Promise<GameSeries> {
+    return this.run(() => {
+      const me = this.me();
+      const s = this.hostSeries(seriesId);
+      const res = endSeriesRule(this.changeInput(s), this.p15, this.now());
+      if (!res.ok) fail(res.error);
+      this.applyEffects15(res.value.effects);
+      return this.seriesView(s, me);
+    });
   }
-  async listOccurrences(): Promise<never> {
-    throw phase15NotImplemented('listOccurrences');
+
+  listOccurrences(seriesId: SeriesId, options: { from?: IsoDateTime; to?: IsoDateTime } = {}): Promise<SeriesOccurrence[]> {
+    return this.run(() => {
+      this.seriesOr404(seriesId, this.me());
+      this.tickSeries();
+      return this.occurrencesOf(seriesId).filter((o) => (!options.from || o.startsAt >= options.from) && (!options.to || o.startsAt < options.to));
+    });
   }
-  async skipOccurrence(): Promise<never> {
-    throw phase15NotImplemented('skipOccurrence');
+
+  skipOccurrence(seriesId: SeriesId, key: string): Promise<SeriesOccurrence> {
+    return this.run(() => {
+      const s = this.hostSeries(seriesId);
+      const now = this.now();
+      const res = skipOccurrenceRule(this.changeInput(s), key, this.p15, now);
+      if (!res.ok) fail(res.error);
+      this.applyEffects15(res.value.effects);
+      const stored = this.state.occurrences.get(key);
+      if (stored) return stored;
+      // A future slot that was not generated yet: the planned occurrence, recorded as skipped.
+      const parsed = parseOccurrenceKey(key) as { slotDate: string };
+      return { ...buildOccurrence(s, parsed.slotDate, this.p15, now), status: 'skipped' as const };
+    });
   }
-  async listRoster(): Promise<never> {
-    throw phase15NotImplemented('listRoster');
+
+  listRoster(seriesId: SeriesId): Promise<RosterMemberView[]> {
+    return this.run(() => {
+      const me = this.me();
+      const s = this.seriesOr404(seriesId, me);
+      const isHost = s.hostId === me;
+      if (!isHost && !this.isRegular(s.id, me)) return [];
+      return this.rosterOf(s.id)
+        .filter((m) => isHost || (m.status === 'regular' && !this.isBlocked(m.userId, me) && !this.isHiddenUser(m.userId)))
+        .sort((a, b) => a.joinedAt.localeCompare(b.joinedAt))
+        .map((m) => ({ ...m, profile: this.publicOf(m.userId) }));
+    });
   }
-  async inviteToRoster(): Promise<never> {
-    throw phase15NotImplemented('inviteToRoster');
+
+  inviteToRoster(seriesId: SeriesId, userId: UserId): Promise<RosterMember> {
+    return this.run(() => {
+      const me = this.me();
+      const s = this.hostSeries(seriesId);
+      if (userId === me) fail('validation', 'self');
+      if (!this.state.users.get(userId)?.profile) fail('not_found');
+      const played = this.connectionsAll().some((c) => c.gamesTogether > 0 && ((c.userA === me && c.userB === userId) || (c.userB === me && c.userA === userId)));
+      if (!played) fail('forbidden', 'not played with');
+      const res = joinRoster({ series: s, existing: this.myRoster(s.id, userId), userId, via: 'played_with', blocked: this.isBlocked(me, userId) }, this.now());
+      if (!res.ok) fail(res.error);
+      this.applyEffects15(res.value.effects);
+      return this.myRoster(s.id, userId) as RosterMember;
+    });
   }
-  async acceptRosterInvite(): Promise<never> {
-    throw phase15NotImplemented('acceptRosterInvite');
+
+  acceptRosterInvite(seriesId: SeriesId): Promise<RosterMember> {
+    return this.run(() => {
+      const me = this.me();
+      const s = this.seriesOr404(seriesId, me);
+      if (s.status === 'ended') fail('game_not_open');
+      if (this.isBlocked(s.hostId, me)) fail('blocked');
+      const res = acceptRosterInviteRule(this.myRoster(s.id, me), this.now());
+      if (!res.ok) fail(res.error);
+      this.applyEffects15(res.value.effects);
+      return this.myRoster(s.id, me) as RosterMember;
+    });
   }
-  async removeFromRoster(): Promise<never> {
-    throw phase15NotImplemented('removeFromRoster');
+
+  removeFromRoster(seriesId: SeriesId, userId: UserId): Promise<RosterMember> {
+    return this.run(() => {
+      const s = this.hostSeries(seriesId);
+      if (userId === s.hostId) fail('forbidden', 'host');
+      const res = leaveRosterRule(this.myRoster(s.id, userId), this.now());
+      if (!res.ok) fail(res.error);
+      this.applyEffects15(res.value.effects);
+      return this.myRoster(s.id, userId) as RosterMember;
+    });
   }
-  async leaveRoster(): Promise<never> {
-    throw phase15NotImplemented('leaveRoster');
+
+  leaveRoster(seriesId: SeriesId): Promise<RosterMember> {
+    return this.run(() => {
+      const me = this.me();
+      const s = this.seriesOr404(seriesId, me);
+      const res = leaveRosterRule(this.myRoster(s.id, me), this.now());
+      if (!res.ok) fail(res.error);
+      this.applyEffects15(res.value.effects);
+      return this.myRoster(s.id, me) as RosterMember;
+    });
   }
-  async setAlwaysIn(): Promise<never> {
-    throw phase15NotImplemented('setAlwaysIn');
+
+  setAlwaysIn(seriesId: SeriesId, alwaysIn: boolean): Promise<RosterMember> {
+    return this.run(() => {
+      const me = this.me();
+      const s = this.seriesOr404(seriesId, me);
+      const res = setAlwaysInRule(this.myRoster(s.id, me), alwaysIn, this.now());
+      if (!res.ok) fail(res.error);
+      this.applyEffects15(res.value.effects);
+      return this.myRoster(s.id, me) as RosterMember;
+    });
   }
-  async reconfirmAutoJoin(): Promise<never> {
-    throw phase15NotImplemented('reconfirmAutoJoin');
+
+  reconfirmAutoJoin(gameId: GameId, attending: boolean): Promise<Participant> {
+    return this.run(() => {
+      const me = this.me();
+      this.gameOr404(gameId, me);
+      const occ = this.occurrenceOfGame(gameId);
+      if (!occ) fail('not_found');
+      const key = `${gameId}|${me}`;
+      const res = reconfirmAutoJoinRule(
+        { seriesId: occ.seriesId, record: this.state.autoJoins.get(key) ?? null, occurrence: occ, member: this.myRoster(occ.seriesId, me) },
+        attending,
+        this.p15,
+        this.now(),
+      );
+      if (!res.ok) fail(res.error);
+      this.state.autoJoins.set(key, res.value.record);
+      this.applyEffects15(res.value.effects);
+      return this.withOffer(this.participant(gameId, me) as Participant);
+    });
   }
+
+  // ---------------------------------------------------------------------------
   // RatingsApi
-  async confirmResult(): Promise<never> {
-    throw phase15NotImplemented('confirmResult');
+  // ---------------------------------------------------------------------------
+
+  private verifiedIds(gameId: GameId): UserId[] {
+    return this.participantsOf(gameId)
+      .filter((p) => p.status === 'approved' && p.attendance === 'verified')
+      .map((p) => p.userId)
+      .sort();
   }
-  async getResultConfirmation(): Promise<never> {
-    throw phase15NotImplemented('getResultConfirmation');
+
+  private resultSummary(gameId: GameId, viewer?: UserId): ResultConfirmationSummary | null {
+    const result = this.state.results.get(gameId);
+    if (!result) return null;
+    return summarizeResultConfirmations(
+      { gameId, submittedBy: result.submittedBy, verifiedUserIds: this.verifiedIds(gameId), confirmations: this.state.resultConfirmations.filter((c) => c.gameId === gameId) },
+      viewer,
+    );
   }
-  async getGameRatingStatus(): Promise<never> {
-    throw phase15NotImplemented('getGameRatingStatus');
+
+  private hasSanctionInForce(userId: UserId): boolean {
+    const now = this.now();
+    return this.state.sanctions.some(
+      (s) => s.userId === userId && ['active', 'disputed', 'upheld'].includes(s.status) && toEpochMs(s.startsAt) <= now && (!s.expiresAt || toEpochMs(s.expiresAt) > now),
+    );
   }
-  async getRatingEligibility(): Promise<never> {
-    throw phase15NotImplemented('getRatingEligibility');
+
+  private peerEligibility(g: MockGame, me: UserId): RatingEligibility {
+    const verifiedGamesInSport = [...this.state.participants.values()].filter(
+      (p) => p.userId === me && p.status === 'approved' && p.attendance === 'verified' && this.state.games.get(p.gameId)?.sport === g.sport,
+    ).length;
+    return peerRatingEligibility(
+      {
+        game: { endsAt: g.endsAt },
+        rater: {
+          userId: me,
+          reliability: this.meUser().profile?.reliability.score ?? null,
+          verifiedGamesInSport,
+          hasActiveSanction: this.hasSanctionInForce(me),
+          verifiedInGame: this.participant(g.id, me)?.attendance === 'verified' && this.participant(g.id, me)?.status === 'approved',
+        },
+        verifiedUserIds: this.verifiedIds(g.id).filter((u) => !this.isHiddenUser(u)),
+        blocks: this.state.blocks,
+        alreadyRated: this.state.peerRatings.filter((r) => r.gameId === g.id && r.raterId === me).map((r) => r.rateeId),
+      },
+      this.p15,
+      this.now(),
+    );
   }
-  async submitPeerRatings(): Promise<never> {
-    throw phase15NotImplemented('submitPeerRatings');
+
+  private selfPrior(userId: UserId, sport: SportId) {
+    const us = this.state.users.get(userId)?.sports.find((s) => s.sport === sport);
+    return selfPriorFrom((us?.selfSkill ?? 3) as Stars, us?.attributes ?? null);
   }
-  async listMySkillRatings(): Promise<never> {
-    throw phase15NotImplemented('listMySkillRatings');
+
+  private peerSummary(userId: UserId, sport: SportId): PeerSkillSummary {
+    return aggregatePeerRatings(
+      {
+        userId,
+        sport,
+        self: this.selfPrior(userId, sport),
+        received: this.state.peerRatings.filter((r) => r.rateeId === userId && r.sport === sport),
+        given: this.state.peerRatings.filter((r) => r.raterId === userId && r.sport === sport),
+      },
+      this.p15,
+    );
   }
-  async getMyPeerSummary(): Promise<never> {
-    throw phase15NotImplemented('getMyPeerSummary');
+
+  confirmResult(gameId: GameId, verdict: ResultVerdict): Promise<ResultConfirmationSummary> {
+    return this.run(() => {
+      const me = this.me();
+      const g = this.gameOr404(gameId, me);
+      if (verdict !== 'confirm' && verdict !== 'dispute') fail('validation', 'verdict');
+      if (!this.state.results.has(gameId)) fail('not_found', 'no result');
+      const p = this.participant(gameId, me);
+      if (p?.status !== 'approved' || p.attendance !== 'verified') fail('forbidden', 'not a verified participant');
+      const now = this.now();
+      if (now < toEpochMs(g.endsAt) || now > toEpochMs(g.endsAt) + this.p15.peerRatingWindowHours * HOUR_MS) fail('outside_window');
+      this.state.resultConfirmations = this.state.resultConfirmations.filter((c) => !(c.gameId === gameId && c.userId === me));
+      this.state.resultConfirmations.push({ gameId, userId: me, verdict, createdAt: this.nowIso() });
+      return this.resultSummary(gameId, me) as ResultConfirmationSummary;
+    });
   }
-  async getSkillBands(): Promise<never> {
-    throw phase15NotImplemented('getSkillBands');
+
+  getResultConfirmation(gameId: GameId): Promise<ResultConfirmationSummary | null> {
+    return this.run(() => {
+      const me = this.me();
+      const g = this.state.games.get(gameId);
+      if (!g || !this.canSeeGame(g, me)) return null;
+      return this.resultSummary(gameId, me);
+    });
   }
+
+  getGameRatingStatus(gameId: GameId): Promise<GameRatingEligibility> {
+    return this.run(() => {
+      const g = this.gameOr404(gameId, this.me());
+      const result = this.state.results.get(gameId) ?? null;
+      const approved = this.participantsOf(gameId).filter((p) => p.status === 'approved');
+      const verified = approved.filter((p) => p.attendance === 'verified');
+      const teams = Array.from({ length: Math.max(1, g.teamCount) }, (_, i) => verified.filter((p) => p.team === i).map((p) => p.userId).sort());
+      return gameRatingEligibility(
+        {
+          sport: g.sport,
+          startsAt: g.startsAt,
+          teamScores: result?.teamScores ?? null,
+          resultStatus: this.resultSummary(gameId)?.status ?? 'pending',
+          approvedCount: approved.length,
+          verifiedCount: verified.length,
+          teamsPublishedAt: this.state.teamsPublishedAt.get(gameId) ?? null,
+          teams,
+        },
+        this.p15,
+      );
+    });
+  }
+
+  getRatingEligibility(gameId: GameId): Promise<RatingEligibility> {
+    return this.run(() => {
+      const me = this.me();
+      return this.peerEligibility(this.gameOr404(gameId, me), me);
+    });
+  }
+
+  submitPeerRatings(gameId: GameId, ratings: readonly PeerRatingInput[]): Promise<PeerRating[]> {
+    return this.run(() => {
+      const me = this.me();
+      this.myProfile();
+      const g = this.gameOr404(gameId, me);
+      if (g.status === 'cancelled') fail('game_not_open');
+      const eligibility = this.peerEligibility(g, me);
+      const ok = validatePeerRatings(eligibility, g.sport, ratings);
+      if (!ok.ok) fail(ok.error, eligibility.reasons.join(','));
+      const rows = buildPeerRatings(g.id, g.sport, me, ratings, this.now());
+      this.state.peerRatings.push(...rows);
+      return rows;
+    });
+  }
+
+  listMySkillRatings(): Promise<SkillRating[]> {
+    return this.run(() => {
+      const me = this.me();
+      const rel = this.myProfile().reliability.score;
+      return this.state.skillRatings
+        .filter((r) => r.userId === me)
+        .map((r) => currentSkillRating(r, rel, this.p15, this.now()))
+        .sort((a, b) => b.games - a.games || a.sport.localeCompare(b.sport));
+    });
+  }
+
+  getMyPeerSummary(sport: SportId): Promise<PeerSkillSummary | null> {
+    return this.run(() => {
+      const me = this.me();
+      if (!this.state.peerRatings.some((r) => r.rateeId === me && r.sport === sport)) return null;
+      return this.peerSummary(me, sport);
+    });
+  }
+
+  getSkillBands(gameId: GameId): Promise<Readonly<Record<UserId, Stars>>> {
+    return this.run(() => {
+      const g = this.hostGame(gameId);
+      const out: Record<UserId, Stars> = {};
+      for (const p of this.participantsOf(gameId)) {
+        if (p.status !== 'approved') continue;
+        const hasSport = this.state.users.get(p.userId)?.sports.some((s) => s.sport === g.sport);
+        const rated = this.state.peerRatings.some((r) => r.rateeId === p.userId && r.sport === g.sport);
+        if (hasSport || rated) out[p.userId] = this.peerSummary(p.userId, g.sport).band;
+      }
+      return out;
+    });
+  }
+
+  /** {@link Phase15Extension.listMyRatingHistory}: weekly Glicko updates, oldest first. */
+  listMyRatingHistory(sport?: SportId): Promise<RatingUpdate[]> {
+    return this.run(() => {
+      const me = this.me();
+      return this.state.ratingUpdates.filter((u) => u.userId === me && (!sport || u.sport === sport)).sort((a, b) => a.period.localeCompare(b.period));
+    });
+  }
+
+  // ---------------------------------------------------------------------------
   // MediaApi
-  async listGameMedia(): Promise<never> {
-    throw phase15NotImplemented('listGameMedia');
+  // ---------------------------------------------------------------------------
+
+  private tagsOf(mediaId: MediaId): MediaTag[] {
+    return this.state.mediaTags.filter((t) => t.mediaId === mediaId);
   }
-  async listVenueMedia(): Promise<never> {
-    throw phase15NotImplemented('listVenueMedia');
+
+  private canSeeMedia(m: MockMedia, viewer: UserId): boolean {
+    if (m.status === 'removed') return false;
+    if (m.uploaderId === viewer) return true;
+    if (m.status !== 'published' || this.isBlocked(m.uploaderId, viewer)) return false;
+    const g = this.state.games.get(m.gameId);
+    if (!g) return false;
+    if (g.hostId === viewer || this.participant(g.id, viewer)?.status === 'approved') return true;
+    return m.visibility === 'venue_public';
   }
-  async createMediaUploadIntent(): Promise<never> {
-    throw phase15NotImplemented('createMediaUploadIntent');
+
+  private mediaOr404(mediaId: MediaId, viewer: UserId): MockMedia {
+    const m = this.state.media.get(mediaId);
+    if (!m || !this.canSeeMedia(m, viewer)) fail('not_found');
+    return m;
   }
-  async completeMediaUpload(): Promise<never> {
-    throw phase15NotImplemented('completeMediaUpload');
+
+  private mediaItem(m: MockMedia): MediaItem {
+    const { url: _url, thumbnailUrl: _thumb, ...item } = m;
+    return item;
   }
-  async tagMedia(): Promise<never> {
-    throw phase15NotImplemented('tagMedia');
+
+  /** MediaItemView (+ `pendingUserIds` for the uploader: tags that still block `venue_public`). */
+  private mediaView(m: MockMedia, viewer: UserId): MediaItemView & { pendingUserIds: UserId[] } {
+    const tags = this.tagsOf(m.id);
+    return {
+      ...this.mediaItem(m),
+      url: m.url,
+      thumbnailUrl: m.thumbnailUrl,
+      acceptedTags: tags.filter((t) => t.status === 'accepted' && !this.isBlocked(t.userId, viewer) && !this.isHiddenUser(t.userId)).map((t) => t.userId).sort(),
+      pendingUserIds: m.uploaderId === viewer ? consentBlockers(tags) : [],
+    };
   }
-  async respondToMediaTag(): Promise<never> {
-    throw phase15NotImplemented('respondToMediaTag');
+
+  private storeMediaChange(item: MediaItem, tags: readonly MediaTag[]): void {
+    const prev = this.state.media.get(item.id);
+    if (prev) this.state.media.set(item.id, { ...prev, ...item });
+    this.state.mediaTags = [...this.state.mediaTags.filter((t) => t.mediaId !== item.id), ...tags];
   }
-  async untagMe(): Promise<never> {
-    throw phase15NotImplemented('untagMe');
+
+  listGameMedia(gameId: GameId): Promise<MediaItemView[]> {
+    return this.run(() => {
+      const me = this.me();
+      const g = this.gameOr404(gameId, me);
+      const member = g.hostId === me || this.participant(gameId, me)?.status === 'approved';
+      return [...this.state.media.values()]
+        .filter((m) => m.gameId === gameId && m.status !== 'removed' && (m.status === 'published' || m.uploaderId === me))
+        .filter((m) => (member ? this.canSeeMedia(m, me) : m.visibility === 'venue_public' && this.canSeeMedia(m, me)))
+        .sort((a, b) => b.createdAt.localeCompare(a.createdAt))
+        .map((m) => this.mediaView(m, me));
+    });
   }
-  async listMyTagRequests(): Promise<never> {
-    throw phase15NotImplemented('listMyTagRequests');
+
+  listVenueMedia(venueId: VenueId, options: { from?: IsoDateTime; to?: IsoDateTime } = {}): Promise<MediaItemView[]> {
+    return this.run(() => {
+      const me = this.me();
+      return [...this.state.media.values()]
+        .filter((m) => m.venueId === venueId && m.status === 'published' && m.visibility === 'venue_public' && !this.isBlocked(m.uploaderId, me) && !this.isHiddenUser(m.uploaderId))
+        .filter((m) => {
+          // `venue_vault` ranges on the game's start ([from, to)).
+          const start = this.state.games.get(m.gameId)?.startsAt ?? m.createdAt;
+          return (!options.from || start >= options.from) && (!options.to || start < options.to);
+        })
+        .sort((a, b) => b.createdAt.localeCompare(a.createdAt))
+        .map((m) => this.mediaView(m, me));
+    });
   }
-  async setMediaVisibility(): Promise<never> {
-    throw phase15NotImplemented('setMediaVisibility');
+
+  createMediaUploadIntent(request: MediaUploadRequest): Promise<MediaUploadIntent> {
+    return this.run(() => {
+      const me = this.me();
+      this.myProfile();
+      const g = this.gameOr404(request.gameId, me);
+      if (g.status === 'cancelled') fail('game_not_open');
+      const p = this.participant(g.id, me);
+      const existingCount = [...this.state.media.values()].filter((m) => m.gameId === g.id && m.uploaderId === me && m.status !== 'removed').length;
+      const check = checkMediaUpload({ game: g, verifiedAttendee: p?.status === 'approved' && p.attendance === 'verified', request, existingCount }, this.p15, this.now());
+      if (!check.ok) throw new StError(mediaRejectErrorCode(check.error), check.error, { reason: check.error });
+      const id = this.nextId('m-new');
+      const created = this.nowIso();
+      this.state.media.set(id, {
+        id,
+        gameId: g.id,
+        venueId: g.venueId,
+        uploaderId: me,
+        kind: request.kind,
+        status: 'processing',
+        visibility: 'participants',
+        publicOptIn: false,
+        mimeType: request.mimeType.toLowerCase(),
+        sizeBytes: request.sizeBytes,
+        durationSeconds: request.kind === 'video' ? (request.durationSeconds ?? null) : null,
+        storagePath: `originals/${g.id}/${me}/${id}`,
+        createdAt: created,
+        publishedAt: null,
+        expiresAt: mediaExpiresAt(created, this.p15),
+        removedAt: null,
+        url: '',
+        thumbnailUrl: null,
+      });
+      return { mediaId: id, uploadUrl: `memory://media/${id}`, method: 'PUT', headers: { 'content-type': request.mimeType }, expiresAt: toIso(this.now() + 2 * HOUR_MS), maxBytes: check.value.maxBytes };
+    });
   }
-  async deleteMedia(): Promise<never> {
-    throw phase15NotImplemented('deleteMedia');
+
+  /** {@link Phase15Extension.uploadMediaObject}: the mock keeps the picked image (data URL) as the published rendition. */
+  uploadMediaObject(intent: MediaUploadIntent, file: { uri: string }): Promise<void> {
+    return this.run(() => {
+      const me = this.me();
+      const m = this.state.media.get(intent.mediaId);
+      if (!m || m.uploaderId !== me) fail('not_found');
+      if (m.status !== 'processing') fail('conflict');
+      m.url = file.uri;
+      m.thumbnailUrl = file.uri;
+    });
   }
+
+  completeMediaUpload(mediaId: MediaId): Promise<MediaItem> {
+    return this.run(() => {
+      const me = this.me();
+      const m = this.state.media.get(mediaId);
+      if (!m || m.uploaderId !== me) fail('not_found');
+      if (!m.url) {
+        m.url = photoDataUri(m.id, 'duskPitch');
+        m.thumbnailUrl = m.url;
+      }
+      // Stand-in for the pipeline (EXIF strip → CSAM hash → moderation): everything passes.
+      const change = applyMediaVerdict(this.mediaItem(m), this.tagsOf(m.id), { decision: 'publish', categories: [], exifStripped: true, csamHashMatch: false, source: 'combined', reasonKey: null }, this.now());
+      this.storeMediaChange(change.item, change.tags);
+      return change.item;
+    });
+  }
+
+  tagMedia(mediaId: MediaId, userIds: readonly UserId[]): Promise<MediaTag[]> {
+    return this.run(() => {
+      const me = this.me();
+      const m = this.mediaOr404(mediaId, me);
+      const participantIds = this.participantsOf(m.gameId).filter((p) => p.status === 'approved').map((p) => p.userId);
+      const res = tagMediaRule(this.mediaItem(m), this.tagsOf(m.id), userIds, me, { participantIds, blocks: this.state.blocks }, this.now());
+      if (!res.ok) fail(res.error);
+      this.storeMediaChange(res.value.item, res.value.tags);
+      this.applyEffects15(res.value.effects);
+      return res.value.tags.filter((t) => userIds.includes(t.userId));
+    });
+  }
+
+  respondToMediaTag(mediaId: MediaId, accept: boolean): Promise<MediaTag> {
+    return this.run(() => {
+      const me = this.me();
+      const m = this.state.media.get(mediaId);
+      if (!m || m.status === 'removed') fail('not_found');
+      const res = respondToMediaTagRule(this.mediaItem(m), this.tagsOf(m.id), me, accept, this.now());
+      if (!res.ok) fail(res.error);
+      this.storeMediaChange(res.value.item, res.value.tags);
+      return res.value.tags.find((t) => t.userId === me) as MediaTag;
+    });
+  }
+
+  untagMe(mediaId: MediaId, removeFromPublic: boolean): Promise<MediaTag> {
+    return this.run(() => {
+      const me = this.me();
+      const m = this.state.media.get(mediaId);
+      if (!m || m.status === 'removed') fail('not_found');
+      const res = untagMeRule(this.mediaItem(m), this.tagsOf(m.id), me, removeFromPublic, this.now());
+      if (!res.ok) fail(res.error);
+      this.storeMediaChange(res.value.item, res.value.tags);
+      return res.value.tags.find((t) => t.userId === me) as MediaTag;
+    });
+  }
+
+  listMyTagRequests(): Promise<MediaTag[]> {
+    return this.run(() => {
+      const me = this.me();
+      return this.state.mediaTags
+        .filter((t) => t.userId === me && t.status === 'requested')
+        .filter((t) => {
+          const m = this.state.media.get(t.mediaId);
+          return !!m && m.status === 'published' && !this.isBlocked(m.uploaderId, me);
+        })
+        .sort((a, b) => b.createdAt.localeCompare(a.createdAt));
+    });
+  }
+
+  setMediaVisibility(mediaId: MediaId, visibility: MediaVisibility): Promise<MediaItem> {
+    return this.run(() => {
+      const me = this.me();
+      const m = this.mediaOr404(mediaId, me);
+      const res = requestMediaVisibility(this.mediaItem(m), this.tagsOf(m.id), visibility, me, this.now());
+      if (!res.ok) fail(mediaRejectErrorCode(res.error), res.error);
+      this.storeMediaChange(res.value.item, res.value.tags);
+      return res.value.item;
+    });
+  }
+
+  deleteMedia(mediaId: MediaId): Promise<void> {
+    return this.run(() => {
+      const me = this.me();
+      const m = this.mediaOr404(mediaId, me);
+      const res = deleteMediaRule(this.mediaItem(m), me, false, this.now());
+      if (!res.ok) fail(res.error);
+      this.storeMediaChange(res.value.item, this.tagsOf(m.id));
+    });
+  }
+
+  /** {@link Phase15Extension.reportMedia}: one report per person and item (`already_reported`). */
+  reportMedia(mediaId: MediaId, reason: string, note?: string): Promise<void> {
+    return this.run(() => {
+      const me = this.me();
+      const m = this.mediaOr404(mediaId, me);
+      if (m.uploaderId === me) fail('validation', 'own item');
+      if (this.state.mediaReports.some((r) => r.mediaId === mediaId && r.reporterId === me)) fail('already_reported');
+      this.state.mediaReports.push({ mediaId, reporterId: me, reason, note: note?.trim() || null, createdAt: this.nowIso() });
+    });
+  }
+
+  /** {@link Phase15Extension.getMediaItem}. */
+  getMediaItem(mediaId: MediaId): Promise<MediaItemView | null> {
+    return this.run(() => {
+      const me = this.me();
+      const m = this.state.media.get(mediaId);
+      if (!m) return null;
+      // A tagged person may preview the item they are asked about (it is invisible to others until accepted).
+      const tagged = this.state.mediaTags.some((t) => t.mediaId === mediaId && t.userId === me && t.status !== 'removed');
+      if (!this.canSeeMedia(m, me) && !(tagged && m.status === 'published')) return null;
+      return this.mediaView(m, me);
+    });
+  }
+
+  // ---------------------------------------------------------------------------
   // NetworkApi
-  async listConnections(): Promise<never> {
-    throw phase15NotImplemented('listConnections');
+  // ---------------------------------------------------------------------------
+
+  /** `connections`: played-with derived from co-verified attendance, friendship rows overlaid. */
+  private connectionsAll(): Connection[] {
+    const now = this.now();
+    const facts: AttendanceFact[] = [];
+    for (const p of this.state.participants.values()) {
+      if (p.status !== 'approved') continue;
+      const g = this.state.games.get(p.gameId);
+      if (!g || g.status === 'cancelled' || toEpochMs(g.endsAt) > now) continue;
+      facts.push({ gameId: g.id, userId: p.userId, verified: p.attendance === 'verified', endsAt: g.endsAt });
+    }
+    const map = new Map<string, Connection>();
+    for (const pw of derivePlayedWith(facts, this.state.blocks, this.p15, now)) {
+      map.set(`${pw.userA}|${pw.userB}`, { ...pw, friendStatus: null, friendRequestedBy: null, friendRequestedAt: null, friendAcceptedAt: null });
+    }
+    for (const [key, f] of this.state.friendships) {
+      const base = map.get(key) ?? { userA: f.userA, userB: f.userB, gamesTogether: 0, lastPlayedAt: null };
+      map.set(key, { ...base, ...f });
+    }
+    return [...map.values()];
   }
-  async requestFriend(): Promise<never> {
-    throw phase15NotImplemented('requestFriend');
+
+  private connectionWith(me: UserId, other: UserId): Connection | null {
+    const { userA, userB } = connectionPair(me, other);
+    return this.connectionsAll().find((c) => c.userA === userA && c.userB === userB) ?? null;
   }
-  async respondFriendRequest(): Promise<never> {
-    throw phase15NotImplemented('respondFriendRequest');
+
+  private connectionView(c: Connection, me: UserId): ConnectionView {
+    const other = c.userA === me ? c.userB : c.userA;
+    return { user: this.publicOf(other), playedWith: c.gamesTogether > 0, gamesTogether: c.gamesTogether, lastPlayedAt: c.lastPlayedAt, friend: friendState(c, me) };
   }
-  async removeFriend(): Promise<never> {
-    throw phase15NotImplemented('removeFriend');
+
+  private friendAction(other: UserId, action: 'request' | 'accept' | 'decline' | 'cancel' | 'remove'): ConnectionView {
+    const me = this.me();
+    this.myProfile();
+    if (!this.state.users.get(other)?.profile || this.isHiddenUser(other)) fail('not_found');
+    const res = friendTransition(this.connectionWith(me, other), me, other, action, this.state.blocks, this.now());
+    if (!res.ok) fail(res.error);
+    this.applyEffects15(res.value.effects);
+    return this.connectionView(res.value.connection, me);
   }
-  async getNetworkPrivacy(): Promise<never> {
-    throw phase15NotImplemented('getNetworkPrivacy');
+
+  listConnections(filter: 'all' | 'friends' | 'played_with' | 'requests' = 'all'): Promise<ConnectionView[]> {
+    return this.run(() => {
+      const me = this.me();
+      const recent = (c: Connection) => c.friendRequestedAt && (!c.lastPlayedAt || c.friendRequestedAt > c.lastPlayedAt) ? c.friendRequestedAt : (c.lastPlayedAt ?? '');
+      return visibleConnections(me, this.connectionsAll(), this.state.blocks)
+        .filter((c) => !this.isHiddenUser(c.userA === me ? c.userB : c.userA))
+        .sort((a, b) => recent(b).localeCompare(recent(a)))
+        .map((c) => this.connectionView(c, me))
+        .filter((v) =>
+          filter === 'friends' ? v.friend === 'friends' : filter === 'played_with' ? v.playedWith : filter === 'requests' ? v.friend === 'incoming' : true,
+        );
+    });
   }
-  async setNetworkPrivacy(): Promise<never> {
-    throw phase15NotImplemented('setNetworkPrivacy');
+
+  requestFriend(userId: UserId): Promise<ConnectionView> {
+    return this.run(() => this.friendAction(userId, 'request'));
   }
-  async listFriendsUpcomingGames(): Promise<never> {
-    throw phase15NotImplemented('listFriendsUpcomingGames');
+
+  respondFriendRequest(userId: UserId, accept: boolean): Promise<ConnectionView> {
+    return this.run(() => this.friendAction(userId, accept ? 'accept' : 'decline'));
   }
+
+  removeFriend(userId: UserId): Promise<void> {
+    return this.run(() => {
+      const me = this.me();
+      const state = friendState(this.connectionWith(me, userId), me);
+      if (state === 'none' || state === 'incoming') fail('not_found');
+      this.friendAction(userId, state === 'outgoing' ? 'cancel' : 'remove');
+    });
+  }
+
+  getNetworkPrivacy(): Promise<NetworkPrivacy> {
+    return this.run(() => {
+      const me = this.me();
+      return this.state.networkPrivacy.get(me) ?? { userId: me, upcomingGamesVisibleTo: DEFAULT_UPCOMING_GAMES_AUDIENCE, updatedAt: this.meUser().createdAt };
+    });
+  }
+
+  setNetworkPrivacy(audience: UpcomingGamesAudience): Promise<NetworkPrivacy> {
+    return this.run(() => {
+      const me = this.me();
+      if (audience !== 'friends' && audience !== 'nobody') fail('validation', 'audience');
+      const row: NetworkPrivacy = { userId: me, upcomingGamesVisibleTo: audience, updatedAt: this.nowIso() };
+      this.state.networkPrivacy.set(me, row);
+      return row;
+    });
+  }
+
+  listFriendsUpcomingGames(): Promise<FriendUpcomingGame[]> {
+    return this.run(() => {
+      const me = this.me();
+      this.tickSeries();
+      const connections = this.connectionsAll();
+      const friends = new Set(connections.filter((c) => c.friendStatus === 'accepted' && (c.userA === me || c.userB === me)).map((c) => (c.userA === me ? c.userB : c.userA)));
+      const candidates: FriendGameCandidate[] = [];
+      for (const p of this.state.participants.values()) {
+        if (!friends.has(p.userId) || p.status !== 'approved') continue;
+        const g = this.state.games.get(p.gameId);
+        if (g) candidates.push({ ownerId: p.userId, game: g });
+      }
+      const privacy: Record<UserId, NetworkPrivacy> = Object.fromEntries(this.state.networkPrivacy.entries());
+      const out: FriendUpcomingGame[] = [];
+      for (const x of filterFriendsUpcomingGames(me, candidates, connections, privacy, this.state.blocks, this.now())) {
+        const g = this.state.games.get(x.game.id);
+        if (!g || !this.canSeeGame(g, me)) continue;
+        // A series occurrence still inside its regulars-only window is not advertised to non-regulars.
+        const occ = g.seriesId ? this.occurrenceOfGame(g.id) : undefined;
+        const series = g.seriesId ? this.state.series.get(g.seriesId) : undefined;
+        if (occ && series && !checkOccurrenceJoinWindow(series, occ, this.rosterOf(series.id), me, this.now()).ok) continue;
+        out.push({ friend: this.publicOf(x.ownerId), game: this.summary(g, me) });
+      }
+      return out;
+    });
+  }
+
+  // ---------------------------------------------------------------------------
   // InviteApi
-  async getInviteLink(): Promise<never> {
-    throw phase15NotImplemented('getInviteLink');
+  // ---------------------------------------------------------------------------
+
+  private targetOf(target: InviteTarget): { game: MockGame | null; series: MockSeries | null } {
+    if (target.kind === 'game') return { game: this.hostGame(target.gameId), series: null };
+    return { game: null, series: this.hostSeries(target.seriesId) };
   }
-  async rotateInviteLink(): Promise<never> {
-    throw phase15NotImplemented('rotateInviteLink');
+
+  private timeZoneOf(game: MockGame): string {
+    if (game.seriesId) return this.state.series.get(game.seriesId)?.timeZone ?? DEFAULT_TIME_ZONE;
+    const country = game.venueId ? this.state.venues.get(game.venueId)?.countryCode : null;
+    return (country && COUNTRY_TIME_ZONES[country]) || DEFAULT_TIME_ZONE;
   }
-  async getShareMessage(): Promise<never> {
-    throw phase15NotImplemented('getShareMessage');
+
+  private invitePreview(target: InviteTarget): InvitePreview {
+    const { game, series } = this.targetOf(target);
+    if (game) {
+      const venue = game.venueId ? this.state.venues.get(game.venueId) : undefined;
+      return {
+        sport: game.sport,
+        title: game.title,
+        startsAt: game.startsAt,
+        timeZone: this.timeZoneOf(game),
+        recurrence: null,
+        weekday: null,
+        localStartTime: null,
+        areaLabel: game.hideExactLocation ? null : (venue?.name ?? null),
+        spotsLeft: Math.max(0, game.capacity - this.counts(game.id).approved),
+        capacity: game.capacity,
+        womenOnly: game.womenOnly,
+        hostDisplayName: this.publicOf(game.hostId).displayName,
+        ogImageUrl: null,
+      };
+    }
+    const s = series as MockSeries;
+    const now = this.now();
+    const next = this.occurrencesOf(s.id).find((o) => o.status === 'scheduled' && toEpochMs(o.startsAt) > now);
+    const venue = s.venueId ? this.state.venues.get(s.venueId) : undefined;
+    return {
+      sport: s.sport,
+      title: s.title,
+      startsAt: next?.startsAt ?? null,
+      timeZone: s.timeZone,
+      recurrence: s.recurrence,
+      weekday: s.weekday,
+      localStartTime: s.startTime,
+      areaLabel: s.hideExactLocation ? null : (venue?.name ?? null),
+      spotsLeft: next ? Math.max(0, s.capacity - this.counts(next.gameId).approved) : null,
+      capacity: s.capacity,
+      womenOnly: s.womenOnly,
+      hostDisplayName: this.publicOf(s.hostId).displayName,
+      ogImageUrl: null,
+    };
   }
-  async resolveSeriesInvite(): Promise<never> {
-    throw phase15NotImplemented('resolveSeriesInvite');
+
+  private inviteLink(target: InviteTarget): InviteLink {
+    const { game, series } = this.targetOf(target);
+    const token = game ? game.inviteToken : (series as MockSeries).inviteToken;
+    return {
+      target,
+      token,
+      url: inviteUrl(INVITE_ORIGIN, target, token),
+      preview: this.invitePreview(target),
+      createdAt: game ? game.createdAt : (series as MockSeries).createdAt,
+      rotatedAt: series?.inviteRotatedAt ?? null,
+    };
   }
-  async joinSeriesViaInvite(): Promise<never> {
-    throw phase15NotImplemented('joinSeriesViaInvite');
+
+  getInviteLink(target: InviteTarget): Promise<InviteLink> {
+    return this.run(() => this.inviteLink(target));
   }
-  async getMigrationStats(): Promise<never> {
-    throw phase15NotImplemented('getMigrationStats');
+
+  rotateInviteLink(target: InviteTarget): Promise<InviteLink> {
+    return this.run(() => {
+      const { game, series } = this.targetOf(target);
+      const token = `${target.kind === 'game' ? 'inv' : 'ser'}-${this.nextId('rot')}-${this.now().toString(36)}`;
+      if (game) game.inviteToken = token;
+      if (series) {
+        series.inviteToken = token;
+        series.inviteRotatedAt = this.nowIso();
+      }
+      return this.inviteLink(target);
+    });
+  }
+
+  getShareMessage(target: InviteTarget, locale: Locale): Promise<ShareMessage> {
+    return this.run(() => {
+      const link = this.inviteLink(target);
+      return buildShareMessage(link.preview, locale, link.url);
+    });
+  }
+
+  resolveSeriesInvite(inviteToken: string): Promise<GameSeriesDetail | null> {
+    return this.run(() => {
+      const me = this.me();
+      const s = [...this.state.series.values()].find((x) => x.inviteToken === inviteToken);
+      if (!s || s.status === 'ended' || this.isBlocked(s.hostId, me) || this.isHiddenUser(s.hostId)) return null;
+      this.state.inviteAccess.add(`series:${s.id}|${me}`);
+      this.tickSeries();
+      return this.seriesDetail(s, me);
+    });
+  }
+
+  joinSeriesViaInvite(inviteToken: string): Promise<RosterMember> {
+    return this.run(() => {
+      const me = this.me();
+      const profile = this.myProfile();
+      const now = this.now();
+      const s = [...this.state.series.values()].find((x) => x.inviteToken === inviteToken);
+      if (!s || this.isHiddenUser(s.hostId)) fail('not_found');
+      if (s.hostId === me) fail('conflict', 'host');
+      if (profile.joinBannedUntil && toEpochMs(profile.joinBannedUntil) > now) fail('join_banned');
+      if (s.womenOnly && this.meUser().privateData?.gender !== 'female') fail('women_only');
+      const res = joinRoster({ series: s, existing: this.myRoster(s.id, me), userId: me, via: 'invite_link', blocked: this.isBlocked(s.hostId, me) }, now);
+      if (!res.ok) fail(res.error);
+      this.applyEffects15(res.value.effects);
+      this.state.inviteAccess.add(`series:${s.id}|${me}`);
+      if (!this.state.inviteJoins.some((j) => j.kind === 'series' && j.targetId === s.id && j.userId === me)) {
+        this.state.inviteJoins.push({ kind: 'series', targetId: s.id, userId: me, at: toIso(now) });
+      }
+      this.notify(s.hostId, 'roster_added' as unknown as NotificationKind, { seriesTitle: s.title, via: 'invite_link', seriesId: s.id }, null);
+      return this.myRoster(s.id, me) as RosterMember;
+    });
+  }
+
+  getMigrationStats(target: InviteTarget): Promise<MigrationStats> {
+    return this.run(() => {
+      const { game, series } = this.targetOf(target);
+      const viaLink = (userId: UserId, kind: 'game' | 'series', id: string) => this.state.inviteJoins.find((j) => j.kind === kind && j.targetId === id && j.userId === userId);
+      if (series) {
+        const members: MigrationMember[] = this.rosterOf(series.id).map((m) => ({
+          userId: m.userId,
+          joinedVia: viaLink(m.userId, 'series', series.id) ? 'invite_link' : m.joinedVia,
+          joinedAt: viaLink(m.userId, 'series', series.id)?.at ?? m.joinedAt,
+          current: m.status === 'regular',
+        }));
+        const games = new Set(this.occurrencesOf(series.id).map((o) => o.gameId));
+        const attendance = [...this.state.participants.values()]
+          .filter((p) => games.has(p.gameId) && p.attendance === 'verified')
+          .map((p) => ({ userId: p.userId, at: this.state.games.get(p.gameId)?.endsAt ?? this.nowIso() }));
+        return computeMigrationStats(target, members, attendance);
+      }
+      const g = game as MockGame;
+      const members: MigrationMember[] = this.participantsOf(g.id)
+        .filter((p) => p.userId !== g.hostId)
+        .map((p) => ({
+          userId: p.userId,
+          joinedVia: viaLink(p.userId, 'game', g.id) ? 'invite_link' : 'direct',
+          joinedAt: viaLink(p.userId, 'game', g.id)?.at ?? p.requestedAt,
+          current: p.status === 'approved',
+        }));
+      const attendance = this.participantsOf(g.id).filter((p) => p.attendance === 'verified').map((p) => ({ userId: p.userId, at: g.endsAt }));
+      return computeMigrationStats(target, members, attendance);
+    });
   }
 }

@@ -125,6 +125,7 @@ export function mapGameSummary(r: Row): GameSummary {
     createdAt: str(r.created_at),
     approvedCount: num(r.approved_count),
     waitlistCount: num(r.waitlist_count),
+    seriesId: strOrNull(r.series_id),
   };
 }
 

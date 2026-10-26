@@ -31,6 +31,7 @@ const ERROR_CODES: readonly ErrorCode[] = [
   'already_reported',
   'payment_failed',
   'payment_required',
+  'roster_priority',
   'network',
   'unavailable',
   'unknown',

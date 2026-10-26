@@ -31,6 +31,7 @@ import {
 } from '@st/domain';
 
 import { approximateLocation, chatExpiresAt, promoteFromWaitlist, toIso } from './domain';
+import { seedPhase15 } from './seed15';
 import type { MockGame, MockState, MockUser } from './state';
 
 /** OTP accepted by the mock (docs/qa-strategy.md also lists 000000; both work). */
@@ -78,8 +79,10 @@ interface GameSpec {
   host: number | 'demo';
   /** Demo user participation in this game (when not host): approved, or first on the waitlist. */
   demo?: 'approved' | 'waitlisted';
-  /** Approved players already checked in (host first, demo user never). */
+  /** Approved players already checked in (host first, demo user never unless `hostCheckedIn`). */
   checkedIn?: number;
+  /** The demo user hosts and checked in too (counts toward `checkedIn`). */
+  hostCheckedIn?: boolean;
   teamCount?: number;
   status?: 'scheduled' | 'completed' | 'cancelled';
   notes?: string;
@@ -137,7 +140,7 @@ const CITIES: CitySpec[] = [
       { n: 6, venue: 'jaffa', sport: 'football', title: 'Jaffa Port 7v7', startH: 26, durH: 1.5, capacity: 14, approved: 9, requested: 2, host: 'demo' },
       { n: 7, venue: 'tennis', sport: 'tennis', title: 'Singles Hit & Rally', startH: 5, durH: 1, capacity: 2, approved: 1, host: 4, teamCount: 2 },
       { n: 8, venue: 'rabin', sport: 'basketball', title: 'Rabin Square Run', startH: 50, durH: 2, capacity: 10, approved: 5, host: 6 },
-      { n: 9, venue: 'clore', sport: 'football', title: 'Lunchtime Futsal', startH: -1.5, durH: 1, capacity: 10, approved: 8, checkedIn: 8, host: 'demo' },
+      { n: 9, venue: 'clore', sport: 'football', title: 'Lunchtime Futsal', startH: -1.5, durH: 1, capacity: 10, approved: 8, checkedIn: 5, hostCheckedIn: true, host: 'demo' },
       { n: 10, venue: 'gordon', sport: 'volleyball', title: 'Sunset Beach Volley', startH: 0.75, durH: 1.5, capacity: 8, approved: 7, demo: 'waitlisted', host: 1 },
     ],
   },
@@ -165,6 +168,8 @@ const CITIES: CitySpec[] = [
       { key: 'battersea', name: 'Battersea Park Track', at: { lat: 51.4791, lng: -0.1566 }, address: 'Battersea Park, London SW11', sports: ['running'], rating: null },
     ],
     games: [
+      // Dana played here on a trip: the "played with" link behind James's roster invite.
+      { n: 0, venue: 'hyde', sport: 'football', title: 'Hyde Park Kickabout', startH: -216, durH: 1.5, capacity: 10, approved: 8, host: 0, demo: 'approved', status: 'completed' },
       { n: 1, venue: 'hyde', sport: 'football', title: 'Hyde Park Sunday League', startH: 20, durH: 1.5, capacity: 12, approved: 8, host: 0 },
       { n: 2, venue: 'regents', sport: 'tennis', title: 'Doubles at Regent’s Park', startH: 6, durH: 1.5, capacity: 4, approved: 3, depositMinor: 500, host: 1 },
       { n: 3, venue: 'westway', sport: 'basketball', title: 'Westway Full Court', startH: 30, durH: 2, capacity: 10, approved: 10, waitlist: 1, host: 2 },
@@ -384,6 +389,21 @@ export function buildSeed(now: EpochMs): MockState {
     peerConfirmations: [],
     offers: new Map(),
     inviteAccess: new Set(),
+    series: new Map(),
+    occurrences: new Map(),
+    roster: new Map(),
+    autoJoins: new Map(),
+    inviteJoins: [],
+    resultConfirmations: [],
+    teamsPublishedAt: new Map(),
+    peerRatings: [],
+    skillRatings: [],
+    ratingUpdates: [],
+    media: new Map(),
+    mediaTags: [],
+    mediaReports: [],
+    friendships: new Map(),
+    networkPrivacy: new Map(),
     seq: 0,
   };
 
@@ -496,8 +516,8 @@ export function buildSeed(now: EpochMs): MockState {
       const eligible = people.filter((p) => p.id !== hostId && (!game.womenOnly || p.privateData?.gender === 'female'));
       let checkedIn = 0;
       const add = (userId: string, status: ParticipantStatus, rank: number | null, idx: number) => {
-        const verified =
-          status === 'approved' && (game.status === 'completed' || (userId !== DEMO_USER_ID && checkedIn < (g.checkedIn ?? 0)));
+        const demoMayCheckIn = userId !== DEMO_USER_ID || (g.hostCheckedIn === true && userId === hostId);
+        const verified = status === 'approved' && (game.status === 'completed' || (demoMayCheckIn && checkedIn < (g.checkedIn ?? 0)));
         if (verified) checkedIn += 1;
         const p: Participant = {
           gameId: id,
@@ -606,6 +626,9 @@ lateCancel: false,
     const plan = promoteFromWaitlist({ game, participants }, now);
     for (const offer of plan.offers) state.offers.set(`${game.id}|${offer.userId}`, offer);
   }
+
+  // Phase 1.5: weekly series with rosters, Glicko levels, peer ratings, the Media Vault and the network.
+  seedPhase15(state, now, base);
 
   // A lively, multilingual chat in the game starting soon (translate + moderation demos).
   const chatGame = state.games.get('g-tlv-1');

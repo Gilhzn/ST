@@ -38,6 +38,42 @@ import { Platform } from 'react-native';
 
 import {
   StError,
+  buildShareMessage,
+  inviteUrl,
+  type ConnectionView,
+  type FriendUpcomingGame,
+  type GameNotRatedReason,
+  type GameRatingEligibility,
+  type GameSeries,
+  type GameSeriesCreateInput,
+  type GameSeriesDetail,
+  type InviteLink,
+  type InvitePreview,
+  type InviteTarget,
+  type MediaId,
+  type MediaItem,
+  type MediaItemView,
+  type MediaTag,
+  type MediaUploadIntent,
+  type MediaUploadRequest,
+  type MediaVisibility,
+  type MigrationStats,
+  type NetworkPrivacy,
+  type PeerRating,
+  type PeerRatingInput,
+  type PeerSkillSummary,
+  type RatingEligibility,
+  type RatingUpdate,
+  type ResultConfirmationSummary,
+  type ResultVerdict,
+  type RosterMember,
+  type RosterMemberView,
+  type SeriesEdit,
+  type SeriesId,
+  type SeriesOccurrence,
+  type ShareMessage,
+  type SkillRating,
+  type UpcomingGamesAudience,
   type Appeal,
   type AuthUser,
   type Block,
@@ -118,6 +154,19 @@ import {
   mapVenueReport,
   type Row,
 } from './supabase/mappers';
+import {
+  mapConnectionView,
+  mapMediaItem,
+  mapMediaTag,
+  mapNetworkPrivacy,
+  mapOccurrence,
+  mapPeerRating,
+  mapRatingUpdate,
+  mapResolvedSeries,
+  mapRosterMember,
+  mapSeries,
+  mapSkillRating,
+} from './supabase/mappers15';
 
 export interface SupabaseAdapterOptions {
   url: string;
@@ -130,10 +179,19 @@ interface QueryResult {
 }
 
 const OTP_RESEND_SECONDS = 30;
+/** Private Storage bucket of the Media Vault (0191_storage_media.sql). */
+const MEDIA_BUCKET = 'media';
+/** Public web origin for invite links (`<origin>/invite/<token>`, `<origin>/invite/series/<token>`). */
+const WEB_ORIGIN =
+  process.env.EXPO_PUBLIC_WEB_ORIGIN ?? (Platform.OS === 'web' && typeof window !== 'undefined' ? window.location.origin : 'https://sporttalent.app');
 
-/** Phase 1.5 DataPort methods are stubbed until the adapters implement them (contract v3). */
-function phase15NotImplemented(method: string): StError {
-  return new StError('unavailable', `${method} is not implemented yet (Phase 1.5)`);
+/** The device's IANA zone (one-off games carry it for invite previews and share texts). */
+function deviceTimeZone(): string | null {
+  try {
+    return Intl.DateTimeFormat().resolvedOptions().timeZone || null;
+  } catch {
+    return null;
+  }
 }
 
 export class SupabaseAdapter implements DataPort, BlockedNamesExtension {
@@ -495,6 +553,7 @@ export class SupabaseAdapter implements DataPort, BlockedNamesExtension {
       p_women_only: input.womenOnly,
       p_team_count: input.teamCount,
       p_min_players: input.minPlayers ?? 2,
+      p_time_zone: deviceTimeZone(),
     });
     const [game] = await this.details([mapGameSummary(row)]);
     if (!game) throw new StError('unknown', 'created game not visible');
@@ -794,149 +853,390 @@ export class SupabaseAdapter implements DataPort, BlockedNamesExtension {
     await this.q(this.sb.from('notifications').update({ read_at: new Date().toISOString() }).eq('user_id', me).in('id', [...ids]));
   }
 
-  // -------------------------------------------------------------------------
-  // Phase 1.5 (contract v3): not implemented yet. Each stub rejects with
-  // StError('unavailable') so the DataPort contract holds until the app dev
-  // implements it.
-  // -------------------------------------------------------------------------
-  // SeriesApi
-  async createSeries(): Promise<never> {
-    throw phase15NotImplemented('createSeries');
+  // ===========================================================================
+  // Phase 1.5 (contract v3). RPCs from supabase/migrations/0100–0107 (errors `ST:<code>`):
+  //   series: create_series(p_input jsonb) · update_series(p_series_id, p_scope, p_occurrence_key, p_patch)
+  //           end_series · skip_occurrence · join_roster(p_token) · resolve_series_invite(p_token)
+  //           invite_to_roster · accept_roster_invite · remove_from_roster · leave_roster · set_always_in
+  //           reconfirm_auto_join · reads: series_views, series_occurrences, series_roster (RLS)
+  //   ratings: confirm_result · result_confirmation · game_rating_status · rating_eligibility
+  //            submit_peer_ratings · my_skill_ratings · my_peer_summary · game_skill_bands · rating_updates (RLS)
+  //   media: EF media-upload (intent) → signed PUT → EF media-process; game_gallery · venue_vault
+  //          tag_user · respond_tag · untag · set_visibility · delete_media · report_media · my_tag_requests
+  //   network: list_network · request_friend · respond_friend · remove_friend · get/set_network_privacy
+  //            friends_upcoming_games
+  //   invites: get_invite_preview · rotate_invite_link(p_kind, p_id) · migration_stats(p_kind, p_id)
+  // ===========================================================================
+
+  private async seriesRow(seriesId: SeriesId): Promise<GameSeries | null> {
+    const rows = await this.q<Row[]>(this.sb.from('series_views').select('*').eq('id', seriesId).limit(1));
+    return rows[0] ? mapSeries(rows[0]) : null;
   }
-  async getSeries(): Promise<never> {
-    throw phase15NotImplemented('getSeries');
+
+  private async seriesDetailOf(series: GameSeries, rosterCount?: number): Promise<GameSeriesDetail> {
+    const me = await this.uid();
+    const [hosts, occRows, mine, counted] = await Promise.all([
+      this.publicProfiles([series.hostId]),
+      this.q<Row[]>(this.sb.from('series_occurrences').select('*').eq('series_id', series.id).order('starts_at')),
+      this.q<Row[]>(this.sb.from('series_roster').select('*').eq('series_id', series.id).eq('user_id', me).limit(1)),
+      rosterCount === undefined
+        ? this.q<Row[]>(this.sb.from('series_views').select('roster_count').eq('id', series.id).limit(1))
+        : Promise.resolve([{ roster_count: rosterCount }] as Row[]),
+    ]);
+    const now = Date.now();
+    return {
+      series,
+      host: hosts.get(series.hostId) ?? this.fallbackProfile(series.hostId),
+      upcoming: occRows.map(mapOccurrence).filter((o) => o.status !== 'cancelled' && Date.parse(o.endsAt) > now),
+      rosterCount: Number(counted[0]?.roster_count ?? 0),
+      myRoster: mine[0] ? mapRosterMember(mine[0]) : null,
+      isHost: series.hostId === me,
+    };
   }
-  async listMySeries(): Promise<never> {
-    throw phase15NotImplemented('listMySeries');
+
+  async createSeries(input: GameSeriesCreateInput): Promise<GameSeriesDetail> {
+    await this.uid();
+    const row = await this.rpc<Row>('create_series', { p_input: input });
+    return this.seriesDetailOf(mapSeries(row), Number(row.roster_count ?? 0));
   }
-  async editSeries(): Promise<never> {
-    throw phase15NotImplemented('editSeries');
+
+  async getSeries(seriesId: SeriesId): Promise<GameSeriesDetail | null> {
+    await this.uid();
+    const s = await this.seriesRow(seriesId);
+    return s ? this.seriesDetailOf(s) : null;
   }
-  async endSeries(): Promise<never> {
-    throw phase15NotImplemented('endSeries');
+
+  async listMySeries(): Promise<GameSeries[]> {
+    const me = await this.uid();
+    const rows = await this.q<Row[]>(
+      this.sb.from('series_views').select('*').or(`host_id.eq.${me},my_roster_status.in.(regular,invited)`).order('title'),
+    );
+    return rows.map(mapSeries);
   }
-  async listOccurrences(): Promise<never> {
-    throw phase15NotImplemented('listOccurrences');
+
+  async editSeries(seriesId: SeriesId, edit: SeriesEdit): Promise<GameSeriesDetail> {
+    await this.uid();
+    const row = await this.rpc<Row>('update_series', {
+      p_series_id: seriesId,
+      p_scope: edit.scope,
+      p_occurrence_key: edit.occurrenceKey,
+      p_patch: edit.patch,
+    });
+    return this.seriesDetailOf(mapSeries(row), Number(row.roster_count ?? 0));
   }
-  async skipOccurrence(): Promise<never> {
-    throw phase15NotImplemented('skipOccurrence');
+
+  async endSeries(seriesId: SeriesId): Promise<GameSeries> {
+    await this.uid();
+    return mapSeries(await this.rpc<Row>('end_series', { p_series_id: seriesId }));
   }
-  async listRoster(): Promise<never> {
-    throw phase15NotImplemented('listRoster');
+
+  async listOccurrences(seriesId: SeriesId, options: { from?: IsoDateTime; to?: IsoDateTime } = {}): Promise<SeriesOccurrence[]> {
+    await this.uid();
+    let query = this.sb.from('series_occurrences').select('*').eq('series_id', seriesId);
+    if (options.from) query = query.gte('starts_at', options.from);
+    if (options.to) query = query.lt('starts_at', options.to);
+    const rows = await this.q<Row[]>(query.order('starts_at'));
+    return rows.map(mapOccurrence);
   }
-  async inviteToRoster(): Promise<never> {
-    throw phase15NotImplemented('inviteToRoster');
+
+  async skipOccurrence(seriesId: SeriesId, occurrenceKey: string): Promise<SeriesOccurrence> {
+    await this.uid();
+    return mapOccurrence(await this.rpc<Row>('skip_occurrence', { p_series_id: seriesId, p_occurrence_key: occurrenceKey }));
   }
-  async acceptRosterInvite(): Promise<never> {
-    throw phase15NotImplemented('acceptRosterInvite');
+
+  async listRoster(seriesId: SeriesId): Promise<RosterMemberView[]> {
+    await this.uid();
+    const rows = await this.q<Row[]>(this.sb.from('series_roster').select('*').eq('series_id', seriesId).order('joined_at'));
+    const members = rows.map(mapRosterMember);
+    const profiles = await this.publicProfiles(members.map((m) => m.userId));
+    return members.map((m) => ({ ...m, profile: profiles.get(m.userId) ?? this.fallbackProfile(m.userId) }));
   }
-  async removeFromRoster(): Promise<never> {
-    throw phase15NotImplemented('removeFromRoster');
+
+  async inviteToRoster(seriesId: SeriesId, userId: UserId): Promise<RosterMember> {
+    await this.uid();
+    return mapRosterMember(await this.rpc<Row>('invite_to_roster', { p_series_id: seriesId, p_user_id: userId }));
   }
-  async leaveRoster(): Promise<never> {
-    throw phase15NotImplemented('leaveRoster');
+
+  async acceptRosterInvite(seriesId: SeriesId): Promise<RosterMember> {
+    await this.uid();
+    return mapRosterMember(await this.rpc<Row>('accept_roster_invite', { p_series_id: seriesId }));
   }
-  async setAlwaysIn(): Promise<never> {
-    throw phase15NotImplemented('setAlwaysIn');
+
+  async removeFromRoster(seriesId: SeriesId, userId: UserId): Promise<RosterMember> {
+    await this.uid();
+    return mapRosterMember(await this.rpc<Row>('remove_from_roster', { p_series_id: seriesId, p_user_id: userId }));
   }
-  async reconfirmAutoJoin(): Promise<never> {
-    throw phase15NotImplemented('reconfirmAutoJoin');
+
+  async leaveRoster(seriesId: SeriesId): Promise<RosterMember> {
+    await this.uid();
+    return mapRosterMember(await this.rpc<Row>('leave_roster', { p_series_id: seriesId }));
   }
-  // RatingsApi
-  async confirmResult(): Promise<never> {
-    throw phase15NotImplemented('confirmResult');
+
+  async setAlwaysIn(seriesId: SeriesId, alwaysIn: boolean): Promise<RosterMember> {
+    await this.uid();
+    return mapRosterMember(await this.rpc<Row>('set_always_in', { p_series_id: seriesId, p_always_in: alwaysIn }));
   }
-  async getResultConfirmation(): Promise<never> {
-    throw phase15NotImplemented('getResultConfirmation');
+
+  async reconfirmAutoJoin(gameId: GameId, attending: boolean): Promise<Participant> {
+    await this.uid();
+    return mapParticipant(await this.rpc<Row>('reconfirm_auto_join', { p_game_id: gameId, p_attending: attending }));
   }
-  async getGameRatingStatus(): Promise<never> {
-    throw phase15NotImplemented('getGameRatingStatus');
+
+  // ---------------------------------------------------------------------------- RatingsApi
+
+  async confirmResult(gameId: GameId, verdict: ResultVerdict): Promise<ResultConfirmationSummary> {
+    await this.uid();
+    return this.rpc<ResultConfirmationSummary>('confirm_result', { p_game_id: gameId, p_verdict: verdict });
   }
-  async getRatingEligibility(): Promise<never> {
-    throw phase15NotImplemented('getRatingEligibility');
+
+  async getResultConfirmation(gameId: GameId): Promise<ResultConfirmationSummary | null> {
+    await this.uid();
+    return (await this.rpc<ResultConfirmationSummary | null>('result_confirmation', { p_game_id: gameId })) ?? null;
   }
-  async submitPeerRatings(): Promise<never> {
-    throw phase15NotImplemented('submitPeerRatings');
+
+  async getGameRatingStatus(gameId: GameId): Promise<GameRatingEligibility> {
+    await this.uid();
+    const j = await this.rpc<{ eligible?: unknown; reason?: unknown } | null>('game_rating_status', { p_game_id: gameId });
+    return j?.eligible === true ? { eligible: true, reason: null } : { eligible: false, reason: (j?.reason ?? 'no_result') as GameNotRatedReason };
   }
-  async listMySkillRatings(): Promise<never> {
-    throw phase15NotImplemented('listMySkillRatings');
+
+  async getRatingEligibility(gameId: GameId): Promise<RatingEligibility> {
+    await this.uid();
+    return this.rpc<RatingEligibility>('rating_eligibility', { p_game_id: gameId });
   }
-  async getMyPeerSummary(): Promise<never> {
-    throw phase15NotImplemented('getMyPeerSummary');
+
+  async submitPeerRatings(gameId: GameId, ratings: readonly PeerRatingInput[]): Promise<PeerRating[]> {
+    await this.uid();
+    const rows = await this.rpc<Row[]>('submit_peer_ratings', { p_game_id: gameId, p_ratings: ratings });
+    return (rows ?? []).map(mapPeerRating);
   }
-  async getSkillBands(): Promise<never> {
-    throw phase15NotImplemented('getSkillBands');
+
+  async listMySkillRatings(): Promise<SkillRating[]> {
+    await this.uid();
+    const rows = await this.rpc<Record<string, unknown>[] | null>('my_skill_ratings');
+    return (rows ?? []).map(mapSkillRating);
   }
-  // MediaApi
-  async listGameMedia(): Promise<never> {
-    throw phase15NotImplemented('listGameMedia');
+
+  async getMyPeerSummary(sport: SportId): Promise<PeerSkillSummary | null> {
+    await this.uid();
+    return (await this.rpc<PeerSkillSummary | null>('my_peer_summary', { p_sport: sport })) ?? null;
   }
-  async listVenueMedia(): Promise<never> {
-    throw phase15NotImplemented('listVenueMedia');
+
+  async getSkillBands(gameId: GameId): Promise<Readonly<Record<UserId, Stars>>> {
+    await this.uid();
+    return (await this.rpc<Record<UserId, Stars> | null>('game_skill_bands', { p_game_id: gameId })) ?? {};
   }
-  async createMediaUploadIntent(): Promise<never> {
-    throw phase15NotImplemented('createMediaUploadIntent');
+
+  /** Extension: the caller's weekly Glicko updates (RLS: own rows), oldest first. */
+  async listMyRatingHistory(sport?: SportId): Promise<RatingUpdate[]> {
+    const me = await this.uid();
+    let query = this.sb.from('rating_updates').select('*').eq('user_id', me);
+    if (sport) query = query.eq('sport', sport);
+    const rows = await this.q<Row[]>(query.order('period'));
+    return rows.map(mapRatingUpdate);
   }
-  async completeMediaUpload(): Promise<never> {
-    throw phase15NotImplemented('completeMediaUpload');
+
+  // ---------------------------------------------------------------------------- MediaApi
+
+  /** Signs display URLs (private `media` bucket) for items from `st_media_json` / `media_items`. */
+  private async mediaViews(rows: readonly Row[]): Promise<MediaItemView[]> {
+    const items = rows.map(mapMediaItem);
+    const paths = [...new Set(items.flatMap((m) => [m.storagePath, m.thumbnailPath]).filter((p): p is string => !!p && p.startsWith('media/')))];
+    const signed = new Map<string, string>();
+    if (paths.length) {
+      const { data } = await this.sb.storage.from(MEDIA_BUCKET).createSignedUrls(paths, 60 * 60);
+      for (const s of data ?? []) if (s.path && s.signedUrl) signed.set(s.path, s.signedUrl);
+    }
+    return items.map(({ thumbnailPath, pendingUserIds, acceptedTags, ...item }) => ({
+      ...item,
+      url: signed.get(item.storagePath) ?? '',
+      thumbnailUrl: thumbnailPath ? (signed.get(thumbnailPath) ?? null) : null,
+      acceptedTags,
+      ...(pendingUserIds.length ? { pendingUserIds } : null),
+    }));
   }
-  async tagMedia(): Promise<never> {
-    throw phase15NotImplemented('tagMedia');
+
+  private stripMedia(row: Row): MediaItem {
+    const { thumbnailPath: _t, pendingUserIds: _p, acceptedTags: _a, ...item } = mapMediaItem(row);
+    return item;
   }
-  async respondToMediaTag(): Promise<never> {
-    throw phase15NotImplemented('respondToMediaTag');
+
+  async listGameMedia(gameId: GameId): Promise<MediaItemView[]> {
+    await this.uid();
+    return this.mediaViews((await this.rpc<Row[]>('game_gallery', { p_game_id: gameId })) ?? []);
   }
-  async untagMe(): Promise<never> {
-    throw phase15NotImplemented('untagMe');
+
+  async listVenueMedia(venueId: VenueId, options: { from?: IsoDateTime; to?: IsoDateTime } = {}): Promise<MediaItemView[]> {
+    await this.uid();
+    return this.mediaViews((await this.rpc<Row[]>('venue_vault', { p_venue_id: venueId, p_from: options.from ?? null, p_to: options.to ?? null })) ?? []);
   }
-  async listMyTagRequests(): Promise<never> {
-    throw phase15NotImplemented('listMyTagRequests');
+
+  async createMediaUploadIntent(request: MediaUploadRequest): Promise<MediaUploadIntent> {
+    await this.uid();
+    return this.fn<MediaUploadIntent>('media-upload', { ...request });
   }
-  async setMediaVisibility(): Promise<never> {
-    throw phase15NotImplemented('setMediaVisibility');
+
+  /** Extension: sends the picked bytes to the signed upload URL. */
+  async uploadMediaObject(intent: MediaUploadIntent, file: { uri: string; blob?: Blob }): Promise<void> {
+    let res: Response;
+    try {
+      const body = file.blob ?? (await (await fetch(file.uri)).blob());
+      res = await fetch(intent.uploadUrl, { method: intent.method, headers: { ...intent.headers }, body });
+    } catch (e) {
+      throw toStError(e, 'network');
+    }
+    if (!res.ok) throw new StError(res.status === 413 ? 'validation' : 'unavailable', `upload failed (${res.status})`);
   }
-  async deleteMedia(): Promise<never> {
-    throw phase15NotImplemented('deleteMedia');
+
+  async completeMediaUpload(mediaId: MediaId): Promise<MediaItem> {
+    await this.uid();
+    await this.fn<{ mediaId: string; status: string }>('media-process', { mediaId });
+    const rows = await this.q<Row[]>(this.sb.from('media_items').select('*').eq('id', mediaId).limit(1));
+    if (!rows[0]) throw new StError('not_found');
+    return this.stripMedia(rows[0]);
   }
-  // NetworkApi
-  async listConnections(): Promise<never> {
-    throw phase15NotImplemented('listConnections');
+
+  async tagMedia(mediaId: MediaId, userIds: readonly UserId[]): Promise<MediaTag[]> {
+    await this.uid();
+    const rows = await this.rpc<Row[]>('tag_user', { p_media_id: mediaId, p_user_ids: userIds });
+    return (rows ?? []).map(mapMediaTag);
   }
-  async requestFriend(): Promise<never> {
-    throw phase15NotImplemented('requestFriend');
+
+  async respondToMediaTag(mediaId: MediaId, accept: boolean): Promise<MediaTag> {
+    await this.uid();
+    return mapMediaTag(await this.rpc<Row>('respond_tag', { p_media_id: mediaId, p_accept: accept }));
   }
-  async respondFriendRequest(): Promise<never> {
-    throw phase15NotImplemented('respondFriendRequest');
+
+  async untagMe(mediaId: MediaId, removeFromPublic: boolean): Promise<MediaTag> {
+    await this.uid();
+    return mapMediaTag(await this.rpc<Row>('untag', { p_media_id: mediaId, p_remove_from_public: removeFromPublic }));
   }
-  async removeFriend(): Promise<never> {
-    throw phase15NotImplemented('removeFriend');
+
+  async listMyTagRequests(): Promise<MediaTag[]> {
+    await this.uid();
+    return ((await this.rpc<Row[]>('my_tag_requests')) ?? []).map(mapMediaTag);
   }
-  async getNetworkPrivacy(): Promise<never> {
-    throw phase15NotImplemented('getNetworkPrivacy');
+
+  async setMediaVisibility(mediaId: MediaId, visibility: MediaVisibility): Promise<MediaItem> {
+    await this.uid();
+    return this.stripMedia(await this.rpc<Row>('set_visibility', { p_media_id: mediaId, p_visibility: visibility }));
   }
-  async setNetworkPrivacy(): Promise<never> {
-    throw phase15NotImplemented('setNetworkPrivacy');
+
+  async deleteMedia(mediaId: MediaId): Promise<void> {
+    await this.uid();
+    await this.rpc('delete_media', { p_media_id: mediaId });
   }
-  async listFriendsUpcomingGames(): Promise<never> {
-    throw phase15NotImplemented('listFriendsUpcomingGames');
+
+  /** Extension: `report_media` (one report per person; `already_reported`). */
+  async reportMedia(mediaId: MediaId, reason: string, note?: string): Promise<void> {
+    await this.uid();
+    await this.rpc('report_media', { p_media_id: mediaId, p_reason: reason, p_note: note?.trim() || null });
   }
-  // InviteApi
-  async getInviteLink(): Promise<never> {
-    throw phase15NotImplemented('getInviteLink');
+
+  /** Extension: one visible item (RLS `media_items_read`), for tag-request previews. */
+  async getMediaItem(mediaId: MediaId): Promise<MediaItemView | null> {
+    await this.uid();
+    const rows = await this.q<Row[]>(this.sb.from('media_items').select('*').eq('id', mediaId).limit(1));
+    if (!rows[0]) return null;
+    const [view] = await this.mediaViews(rows);
+    return view ?? null;
   }
-  async rotateInviteLink(): Promise<never> {
-    throw phase15NotImplemented('rotateInviteLink');
+
+  // ---------------------------------------------------------------------------- NetworkApi
+
+  async listConnections(filter: 'all' | 'friends' | 'played_with' | 'requests' = 'all'): Promise<ConnectionView[]> {
+    await this.uid();
+    const rows = await this.rpc<Record<string, unknown>[]>('list_network', { p_filter: filter });
+    return (rows ?? []).map(mapConnectionView);
   }
-  async getShareMessage(): Promise<never> {
-    throw phase15NotImplemented('getShareMessage');
+
+  async requestFriend(userId: UserId): Promise<ConnectionView> {
+    await this.uid();
+    return mapConnectionView(await this.rpc<Record<string, unknown>>('request_friend', { p_user_id: userId }));
   }
-  async resolveSeriesInvite(): Promise<never> {
-    throw phase15NotImplemented('resolveSeriesInvite');
+
+  async respondFriendRequest(userId: UserId, accept: boolean): Promise<ConnectionView> {
+    await this.uid();
+    return mapConnectionView(await this.rpc<Record<string, unknown>>('respond_friend', { p_user_id: userId, p_accept: accept }));
   }
-  async joinSeriesViaInvite(): Promise<never> {
-    throw phase15NotImplemented('joinSeriesViaInvite');
+
+  async removeFriend(userId: UserId): Promise<void> {
+    await this.uid();
+    await this.rpc('remove_friend', { p_user_id: userId });
   }
-  async getMigrationStats(): Promise<never> {
-    throw phase15NotImplemented('getMigrationStats');
+
+  async getNetworkPrivacy(): Promise<NetworkPrivacy> {
+    await this.uid();
+    return mapNetworkPrivacy(await this.rpc<Record<string, unknown>>('get_network_privacy'));
+  }
+
+  async setNetworkPrivacy(audience: UpcomingGamesAudience): Promise<NetworkPrivacy> {
+    await this.uid();
+    return mapNetworkPrivacy(await this.rpc<Record<string, unknown>>('set_network_privacy', { p_audience: audience }));
+  }
+
+  async listFriendsUpcomingGames(): Promise<FriendUpcomingGame[]> {
+    await this.uid();
+    const rows = await this.rpc<{ friend: PublicProfile; game: Row }[]>('friends_upcoming_games');
+    return (rows ?? []).map((r) => ({ friend: r.friend, game: mapGameSummary(r.game) }));
+  }
+
+  // ---------------------------------------------------------------------------- InviteApi
+
+  private async inviteToken(target: InviteTarget): Promise<{ token: string; createdAt: IsoDateTime }> {
+    const rows =
+      target.kind === 'game'
+        ? await this.q<Row[]>(this.sb.from('game_views').select('invite_token, created_at').eq('id', target.gameId).limit(1))
+        : await this.q<Row[]>(this.sb.from('series_views').select('invite_token, created_at').eq('id', target.seriesId).limit(1));
+    const row = rows[0];
+    if (!row) throw new StError('not_found');
+    if (!row.invite_token) throw new StError('forbidden', 'host only');
+    return { token: String(row.invite_token), createdAt: String(row.created_at) };
+  }
+
+  private async linkFor(target: InviteTarget, token: string, createdAt: IsoDateTime): Promise<InviteLink> {
+    const preview = await this.rpc<InvitePreview | null>('get_invite_preview', { p_token: token });
+    if (!preview) throw new StError('game_not_open');
+    return { target, token, url: inviteUrl(WEB_ORIGIN, target, token), preview, createdAt, rotatedAt: null };
+  }
+
+  async getInviteLink(target: InviteTarget): Promise<InviteLink> {
+    await this.uid();
+    const { token, createdAt } = await this.inviteToken(target);
+    return this.linkFor(target, token, createdAt);
+  }
+
+  async rotateInviteLink(target: InviteTarget): Promise<InviteLink> {
+    await this.uid();
+    const id = target.kind === 'game' ? target.gameId : target.seriesId;
+    const token = await this.rpc<string>('rotate_invite_link', { p_kind: target.kind, p_id: id });
+    const link = await this.linkFor(target, token, new Date().toISOString());
+    return { ...link, rotatedAt: new Date().toISOString() };
+  }
+
+  async getShareMessage(target: InviteTarget, locale: Locale): Promise<ShareMessage> {
+    const link = await this.getInviteLink(target);
+    return buildShareMessage(link.preview, locale, link.url);
+  }
+
+  async resolveSeriesInvite(inviteToken: string): Promise<GameSeriesDetail | null> {
+    await this.uid();
+    const j = await this.rpc<Record<string, unknown> | null>('resolve_series_invite', { p_token: inviteToken });
+    if (!j) return null;
+    const visible = await this.seriesRow(String(j.id));
+    const series = visible ?? mapResolvedSeries(j);
+    const detail = await this.seriesDetailOf(series, Number(j.rosterCount ?? 0));
+    return detail;
+  }
+
+  async joinSeriesViaInvite(inviteToken: string): Promise<RosterMember> {
+    await this.uid();
+    return mapRosterMember(await this.rpc<Row>('join_roster', { p_token: inviteToken }));
+  }
+
+  async getMigrationStats(target: InviteTarget): Promise<MigrationStats> {
+    await this.uid();
+    const id = target.kind === 'game' ? target.gameId : target.seriesId;
+    return this.rpc<MigrationStats>('migration_stats', { p_kind: target.kind, p_id: id });
   }
 }
