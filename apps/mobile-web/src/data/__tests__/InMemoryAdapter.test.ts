@@ -87,4 +87,28 @@ describe('InMemoryAdapter', () => {
     expect(third.mutedUntil).not.toBeNull();
     await expect(a.sendMessage('g-tlv-1', 'hello', 'c6')).rejects.toMatchObject({ code: 'chat_muted' });
   });
+
+  it('createGame validates minPlayers and the blocked list carries names', async () => {
+    const { a } = await signedIn('+972500000001');
+    const base = {
+      sport: 'football' as const,
+      title: 'Min test',
+      visibility: 'public' as const,
+      venueId: 'v-tlv-yarkon',
+      hideExactLocation: false,
+      capacity: 10,
+      startsAt: new Date(NOW + 30 * 3600_000).toISOString(),
+      endsAt: new Date(NOW + 31.5 * 3600_000).toISOString(),
+      depositMinor: 0,
+      currency: 'ILS',
+      womenOnly: false,
+      teamCount: 2,
+    };
+    await expect(a.createGame({ ...base, minPlayers: 11 })).rejects.toMatchObject({ code: 'validation' });
+    expect((await a.createGame({ ...base, minPlayers: 8 })).minPlayers).toBe(8);
+    await a.blockUser('u-tlv-2');
+    const named = await a.listBlockedNamed();
+    expect(named).toEqual([expect.objectContaining({ blockedId: 'u-tlv-2', displayName: expect.any(String) })]);
+    expect(named[0]!.displayName).not.toBe('');
+  });
 });

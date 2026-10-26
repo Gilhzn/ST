@@ -4,8 +4,9 @@
  * it and the first to accept wins. Countdown is informational (live region).
  */
 import type { Participant } from '@st/domain';
-import { Button, Card, isolate, Row, Stack, Text } from '@st/ui';
+import { Button, isolate, Row, Stack, Text } from '@st/ui';
 
+import { Card } from '@/components/CardView';
 import { Icon } from '@/components/Icon';
 import { InlineError } from '@/components/States';
 import { useToast } from '@/components/Toast';

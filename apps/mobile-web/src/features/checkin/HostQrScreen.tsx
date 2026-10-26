@@ -5,11 +5,12 @@
  * action (rotates the secret so screenshots die), and manual marking (host check-in).
  */
 import { DEFAULT_TRUST_CONFIG, type QrToken } from '@st/domain';
-import { BidiText, Button, Card, isolate, radius, Row, Stack, Text, useTheme } from '@st/ui';
+import { BidiText, Button, isolate, radius, Row, Stack, Text, useTheme } from '@st/ui';
 import { useCallback, useEffect, useState } from 'react';
 import { useWindowDimensions, View } from 'react-native';
 import QRCode from 'react-native-qrcode-svg';
 
+import { Card } from '@/components/CardView';
 import { Screen } from '@/components/Screen';
 import { Banner, ErrorView, InlineError, Skeleton } from '@/components/States';
 import { useToast } from '@/components/Toast';

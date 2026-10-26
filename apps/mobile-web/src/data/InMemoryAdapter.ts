@@ -87,6 +87,7 @@ import {
   type Effect,
 } from '@st/domain';
 
+import type { BlockedEntry, BlockedNamesExtension } from './blocked';
 import type { DataPort, ListMessagesOptions, NearbyGamesOptions, OtpSent, RequestJoinOptions } from './DataPort';
 import { toStError } from './errors';
 import {
@@ -145,7 +146,7 @@ function fail(code: ConstructorParameters<typeof StError>[0], message?: string):
   throw new StError(code, message);
 }
 
-export class InMemoryAdapter implements DataPort {
+export class InMemoryAdapter implements DataPort, BlockedNamesExtension {
   private state: MockState;
   private session: UserId | null = null;
   private readonly authListeners = new Set<(user: AuthUser | null) => void>();
@@ -811,6 +812,8 @@ export class InMemoryAdapter implements DataPort {
       if (!Number.isInteger(input.teamCount) || input.teamCount < 1 || input.teamCount > 16 || input.teamCount > input.capacity) {
         fail('validation', 'teamCount');
       }
+      const minPlayers = input.minPlayers ?? 2;
+      if (!Number.isInteger(minPlayers) || minPlayers < 2 || minPlayers > input.capacity) fail('validation', 'minPlayers');
       const start = toEpochMs(input.startsAt);
       const end = toEpochMs(input.endsAt);
       if (!Number.isFinite(start) || !Number.isFinite(end) || end <= start || end - start > DAY_MS) fail('validation', 'time');
@@ -846,7 +849,7 @@ export class InMemoryAdapter implements DataPort {
         depositForfeitTo: input.depositForfeitTo ?? 'pot',
         womenOnly: input.womenOnly,
         status: 'scheduled',
-        minPlayers: input.minPlayers ?? 2,
+        minPlayers,
         teamCount: input.teamCount,
         inviteToken: `inv-${this.state.seq}-${Math.floor(now / 1000).toString(36)}`,
         createdAt: toIso(now),
@@ -1289,6 +1292,20 @@ export class InMemoryAdapter implements DataPort {
     return this.run(() => {
       const me = this.me();
       return this.state.blocks.filter((b) => b.blockerId === me);
+    });
+  }
+
+  /** {@link BlockedNamesExtension}: the blocker's own list, labelled with names. */
+  listBlockedNamed(): Promise<BlockedEntry[]> {
+    return this.run(() => {
+      const me = this.me();
+      return this.state.blocks
+        .filter((b) => b.blockerId === me)
+        .sort((a, b) => b.createdAt.localeCompare(a.createdAt))
+        .map((b) => {
+          const p = this.state.users.get(b.blockedId)?.profile;
+          return { ...b, displayName: p?.displayName ?? null, avatarUrl: p?.avatarUrl ?? null };
+        });
     });
   }
 

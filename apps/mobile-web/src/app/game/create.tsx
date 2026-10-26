@@ -41,6 +41,9 @@ const CAPACITY: Record<SportId, { min: number; max: number; def: number; teams: 
   running: { min: 2, max: 50, def: 10, teams: 1 },
   volleyball: { min: 4, max: 14, def: 12, teams: 2 },
 };
+/** Minimum players for the game to go ahead (PRD GAME-001), clamped to 2..capacity. */
+const MIN_PLAYERS: Record<SportId, number> = { football: 10, basketball: 6, tennis: 2, padel: 4, running: 2, volleyball: 8 };
+const clampMin = (n: number, capacity: number) => Math.max(2, Math.min(capacity, n));
 const DEPOSIT_MIN = 1;
 const DEPOSIT_MAX = 200;
 
@@ -56,6 +59,8 @@ interface Draft {
   time: string;
   duration: number;
   capacity: number;
+  /** Null until the host changes it: follows the sport default. */
+  minPlayers: number | null;
   visibility: 'public' | 'private';
   womenOnly: boolean;
   depositOn: boolean;
@@ -89,6 +94,7 @@ const EMPTY: Draft = {
   time: defaultTime(),
   duration: 90,
   capacity: 10,
+  minPlayers: null,
   visibility: 'public',
   womenOnly: false,
   depositOn: false,
@@ -144,6 +150,7 @@ export default function CreateGameScreen() {
   const venue = (venues.data ?? []).find((v) => v.id === draft.venueId) ?? preselected.data ?? null;
   const currency = currencyForCountry(venue?.countryCode ?? profile?.countryCode ?? null);
   const cap = draft.sport ? CAPACITY[draft.sport] : CAPACITY.football;
+  const minPlayers = clampMin(draft.minPlayers ?? (draft.sport ? MIN_PLAYERS[draft.sport] : 2), draft.capacity);
   const startsAt = startIso(draft.day, draft.time);
   const endsAt = new Date(Date.parse(startsAt) + draft.duration * 60_000).toISOString();
   const depositMajor = Number(draft.deposit.replace(',', '.'));
@@ -186,6 +193,7 @@ export default function CreateGameScreen() {
       location,
       hideExactLocation: draft.hideExact,
       capacity: draft.capacity,
+      minPlayers,
       startsAt,
       endsAt,
       depositMinor,
@@ -330,7 +338,7 @@ export default function CreateGameScreen() {
                 label={t(`common:sports.${s}`)}
                 selectionRole="radio"
                 selected={draft.sport === s}
-                onToggle={() => update({ sport: s, capacity: CAPACITY[s].def, teamCount: CAPACITY[s].teams, venueId: draft.venueId })}
+                onToggle={() => update({ sport: s, capacity: CAPACITY[s].def, minPlayers: null, teamCount: CAPACITY[s].teams, venueId: draft.venueId })}
               />
             ))}
           </Row>
@@ -449,6 +457,19 @@ export default function CreateGameScreen() {
             </Text>
           </Stack>
           <Stack gap="xs">
+            <Text variant="label">{t('games:wizard.who.minPlayers')}</Text>
+            <Row gap="md">
+              <StepperButton testID="game.create.minPlayers.dec" icon="minus" label={t('games:wizard.who.fewerMin')} disabled={minPlayers <= 2} onPress={() => update({ minPlayers: minPlayers - 1 })} />
+              <Text variant="numeric" testID="game.create.minPlayers.value" accessibilityLiveRegion="polite">
+                {isolate(String(minPlayers), 'ltr')}
+              </Text>
+              <StepperButton testID="game.create.minPlayers.inc" icon="plus" label={t('games:wizard.who.moreMin')} disabled={minPlayers >= draft.capacity} onPress={() => update({ minPlayers: minPlayers + 1 })} />
+            </Row>
+            <Text variant="caption" color="textTertiary">
+              {t('games:wizard.who.minPlayersHelp', { count: minPlayers })}
+            </Text>
+          </Stack>
+          <Stack gap="xs">
             <Text variant="label">{t('games:wizard.who.visibility')}</Text>
             <SelectableRow testID="game.create.visibility.public" selected={draft.visibility === 'public'} onPress={() => update({ visibility: 'public' })} title={t('games:wizard.who.public')} subtitle={t('games:wizard.who.publicHelp')} icon="earth" />
             <SelectableRow testID="game.create.visibility.private" selected={draft.visibility === 'private'} onPress={() => update({ visibility: 'private' })} title={t('games:wizard.who.private')} subtitle={t('games:wizard.who.privateHelp')} icon="lock-outline" />
@@ -506,7 +527,7 @@ export default function CreateGameScreen() {
           />
           <ReviewRow
             label={t('games:wizard.stepName.who')}
-            value={t('games:wizard.review.whoValue', { capacity: draft.capacity, visibility: t(`games:wizard.who.${draft.visibility}`) })}
+            value={t('games:wizard.review.whoValue', { capacity: draft.capacity, min: minPlayers, visibility: t(`games:wizard.who.${draft.visibility}`) })}
             onEdit={() => goTo(3)}
           />
           <ReviewRow

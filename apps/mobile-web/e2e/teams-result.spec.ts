@@ -39,11 +39,13 @@ test("host enters the result while the window is open", async ({ page }) => {
   expect(errors, errors.join("\n")).toEqual([]);
 });
 
-test("result entry is read-only after the window closes", async ({ page }) => {
+test("no result entry once the window has closed", async ({ page }) => {
+  const errors = trackErrors(page);
   await signIn(page, DANA);
   await page.getByTestId("nav.tab.games").click();
   await page.getByTestId("games.segment.past").click();
-  await page.getByTestId("games.card.g-tlv-tlv-0").or(page.getByTestId("games.card.g-tlv-0")).first().click();
-  await expect(page).toHaveURL(/\/game\/g-tlv-0$/);
-  await page.goto("/game/g-tlv-0/result").catch(() => undefined);
+  await page.getByTestId("games.card.g-tlv-0").click(); // ended ~48 h ago
+  await expect(page.getByTestId("game.title")).toBeVisible();
+  await expect(page.getByTestId("game.result")).toHaveCount(0);
+  expect(errors, errors.join("\n")).toEqual([]);
 });

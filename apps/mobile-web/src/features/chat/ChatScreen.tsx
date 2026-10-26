@@ -18,13 +18,14 @@ import {
   type StError,
   type UserReportCategory,
 } from '@st/domain';
-import { BidiText, Button, Card, isolate, radius, Row, sizing, spacing, Stack, Text, TextField, useTheme } from '@st/ui';
+import { BidiText, Button, isolate, radius, Row, sizing, spacing, Stack, Text, TextField, useTheme } from '@st/ui';
 import * as Crypto from 'expo-crypto';
 import { router } from 'expo-router';
 import { useCallback, useEffect, useMemo, useState, type ReactNode } from 'react';
 import { FlatList, KeyboardAvoidingView, Modal, Platform, Pressable, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
+import { Card } from '@/components/CardView';
 import { ChoiceChip } from '@/components/ChoiceChip';
 import { ConfirmDialog } from '@/components/ConfirmDialog';
 import { Icon } from '@/components/Icon';

@@ -6,10 +6,11 @@
  * timeline. Never only red; always a next step.
  */
 import { canDispute, type Appeal } from '@st/domain';
-import { Button, Card, Divider, isolate, Row, Stack, StatusBadge, Text, TextField } from '@st/ui';
+import { Button, Divider, isolate, Row, Stack, StatusBadge, Text, TextField } from '@st/ui';
 import { useState } from 'react';
 import { View } from 'react-native';
 
+import { Card } from '@/components/CardView';
 import { ChoiceChip } from '@/components/ChoiceChip';
 import { Screen } from '@/components/Screen';
 import { Banner, ErrorView, InlineError, Skeleton } from '@/components/States';

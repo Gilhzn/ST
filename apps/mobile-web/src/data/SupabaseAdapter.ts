@@ -17,7 +17,7 @@
  *   RPC  report_venue(p_venue_id, p_reason, p_note)
  *   RPC  create_game(p_sport, p_title, p_notes, p_visibility, p_venue_id, p_lat, p_lng, p_hide_exact_location,
  *                    p_capacity, p_starts_at, p_ends_at, p_deposit_minor, p_currency, p_deposit_forfeit_to,
- *                    p_women_only, p_team_count)                      → game_views row
+ *                    p_women_only, p_team_count, p_min_players)       → game_views row
  *   RPC  cancel_game(p_game_id) · resolve_invite(p_token)               → game_views row | null
  *   RPC  request_join(p_game_id, p_position, p_invite_token)          → participant row
  *   RPC  decide_join(p_game_id, p_user_id, p_decision) · remove_participant(p_game_id, p_user_id)
@@ -96,6 +96,7 @@ import {
   type VenueReportReason,
 } from '@st/domain';
 
+import type { BlockedEntry, BlockedNameCache, BlockedNamesExtension } from './blocked';
 import type { DataPort, ListMessagesOptions, NearbyGamesOptions, OtpSent, RequestJoinOptions } from './DataPort';
 import { isErrorCode, toStError } from './errors';
 import {
@@ -130,7 +131,7 @@ interface QueryResult {
 
 const OTP_RESEND_SECONDS = 30;
 
-export class SupabaseAdapter implements DataPort {
+export class SupabaseAdapter implements DataPort, BlockedNamesExtension {
   private readonly sb: SupabaseClient;
   private readonly channels = new Map<GameId, { channel: RealtimeChannel; listeners: Set<(e: ChatEvent) => void> }>();
 
@@ -488,6 +489,7 @@ export class SupabaseAdapter implements DataPort {
       p_deposit_forfeit_to: input.depositForfeitTo ?? 'pot',
       p_women_only: input.womenOnly,
       p_team_count: input.teamCount,
+      p_min_players: input.minPlayers ?? 2,
     });
     const [game] = await this.details([mapGameSummary(row)]);
     if (!game) throw new StError('unknown', 'created game not visible');
@@ -616,13 +618,50 @@ export class SupabaseAdapter implements DataPort {
   }
 
   async blockUser(userId: UserId): Promise<void> {
-    await this.uid();
+    const me = await this.uid();
+    // public_profiles hides blocked pairs, so remember the name while it is still visible.
+    const profile = (await this.publicProfiles([userId]).catch(() => new Map<UserId, PublicProfile>())).get(userId);
     await this.rpc('block_user', { p_user_id: userId });
+    if (profile) await this.updateBlockedNames(me, (c) => ({ ...c, [userId]: { displayName: profile.displayName, avatarUrl: profile.avatarUrl } }));
   }
 
   async unblockUser(userId: UserId): Promise<void> {
-    await this.uid();
+    const me = await this.uid();
     await this.rpc('unblock_user', { p_user_id: userId });
+    await this.updateBlockedNames(me, (c) => {
+      const next = { ...c };
+      delete next[userId];
+      return next;
+    });
+  }
+
+  /** {@link BlockedNamesExtension}: names come from this device's cache (see `blocked.ts`). */
+  async listBlockedNamed(): Promise<BlockedEntry[]> {
+    const me = await this.uid();
+    const [blocks, cache] = await Promise.all([this.listBlocked(), this.readBlockedNames(me)]);
+    return blocks.map((b) => ({ ...b, displayName: cache[b.blockedId]?.displayName ?? null, avatarUrl: cache[b.blockedId]?.avatarUrl ?? null }));
+  }
+
+  private blockedNamesKey(me: UserId): string {
+    return `st.blockedNames.${me}`;
+  }
+
+  private async readBlockedNames(me: UserId): Promise<BlockedNameCache> {
+    try {
+      const raw = await AsyncStorage.getItem(this.blockedNamesKey(me));
+      const parsed: unknown = raw ? JSON.parse(raw) : null;
+      return parsed && typeof parsed === 'object' ? (parsed as BlockedNameCache) : {};
+    } catch {
+      return {};
+    }
+  }
+
+  private async updateBlockedNames(me: UserId, fn: (cache: BlockedNameCache) => BlockedNameCache): Promise<void> {
+    try {
+      await AsyncStorage.setItem(this.blockedNamesKey(me), JSON.stringify(fn(await this.readBlockedNames(me))));
+    } catch {
+      // Device cache only; the block itself already succeeded.
+    }
   }
 
   async listBlocked(): Promise<Block[]> {

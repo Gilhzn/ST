@@ -70,11 +70,15 @@
       },
       "who": {
         "fewer": "Fewer players",
-        "more": "More players"
+        "more": "More players",
+        "minPlayers": "Minimum players",
+        "minPlayersHelp": "{count, plural, one {The game goes ahead with at least # player.} other {The game goes ahead with at least # players.}}",
+        "fewerMin": "Lower the minimum",
+        "moreMin": "Raise the minimum"
       },
       "review": {
         "whenValue": "{start} · {duration}",
-        "whoValue": "{capacity, plural, one {# player} other {# players}} · {visibility}",
+        "whoValue": "{capacity, plural, one {# player} other {# players}} (min. {min}) · {visibility}",
         "noDeposit": "No deposit",
         "editA11y": "Edit {section}"
       },

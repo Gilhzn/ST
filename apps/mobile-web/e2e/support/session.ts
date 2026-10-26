@@ -30,7 +30,17 @@ export async function signIn(page: Page, who: { country: string; national: strin
   await expect(page).toHaveURL(/\/map$/);
 }
 
+/** Pops pushed screens (game details, check-in, …) until the tab bar is reachable. */
+export async function backToTabs(page: Page) {
+  const tab = page.getByTestId("nav.tab.profile");
+  for (let i = 0; i < 5 && !(await tab.isVisible()); i++) {
+    await page.getByTestId("nav.back").filter({ visible: true }).last().click();
+  }
+  await expect(tab).toBeVisible();
+}
+
 export async function signOut(page: Page) {
+  await backToTabs(page);
   await page.getByTestId("nav.tab.profile").click();
   await page.getByTestId("profile.settings").click();
   await page.getByTestId("settings.signOut").click();

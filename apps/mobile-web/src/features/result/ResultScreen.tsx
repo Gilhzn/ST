@@ -5,11 +5,12 @@
  * game ends and after the window closes it is read-only.
  */
 import { DEFAULT_TRUST_CONFIG, canSubmitResult } from '@st/domain';
-import { BidiText, Button, Card, isolate, Row, Stack, Text, TextField, useTheme } from '@st/ui';
+import { BidiText, Button, isolate, Row, Stack, Text, TextField, useTheme } from '@st/ui';
 import { router } from 'expo-router';
 import { useEffect, useState } from 'react';
 import { Pressable } from 'react-native';
 
+import { Card } from '@/components/CardView';
 import { Icon } from '@/components/Icon';
 import { Screen } from '@/components/Screen';
 import { Banner, ErrorView, InlineError, Skeleton } from '@/components/States';

@@ -6,10 +6,11 @@
  * the server offers. Spoofing signals only route to another way.
  */
 import { DEFAULT_TRUST_CONFIG, isCheckInOpen, type CheckInMethod, type CheckInVerdict, type GpsSample, type ParticipantView } from '@st/domain';
-import { BidiText, Button, Card, Divider, isolate, Row, Stack, Text, TextField } from '@st/ui';
+import { BidiText, Button, Divider, isolate, Row, Stack, Text, TextField } from '@st/ui';
 import { useEffect, useRef, useState } from 'react';
 import { AccessibilityInfo } from 'react-native';
 
+import { Card } from '@/components/CardView';
 import { Icon } from '@/components/Icon';
 import { Screen } from '@/components/Screen';
 import { Banner, ErrorView, InlineError, Skeleton } from '@/components/States';
