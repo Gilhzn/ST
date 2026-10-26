@@ -17,7 +17,8 @@
       "good": "信号强",
       "fair": "信号一般",
       "poor": "信号弱"
-    }
+    },
+    "titleIdle": "你到场地了吗？"
   },
   "success": {
     "title": "签到成功",
@@ -55,8 +56,9 @@
     "codeLabel": "6 位数字码",
     "scanInstead": "改为扫描二维码",
     "submit": "用验证码签到",
-    "tokenHint": "请输入组织者二维码下方显示的验证码。",
-    "tokenLabel": "签到码"
+    "tokenHint": "无法扫码？请主办人复制签到码发给你，然后粘贴到这里。",
+    "tokenLabel": "签到码",
+    "tokenPlaceholder": "粘贴代码"
   },
   "peer": {
     "ask": "请队友确认",
@@ -96,7 +98,7 @@
   "host": {
     "title": "签到码",
     "instruction": "玩家扫描此二维码即可签到。二维码每{seconds, plural, other {# 秒}}刷新一次。",
-    "fallbackCode": "或输入此验证码",
+    "fallbackCode": "无法扫码？复制代码并发送",
     "counter": "已签到 {checkedIn}/{total}",
     "markManually": "手动标记玩家",
     "manualTitle": "标记玩家",

@@ -187,7 +187,8 @@
       "body": "アカウントの主催機能が一時停止されています。理由と終了日をご確認ください。",
       "action": "詳細を見る"
     },
-    "defaultTitle": "{sport}の試合"
+    "defaultTitle": "{sport}の試合",
+    "reviewCta": "確認する"
   },
   "details": {
     "hiddenLocation": "正確な場所は、主催者が承認したあとに共有されます",
@@ -250,7 +251,7 @@
       "checkInOpens": "チェックインは{time}に開始",
       "chat": "チャット",
       "directions": "経路",
-      "cantMakeIt": "参加できなくなった",
+      "cantMakeIt": "参加をやめる",
       "leaveWaitlist": "キャンセル待ちをやめる",
       "waitlistPosition": "キャンセル待ちの{position}番目です。",
       "requestHint": "主催者にリクエストを送信します"

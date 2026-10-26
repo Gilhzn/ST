@@ -187,7 +187,8 @@
       "body": "L’organisation de parties est suspendue sur ton compte. Consulte la raison et la date de fin.",
       "action": "Voir les détails"
     },
-    "defaultTitle": "Partie de {sport}"
+    "defaultTitle": "Partie de {sport}",
+    "reviewCta": "Vérifier"
   },
   "details": {
     "hiddenLocation": "L’endroit exact est partagé une fois que l’organisateur t’a validé",
@@ -250,7 +251,7 @@
       "checkInOpens": "Le check-in ouvre {time}",
       "chat": "Discussion",
       "directions": "Itinéraire",
-      "cantMakeIt": "Je ne peux pas venir",
+      "cantMakeIt": "Me désister",
       "leaveWaitlist": "Quitter la liste d’attente",
       "waitlistPosition": "Tu es n° {position} sur la liste d’attente.",
       "requestHint": "Envoie une demande à l’organisateur"

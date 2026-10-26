@@ -187,7 +187,8 @@
       "body": "你的账号已暂停组织比赛。请查看原因和结束时间。",
       "action": "查看详情"
     },
-    "defaultTitle": "{sport}比赛"
+    "defaultTitle": "{sport}比赛",
+    "reviewCta": "检查"
   },
   "details": {
     "hiddenLocation": "组织者批准你加入后，会分享确切地点",

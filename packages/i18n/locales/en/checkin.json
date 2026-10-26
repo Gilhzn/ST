@@ -17,7 +17,8 @@
       "good": "Strong signal",
       "fair": "Fair signal",
       "poor": "Weak signal"
-    }
+    },
+    "titleIdle": "Are you at the venue?"
   },
   "success": {
     "title": "You’re checked in",
@@ -55,8 +56,9 @@
     "codeLabel": "6-digit code",
     "scanInstead": "Scan the QR code instead",
     "submit": "Check in with code",
-    "tokenHint": "Type the code shown under the host’s QR code.",
-    "tokenLabel": "Check-in code"
+    "tokenHint": "Can’t scan? Ask the host to copy the check-in code and send it to you, then paste it here.",
+    "tokenLabel": "Check-in code",
+    "tokenPlaceholder": "Paste the code"
   },
   "peer": {
     "ask": "Ask a teammate",
@@ -96,7 +98,7 @@
   "host": {
     "title": "Check-in code",
     "instruction": "Players scan this to check in. The code refreshes every {seconds, plural, one {# second} other {# seconds}}.",
-    "fallbackCode": "Or enter this code",
+    "fallbackCode": "Can’t scan? Copy the code and send it",
     "counter": "{checkedIn} of {total} checked in",
     "markManually": "Mark players manually",
     "manualTitle": "Mark players",

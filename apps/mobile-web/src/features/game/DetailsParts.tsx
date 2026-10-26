@@ -26,7 +26,7 @@ import {
   type PillTone,
 } from '@st/ui';
 import { useState, type ReactNode } from 'react';
-import { Pressable, View } from 'react-native';
+import { Platform, Pressable, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { capitalize } from '@/components/GameCard';
@@ -318,13 +318,14 @@ export function PlayersSection({ game, players, hint }: { game: GameDetail; play
         testID="game.players.toggle"
         role="button"
         aria-expanded={open}
-        aria-label={t('games:details.players.toggle', { count: players.length })}
+        aria-label={Platform.OS === 'web' ? undefined : t('games:details.players.toggle', { count: players.length })}
         onPress={() => {
           Haptics.selection();
           setOpen((o) => !o);
         }}
         style={({ pressed }) => ({ borderRadius: radius.lg, opacity: pressed ? 0.8 : 1 })}
       >
+        <View>
         <SectionTitle
           title={t('games:details.sections.players')}
           count={isolate(`${game.approvedCount}/${game.capacity}`, 'ltr')}
@@ -341,6 +342,7 @@ export function PlayersSection({ game, players, hint }: { game: GameDetail; play
             </View>
           }
         />
+        </View>
       </Pressable>
       {open ? (
         <ListGroup>

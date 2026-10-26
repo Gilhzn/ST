@@ -6,6 +6,7 @@ import type { IconName } from "../icons/registry";
 import { useTheme } from "../theme";
 import { borderWidth, radius, sizing, spacing, type SportKey } from "../tokens";
 import { Text } from "./Text";
+import { showFocusRing } from "../focusVisible";
 
 export type ListItemLeadTone = "brand" | "neutral" | "success" | "warning" | "danger" | "info";
 
@@ -122,8 +123,8 @@ export function ListItem({
     );
   }
   return (
-    <Pressable role={role ?? "button"} aria-label={rest["aria-label"] ?? (value ? `${title}, ${value}` : title)} aria-disabled={Boolean(disabled)} disabled={disabled} onPress={onPress} style={style} {...rest}>
-      {(st) => content(st.pressed, Boolean((st as { focused?: boolean }).focused))}
+    <Pressable role={role ?? "button"} aria-label={rest["aria-label"]} aria-disabled={Boolean(disabled)} disabled={disabled} onPress={onPress} style={style} {...rest}>
+      {(st) => content(st.pressed, showFocusRing((st as { focused?: boolean }).focused))}
     </Pressable>
   );
 }

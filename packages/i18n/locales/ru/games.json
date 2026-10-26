@@ -187,7 +187,8 @@
       "body": "Создание игр приостановлено для вашего аккаунта. Узнайте причину и срок.",
       "action": "Подробнее"
     },
-    "defaultTitle": "Игра: {sport}"
+    "defaultTitle": "Игра: {sport}",
+    "reviewCta": "Проверить"
   },
   "details": {
     "hiddenLocation": "Точное место станет известно после того, как организатор вас одобрит",
@@ -250,7 +251,7 @@
       "checkInOpens": "Чек-ин откроется {time}",
       "chat": "Чат",
       "directions": "Маршрут",
-      "cantMakeIt": "Не смогу прийти",
+      "cantMakeIt": "Не приду",
       "leaveWaitlist": "Покинуть лист ожидания",
       "waitlistPosition": "Вы № {position} в листе ожидания.",
       "requestHint": "Отправляет заявку организатору"
@@ -353,8 +354,8 @@
     "refresh": "Обновить",
     "segmentsA11y": "Показать игры",
     "segment": {
-      "upcoming": "Предстоящие",
-      "hosting": "Организую",
+      "upcoming": "Скоро",
+      "hosting": "Провожу",
       "past": "Прошедшие"
     },
     "findGame": "Найти игру",

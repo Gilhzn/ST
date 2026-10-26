@@ -8,6 +8,7 @@ import { useTheme } from "../theme";
 import { borderWidth, radius, sizing, spacing, sportColors, type SportKey } from "../tokens";
 import { Text } from "./Text";
 import { usePressScale } from "./usePressScale";
+import { showFocusRing } from "../focusVisible";
 
 export interface ChipProps extends Omit<PressableProps, "children" | "style"> {
   label: string;
@@ -100,7 +101,8 @@ export function Chip({
           onPress?.(e);
         }}
         style={(st) => {
-          const { pressed, focused } = st as { pressed: boolean; focused?: boolean };
+          const { pressed, focused: rawFocused } = st as { pressed: boolean; focused?: boolean };
+          const focused = showFocusRing(rawFocused);
           const s: ViewStyle = {
             minHeight: h,
             paddingStart: lead ? spacing.md - 2 : spacing.md + 2,

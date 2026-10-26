@@ -4,6 +4,7 @@ import { Animated, Pressable, View, type PressableProps, type StyleProp, type Vi
 import { useTheme } from "../theme";
 import { borderWidth, motion, radius, spacing, type ElevationLevel, type SpaceToken } from "../tokens";
 import { usePressScale } from "./usePressScale";
+import { showFocusRing } from "../focusVisible";
 
 export type CardVariant = "elevated" | "outlined" | "filled";
 
@@ -73,7 +74,8 @@ export function Card({
           onPressOut?.(e);
         }}
         style={(st) => {
-          const { pressed, focused } = st as { pressed: boolean; focused?: boolean };
+          const { pressed, focused: rawFocused } = st as { pressed: boolean; focused?: boolean };
+          const focused = showFocusRing(rawFocused);
           return [
             base,
             pressed ? { opacity: 0.92 } : null,

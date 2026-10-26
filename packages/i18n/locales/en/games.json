@@ -187,7 +187,8 @@
       "body": "Hosting is paused on your account. See why and when it ends.",
       "action": "See details"
     },
-    "defaultTitle": "{sport} game"
+    "defaultTitle": "{sport} game",
+    "reviewCta": "Review"
   },
   "details": {
     "hiddenLocation": "Exact spot shared after the host approves you",

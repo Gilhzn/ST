@@ -16,8 +16,8 @@
   "sheet": {
     "title": "{count, plural, =0 {Keine Spiele in der Nähe} one {# Spiel in der Nähe} other {# Spiele in der Nähe}}",
     "sortLabel": "Sortieren nach",
-    "sortSoonest": "Zeitlich am nächsten",
-    "sortNearest": "Am nächsten",
+    "sortSoonest": "Nach Uhrzeit",
+    "sortNearest": "Nach Entfernung",
     "showList": "Liste",
     "showMap": "Karte",
     "sortA11y": "Sortieren nach: {sort}",

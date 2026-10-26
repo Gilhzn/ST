@@ -50,7 +50,7 @@ import { useAction, useAsync } from '@/hooks/useAsync';
 import { useT } from '@/i18n';
 import { currencyForCountry } from '@/lib/currency';
 import { deviceRegion } from '@/lib/device';
-import { currencyDigits, formatDate, formatDateTime, formatDistance, formatDuration, formatList, formatMoney, formatNumber, formatTime, usesMiles } from '@/lib/format';
+import { currencyDigits, formatDate, formatDateTime, formatDistance, formatList, formatMoney, formatNumber, formatTime, usesMiles } from '@/lib/format';
 import { getCurrentPosition, getLocationPermission } from '@/platform/location';
 import { getPref, PrefKeys, setPref } from '@/state/prefs';
 import { useSession } from '@/state/session';
@@ -296,8 +296,9 @@ export default function CreateGameScreen() {
           <Text variant="overline" color="textTertiary">
             {t('games:wizard.published.shareTitle')}
           </Text>
-          <View style={{ flexDirection: 'row', gap: spacing.sm }}>
-            <View style={{ flex: 1 }}>
+          {/* Stacked: side by side, "Share on WhatsApp" truncated at phone width in most languages. */}
+          <View style={{ gap: spacing.sm }}>
+            <View>
               <Button
                 testID="game.create.share.whatsapp"
                 variant="secondary"
@@ -307,7 +308,7 @@ export default function CreateGameScreen() {
                 onPress={() => void Linking.openURL(`https://wa.me/?text=${encodeURIComponent(`${published.title} ${url}`)}`)}
               />
             </View>
-            <View style={{ flex: 1 }}>
+            <View>
               <Button
                 testID="game.create.share.copy"
                 variant="secondary"
@@ -348,11 +349,12 @@ export default function CreateGameScreen() {
         role="progressbar"
         aria-label={stepLabel}
         aria-valuemin={0}
-        aria-valuemax={STEPS.length + 1}
-        aria-valuenow={step + 1}
+        aria-valuemax={STEPS.length}
+        aria-valuenow={Math.min(step + 1, STEPS.length)}
         style={{ flexDirection: 'row', gap: spacing.xs, paddingStart: spacing.sm }}
       >
-        {[...STEPS, 'review'].map((name, i) => (
+        {/* One bar per step ("Step 2 of 5" = 2 of 5 bars); the review fills them all. */}
+        {STEPS.map((name, i) => (
           <View key={name} style={{ flex: 1, height: 4, borderRadius: 2, backgroundColor: i <= step ? theme.colors.primary : theme.colors.surfaceSunken }} />
         ))}
       </View>
@@ -371,7 +373,8 @@ export default function CreateGameScreen() {
       ) : null}
       <InlineError error={publish.error} />
       <View style={{ flexDirection: 'row', gap: spacing.sm }}>
-        <Button testID="game.create.back" variant="outline" size="lg" icon="ArrowLeft" label={t('common:actions.back')} onPress={back} />
+        {/* Step 1 has no Back: the header's close button is the way out. */}
+        {step > 0 ? <Button testID="game.create.back" variant="outline" size="lg" icon="ArrowLeft" label={t('common:actions.back')} onPress={back} /> : null}
         <View style={{ flex: 1 }}>
           {isReview ? (
             <Button
@@ -389,7 +392,14 @@ export default function CreateGameScreen() {
               }}
             />
           ) : (
-            <Button testID="game.create.next" size="lg" fullWidth iconEnd="ArrowRight" label={t('common:actions.next')} onPress={next} />
+            <Button
+              testID="game.create.next"
+              size="lg"
+              fullWidth
+              iconEnd="ArrowRight"
+              label={step === STEPS.length - 1 ? t('games:wizard.reviewCta') : t('common:actions.next')}
+              onPress={next}
+            />
           )}
         </View>
       </View>
@@ -542,14 +552,6 @@ export default function CreateGameScreen() {
               options={DURATIONS.map((m) => ({ value: String(m), label: compactMinutes(m, locale), testID: `game.create.duration.${m}` }))}
             />
           </View>
-          <ToggleRow
-            icon="ArrowClockwise"
-            label={t('games:wizard.when.repeatWeekly')}
-            help={t('games:wizard.when.comingSoon')}
-            value={false}
-            onChange={() => undefined}
-            disabled
-          />
         </>
       ) : null}
 
@@ -704,7 +706,7 @@ export default function CreateGameScreen() {
             <ReviewRow
               icon="CalendarDots"
               label={t('games:wizard.stepName.when')}
-              value={t('games:wizard.review.whenValue', { start: isolate(formatDateTime(startsAt, locale), 'ltr'), duration: formatDuration(draft.duration, locale) })}
+              value={t('games:wizard.review.whenValue', { start: isolate(formatDateTime(startsAt, locale), 'ltr'), duration: compactMinutes(draft.duration, locale) })}
               onEdit={() => goTo(2)}
             />
             <ReviewRow

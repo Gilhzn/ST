@@ -40,3 +40,4 @@ export * from "./components/EmptyState";
 export * from "./components/Divider";
 export * from "./components/Mirror";
 export { usePressScale } from "./components/usePressScale";
+export { showFocusRing } from "./focusVisible";

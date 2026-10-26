@@ -187,7 +187,8 @@
       "body": "La organización está en pausa en tu cuenta. Consulta el motivo y cuándo termina.",
       "action": "Ver detalles"
     },
-    "defaultTitle": "Partido de {sport}"
+    "defaultTitle": "Partido de {sport}",
+    "reviewCta": "Revisar"
   },
   "details": {
     "hiddenLocation": "El punto exacto se comparte cuando el organizador te apruebe",

@@ -187,7 +187,8 @@
       "body": "الاستضافة متوقفة مؤقتًا على حسابك. اعرف السبب وموعد انتهائها.",
       "action": "عرض التفاصيل"
     },
-    "defaultTitle": "مباراة {sport}"
+    "defaultTitle": "مباراة {sport}",
+    "reviewCta": "مراجعة"
   },
   "details": {
     "hiddenLocation": "تتم مشاركة الموقع الدقيق بعد موافقة المضيف عليك",
@@ -250,7 +251,7 @@
       "checkInOpens": "يبدأ تسجيل الحضور {time}",
       "chat": "الدردشة",
       "directions": "الاتجاهات",
-      "cantMakeIt": "لا أستطيع الحضور",
+      "cantMakeIt": "لن أحضر",
       "leaveWaitlist": "مغادرة قائمة الانتظار",
       "waitlistPosition": "ترتيبك #{position} في قائمة الانتظار.",
       "requestHint": "يرسل طلبًا إلى المضيف"

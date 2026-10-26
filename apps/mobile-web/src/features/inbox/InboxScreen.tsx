@@ -12,6 +12,7 @@ import {
   EmptyState,
   Haptics,
   Icon,
+  isolate,
   LargeHeader,
   radius,
   Row,
@@ -37,7 +38,7 @@ import { statementValues } from '@/features/sanctions/SanctionScreen';
 import { useAsync } from '@/hooks/useAsync';
 import { useNow } from '@/hooks/useNow';
 import { useT, type TFunction } from '@/i18n';
-import { formatDate, formatRelative } from '@/lib/format';
+import { formatDate, formatDay, formatRelative, formatTime } from '@/lib/format';
 
 const KIND: Partial<Record<NotificationKind, { icon: IconName; tone: NoticeTone }>> = {
   join_requested: { icon: 'UserPlus', tone: 'brand' },
@@ -155,7 +156,10 @@ export function InboxScreen() {
           actions={
             tab === 'notifications' && unread.length ? (
               <Button testID="inbox.markAllRead" variant="ghost" size="sm" icon="Check" label={t('chat:inbox.markAllRead')} onPress={() => markRead(unread.map((n) => n.id))} />
-            ) : undefined
+            ) : (
+              // Keep the action row so the large title doesn't jump when switching tabs.
+              <View style={{ height: 36 }} />
+            )
           }
         >
           <Segmented
@@ -164,7 +168,8 @@ export function InboxScreen() {
             onChange={setTab}
             options={[
               { value: 'notifications', label: t('chat:inbox.tabNotifications'), icon: 'Bell', count: unread.length || undefined, testID: 'inbox.tab.notifications' },
-              { value: 'chats', label: t('chat:inbox.tabChats'), icon: 'ChatsCircle', count: chats.length || undefined, testID: 'inbox.tab.chats' },
+              // No count on Chats: a number badge reads as "unread", and chats have no unread state yet.
+              { value: 'chats', label: t('chat:inbox.tabChats'), icon: 'ChatsCircle', testID: 'inbox.tab.chats' },
             ]}
           />
         </LargeHeader>
@@ -215,8 +220,9 @@ export function InboxScreen() {
                       <BidiText variant="headline" numberOfLines={1}>
                         {g.title}
                       </BidiText>
+                      {/* The game's own time ("Today, 8:50 PM"), not a bare "in 10 minutes" that reads like a message time. */}
                       <Text variant="footnote" color="textSecondary" numberOfLines={1}>
-                        {formatRelative(g.startsAt, locale, now)}
+                        {t('common:datetime.dayTime', { day: formatDay(g.startsAt, locale, now), time: isolate(formatTime(g.startsAt, locale), 'ltr') })}
                       </Text>
                     </Stack>
                     <Icon name="CaretRight" size={18} weight="bold" color="textTertiary" />

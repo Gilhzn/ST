@@ -8,6 +8,7 @@ import { borderWidth, radius, sizing, spacing, zIndex } from "../tokens";
 import { Gradient } from "./Gradient";
 import { Text } from "./Text";
 import { usePressScale } from "./usePressScale";
+import { showFocusRing } from "../focusVisible";
 
 export interface FabProps extends Omit<PressableProps, "children" | "style"> {
   /** Default "Plus". */
@@ -48,7 +49,8 @@ export function Fab({ icon = "Plus", label, extended, tone = "accent", style, on
           onPress?.(e);
         }}
         style={(st) => {
-          const { focused } = st as { focused?: boolean };
+          const { focused: rawFocused } = st as { focused?: boolean };
+          const focused = showFocusRing(rawFocused);
           return {
             height: sizing.fab,
             minWidth: sizing.fab,

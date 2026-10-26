@@ -187,7 +187,8 @@
       "body": "L’organizzazione di partite è sospesa sul tuo account. Scopri perché e quando termina.",
       "action": "Vedi i dettagli"
     },
-    "defaultTitle": "Partita di {sport}"
+    "defaultTitle": "Partita di {sport}",
+    "reviewCta": "Rivedi"
   },
   "details": {
     "hiddenLocation": "Il punto esatto viene condiviso dopo l’approvazione dell’organizzatore",
@@ -250,7 +251,7 @@
       "checkInOpens": "Il check-in apre {time}",
       "chat": "Chat",
       "directions": "Indicazioni",
-      "cantMakeIt": "Non posso venire",
+      "cantMakeIt": "Non vengo",
       "leaveWaitlist": "Esci dalla lista d’attesa",
       "waitlistPosition": "Sei il n. {position} in lista d’attesa.",
       "requestHint": "Invia una richiesta all’organizzatore"

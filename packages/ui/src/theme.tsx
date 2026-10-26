@@ -168,7 +168,14 @@ export function ThemeProvider({
   return (
     <ThemeContext.Provider value={theme}>
       {applyDirection ? (
-        <View style={{ flex: 1, direction: resolvedDirection, backgroundColor: theme.colors.background }}>
+        <View
+          // Web: react-native-web resolves logical styles (paddingStart, marginEnd, start/end
+          // insets, borderStart*, borderTopStartRadius…) from its locale context, which only a
+          // `dir` (or `lang`) prop sets. CSS `direction` alone flips flex rows but leaves every
+          // logical style on its LTR side, so RTL pages had start/end insets on the wrong edge.
+          {...(Platform.OS === "web" ? ({ dir: resolvedDirection } as object) : null)}
+          style={{ flex: 1, direction: resolvedDirection, backgroundColor: theme.colors.background }}
+        >
           {children}
         </View>
       ) : (

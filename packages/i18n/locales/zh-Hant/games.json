@@ -187,7 +187,8 @@
       "body": "你的帳號已暫停主辦比賽。請查看原因與結束時間。",
       "action": "查看詳情"
     },
-    "defaultTitle": "{sport}比賽"
+    "defaultTitle": "{sport}比賽",
+    "reviewCta": "檢查"
   },
   "details": {
     "hiddenLocation": "主辦人核准你加入後，會分享確切地點",

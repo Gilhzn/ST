@@ -4,10 +4,10 @@
  * "No venue here? Report it." flow (one report per person).
  */
 import { DEFAULT_TRUST_CONFIG, isStError, type NearbyGame, type NearbyVenue, type VenueReportReason } from '@st/domain';
-import { BidiText, Button, Divider, Row, SportDot, Stack, Text } from '@st/ui';
+import { BidiText, Button, Divider, Icon, IconButton, isolate, radius, Row, spacing, SportGlyphBadge, Stack, Text, useTheme } from '@st/ui';
 import { router } from 'expo-router';
 import { useState } from 'react';
-import { Linking, Platform } from 'react-native';
+import { Linking, Platform, View } from 'react-native';
 
 import { ChoiceChip } from '@/components/ChoiceChip';
 import { GameCard } from '@/components/GameCard';
@@ -16,7 +16,7 @@ import { useToast } from '@/components/Toast';
 import { useData } from '@/data/DataProvider';
 import { useAction } from '@/hooks/useAsync';
 import { useT } from '@/i18n';
-import { formatDistance, formatNumber } from '@/lib/format';
+import { formatDistance, formatList, formatNumber } from '@/lib/format';
 
 const REASONS: VenueReportReason[] = ['no_venue_here', 'wrong_location', 'closed', 'duplicate', 'unsafe', 'other'];
 
@@ -41,6 +41,7 @@ export function VenueDetails({
   onClose: () => void;
 }) {
   const { t, locale } = useT();
+  const theme = useTheme();
   const port = useData();
   const toast = useToast();
   const [reporting, setReporting] = useState(false);
@@ -61,65 +62,99 @@ export function VenueDetails({
   };
   const alreadyReported = reported || (report.error && isStError(report.error) && report.error.code === 'already_reported');
 
+  const sportNames = formatList(venue.sports.map((sp) => t(`common:sports.${sp}`)), locale);
+  const rating = venue.ratingAvg;
+
   return (
-    <Stack gap="lg" testID="map.venue.sheet">
-      <Row gap="sm" align="start">
-        <Stack gap="xs" style={{ flex: 1 }}>
-          <BidiText variant="title2" accessibilityRole="header">
+    <Stack gap="xl" testID="map.venue.sheet">
+      <Stack gap="md">
+        <Row gap="sm" align="center">
+          <View aria-hidden style={{ flexDirection: 'row', flex: 1 }}>
+            {venue.sports.slice(0, 4).map((sp, i) => (
+              <SportGlyphBadge
+                key={sp}
+                sport={sp}
+                size={44}
+                variant="solid"
+                squircle
+                style={{ marginStart: i === 0 ? 0 : -10, zIndex: 4 - i, borderWidth: 2, borderColor: theme.colors.surfaceRaised }}
+              />
+            ))}
+          </View>
+          <IconButton testID="map.venue.close" icon="X" variant="tonal" label={t('common:actions.close')} onPress={onClose} />
+        </Row>
+        <Stack gap="xs">
+          <BidiText variant="title2" role="heading" aria-level={2}>
             {venue.name}
           </BidiText>
-          <Row gap="xs" wrap>
-            {venue.sports.map((s) => (
-              <Row key={s} gap="xxs">
-                <SportDot sport={s} />
-                <Text variant="caption" color="textSecondary">
-                  {t(`common:sports.${s}`)}
-                </Text>
-              </Row>
-            ))}
+          <Row gap="xs" align="center" wrap>
+            <Icon name="MapPin" size={16} weight="fill" color="textTertiary" />
+            <Text variant="callout" color="textSecondary">
+              {formatList([sportNames, t('map:card.distanceAway', { distance: isolate(distance, 'ltr') })], locale)}
+            </Text>
           </Row>
-          <Text variant="callout" color="textSecondary">
-            {t('map:card.distanceAway', { distance })}
-          </Text>
         </Stack>
-        <Button testID="map.venue.close" variant="ghost" size="sm" label={t('common:actions.close')} onPress={onClose} />
-      </Row>
-      <Row gap="sm" wrap>
-        <Button
+      </Stack>
+
+      <Row gap="sm" align="center">
+        <View style={{ flex: 1 }}>
+          <Button
+            testID="map.venue.startGame"
+            variant="primary"
+            icon="Plus"
+            fullWidth
+            label={t('games:venue.startGame')}
+            onPress={() => router.push({ pathname: '/game/create', params: { venueId: venue.id } })}
+          />
+        </View>
+        <IconButton
           testID="map.venue.directions"
-          variant="secondary"
+          icon="NavigationArrow"
+          variant="tonal"
+          size="lg"
           label={t('games:venue.directions')}
           onPress={() => void Linking.openURL(directionsUrl(venue.location.lat, venue.location.lng, venue.name))}
         />
-        <Button
-          testID="map.venue.startGame"
-          variant="primary"
-          label={t('games:venue.startGame')}
-          onPress={() => router.push({ pathname: '/game/create', params: { venueId: venue.id } })}
-        />
       </Row>
-      <Stack gap="xs">
-        <Text variant="title3">{t('games:venue.rating.title')}</Text>
-        <Text variant="body" color="textSecondary">
-          {venue.ratingAvg !== null
-            ? t('games:venue.rating.summary', {
-                rating: formatNumber(venue.ratingAvg, locale, { maximumFractionDigits: 1 }),
-                count: venue.ratingCount,
-              })
-            : t('games:venue.rating.none')}
+
+      <View style={{ padding: spacing.lg, gap: spacing.xs, borderRadius: radius.lg, backgroundColor: theme.colors.surfaceSunken }}>
+        <Text variant="overline" color="textTertiary">
+          {t('games:venue.rating.title')}
         </Text>
+        {rating !== null ? (
+          <Row gap="md" align="center">
+            <Text variant="numeric" style={{ fontVariant: ['tabular-nums'] }}>
+              {isolate(formatNumber(rating, locale, { maximumFractionDigits: 1, minimumFractionDigits: 1 }), 'ltr')}
+            </Text>
+            <Stack gap="xxs">
+              <Row gap="xxs" aria-label={t('games:venue.rating.scoreOf5', { score: formatNumber(rating, locale, { maximumFractionDigits: 1 }) })} role="img">
+                {[1, 2, 3, 4, 5].map((n) => (
+                  <Icon key={n} name="Star" size={16} weight={rating >= n - 0.25 ? 'fill' : 'regular'} color={rating >= n - 0.75 ? 'warning' : 'textTertiary'} />
+                ))}
+              </Row>
+              <Text variant="footnote" color="textSecondary">
+                {t('games:venue.rating.summary', { rating: formatNumber(rating, locale, { maximumFractionDigits: 1 }), count: venue.ratingCount })}
+              </Text>
+            </Stack>
+          </Row>
+        ) : (
+          <Text variant="body" color="textSecondary">
+            {t('games:venue.rating.none')}
+          </Text>
+        )}
         <Text variant="caption" color="textTertiary">
           {t('games:venue.rate.onlyAfterPlaying')}
         </Text>
-      </Stack>
-      <Stack gap="sm">
+      </View>
+
+      <Stack gap="md">
         <Text variant="title3">{t('games:venue.upcoming')}</Text>
         {here.length ? (
           here.map((g) => (
             <GameCard key={g.id} game={g} distanceM={g.distanceM} now={now} miles={miles} testID={`map.venue.game.${g.id}`} onPress={() => router.push(`/game/${g.id}`)} />
           ))
         ) : (
-          <Text variant="body" color="textSecondary">
+          <Text variant="callout" color="textSecondary">
             {t('games:venue.noUpcoming')}
           </Text>
         )}
@@ -151,7 +186,7 @@ export function VenueDetails({
           </Row>
         </Stack>
       ) : (
-        <Button testID="map.venue.report" variant="ghost" label={t('games:venue.report.cta')} onPress={() => setReporting(true)} />
+        <Button testID="map.venue.report" variant="ghost" icon="Flag" label={t('games:venue.report.cta')} onPress={() => setReporting(true)} style={{ alignSelf: 'center' }} />
       )}
     </Stack>
   );

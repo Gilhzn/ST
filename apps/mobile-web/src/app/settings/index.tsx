@@ -15,6 +15,7 @@ import { SettingsFrame } from '@/features/settings/SettingsFrame';
 import { ThemeSection } from '@/features/settings/ThemeSection';
 import { useLanguage, useT } from '@/i18n';
 import { useSession } from '@/state/session';
+import { formatPhone } from '@/lib/countries';
 
 export default function SettingsScreen() {
   const { t } = useT();
@@ -31,8 +32,8 @@ export default function SettingsScreen() {
           icon="Phone"
           iconTone="brand"
           title={t('settings:account.phone')}
-          value={session.user?.phone ? isolate(session.user.phone, 'ltr') : undefined}
-          aria-label={session.user?.phone ? `${t('settings:account.phone')}: ${session.user.phone}` : t('settings:account.phone')}
+          value={session.user?.phone ? isolate(formatPhone(session.user.phone), 'ltr') : undefined}
+          aria-label={session.user?.phone ? `${t('settings:account.phone')}: ${formatPhone(session.user.phone)}` : t('settings:account.phone')}
         />
       </ListGroup>
 

@@ -11,13 +11,14 @@
     "intro": "Bleib, wo du bist. Wir nehmen drei Standortmessungen im Abstand von ein paar Sekunden vor.",
     "start": "Meinen Standort prüfen",
     "accuracyLabel": "Genauigkeit",
-    "distanceLabel": "Abstand zur Markierung",
+    "distanceLabel": "Entfernung",
     "samplesLabel": "Messungen",
     "quality": {
       "good": "Starkes Signal",
       "fair": "Mittleres Signal",
       "poor": "Schwaches Signal"
-    }
+    },
+    "titleIdle": "Bist du schon da?"
   },
   "success": {
     "title": "Du bist eingecheckt",
@@ -55,8 +56,9 @@
     "codeLabel": "6-stelliger Code",
     "scanInstead": "Stattdessen QR-Code scannen",
     "submit": "Mit Code einchecken",
-    "tokenHint": "Gib den Code ein, der unter dem QR-Code der Organisation steht.",
-    "tokenLabel": "Check-in-Code"
+    "tokenHint": "Scannen klappt nicht? Bitte die Gastgeberin oder den Gastgeber, dir den Check-in-Code zu schicken, und füge ihn hier ein.",
+    "tokenLabel": "Check-in-Code",
+    "tokenPlaceholder": "Code einfügen"
   },
   "peer": {
     "ask": "Mitspieler:in fragen",
@@ -96,7 +98,7 @@
   "host": {
     "title": "Check-in-Code",
     "instruction": "Spieler:innen scannen diesen Code zum Einchecken. Der Code erneuert sich alle {seconds, plural, one {# Sekunde} other {# Sekunden}}.",
-    "fallbackCode": "Oder gib diesen Code ein",
+    "fallbackCode": "Scannen klappt nicht? Code kopieren und senden",
     "counter": "{checkedIn} von {total} eingecheckt",
     "markManually": "Spieler:innen manuell markieren",
     "manualTitle": "Spieler:innen markieren",

@@ -187,7 +187,8 @@
       "body": "आपके खाते पर आयोजन रोका गया है। कारण और खत्म होने का समय देखें।",
       "action": "ब्योरा देखें"
     },
-    "defaultTitle": "{sport} मैच"
+    "defaultTitle": "{sport} मैच",
+    "reviewCta": "समीक्षा करें"
   },
   "details": {
     "hiddenLocation": "आयोजक की मंज़ूरी मिलने के बाद सटीक जगह साझा की जाएगी",
@@ -250,7 +251,7 @@
       "checkInOpens": "चेक-इन {time} को खुलेगा",
       "chat": "चैट",
       "directions": "रास्ता",
-      "cantMakeIt": "मैं नहीं आ पाऊँगा/पाऊँगी",
+      "cantMakeIt": "नहीं आ पाऊँगा",
       "leaveWaitlist": "प्रतीक्षा सूची छोड़ें",
       "waitlistPosition": "प्रतीक्षा सूची में आपका नंबर #{position} है।",
       "requestHint": "आयोजक को अनुरोध भेजता है"

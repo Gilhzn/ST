@@ -17,7 +17,8 @@
       "good": "訊號強",
       "fair": "訊號普通",
       "poor": "訊號弱"
-    }
+    },
+    "titleIdle": "你到場地了嗎？"
   },
   "success": {
     "title": "報到成功",
@@ -55,8 +56,9 @@
     "codeLabel": "6 位數代碼",
     "scanInstead": "改為掃描 QR 碼",
     "submit": "用代碼報到",
-    "tokenHint": "請輸入主辦人 QR 碼下方顯示的代碼。",
-    "tokenLabel": "報到代碼"
+    "tokenHint": "無法掃描？請主辦人複製報到碼傳給你，再貼到這裡。",
+    "tokenLabel": "報到代碼",
+    "tokenPlaceholder": "貼上代碼"
   },
   "peer": {
     "ask": "請隊友確認",
@@ -96,7 +98,7 @@
   "host": {
     "title": "報到碼",
     "instruction": "球友掃描此 QR 碼即可報到。QR 碼每{seconds, plural, other {# 秒}}更新一次。",
-    "fallbackCode": "或輸入這組代碼",
+    "fallbackCode": "無法掃描？複製代碼並傳送",
     "counter": "已報到 {checkedIn}/{total}",
     "markManually": "手動標記球友",
     "manualTitle": "標記球友",

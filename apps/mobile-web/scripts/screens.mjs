@@ -17,7 +17,9 @@
  *
  * Flags: --only <a,b>  --locale <en|he|ar|…>[,…]  --scheme <light|dark>[,…]
  *        --port <n> (default 4319)  --dist <dir> (default ./dist)
+ *        --device <phone|pixel7|desktop> (default phone: 393×852, iPhone 15 / Pixel 8 class)
  *        --full (every screen as scrolled parts, see scrollShots)
+ * Console errors/warnings and page errors are collected and printed per flow.
  * Output: <name>.<locale>.<scheme>.png  (scrolled screens: <name>.<locale>.<scheme>.<NN>.png)
  */
 import { createServer } from 'node:http';
@@ -51,6 +53,7 @@ const SCHEMES = list(flag('scheme'), ['light', 'dark']);
 const PORT = Number(flag('port') ?? 4319);
 const DIST = resolve(root, flag('dist') ?? 'dist');
 const FULL = flag('full') === 'true';
+const DEVICE = flag('device') ?? 'phone';
 
 const LOCALE_TAG = { en: 'en-US', he: 'he-IL', ar: 'ar-EG', es: 'es-ES', ru: 'ru-RU', de: 'de-DE', fr: 'fr-FR', ja: 'ja-JP', hi: 'hi-IN' };
 
@@ -144,6 +147,28 @@ async function openListIfCollapsed(page) {
   await settle(page, 500);
 }
 
+/** Phones: switch the map screen to its list view (wide layouts always show the list pane). */
+async function showListView(page) {
+  if (await isVisible(page, 'map.list')) return;
+  if (await isVisible(page, 'map.list.toggle')) await click(page, 'map.list.toggle');
+  await settle(page, 500);
+}
+
+/** Mock-adapter QA hook (InMemoryAdapter.run): artificial latency / offline without a reload. */
+async function mock(page, value) {
+  await page.evaluate((v) => {
+    globalThis.__ST_MOCK__ = v;
+  }, value);
+}
+
+/** In-app navigation via the History API (a reload would reset the in-memory data). */
+async function pushPath(page, path) {
+  await page.evaluate((to) => {
+    window.history.pushState({}, '', to);
+    window.dispatchEvent(new PopStateEvent('popstate'));
+  }, path);
+}
+
 /* ------------------------------------------------------------------ */
 /* Flows. Each step: { name?, run }. Steps without a name only navigate. */
 /* ------------------------------------------------------------------ */
@@ -184,7 +209,7 @@ const FLOWS = [
     steps: [
       { run: async (p) => { await signIn(p, DANA); await visible(p, 'map.canvas', 15000); await settle(p, 1500); } },
       { name: 'map', run: async () => {} },
-      { run: async (p) => openListIfCollapsed(p) },
+      { run: async (p) => showListView(p) },
       { name: 'map-list', run: async () => {} },
       {
         run: async (p) => {
@@ -199,13 +224,53 @@ const FLOWS = [
         run: async (p) => {
           if (await isVisible(p, 'map.venue.close')) await click(p, 'map.venue.close');
           await settle(p, 400);
-          await openListIfCollapsed(p);
-          await tid(p, 'map.card.g-tlv-1').first().click();
-          await p.waitForURL(/\/game\/g-tlv-1$/);
-          await visible(p, 'game.title');
         },
       },
+      // Empty state: one sport with no games nearby, smallest radius.
+      {
+        name: 'map-empty',
+        run: async (p) => {
+          await click(p, 'map.filter.sport.tennis');
+          await click(p, 'map.filter.radius.1');
+          await visible(p, 'map.sheet.title');
+          await settle(p, 700);
+        },
+      },
+      // Network error (mock offline): change the radius so the list refetches.
+      {
+        name: 'map-error',
+        run: async (p) => {
+          await mock(p, { offline: true });
+          await click(p, 'map.filter.radius.2');
+          await settle(p, 900);
+        },
+      },
+      {
+        run: async (p) => {
+          await mock(p, {});
+          await click(p, 'map.filter.sport.tennis');
+          await click(p, 'map.filter.radius.5');
+          await settle(p, 700);
+          await mock(p, { latencyMs: 8000 });
+          await tid(p, 'map.card.g-tlv-1').first().click();
+          await p.waitForURL(/\/game\/g-tlv-1$/);
+        },
+      },
+      // Loading skeleton (mock latency) on game details, then the loaded screen.
+      { name: 'game-loading', run: async (p) => settle(p, 400) },
+      { run: async (p) => { await mock(p, {}); await visible(p, 'game.title', 15000); } },
       { name: 'game', run: async () => {} },
+      {
+        name: 'game-scrolled',
+        run: async (p) => {
+          await p.evaluate(() => {
+            const els = [...document.querySelectorAll('*')].filter((e) => e.scrollHeight > e.clientHeight + 40 && getComputedStyle(e).overflowY !== 'visible');
+            els.sort((a, b) => b.scrollHeight - a.scrollHeight);
+            if (els[0]) els[0].scrollTop = els[0].scrollHeight;
+          });
+          await settle(p, 500);
+        },
+      },
       { run: async (p) => { await click(p, 'game.chat'); await visible(p, 'chat.list'); } },
       { name: 'chat', run: async () => {} },
       // Extra chat states (Developer B): moderation nudge, server block, translation, options sheet.
@@ -249,6 +314,17 @@ const FLOWS = [
       { name: 'result', run: async () => {} },
       { run: async (p) => { await backToTabs(p); await click(p, 'nav.tab.inbox'); await visible(p, 'screen.inbox'); } },
       { name: 'inbox', run: async () => {} },
+      { name: 'inbox-chats', run: async (p) => { await click(p, 'inbox.tab.chats'); await settle(p, 500); } },
+      // Error state with Retry: open a game while the mock is offline.
+      {
+        name: 'game-error',
+        run: async (p) => {
+          await mock(p, { offline: true });
+          await pushPath(p, '/game/g-tlv-1');
+          await settle(p, 1200);
+        },
+      },
+      { run: async (p) => { await mock(p, {}); await backToTabs(p); await click(p, 'nav.tab.inbox'); await visible(p, 'screen.inbox'); } },
       { run: async (p) => { await click(p, 'nav.tab.profile'); await visible(p, 'screen.profile'); } },
       { name: 'profile', run: async () => {} },
       // Extra profile/settings states (Developer B).
@@ -292,6 +368,7 @@ const FLOWS = [
       { name: 'create-5', run: async () => {} },
       { run: async (p) => { await click(p, 'game.create.next'); await visible(p, 'game.create.review'); } },
       { name: 'create-review', run: async () => {} },
+      { name: 'create-published', run: async (p) => { await click(p, 'game.create.publish'); await visible(p, 'screen.game.create.done'); await settle(p, 900); } },
     ],
   },
   {
@@ -365,8 +442,14 @@ async function runFlow(browser, flow, locale, scheme, base) {
   const wanted = flow.steps.filter((s) => s.name && (!ONLY || ONLY.includes(s.name)));
   if (!wanted.length) return [];
   const lastWanted = flow.steps.lastIndexOf(wanted[wanted.length - 1]);
+  const deviceProfile =
+    DEVICE === 'pixel7'
+      ? devices['Pixel 7']
+      : DEVICE === 'desktop'
+        ? { viewport: { width: 1280, height: 800 }, deviceScaleFactor: 1, isMobile: false, hasTouch: false }
+        : { viewport: { width: 393, height: 852 }, deviceScaleFactor: 2, isMobile: true, hasTouch: true, userAgent: devices['Pixel 7'].userAgent };
   const context = await browser.newContext({
-    ...devices['Pixel 7'],
+    ...deviceProfile,
     baseURL: base,
     locale: LOCALE_TAG[locale] ?? locale,
     colorScheme: scheme,
@@ -378,6 +461,10 @@ async function runFlow(browser, flow, locale, scheme, base) {
   const page = await context.newPage();
   const errors = [];
   page.on('pageerror', (e) => errors.push(e.message));
+  const consoleMsgs = new Set();
+  page.on('console', (m) => {
+    if (m.type() === 'error' || m.type() === 'warning') consoleMsgs.add(`${m.type()}: ${m.text().split('\n')[0].slice(0, 200)}`);
+  });
   const shots = [];
   try {
     // A failed navigation step skips the next named screen (it would show the wrong page);
@@ -414,6 +501,7 @@ async function runFlow(browser, flow, locale, scheme, base) {
     }
   } finally {
     if (errors.length) console.warn(`  page errors (${flow.id}): ${errors.slice(0, 3).join(' | ')}`);
+    for (const m of consoleMsgs) console.warn(`  console ${flow.id} ${locale}/${scheme}: ${m}`);
     await context.close();
   }
   return shots;

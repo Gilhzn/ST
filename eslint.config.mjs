@@ -5,7 +5,7 @@ import globals from "globals";
 export default tseslint.config(
   {
     ignores: [
-      "**/node_modules/**", "**/dist/**", "**/coverage/**", "**/.expo/**",
+      "**/node_modules/**", "**/dist/**", "**/dist-artifact/**", "**/coverage/**", "**/.expo/**",
       "supabase/functions/_shared/domain.mjs", "**/*.config.js", "**/expo-env.d.ts",
     ],
   },

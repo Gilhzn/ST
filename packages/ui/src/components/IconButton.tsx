@@ -9,6 +9,7 @@ import { useTheme } from "../theme";
 import { borderWidth, radius, sizing, type ColorToken, type HapticEvent } from "../tokens";
 import { Text } from "./Text";
 import { usePressScale } from "./usePressScale";
+import { showFocusRing } from "../focusVisible";
 
 /**
  * plain: icon only · tonal: sunken fill · filled: brand fill · glass: translucent surface with
@@ -90,7 +91,8 @@ export function IconButton({
           onPress?.(e);
         }}
         style={(st) => {
-          const { pressed, focused } = st as { pressed: boolean; focused?: boolean };
+          const { pressed, focused: rawFocused } = st as { pressed: boolean; focused?: boolean };
+          const focused = showFocusRing(rawFocused);
           return {
             width: d,
             height: d,

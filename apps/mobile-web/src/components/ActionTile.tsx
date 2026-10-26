@@ -58,7 +58,7 @@ export function ActionTile({
               <Icon name={icon} size={22} weight="regular" color={fg} />
               {badge ? <View aria-hidden style={{ position: 'absolute', top: 6, end: 6, width: 10, height: 10, borderRadius: 5, backgroundColor: c.danger, borderWidth: 2, borderColor: c.surface }} /> : null}
             </View>
-            <Text variant="caption" weight="medium" color={tone === 'danger' ? 'dangerText' : 'textSecondary'} numberOfLines={1} align="center">
+            <Text variant="caption" weight="medium" color={tone === 'danger' ? 'dangerText' : 'textSecondary'} numberOfLines={2} align="center">
               {label}
             </Text>
           </>

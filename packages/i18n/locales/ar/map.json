@@ -38,7 +38,7 @@
     }
   },
   "cluster": {
-    "a11y": "{count, plural, zero {# مباراة} one {مباراة واحدة} two {مباراتان} few {# مباريات} many {# مباراة} other {# مباراة}}: {sports}. انقر مرتين للتقريب."
+    "a11y": "{count, plural, zero {# مباراة} one {مباراة واحدة} two {# مباراة} few {# مباريات} many {# مباراة} other {# مباراة}}: {sports}. انقر مرتين للتقريب."
   },
   "venues": {
     "sectionTitle": "ملاعب بلا مباريات",

@@ -368,7 +368,7 @@ export function ChatScreen({ gameId }: { gameId: string }) {
                       </Stack>
                     </View>
                   ) : null}
-                  {serverNudge ? (
+                  {serverNudge && !blocked ? (
                     <Row gap="xs" testID="chat.nudge.server" aria-live="polite" align="start">
                       <Icon name="Info" size={16} weight="fill" color="warningText" />
                       <Text variant="footnote" color="warningText" style={{ flex: 1 }}>
@@ -400,6 +400,8 @@ export function ChatScreen({ gameId }: { gameId: string }) {
                         onChangeText={(v) => {
                           setText(v);
                           if (nudge) setNudge(false);
+                          // The server's note was about the last message; a new draft starts clean.
+                          if (serverNudge) setServerNudge(null);
                         }}
                         multiline
                         numberOfLines={1}

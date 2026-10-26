@@ -29,7 +29,7 @@ import {
   type GradientName,
 } from '@st/ui';
 import { useEffect, useMemo, useRef, useState, type ReactNode } from 'react';
-import { AccessibilityInfo, Animated, Easing, Pressable, View } from 'react-native';
+import { AccessibilityInfo, Animated, Easing, Platform, Pressable, View } from 'react-native';
 import Svg, { Line } from 'react-native-svg';
 
 import { Screen } from '@/components/Screen';
@@ -279,7 +279,9 @@ export function TeamsScreen({ gameId }: { gameId: string }) {
                           disabled={!movable}
                           role={movable ? 'button' : undefined}
                           aria-label={
-                            movable
+                            Platform.OS === 'web'
+                              ? undefined
+                              : movable
                               ? `${name}. ${t('games:teams.ratingA11y', { rating: fmt1(m.rating) })}. ${t('games:teams.moveTo', { team: next })}`
                               : name
                           }
@@ -296,6 +298,7 @@ export function TeamsScreen({ gameId }: { gameId: string }) {
                             borderTopColor: theme.colors.border,
                           })}
                         >
+                          <View style={{ flex: 1, flexDirection: 'row', alignItems: 'center', gap: sideBySide ? spacing.sm : spacing.md }}>
                           <Avatar name={name} uri={p?.profile.avatarUrl} size="sm" decorative />
                           <View style={{ flex: 1, gap: 2 }}>
                             <BidiText variant="callout" weight="medium" numberOfLines={1}>
@@ -307,6 +310,7 @@ export function TeamsScreen({ gameId }: { gameId: string }) {
                             </Row>
                           </View>
                           {movable && !sideBySide ? <Icon name="ArrowsLeftRight" size={18} color="textTertiary" /> : null}
+                          </View>
                         </Pressable>
                       );
                     })}

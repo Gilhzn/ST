@@ -18,6 +18,7 @@ import { useAction } from '@/hooks/useAsync';
 import { useT } from '@/i18n';
 import { formatClock } from '@/lib/format';
 import { useSession } from '@/state/session';
+import { formatPhone } from '@/lib/countries';
 
 export default function OtpScreen() {
   const { t } = useT();
@@ -85,7 +86,7 @@ export default function OtpScreen() {
       backFallback="/phone"
       large
       title={t('auth:otp.title')}
-      subtitle={t('auth:otp.body', { phone: isolate(phone, 'ltr') })}
+      subtitle={t('auth:otp.body', { phone: isolate(formatPhone(phone), 'ltr') })}
       footer={
         <Button
           testID="auth.otp.submit"

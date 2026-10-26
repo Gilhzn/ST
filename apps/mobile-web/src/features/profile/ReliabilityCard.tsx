@@ -28,6 +28,17 @@ function explain(status: ReliabilityStatus, t: ReturnType<typeof useT>['t'], loc
   return t(`trust:reliability.how.${status}`);
 }
 
+/**
+ * The "How it works" lines read "Caution: below the reliable level…". Next to the badge that
+ * already says "Caution", drop the "Label:" prefix so the card doesn't repeat itself.
+ */
+function withoutLabel(text: string, locale: string): string {
+  const m = /^([^:：]{1,24})[:：]\s*(.+)$/su.exec(text);
+  if (!m?.[2]) return text;
+  const rest = m[2];
+  return rest.charAt(0).toLocaleUpperCase(locale) + rest.slice(1);
+}
+
 export function ReliabilityCard({ reliability, sanctions, now }: { reliability: ReliabilitySnapshot; sanctions: readonly Sanction[]; now: number }) {
   const { t, locale } = useT();
   const theme = useTheme();
@@ -88,7 +99,7 @@ export function ReliabilityCard({ reliability, sanctions, now }: { reliability: 
             <StatusBadge status={reliability.status} label={label} />
           </View>
           <Text variant="footnote" color="textSecondary">
-            {explain(reliability.status, t, locale)}
+            {withoutLabel(explain(reliability.status, t, locale), locale)}
           </Text>
         </Stack>
       </Row>

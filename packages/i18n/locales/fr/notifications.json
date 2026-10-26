@@ -41,7 +41,7 @@
   },
   "sanction_issued": {
     "title": "Du nouveau sur ton compte",
-    "body": "Nous avons pris une décision concernant ton compte. Ouvre l’appli pour voir ce qui s’est passé et comment faire appel."
+    "body": "Nous avons pris une décision concernant ton compte. Touche pour voir ce qui s’est passé et comment faire appel."
   },
   "sanction_decided": {
     "title": "Décision concernant ton compte",

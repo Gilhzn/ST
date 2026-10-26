@@ -8,6 +8,7 @@ import { useTheme } from "../theme";
 import { borderWidth, radius, sizing, spacing, type HapticEvent, type SemanticColors } from "../tokens";
 import { Text } from "./Text";
 import { usePressScale } from "./usePressScale";
+import { showFocusRing } from "../focusVisible";
 
 /**
  * primary: brand fill · secondary: tonal (brand tint) · outline: hairline border ·
@@ -37,7 +38,8 @@ export interface ButtonProps extends Omit<PressableProps, "children" | "style"> 
 }
 
 const heights: Record<ButtonSize, number> = { sm: sizing.buttonSm, md: sizing.buttonMd, lg: sizing.buttonLg };
-const padX: Record<ButtonSize, number> = { sm: spacing.md, md: spacing.lg + spacing.xs, lg: spacing.xl };
+// lg: 16, not 24 — two lg buttons share a 393pt footer ("Shuffle again" + "Lock teams") without truncating.
+const padX: Record<ButtonSize, number> = { sm: spacing.md, md: spacing.lg + spacing.xs, lg: spacing.lg };
 const iconPx: Record<ButtonSize, number> = { sm: 16, md: 20, lg: 20 };
 
 interface Palette {
@@ -137,7 +139,8 @@ export function Button({
           onPress?.(e);
         }}
         style={(state) => {
-          const { pressed, focused, hovered } = state as { pressed: boolean; focused?: boolean; hovered?: boolean };
+          const { pressed, focused: rawFocused, hovered } = state as { pressed: boolean; focused?: boolean; hovered?: boolean };
+          const focused = showFocusRing(rawFocused);
           const s: ViewStyle = {
             minHeight: h,
             paddingStart: padX[size],
@@ -169,7 +172,7 @@ export function Button({
           variant={size === "sm" ? "label" : "headline"}
           color={fg}
           numberOfLines={1}
-          style={loading ? { opacity: 0.9 } : undefined}
+          style={[{ flexShrink: 1 }, loading ? { opacity: 0.9 } : null]}
         >
           {label}
         </Text>

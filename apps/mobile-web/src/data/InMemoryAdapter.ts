@@ -119,7 +119,7 @@ import {
   verifyQr,
   type ChatBlockRecord,
 } from './mock/domain';
-import { buildSeed, MOCK_OTP_CODES } from './mock/seed';
+import { buildSeed, DEMO_TRANSLATIONS, MOCK_OTP_CODES } from './mock/seed';
 import type { MockGame, MockState, MockUser } from './mock/state';
 
 export interface InMemoryAdapterOptions {
@@ -172,8 +172,13 @@ export class InMemoryAdapter implements DataPort, BlockedNamesExtension {
   // ---------------------------------------------------------------------------
 
   private async run<T>(fn: () => T): Promise<T> {
-    if (this.latencyMs > 0) await new Promise((r) => setTimeout(r, this.latencyMs));
+    // Demo/QA hook (mock only): `globalThis.__ST_MOCK__ = { latencyMs, offline }` surfaces the
+    // loading skeletons and network-error states in screenshot tours without a reload.
+    const qa = (globalThis as { __ST_MOCK__?: { latencyMs?: number; offline?: boolean } }).__ST_MOCK__;
+    const latency = qa?.latencyMs ?? this.latencyMs;
+    if (latency > 0) await new Promise((r) => setTimeout(r, latency));
     else await Promise.resolve();
+    if (qa?.offline) fail('network');
     try {
       return clone(fn());
     } catch (e) {
@@ -1469,7 +1474,7 @@ export class InMemoryAdapter implements DataPort, BlockedNamesExtension {
       this.chatGame(m.gameId);
       const cached = this.state.translations.find((t) => t.messageId === messageId && t.target === target);
       if (cached) return cached;
-      const t: TranslatedMessage = { messageId, target, text: `[${target}] ${m.body}`, provider: 'google' };
+      const t: TranslatedMessage = { messageId, target, text: DEMO_TRANSLATIONS[m.body]?.[target] ?? `[${target}] ${m.body}`, provider: 'google' };
       this.state.translations.push(t);
       return t;
     });

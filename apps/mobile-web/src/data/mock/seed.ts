@@ -612,7 +612,7 @@ lateCancel: false,
   if (chatGame) {
     const lines: [string, string, string | null, number][] = [
       ['u-tlv-0', 'Pitch 3 tonight, bring a dark and a light shirt.', 'en', -50],
-      ['u-tlv-1', 'אני מביאה כדור, נתראה ב-18:00!', 'he', -35],
+      ['u-tlv-1', 'אני מביאה כדור, נתראה במגרש!', 'he', -35],
       ['u-tlv-2', 'سأتأخر خمس دقائق، احجزوا لي مكانًا', 'ar', -20],
       [DEMO_USER_ID, 'Great, see you there!', 'en', -10],
     ];
@@ -633,3 +633,34 @@ lateCancel: false,
   }
   return state;
 }
+
+/**
+ * Demo phrasebook for the seeded chat so "Translate" shows a real translation in the mock
+ * (the server uses a translation provider). Unknown text falls back to a tagged echo.
+ */
+export const DEMO_TRANSLATIONS: Record<string, Partial<Record<string, string>>> = {
+  'Pitch 3 tonight, bring a dark and a light shirt.': {
+    he: 'מגרש 3 הערב, תביאו חולצה כהה וחולצה בהירה.',
+    ar: 'الملعب 3 الليلة، أحضروا قميصًا داكنًا وآخر فاتحًا.',
+    es: 'Cancha 3 esta noche, trae una camiseta oscura y una clara.',
+    de: 'Heute Abend Platz 3, bringt ein dunkles und ein helles Shirt mit.',
+    fr: 'Terrain 3 ce soir, apportez un maillot foncé et un clair.',
+    ru: 'Сегодня поле 3, возьмите тёмную и светлую футболки.',
+  },
+  'אני מביאה כדור, נתראה במגרש!': {
+    en: 'I’m bringing a ball, see you at the pitch!',
+    ar: 'سأحضر كرة، نراكم في الملعب!',
+    es: 'Llevo un balón, ¡nos vemos en la cancha!',
+    de: 'Ich bringe einen Ball mit, wir sehen uns auf dem Platz!',
+    fr: 'J’apporte un ballon, on se voit au terrain !',
+    ru: 'Я принесу мяч, увидимся на поле!',
+  },
+  'سأتأخر خمس دقائق، احجزوا لي مكانًا': {
+    en: 'I’ll be five minutes late, save me a spot.',
+    he: 'אאחר בחמש דקות, תשמרו לי מקום.',
+    es: 'Llegaré cinco minutos tarde, guardadme un sitio.',
+    de: 'Ich komme fünf Minuten später, haltet mir einen Platz frei.',
+    fr: 'J’aurai cinq minutes de retard, gardez-moi une place.',
+    ru: 'Опоздаю на пять минут, займите мне место.',
+  },
+};

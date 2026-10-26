@@ -253,6 +253,7 @@ export function CheckInScreen({ gameId }: { gameId: string }) {
                 autoCapitalize="none"
                 autoCorrect={false}
                 icon="QrCode"
+                placeholder={t('checkin:qr.tokenPlaceholder')}
                 onSubmitEditing={() => void submitQr(code)}
               />
               <Button testID="checkin.qr.submit" size="lg" fullWidth icon="CheckCircle" label={t('checkin:qr.submit')} loading={submit.busy} disabled={!code.trim()} onPress={() => void submitQr(code)} />
@@ -448,7 +449,7 @@ function GpsPanel({
       <GpsRadar samples={samples} total={SAMPLE_COUNT} pin={pin} active={sampling} />
       <Stack gap="xxs" align="center">
         <Text variant="title3" align="center">
-          {t('checkin:gps.title')}
+          {sampling ? t('checkin:gps.title') : t('checkin:gps.titleIdle')}
         </Text>
         <Text variant="callout" color="textSecondary" align="center" aria-live="polite" testID="checkin.gps.progress">
           {sampling ? t('checkin:gps.progress', { done: samples.length, total: SAMPLE_COUNT }) : t('checkin:gps.intro')}
@@ -514,7 +515,7 @@ function GpsPanel({
 function Metric({ label, value, children, testID, a11y }: { label: string; value: string; children?: ReactNode; testID?: string; a11y?: string }) {
   return (
     <View testID={testID} accessible aria-label={a11y ?? `${label}: ${value}`} style={{ flex: 1, alignItems: 'center', gap: spacing.xs, paddingStart: spacing.xs, paddingEnd: spacing.xs }}>
-      <Text variant="caption" color="textSecondary" numberOfLines={1}>
+      <Text variant="caption" color="textSecondary" numberOfLines={2} align="center">
         {label}
       </Text>
       <Text variant="statSmall" numberOfLines={1}>

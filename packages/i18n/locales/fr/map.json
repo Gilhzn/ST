@@ -16,8 +16,8 @@
   "sheet": {
     "title": "{count, plural, =0 {Aucune partie à proximité} one {# partie à proximité} many {# de parties à proximité} other {# parties à proximité}}",
     "sortLabel": "Trier par",
-    "sortSoonest": "Plus proches dans le temps",
-    "sortNearest": "Plus proches",
+    "sortSoonest": "Les plus tôt",
+    "sortNearest": "Les plus proches",
     "showList": "Liste",
     "showMap": "Carte",
     "sortA11y": "Trier par : {sort}",

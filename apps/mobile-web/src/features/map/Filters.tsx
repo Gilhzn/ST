@@ -140,10 +140,10 @@ export function RadiusSelector({ value, onChange, miles }: { value: RadiusKm; on
         flexDirection: 'row',
         alignItems: 'center',
         alignSelf: 'flex-start',
-        height: 40,
+        height: 44,
         padding: 3,
         gap: 2,
-        borderRadius: 20,
+        borderRadius: 22,
         backgroundColor: theme.colors.surface,
         borderWidth: 1,
         borderColor: dark ? 'rgba(255,255,255,0.08)' : 'rgba(18,17,41,0.06)',
@@ -156,7 +156,7 @@ export function RadiusSelector({ value, onChange, miles }: { value: RadiusKm; on
       {RADII_KM.map((r) => {
         const on = value === r;
         const distance = formatKm(r, locale, miles);
-        const short = formatNumber(miles ? r * 0.621371 : r, locale, { maximumFractionDigits: miles && r < 10 ? 1 : 0 });
+        const short = formatNumber(miles ? r * 0.621371 : r, locale, { maximumFractionDigits: miles && r < 5 ? 1 : 0 });
         return (
           <Pressable
             key={r}
@@ -164,17 +164,17 @@ export function RadiusSelector({ value, onChange, miles }: { value: RadiusKm; on
             role="radio"
             aria-checked={on}
             aria-label={t('map:radius.a11y', { distance })}
-            hitSlop={{ top: 4, bottom: 4 }}
+            hitSlop={{ top: 3, bottom: 3 }}
             onPress={() => {
               if (!on) tick();
               onChange(r);
             }}
             style={({ pressed }) => ({
-              minWidth: 34,
-              height: 34,
-              paddingStart: on ? 10 : 6,
-              paddingEnd: on ? 10 : 6,
-              borderRadius: 17,
+              minWidth: 38,
+              height: 38,
+              paddingStart: on ? 12 : 6,
+              paddingEnd: on ? 12 : 6,
+              borderRadius: 19,
               alignItems: 'center',
               justifyContent: 'center',
               backgroundColor: on ? theme.colors.primary : pressed ? theme.colors.surfaceSunken : 'transparent',

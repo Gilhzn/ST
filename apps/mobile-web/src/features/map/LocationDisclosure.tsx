@@ -16,7 +16,7 @@ export function LocationDisclosure({ onAllow, onDismiss, busy }: { onAllow: () =
     <Card elevation={3} accessibilityRole="summary">
       <Stack gap="md">
         <Row gap="sm" align="center">
-          <Icon name="crosshairs-gps" color="primary" />
+          <Icon name="GpsFix" color="primary" />
           <Text variant="title3" style={{ flex: 1 }}>
             {t('auth:permissions.location.title')}
           </Text>

@@ -187,7 +187,8 @@
       "body": "A organização de jogos está pausada na sua conta. Veja o motivo e quando termina.",
       "action": "Ver detalhes"
     },
-    "defaultTitle": "Jogo de {sport}"
+    "defaultTitle": "Jogo de {sport}",
+    "reviewCta": "Revisar"
   },
   "details": {
     "hiddenLocation": "O ponto exato é compartilhado depois que o organizador aprovar você",
@@ -250,7 +251,7 @@
       "checkInOpens": "O check-in abre {time}",
       "chat": "Chat",
       "directions": "Como chegar",
-      "cantMakeIt": "Não vou conseguir ir",
+      "cantMakeIt": "Desistir",
       "leaveWaitlist": "Sair da lista de espera",
       "waitlistPosition": "Você é o nº {position} na lista de espera.",
       "requestHint": "Envia uma solicitação ao organizador"
@@ -354,7 +355,7 @@
     "segmentsA11y": "Mostrar jogos",
     "segment": {
       "upcoming": "Próximos",
-      "hosting": "Organizando",
+      "hosting": "Organizo",
       "past": "Passados"
     },
     "findGame": "Encontrar um jogo",

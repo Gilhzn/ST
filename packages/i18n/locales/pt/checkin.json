@@ -17,7 +17,8 @@
       "good": "Sinal forte",
       "fair": "Sinal médio",
       "poor": "Sinal fraco"
-    }
+    },
+    "titleIdle": "Você já está no local?"
   },
   "success": {
     "title": "Check-in feito",
@@ -55,8 +56,9 @@
     "codeLabel": "Código de 6 dígitos",
     "scanInstead": "Ler o QR code",
     "submit": "Fazer check-in com o código",
-    "tokenHint": "Digite o código mostrado abaixo do QR code do organizador.",
-    "tokenLabel": "Código de check-in"
+    "tokenHint": "Não consegue ler? Peça ao anfitrião para copiar o código de check-in e enviar para você, depois cole aqui.",
+    "tokenLabel": "Código de check-in",
+    "tokenPlaceholder": "Cole o código"
   },
   "peer": {
     "ask": "Pedir a um colega",
@@ -96,7 +98,7 @@
   "host": {
     "title": "Código de check-in",
     "instruction": "Os jogadores leem este código para fazer check-in. O código muda a cada {seconds, plural, one {# segundo} many {# de segundos} other {# segundos}}.",
-    "fallbackCode": "Ou digite este código",
+    "fallbackCode": "Não conseguem ler? Copie o código e envie",
     "counter": "{checkedIn} de {total} fizeram check-in",
     "markManually": "Marcar jogadores manualmente",
     "manualTitle": "Marcar jogadores",

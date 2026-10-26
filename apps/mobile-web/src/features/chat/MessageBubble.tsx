@@ -68,7 +68,7 @@ export function MessageBubble({
   const time = isolate(formatTime(message.createdAt, locale), 'ltr');
   const fg = own ? 'onPrimary' : 'text';
   const meta = own ? c.onPrimary : c.textTertiary;
-  const metaOpacity = own ? 0.78 : 1;
+  const metaOpacity = own ? 0.9 : 1; // 0.78 measured 4.3:1 on the brand bubble (axe)
 
   const bubble = (
     <Pressable

@@ -8,7 +8,7 @@ import type { NearbyGame } from '@st/domain';
 import { BidiText, Icon, isolate, sportColors, Text, useTheme, type IconName } from '@st/ui';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useEffect, useRef } from 'react';
-import { FlatList, Pressable, View, type NativeScrollEvent, type NativeSyntheticEvent } from 'react-native';
+import { FlatList, Platform, Pressable, View, type NativeScrollEvent, type NativeSyntheticEvent } from 'react-native';
 
 import { gameTiming } from '@/components/GameCard';
 import { useT } from '@/i18n';
@@ -121,11 +121,12 @@ export function HeroCard({
   return (
     <Pressable
       testID={`map.card.${game.id}`}
-      accessibilityRole="button"
-      accessibilityLabel={[t(`common:sports.${game.sport}`), game.title, when, players, t('map:card.distanceAway', { distance }), live ? t('map:card.live') : null]
+      role="button"
+      // Web: name from the visible text (WCAG 2.5.3); native: the summary sentence.
+      aria-label={Platform.OS === 'web' ? undefined : [t(`common:sports.${game.sport}`), game.title, when, players, t('map:card.distanceAway', { distance }), live ? t('map:card.live') : null]
         .filter(Boolean)
         .join(', ')}
-      accessibilityState={{ selected }}
+      aria-current={selected ? true : undefined}
       onPress={onPress}
       style={({ pressed }) => ({
         width,
@@ -148,6 +149,7 @@ export function HeroCard({
         direction: theme.isRTL ? 'rtl' : 'ltr',
       })}
     >
+      <View style={{ flex: 1, flexDirection: 'row', gap: 12 }}>
       <LinearGradient colors={[grad[0], grad[1]]} start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }} style={{ width: 84, borderRadius: 16, alignItems: 'center', justifyContent: 'center', overflow: 'hidden' }}>
         {/* court-line motif */}
         <View style={{ position: 'absolute', width: 64, height: 64, borderRadius: 32, borderWidth: 1.5, borderColor: 'rgba(255,255,255,0.18)' }} />
@@ -195,6 +197,7 @@ export function HeroCard({
             {isolate(`${game.approvedCount}/${game.capacity}`, 'ltr')}
           </Text>
         </View>
+      </View>
       </View>
     </Pressable>
   );

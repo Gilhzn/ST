@@ -293,7 +293,9 @@ export default function MapScreen() {
 
   const sportNames = sports.length ? formatList(sports.map((s) => t(`common:sports.${s}`)), locale) : t('map:empty.allSports');
   const nextRadius = RADII_KM.find((r) => r > radiusKm);
-  const title = t('map:sheet.title', { count: gameList.length });
+  // While loading or after a failed load, "No games nearby" would be a false statement.
+  const unknownCount = gameList.length === 0 && (games.loading || !!games.error);
+  const title = unknownCount ? (games.loading ? t('common:status.loading') : '') : t('map:sheet.title', { count: gameList.length });
   const radiusLabel = formatKm(radiusKm, locale, miles);
   const selectedGameId = selection?.kind === 'game' ? selection.id : null;
 
@@ -524,8 +526,13 @@ export default function MapScreen() {
       ) : null}
       {view === 'list' ? (
         <View style={{ flex: 1, paddingStart: spacing.lg, paddingEnd: spacing.lg }} testID="map.list">
-          <View style={{ paddingTop: spacing.sm, paddingBottom: spacing.sm }}>{sheetHeader}</View>
-          {listBody}
+          {/* A tapped venue opens its details in place (it only lived in the map sheet before). */}
+          {venueSheet ?? (
+            <>
+              <View style={{ paddingTop: spacing.sm, paddingBottom: spacing.sm }}>{sheetHeader}</View>
+              {listBody}
+            </>
+          )}
         </View>
       ) : (
         <Sheet

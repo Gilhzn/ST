@@ -1,4 +1,4 @@
-import { Animated, Pressable, View, type StyleProp, type ViewStyle } from "react-native";
+import { Animated, Platform, Pressable, View, type StyleProp, type ViewStyle } from "react-native";
 
 import { isolate } from "../bidi";
 import { Icon, SportGlyphBadge } from "../icons/Icon";
@@ -12,6 +12,7 @@ import { ProgressRing } from "./ProgressRing";
 import { StatusBadge, StatusPill, type PillTone } from "./StatusBadge";
 import { Text } from "./Text";
 import { usePressScale } from "./usePressScale";
+import { showFocusRing } from "../focusVisible";
 
 export interface GameHeroCardProps {
   sport: SportKey;
@@ -98,9 +99,14 @@ export function GameHeroCard(props: GameHeroCardProps) {
         <View style={{ flexDirection: "row", alignItems: "flex-start", gap: spacing.md }}>
           <SportGlyphBadge sport={sport} size={44} variant="glass" squircle />
           <View style={{ flex: 1, gap: 2 }}>
-            <Text variant="overline" color="textOnMedia" numberOfLines={1} style={{ opacity: 0.88 }}>
-              {sportLabel}
-            </Text>
+            {/* The status pill shares the overline row, so the day line below gets the full width
+                ("Today · in 34 minutes" truncated next to "On the waitlist" before). */}
+            <View style={{ flexDirection: "row", alignItems: "center", gap: spacing.sm, minHeight: 24 }}>
+              <Text variant="overline" color="textOnMedia" numberOfLines={1} style={{ opacity: 0.88, flex: 1 }}>
+                {sportLabel}
+              </Text>
+              {status ? <StatusPill label={status.label} tone={status.tone ?? "glass"} icon={status.icon} /> : null}
+            </View>
             <Text variant="title1" weight="bold" color="textOnMedia" role="none" style={{ fontVariant: ["tabular-nums"], letterSpacing: -0.6 }}>
               {isolate(timeLabel, "ltr")}
             </Text>
@@ -108,7 +114,6 @@ export function GameHeroCard(props: GameHeroCardProps) {
               {relativeLabel ? `${dayLabel} · ${relativeLabel}` : dayLabel}
             </Text>
           </View>
-          {status ? <StatusPill label={status.label} tone={status.tone ?? "glass"} icon={status.icon} /> : null}
         </View>
       </Gradient>
 
@@ -169,7 +174,7 @@ export function GameHeroCard(props: GameHeroCardProps) {
   if (!onPress) {
     return (
       <View testID={testID} accessible role="group" aria-label={accessibilityLabel} style={[shell, style]}>
-        {body}
+        <View aria-hidden>{body}</View>
       </View>
     );
   }
@@ -178,12 +183,16 @@ export function GameHeroCard(props: GameHeroCardProps) {
       <Pressable
         testID={testID}
         role="button"
-        aria-label={accessibilityLabel}
+        // Web: the name comes from the visible card text (WCAG 2.5.3 label in name — a summary
+        // label that differs from what sighted voice-control users see fails it). Native keeps
+        // the one-sentence summary for VoiceOver/TalkBack.
+        aria-label={Platform.OS === "web" ? undefined : accessibilityLabel}
         onPress={onPress}
         onPressIn={press.onPressIn}
         onPressOut={press.onPressOut}
         style={(st) => {
-          const { focused } = st as { focused?: boolean };
+          const { focused: rawFocused } = st as { focused?: boolean };
+          const focused = showFocusRing(rawFocused);
           return [
             shell,
             focused ? { outlineColor: c.focusRing, outlineWidth: borderWidth.focus, outlineStyle: "solid", outlineOffset: 2 } : null,

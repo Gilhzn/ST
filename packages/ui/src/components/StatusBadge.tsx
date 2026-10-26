@@ -60,7 +60,7 @@ export function StatusBadge({ status, label, percent, size = "md", accessibility
         {label}
       </Text>
       {showPct ? (
-        <Text variant={sm ? "caption" : "footnote"} weight="semibold" style={{ color: t.fg, fontVariant: ["tabular-nums"], opacity: 0.85 }}>
+        <Text variant={sm ? "caption" : "footnote"} weight="semibold" style={{ color: t.fg, fontVariant: ["tabular-nums"] }}>
           {"⁦" + pct + "⁩"}
         </Text>
       ) : null}

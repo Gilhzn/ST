@@ -60,7 +60,10 @@ export function HostQrScreen({ gameId }: { gameId: string }) {
   const now = useNow(1000);
   const { game, participants, refresh } = useGame(gameId, { pollMs: 10_000 });
   const [token, setToken] = useState<QrToken | null>(null);
-  const [period, setPeriod] = useState(DEFAULT_TRUST_CONFIG.qrStepSeconds * 1000);
+  // The display rotates every step (20 s); a token stays accepted for one more step of drift,
+  // so the countdown runs to the next step boundary, not to `expiresAt` (which read "37" next
+  // to "refreshes every 20 seconds").
+  const period = DEFAULT_TRUST_CONFIG.qrStepSeconds * 1000;
   const [manual, setManual] = useState(false);
   const load = useAction(async (rotate: boolean) => (rotate ? port.rotateQr(gameId) : port.getQrToken(gameId)));
   const mark = useAction(async (userId: string) => port.submitCheckIn(gameId, { method: 'host', targetUserId: userId }));
@@ -70,10 +73,7 @@ export function HostQrScreen({ gameId }: { gameId: string }) {
   const fetchToken = useCallback(
     async (rotate = false) => {
       const next = await run(rotate);
-      if (next) {
-        setToken(next);
-        setPeriod(Math.max(DEFAULT_TRUST_CONFIG.qrStepSeconds * 1000, Date.parse(next.expiresAt) - Date.now()));
-      }
+      if (next) setToken(next);
     },
     [run],
   );
@@ -85,10 +85,10 @@ export function HostQrScreen({ gameId }: { gameId: string }) {
   // Swap the code as soon as it expires (instant swap; also with reduced motion).
   useEffect(() => {
     if (!token) return;
-    const ms = Math.max(500, Date.parse(token.expiresAt) - Date.now());
+    const ms = Math.max(500, (token.step + 1) * period - Date.now());
     const id = setTimeout(() => void fetchToken(), ms);
     return () => clearTimeout(id);
-  }, [token, fetchToken]);
+  }, [token, fetchToken, period]);
 
   const g = game.data;
   if (!g || !g.isHost) {
@@ -108,7 +108,7 @@ export function HostQrScreen({ gameId }: { gameId: string }) {
     );
   }
 
-  const left = token ? Math.max(0, Date.parse(token.expiresAt) - now) : 0;
+  const left = token ? Math.min(period, Math.max(0, (token.step + 1) * period - now)) : 0;
   const secondsLeft = Math.ceil(left / 1000);
   const approved = (participants.data ?? []).filter((p) => p.status === 'approved');
   const here = approved.filter((p) => p.attendance === 'verified');
@@ -193,7 +193,10 @@ export function HostQrScreen({ gameId }: { gameId: string }) {
                     weight="semibold"
                     color="textOnMedia"
                     selectable
-                    numberOfLines={2}
+                    numberOfLines={1}
+                    ellipsizeMode="middle"
+                    // The code is LTR data: keep its paragraph LTR so it truncates at the end in RTL UIs too.
+                    {...({ dir: 'ltr' } as object)}
                     testID="checkin.qr.code"
                     style={{ fontFamily: 'monospace', fontVariant: ['tabular-nums'], letterSpacing: 0.5 }}
                   >

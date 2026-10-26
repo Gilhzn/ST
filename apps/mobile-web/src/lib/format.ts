@@ -65,7 +65,15 @@ export function formatDay(iso: string, locale: string, now: number = Date.now())
 
 /** "in 45 minutes" — always shown next to an absolute time on details screens. */
 export function formatRelative(iso: string, locale: string, now: number = Date.now()): string {
-  return safe(() => i18nFormatRelative(iso, locale, now), '');
+  return safe(() => stripDualCount(i18nFormatRelative(iso, locale, now)), '');
+}
+
+/**
+ * Chromium's ICU data spells the Hebrew/Arabic dual with a trailing count ("בעוד שעתיים (2)"),
+ * which bidi then scatters on screen ("לפני (2) שעתיים"). The dual word already says the number.
+ */
+export function stripDualCount(text: string): string {
+  return text.replace(/\s*\(\d+\)/u, '');
 }
 
 export function formatNumber(n: number, locale: string, opts?: Intl.NumberFormatOptions): string {
@@ -100,9 +108,43 @@ export function formatMoney(amountMinor: number, currency: CurrencyCode, locale:
   return safe(() => i18nFormatMoney(amountMinor, currency, locale), `${amountMinor} ${currency}`);
 }
 
-/** "1 hour, 30 minutes". */
+/** Hebrew durations as people say them: "שעה ו-30 דקות", "שעתיים", "3 ימים ו-4 שעות". */
+const HE_UNITS: Record<'day' | 'hour' | 'minute', [one: string, two: string, many: string]> = {
+  day: ['יום', 'יומיים', 'ימים'],
+  hour: ['שעה', 'שעתיים', 'שעות'],
+  minute: ['דקה', 'שתי דקות', 'דקות'],
+};
+
+function durationParts(minutes: number): ['day' | 'hour' | 'minute', number][] {
+  let remaining = Math.max(1, Math.round(minutes));
+  const parts: ['day' | 'hour' | 'minute', number][] = [];
+  for (const [unit, size] of [['day', 1440], ['hour', 60], ['minute', 1]] as const) {
+    const value = Math.floor(remaining / size);
+    remaining -= value * size;
+    if (value > 0 && parts.length < 2) parts.push([unit, value]);
+  }
+  return parts;
+}
+
+/**
+ * Compact duration, two units max: "1 hr, 30 min", "29 days, 3 hr" ("1 hour, 30 minutes"
+ * wrapped on every card). Hebrew is spelled naturally ("שעה ו-30 דקות") instead of ICU's "1 שעה, 30 דקות".
+ */
 export function formatDuration(minutes: number, locale: string): string {
-  return safe(() => i18nFormatDuration(minutes * 60_000, locale), `${minutes} min`);
+  const parts = durationParts(minutes);
+  if (locale.split('-')[0] === 'he') {
+    const words = parts.map(([unit, n]) => (n === 1 ? HE_UNITS[unit][0] : n === 2 ? HE_UNITS[unit][1] : `${n} ${HE_UNITS[unit][2]}`));
+    return words.length === 2 ? `${words[0]} ${/^\d/.test(words[1]) ? 'ו-' : 'ו'}${words[1]}` : words[0];
+  }
+  return safe(
+    () =>
+      i18nFormatList(
+        parts.map(([unit, n]) => new Intl.NumberFormat(locale, { style: 'unit', unit, unitDisplay: unit === 'day' ? 'long' : 'short', maximumFractionDigits: 0 }).format(n)),
+        locale,
+        'unit',
+      ),
+    safe(() => i18nFormatDuration(minutes * 60_000, locale), `${minutes} min`),
+  );
 }
 
 /** Countdown "0:30" (LTR digits; isolate when embedding). */

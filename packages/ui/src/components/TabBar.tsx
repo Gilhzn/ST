@@ -10,6 +10,7 @@ import { useTheme } from "../theme";
 import { borderWidth, radius, sizing, spacing, zIndex } from "../tokens";
 import { Text } from "./Text";
 import { usePressScale } from "./usePressScale";
+import { showFocusRing } from "../focusVisible";
 
 export interface TabBarProps {
   children: ReactNode;
@@ -101,7 +102,8 @@ export function TabBarItem({ icon, label, active = false, badge, vertical, style
         onPress?.(e);
       }}
       style={(st) => {
-        const { focused } = st as { focused?: boolean };
+        const { focused: rawFocused } = st as { focused?: boolean };
+        const focused = showFocusRing(rawFocused);
         return [
           {
             flex: vertical ? undefined : 1,

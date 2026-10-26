@@ -13,7 +13,7 @@ import {
   type UserSport,
   type UserSportInput,
 } from '@st/domain';
-import { Avatar, Button, Chip, Row, spacing, SportGlyphBadge, Stack, Text, TextField, useTheme } from '@st/ui';
+import { Avatar, Button, Chip, isolate, Row, spacing, SportGlyphBadge, Stack, Text, TextField, useTheme } from '@st/ui';
 import { useState } from 'react';
 import { View } from 'react-native';
 
@@ -154,7 +154,7 @@ export function EditProfile({
             onChangeText={setBio}
           />
           <Text variant="caption" color="textTertiary" style={{ alignSelf: 'flex-end', fontVariant: ['tabular-nums'] }}>
-            {t('trust:sanctions.appeal.counter', { count: bio.length, max: BIO_MAX })}
+            {isolate(t('trust:sanctions.appeal.counter', { count: bio.length, max: BIO_MAX }), 'ltr')}
           </Text>
         </Stack>
 

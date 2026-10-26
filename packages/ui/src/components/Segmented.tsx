@@ -7,6 +7,7 @@ import type { IconName } from "../icons/registry";
 import { useTheme } from "../theme";
 import { borderWidth, motion, radius, spacing } from "../tokens";
 import { Text } from "./Text";
+import { showFocusRing } from "../focusVisible";
 
 export interface SegmentedOption<T extends string> {
   value: T;
@@ -101,7 +102,8 @@ export function Segmented<T extends string>({ options, value, onChange, label, s
               }
             }}
             style={(st) => {
-              const { focused } = st as { focused?: boolean };
+              const { focused: rawFocused } = st as { focused?: boolean };
+              const focused = showFocusRing(rawFocused);
               return {
                 flex: 1,
                 flexDirection: "row",

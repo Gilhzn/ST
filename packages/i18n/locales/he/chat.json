@@ -21,7 +21,7 @@
     "retracted": "ההודעה הזו הוסרה."
   },
   "translate": {
-    "translatedFrom": "תורגם מ-{language}",
+    "translatedFrom": "תורגם מ{language}",
     "showOriginal": "הצגת המקור",
     "showTranslation": "הצגת התרגום",
     "autoTranslate": "תרגום אוטומטי של הצ׳אט הזה",

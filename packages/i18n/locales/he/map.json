@@ -16,8 +16,8 @@
   "sheet": {
     "title": "{count, plural, =0 {אין משחקים בסביבה} one {משחק אחד בסביבה} two {שני משחקים בסביבה} other {# משחקים בסביבה}}",
     "sortLabel": "מיון לפי",
-    "sortSoonest": "הקרובים ביותר בזמן",
-    "sortNearest": "הקרובים ביותר במרחק",
+    "sortSoonest": "לפי שעה",
+    "sortNearest": "לפי מרחק",
     "showList": "רשימה",
     "showMap": "מפה",
     "sortA11y": "מיון לפי: {sort}",
@@ -38,7 +38,7 @@
     }
   },
   "cluster": {
-    "a11y": "{count, plural, one {משחק אחד} two {שני משחקים} other {# משחקים}}: {sports}. הקשה כפולה להתקרבות."
+    "a11y": "{count, plural, one {משחק אחד} two {# משחקים} other {# משחקים}}: {sports}. הקשה כפולה להתקרבות."
   },
   "venues": {
     "sectionTitle": "מגרשים בלי משחקים",

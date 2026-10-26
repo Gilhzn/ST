@@ -17,7 +17,8 @@
       "good": "電波良好",
       "fair": "電波普通",
       "poor": "電波が弱い"
-    }
+    },
+    "titleIdle": "会場に着きましたか？"
   },
   "success": {
     "title": "チェックインしました",
@@ -55,8 +56,9 @@
     "codeLabel": "6桁のコード",
     "scanInstead": "代わりにQRコードを読み取る",
     "submit": "コードでチェックイン",
-    "tokenHint": "主催者のQRコードの下に表示されているコードを入力してください。",
-    "tokenLabel": "チェックインコード"
+    "tokenHint": "スキャンできない場合は、ホストにチェックインコードを送ってもらい、ここに貼り付けてください。",
+    "tokenLabel": "チェックインコード",
+    "tokenPlaceholder": "コードを貼り付け"
   },
   "peer": {
     "ask": "チームメイトに頼む",
@@ -96,7 +98,7 @@
   "host": {
     "title": "チェックインコード",
     "instruction": "プレイヤーはこのコードを読み取ってチェックインします。コードは{seconds, plural, other {#秒}}ごとに更新されます。",
-    "fallbackCode": "またはこのコードを入力",
+    "fallbackCode": "スキャンできない場合はコードをコピーして送信",
     "counter": "{total}人中{checkedIn}人がチェックイン済み",
     "markManually": "手動でマークする",
     "manualTitle": "プレイヤーをマーク",

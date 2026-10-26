@@ -4,7 +4,7 @@
  */
 import { Fab, fontWeights, Icon, IconButton, Text, useTheme, type FontWeightKey, type IconName } from '@st/ui';
 import { useEffect, useRef, type ReactNode } from 'react';
-import { Animated, Pressable, TextInput, View, type TextStyle } from 'react-native';
+import { Animated, Platform, Pressable, TextInput, View, type TextStyle } from 'react-native';
 
 import { Glass } from './Glass';
 
@@ -51,6 +51,8 @@ export function SearchBar({
           style={[
             {
               flex: 1,
+              // Web inputs have an intrinsic ~20ch width; without this the trailing List pill overflows at 393px.
+              minWidth: 0,
               height: 48,
               fontSize: 16,
               color: theme.colors.text,
@@ -74,14 +76,16 @@ export function ViewToggle({ testID, icon, label, onPress }: { testID: string; i
   return (
     <Pressable
       testID={testID}
-      accessibilityRole="button"
-      accessibilityLabel={label}
+      role="button"
+      aria-label={label}
       onPress={onPress}
+      hitSlop={4}
       style={({ pressed }) => ({
         flexDirection: 'row',
         alignItems: 'center',
         gap: 6,
         height: 40,
+        flexShrink: 0,
         paddingStart: 12,
         paddingEnd: 14,
         borderRadius: 20,
@@ -103,7 +107,7 @@ export function SearchAreaButton({ visible, label, onPress }: { visible: boolean
   const weight = useWeight();
   const anim = useRef(new Animated.Value(visible ? 1 : 0)).current;
   useEffect(() => {
-    Animated.timing(anim, { toValue: visible ? 1 : 0, duration: theme.reducedMotion ? 0 : 200, useNativeDriver: true }).start();
+    Animated.timing(anim, { toValue: visible ? 1 : 0, duration: theme.reducedMotion ? 0 : 200, useNativeDriver: Platform.OS !== 'web' }).start();
   }, [visible, theme.reducedMotion]);
   return (
     <Animated.View

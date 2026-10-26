@@ -1,6 +1,5 @@
 /**
- * Theme preference row (design v2 §15.15): icon + title with a live swatch of the active
- * palette, then System | Light | Dark as a Segmented control (radio semantics). Persists via
+ * Theme preference row (design v2 §15.15): icon + title, then System | Light | Dark as a Segmented control (radio semantics). Persists via
  * the ThemeProvider.
  */
 import { Icon, radius, Row, Segmented, spacing, Text, useTheme, type ThemePreference } from '@st/ui';
@@ -21,17 +20,6 @@ export function ThemeSection() {
         <Text variant="body" style={{ flex: 1 }}>
           {t('settings:theme.title')}
         </Text>
-        {/* Decorative swatch of the active palette; the choice itself is announced by the radios. */}
-        <View
-          testID="settings.theme.preview"
-          aria-hidden
-          importantForAccessibility="no-hide-descendants"
-          style={{ flexDirection: 'row', padding: 3, gap: 3, borderRadius: radius.pill, backgroundColor: colors.background, borderWidth: 1, borderColor: colors.border }}
-        >
-          {[colors.surface, colors.primary, colors.accent, colors.text].map((c, i) => (
-            <View key={i} style={{ width: 14, height: 14, borderRadius: 7, backgroundColor: c, borderWidth: 1, borderColor: colors.border }} />
-          ))}
-        </View>
       </Row>
       <Segmented<ThemePreference>
         label={t('settings:theme.title')}

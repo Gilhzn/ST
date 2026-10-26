@@ -17,7 +17,8 @@
       "good": "Signal fort",
       "fair": "Signal moyen",
       "poor": "Signal faible"
-    }
+    },
+    "titleIdle": "Vous êtes sur place ?"
   },
   "success": {
     "title": "Check-in effectué",
@@ -55,8 +56,9 @@
     "codeLabel": "Code à 6 chiffres",
     "scanInstead": "Scanner le QR code à la place",
     "submit": "Faire le check-in avec le code",
-    "tokenHint": "Saisis le code affiché sous le QR code de l’organisateur.",
-    "tokenLabel": "Code de check-in"
+    "tokenHint": "Impossible de scanner ? Demandez à l’organisateur de vous envoyer le code d’enregistrement, puis collez-le ici.",
+    "tokenLabel": "Code de check-in",
+    "tokenPlaceholder": "Collez le code"
   },
   "peer": {
     "ask": "Demander à un coéquipier",
@@ -96,7 +98,7 @@
   "host": {
     "title": "Code de check-in",
     "instruction": "Les joueurs scannent ce code pour faire leur check-in. Le code change toutes les {seconds, plural, one {# seconde} many {# de secondes} other {# secondes}}.",
-    "fallbackCode": "Ou saisis ce code",
+    "fallbackCode": "Scan impossible ? Copiez le code et envoyez-le",
     "counter": "{checkedIn} sur {total} ont fait leur check-in",
     "markManually": "Marquer les joueurs manuellement",
     "manualTitle": "Marquer les joueurs",

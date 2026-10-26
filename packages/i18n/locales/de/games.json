@@ -187,7 +187,8 @@
       "body": "Das Organisieren ist für dein Konto pausiert. Sieh nach, warum und wann es endet.",
       "action": "Details ansehen"
     },
-    "defaultTitle": "{sport}-Spiel"
+    "defaultTitle": "{sport}-Spiel",
+    "reviewCta": "Überprüfen"
   },
   "details": {
     "hiddenLocation": "Den genauen Ort erfährst du, sobald die Organisation dich bestätigt hat",
@@ -250,7 +251,7 @@
       "checkInOpens": "Check-in öffnet {time}",
       "chat": "Chat",
       "directions": "Route",
-      "cantMakeIt": "Ich kann nicht kommen",
+      "cantMakeIt": "Absagen",
       "leaveWaitlist": "Warteliste verlassen",
       "waitlistPosition": "Du bist auf Platz {position} der Warteliste.",
       "requestHint": "Sendet eine Anfrage an die Organisation"
@@ -353,9 +354,9 @@
     "refresh": "Aktualisieren",
     "segmentsA11y": "Spiele anzeigen",
     "segment": {
-      "upcoming": "Anstehend",
-      "hosting": "Organisiert",
-      "past": "Vergangen"
+      "upcoming": "Geplant",
+      "hosting": "Als Host",
+      "past": "Vorbei"
     },
     "findGame": "Spiel finden",
     "hostGame": "Spiel organisieren",
