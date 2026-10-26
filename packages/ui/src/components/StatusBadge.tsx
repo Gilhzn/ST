@@ -31,8 +31,8 @@ export function StatusBadge({ status, label, percent, size = "md", accessibility
   return (
     <View
       accessible
-      accessibilityRole="text"
-      accessibilityLabel={a11y}
+      role="img"
+      aria-label={a11y}
       style={[
         {
           flexDirection: "row",
@@ -51,11 +51,7 @@ export function StatusBadge({ status, label, percent, size = "md", accessibility
         style,
       ]}
     >
-      <Text
-        variant={size === "sm" ? "caption" : "label"}
-        style={{ color: t.fg, fontWeight: "700" }}
-        importantForAccessibility="no"
-      >
+      <Text variant={size === "sm" ? "caption" : "label"} style={{ color: t.fg, fontWeight: "700" }} aria-hidden>
         {t.glyph}
       </Text>
       <Text variant={size === "sm" ? "caption" : "label"} style={{ color: t.fg }} numberOfLines={1}>
@@ -85,8 +81,8 @@ export function StatusDot({
   return (
     <View
       accessible
-      accessibilityRole="image"
-      accessibilityLabel={accessibilityLabel}
+      role="img"
+      aria-label={accessibilityLabel}
       style={{
         width: size,
         height: size,

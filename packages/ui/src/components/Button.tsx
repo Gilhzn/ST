@@ -49,7 +49,8 @@ function paletteFor(variant: ButtonVariant, c: SemanticColors): Palette {
 
 /**
  * Button. Min touch target 48 (sm is 36 visually + hitSlop to 48).
- * Loading keeps width stable, sets accessibilityState.busy and blocks presses.
+ * Loading keeps width stable, sets aria-busy and blocks presses. Uses role/aria-* props
+ * (accessibilityState is ignored by react-native-web).
  */
 export function Button({
   label,
@@ -63,6 +64,7 @@ export function Button({
   style,
   loadingLabel,
   accessibilityLabel,
+  "aria-label": ariaLabel,
   accessibilityHint,
   hitSlop,
   ref,
@@ -78,10 +80,11 @@ export function Button({
   return (
     <Pressable
       ref={ref}
-      accessibilityRole="button"
-      accessibilityLabel={loading && loadingLabel ? loadingLabel : (accessibilityLabel ?? label)}
+      role="button"
+      aria-label={loading && loadingLabel ? loadingLabel : (ariaLabel ?? accessibilityLabel ?? label)}
       accessibilityHint={accessibilityHint}
-      accessibilityState={{ disabled: isDisabled, busy: loading }}
+      aria-disabled={isDisabled}
+      aria-busy={loading}
       disabled={isDisabled}
       hitSlop={hitSlop ?? (slop ? { top: slop, bottom: slop } : undefined)}
       style={(state) => {
@@ -109,11 +112,7 @@ export function Button({
       }}
       {...rest}
     >
-      {loading ? (
-        <ActivityIndicator size="small" color={c[p.fg]} accessibilityElementsHidden importantForAccessibility="no" />
-      ) : (
-        startIcon
-      )}
+      {loading ? <ActivityIndicator size="small" color={c[p.fg]} aria-hidden /> : startIcon}
       <Text
         variant={size === "sm" ? "label" : "bodyStrong"}
         color={isDisabled && !loading ? "disabledText" : p.fg}

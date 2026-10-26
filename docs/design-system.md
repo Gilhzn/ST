@@ -159,7 +159,7 @@ The status is derived by the domain (`green` = no yellow card and ≥ 85%, `red`
 | red | ✕ | Restricted · 52% | `#A8141F`/`#FDE7E8` → 6.38 | `#FF9198`/`#3A1418` → 7.54 | 5.98 / 6.57 |
 | new | ✦ | New player | `#33407A`/`#E8EAF6` → 8.13 | `#B9C2FF`/`#1E2236` → 9.14 | 5.37 / 6.59 |
 
-- `StatusBadge` speaks "Reliability: Reliable, 92%". Pass a localized `accessibilityLabel`.
+- `StatusBadge` speaks "Reliability: Reliable, 92%". Pass a localized `accessibilityLabel` (component prop; rendered as `aria-label`).
 - `StatusDot` (dense lists) is a solid dot with a glyph. It must have an `accessibilityLabel` and must sit next to the name.
 - The percentage is wrapped in LRI…PDI so "92%" never reorders inside Arabic or Hebrew text. Locale digit shaping comes from `Intl.NumberFormat`.
 - Avoid moralizing labels ("Bad player"). The approved en labels are *Reliable / Caution / Restricted / New player*. The i18n agent owns the translations.
@@ -274,7 +274,7 @@ Also:
 - **Library:** `@expo/vector-icons` → MaterialCommunityIcons (it ships with Expo and covers every sport). Size 24 in nav/actions and 20 inline. Icons get `textSecondary` color by default and `primary` when active.
 - **Stroke and style:** outlined icons for inactive tabs and filled for active ones. Active state is never shown by color alone (filled shape + label + indicator bar).
 - Glyph fallbacks in `@st/ui` (✓ ! ✕ ✦ and sport emoji) exist so the package has no icon dependency. The app passes real icons via `icon`/`startIcon`.
-- **Icon‑only buttons** need `accessibilityLabel`, and a tooltip on web hover/focus.
+- **Icon‑only buttons** need `aria-label`, and a tooltip on web hover/focus.
 - **Directional icons** are wrapped in `<Mirror>` (see §9). Icons with text baked in (e.g. "A→文" translate) are not mirrored.
 - **Semantic icon map** (keep consistent everywhere):
   - Map `map-marker-radius`, Games `calendar-star`, Inbox `message-text`, Network `account-group`, Profile `account-circle`.
@@ -333,7 +333,10 @@ The app runs RTL for `he` and `ar`. **Native:** `I18nManager.forceRTL(true)` + r
 
 - **Touch targets:** ≥ 48dp everywhere (`sizing.touchTarget`). Small visuals extend with `hitSlop` (Button `sm`, Chip 40 → 48). Keep 8dp spacing between adjacent targets (2.5.8).
 - **Screen readers:**
-  - Every interactive element has a role (`button`, `checkbox`, `radio`, `adjustable`, `link`, `header`) and a localized `accessibilityLabel`. Labels describe purpose ("Join game"), and `accessibilityHint` describes the result ("Sends a request to the host").
+  - Every interactive element has a `role` (`button`, `checkbox`, `radio`, `tab`, `link`, `heading`, `img`) and a localized `aria-label`. Labels describe purpose ("Join game"), and `accessibilityHint` (native only) describes the result ("Sends a request to the host").
+  - **Use the modern `role` / `aria-*` props** (`aria-checked`, `aria-selected`, `aria-expanded`, `aria-disabled`, `aria-busy`, `aria-hidden`, `aria-live`), never `accessibilityState` / `accessibilityRole` / `accessibilityLabel` / `importantForAccessibility` / `accessibilityLiveRegion`. react-native-web 0.21 ignores `accessibilityState`, so selection never reaches the DOM. `test/a11y-props.test.ts` enforces this in `packages/ui`. Still allowed: `accessible`, `accessibilityHint`, `accessibilityActions`, `accessibilityLanguage`.
+  - Don't use `slider`/`adjustable` roles unless `aria-valuenow/min/max` are set (axe: critical). The sheet handle is a `button` with `aria-expanded` ("Expand sheet" / "Collapse sheet"), plus expand/collapse custom actions on native.
+  - `aria-selected` only goes on `tab`/`option` roles. Segmented controls are `Chip selectionRole="tab"` inside a `role="tablist"` row. Radius chips are `radio` inside `role="radiogroup"`.
   - Cards are one focus stop with a summary label: "Football, 6 of 10 players, today 18:00, Park HaYarkon, 1.2 kilometres, deposit 20 shekels".
   - Map: pins are focusable with labels. A **List view toggle** is always visible, so the map is never the only way to find games.
   - Live updates (waitlist position, check‑in progress, errors) use `accessibilityLiveRegion="polite"` or `announceForAccessibility`. Errors use `assertive` only when blocking.
@@ -352,7 +355,7 @@ The app runs RTL for `he` and `ar`. **Native:** `I18nManager.forceRTL(true)` + r
   - The sanctions countdown is informational only.
   - The QR check‑in never requires speed: a code is valid for ±1 step (≈ 90s window).
   - The OTP resend timer is shown and announced.
-- **Dragging alternatives (2.5.7):** the sheet has tap/adjustable actions, the radius slider is a set of chips, and the teams reshuffle and moves use buttons, not drag‑only.
+- **Dragging alternatives (2.5.7):** the sheet handle has a tap action and expand/collapse actions, the radius slider is a set of chips, and the teams reshuffle and moves use buttons, not drag‑only.
 - **Language:** set `lang` on web root and use `accessibilityLanguage` on native Text for content in another language (translated chat).
 
 ---
@@ -671,9 +674,9 @@ Each spec lists layout, components, states (**loading / empty / error / offline*
 | `ThemeProvider`, `useTheme`, `useMirrorStyle` | Theme context (`colors`, `scheme`, `preference`, `setPreference`, `direction`, `isRTL`, `locale`, `script`, `reducedMotion`, `elevation()`, `fontFamily()`) |
 | `Text` | Variants, semantic color, script‑aware font/line‑height, header role, dynamic‑type caps |
 | `Button` | `primary/secondary/ghost/danger/accent`, `sm/md/lg`, `loading`, start/end icons, focus ring, 48dp target |
-| `Chip`, `SportDot` | Selectable filter chip (checkbox/radio semantics, ✓ glyph), sport marker |
+| `Chip`, `SportDot` | Selectable chip (`checkbox`/`radio` via `aria-checked`, `tab` via `aria-selected`; ✓ glyph), sport marker |
 | `Card` | Surface, elevation/outlined, `accentEdge` lane line, pressable |
-| `Sheet` | Bottom sheet with detents, drag + tap + a11y adjustable |
+| `Sheet` | Bottom sheet with detents: drag, tap, and a handle `button` with `aria-expanded` |
 | `StatusBadge`, `StatusDot` | Reliability glyph + label (+%) |
 | `PinBadge`, `ClusterBadge` | Sport map markers, clusters |
 | `BidiText` | FSI/PDI isolation, sanitization, writingDirection, script font |

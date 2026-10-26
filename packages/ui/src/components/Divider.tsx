@@ -16,8 +16,7 @@ export function Divider({ vertical, insetStart, strong, style, ...rest }: Divide
   const inset = typeof insetStart === "number" ? insetStart : insetStart ? spacing[insetStart] : 0;
   return (
     <View
-      accessibilityElementsHidden
-      importantForAccessibility="no-hide-descendants"
+      aria-hidden
       style={[
         vertical
           ? { width: 1, alignSelf: "stretch", backgroundColor: strong ? colors.borderStrong : colors.border }

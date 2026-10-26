@@ -44,9 +44,9 @@ export function Avatar({ name, uri, size = "md", badge, decorative, style }: Ava
   return (
     <View
       accessible={!decorative}
-      accessibilityRole={decorative ? undefined : "image"}
-      accessibilityLabel={decorative ? undefined : name}
-      importantForAccessibility={decorative ? "no-hide-descendants" : "yes"}
+      role={decorative ? undefined : "img"}
+      aria-label={decorative ? undefined : name}
+      aria-hidden={decorative ? true : undefined}
       style={[{ width: d, height: d }, style]}
     >
       {uri ? (

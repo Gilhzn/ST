@@ -12,8 +12,11 @@ export interface ChipProps extends Omit<PressableProps, "children" | "style"> {
   /** Shows the sport marker (shape + color) before the label. */
   sport?: SportKey;
   startIcon?: ReactNode;
-  /** "checkbox" for multi-select filters (sports), "radio" for single-select (radius). */
-  selectionRole?: "checkbox" | "radio" | "button";
+  /**
+   * "checkbox" for multi-select filters (sports), "radio" for single-select (radius; wrap the
+   * group in role="radiogroup"), "tab" for segmented controls (wrap in role="tablist").
+   */
+  selectionRole?: "checkbox" | "radio" | "tab";
   style?: StyleProp<ViewStyle>;
 }
 
@@ -21,7 +24,7 @@ const CHIP_HEIGHT = 40;
 
 /**
  * Selectable filter chip. Selection is shown by fill + border + a ✓ glyph
- * (never color alone) and exposed via accessibilityState.
+ * (never color alone) and exposed via aria-checked / aria-selected (works on web too).
  * When the 3-sport limit is reached, unselected chips stay focusable but disabled
  * with an accessibilityHint explaining why.
  */
@@ -41,18 +44,16 @@ export function Chip({
 }: ChipProps & { ref?: Ref<ComponentRef<typeof View>> }) {
   const { colors: c, reducedMotion } = useTheme();
   const slop = (sizing.touchTarget - CHIP_HEIGHT) / 2;
-  const state =
-    selectionRole === "button"
-      ? { selected, disabled: Boolean(disabled) }
-      : { checked: selected, disabled: Boolean(disabled) };
 
   return (
     <Pressable
       ref={ref}
-      accessibilityRole={selectionRole}
-      accessibilityLabel={label}
+      role={selectionRole}
+      aria-label={label}
       accessibilityHint={accessibilityHint}
-      accessibilityState={state}
+      aria-checked={selectionRole === "tab" ? undefined : selected}
+      aria-selected={selectionRole === "tab" ? selected : undefined}
+      aria-disabled={Boolean(disabled)}
       disabled={disabled}
       hitSlop={{ top: slop, bottom: slop }}
       onPress={(e) => {
@@ -83,7 +84,7 @@ export function Chip({
       {...rest}
     >
       {selected ? (
-        <Text variant="label" color="onPrimarySubtle" accessibilityElementsHidden importantForAccessibility="no">
+        <Text variant="label" color="onPrimarySubtle" aria-hidden>
           ✓
         </Text>
       ) : null}
@@ -123,5 +124,5 @@ export function SportDot({ sport, size = 12 }: { sport: SportKey; size?: number 
             : t.shape === "pill"
               ? { width: size * 1.5, height: size * 0.75, borderRadius: size }
               : { width: size * 0.7, height: size * 1.2, borderRadius: size };
-  return <View accessibilityElementsHidden importantForAccessibility="no-hide-descendants" style={[common, shape]} />;
+  return <View aria-hidden style={[common, shape]} />;
 }

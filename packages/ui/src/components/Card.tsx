@@ -17,7 +17,7 @@ export interface CardProps extends Omit<PressableProps, "children" | "style"> {
 
 /**
  * Surface container. With `onPress` it becomes one large pressable (role=button);
- * pass `accessibilityLabel` summarizing the card ("Football, 6/10, Today 18:00, 1.2 km").
+ * pass `aria-label` summarizing the card ("Football, 6/10, Today 18:00, 1.2 km").
  */
 export function Card({
   children,
@@ -46,7 +46,7 @@ export function Card({
 
   return (
     <Pressable
-      accessibilityRole="button"
+      role="button"
       onPress={onPress}
       style={(st) => {
         const { pressed, focused } = st as { pressed: boolean; focused?: boolean };

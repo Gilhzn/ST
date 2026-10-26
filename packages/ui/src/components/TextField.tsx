@@ -54,7 +54,7 @@ export function TextField({
       <Text variant="label" color="text" nativeID={`${id}-label`}>
         {label}
         {required ? (
-          <Text variant="label" color="dangerText" accessibilityElementsHidden importantForAccessibility="no">
+          <Text variant="label" color="dangerText" aria-hidden>
             {" *"}
           </Text>
         ) : null}
@@ -76,9 +76,8 @@ export function TextField({
         {start}
         <TextInput
           ref={ref}
-          accessibilityLabel={required ? `${label}, required` : label}
+          aria-label={required ? `${label}, required` : label}
           accessibilityHint={describedBy}
-          aria-labelledby={`${id}-label`}
           aria-invalid={Boolean(error)}
           editable={editable}
           placeholderTextColor={c.textTertiary}
@@ -110,12 +109,8 @@ export function TextField({
         {end}
       </View>
       {error ? (
-        <View
-          accessibilityLiveRegion="polite"
-          accessibilityRole="alert"
-          style={{ flexDirection: "row", gap: spacing.xs, alignItems: "flex-start" }}
-        >
-          <Text variant="caption" color="dangerText" importantForAccessibility="no">
+        <View aria-live="polite" style={{ flexDirection: "row", gap: spacing.xs, alignItems: "flex-start" }}>
+          <Text variant="caption" color="dangerText" aria-hidden>
             ⚠
           </Text>
           <Text variant="caption" color="dangerText" style={{ flex: 1 }}>

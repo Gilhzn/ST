@@ -17,7 +17,7 @@ export interface TextProps extends RNTextProps {
 
 /**
  * Typography primitive. Applies the locale's font, per-script line-height/tracking and
- * dynamic-type caps. Headings (display/title*) get accessibilityRole="header".
+ * dynamic-type caps. Headings (display/title*) get role="heading".
  */
 export function Text({
   variant = "body",
@@ -25,7 +25,7 @@ export function Text({
   script,
   align,
   style,
-  accessibilityRole,
+  role,
   maxFontSizeMultiplier,
   ref,
   ...rest
@@ -53,7 +53,7 @@ export function Text({
   return (
     <RNText
       ref={ref}
-      accessibilityRole={accessibilityRole ?? (isHeading ? "header" : undefined)}
+      role={role ?? (isHeading ? "heading" : undefined)}
       maxFontSizeMultiplier={maxFontSizeMultiplier ?? t.maxFontSizeMultiplier}
       style={[base, style]}
       {...rest}

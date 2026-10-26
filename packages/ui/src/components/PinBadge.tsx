@@ -57,9 +57,9 @@ export function PinBadge({ sport, state = "default", icon, accessibilityLabel, s
   return (
     <View
       accessible
-      accessibilityRole="button"
-      accessibilityLabel={accessibilityLabel}
-      accessibilityState={{ selected: state === "selected" }}
+      role="button"
+      aria-label={accessibilityLabel}
+      aria-expanded={state === "selected"}
       style={[
         { alignItems: "center", justifyContent: "center", minWidth: sizing.touchTarget, minHeight: sizing.touchTarget },
         style,
@@ -121,8 +121,8 @@ export function ClusterBadge({ count, sports = [], accessibilityLabel }: Cluster
   return (
     <View
       accessible
-      accessibilityRole="button"
-      accessibilityLabel={accessibilityLabel}
+      role="button"
+      aria-label={accessibilityLabel}
       style={{
         alignItems: "center",
         justifyContent: "center",

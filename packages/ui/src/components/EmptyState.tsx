@@ -46,7 +46,7 @@ export function EmptyState({
 
   return (
     <View
-      accessibilityLiveRegion={tone === "error" || tone === "offline" ? "polite" : "none"}
+      aria-live={tone === "error" || tone === "offline" ? "polite" : undefined}
       style={[
         {
           alignItems: "center",
@@ -61,8 +61,7 @@ export function EmptyState({
     >
       {icon ?? (
         <View
-          accessibilityElementsHidden
-          importantForAccessibility="no-hide-descendants"
+          aria-hidden
           style={{
             width: 72,
             height: 72,
@@ -72,7 +71,7 @@ export function EmptyState({
             justifyContent: "center",
           }}
         >
-          <Text variant="title1" color={glyphColor} accessibilityRole="none">
+          <Text variant="title1" color={glyphColor}>
             {glyphs[tone]}
           </Text>
         </View>

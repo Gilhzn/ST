@@ -33,7 +33,8 @@ export interface SheetProps {
 /**
  * Lightweight bottom sheet (Animated + PanResponder only, no extra deps).
  * - Drag the handle or header to move between detents; tap the handle to cycle.
- * - Screen readers: the handle is an "adjustable" control with increment/decrement actions.
+ * - Screen readers: the handle is a button ("Expand sheet" / "Collapse sheet", aria-expanded)
+ *   with extra expand/collapse custom actions on native. No slider role: axe requires aria-valuenow.
  * - Reduced motion: detent changes are short timing animations, no spring overshoot.
  * On wide web layouts prefer the split-view list pane instead of a sheet.
  */
@@ -43,8 +44,8 @@ export function Sheet({
   index,
   onIndexChange,
   accessibilityLabel,
-  expandLabel = "Expand",
-  collapseLabel = "Collapse",
+  expandLabel = "Expand sheet",
+  collapseLabel = "Collapse sheet",
   header,
   style,
 }: SheetProps) {
@@ -110,7 +111,8 @@ export function Sheet({
 
   return (
     <Animated.View
-      accessibilityLabel={accessibilityLabel}
+      role="region"
+      aria-label={accessibilityLabel}
       style={[
         {
           position: "absolute",
@@ -129,14 +131,14 @@ export function Sheet({
     >
       <View {...responder.panHandlers}>
         <Pressable
-          accessibilityRole="adjustable"
-          accessibilityLabel={atTop ? collapseLabel : expandLabel}
-          accessibilityValue={{ min: 0, max: points.length - 1, now: current }}
+          role="button"
+          aria-label={atTop ? collapseLabel : expandLabel}
+          aria-expanded={atTop}
           accessibilityActions={[
-            { name: "increment", label: expandLabel },
-            { name: "decrement", label: collapseLabel },
+            { name: "expand", label: expandLabel },
+            { name: "collapse", label: collapseLabel },
           ]}
-          onAccessibilityAction={(e) => go(e.nativeEvent.actionName === "increment" ? current + 1 : current - 1)}
+          onAccessibilityAction={(e) => go(e.nativeEvent.actionName === "expand" ? current + 1 : current - 1)}
           onPress={() => go(atTop ? 0 : current + 1)}
           style={{ alignItems: "center", justifyContent: "center", minHeight: 32, paddingTop: spacing.sm }}
           hitSlop={{ top: 8, bottom: 8 }}
