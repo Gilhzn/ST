@@ -70,7 +70,7 @@ Condensed from three research tracks (competition and product, technology, compl
   - Art. 20(6) says decisions must not be taken solely by automated means.
 - **Israel Privacy Protection Law, Amendment 13** (in force 14 Aug 2025): DPO and notification duties for systematic monitoring and large-scale sensitive data. Geolocation is high-scrutiny. Verify with Israeli counsel.
 - **CCPA/CPRA:** precise geolocation (within 1,850 ft) is sensitive personal information, which brings a "Limit Use" right. Ads should use coarse location only, with opt-in.
-- **Minors:** amended COPPA has been fully enforceable since April 2026. The GDPR consent age is 13–16 depending on the country. Recommended: 16+ at launch and 18+ for live streaming.
+- **Minors:** amended COPPA has been fully enforceable since April 2026. The GDPR consent age is 13–16 depending on the country. Research recommendation at the time: 16+ at launch and 18+ for live streaming (superseded: see Owner decisions below).
 - **Contacts:** hashed phone numbers are trivially reversible (Signal moved to SGX enclaves). Best practice is not to upload contacts at all; use invite links, QR codes or the OS picker.
 
 ## D. Redesign decisions (spec v4 → v5)
@@ -83,4 +83,10 @@ Condensed from three research tracks (competition and product, technology, compl
 | Host loses rights permanently | Automatic host suspension + review; permanent only by a human | Same |
 | Ephemeral chat 2–4h | Purge at end+3h; reported/blocked messages retained 90 days for abuse handling | Evidence for appeals and law enforcement |
 | Pre-send NLP block | Block, nudge or allow with an explanation; 3 blocks in 7d → yellow card + 24h mute | Apple 1.2; transparency |
-| (new) | Optional deposit (manual-capture hold), waitlist auto-promotion, reliability %, women-only games, hidden location until approval, age 16+ | Research §A |
+| (new) | Optional deposit (manual-capture hold), waitlist auto-promotion, reliability %, women-only games, hidden location until approval, age gate (originally 16+; now 18+, see Owner decisions) | Research §A |
+
+## Owner decisions (post-research, 2026-10)
+The product owner made the following decisions after this research. Where they conflict with the findings above (minors, payments, seed cities), the decisions win.
+1. **Minimum age is 18+ worldwide** (was 16+ with 18+ for live streaming). This removes the 16-17 protections track; COPPA and GDPR Art. 8 child-consent rules largely fall away. The UK Online Safety Act children's-access assessment is still required. Configured by `trust_config.min_age_years` (default 18), mirrored as `TrustConfig.minAgeYears` / `MIN_AGE_YEARS`.
+2. **Payments:** incorporate a foreign entity (US/EU/UK) and use Stripe as the single global processor, including for Israeli users. Bit and an Israeli local PSP stay an interface stub for a later phase (ADR 0006).
+3. **Seed cities:** Tel Aviv first, then London (the Madrid option is dropped).

@@ -41,7 +41,7 @@ flowchart LR
   EF --> OAI[OpenAI omni-moderation]
   EF --> CLA[Claude claude-haiku-5-5]
   EF --> TR[DeepL / Google Translate]
-  EF --> PAY["PaymentProvider: Stripe | local PSP"]
+  EF --> PAY["PaymentProvider: Stripe (local PSP slot deferred)"]
   EF --> PUSH[Expo Push / Web Push]
   PAY -->|webhooks| EF
   UI --> TILES[Vector tiles: MapTiler / Stadia / OpenFreeMap]
@@ -54,7 +54,7 @@ Plain-text summary:
    screens → DataPort ─┬─ SupabaseAdapter ──► Auth · RLS selects · RPCs · Edge Functions · Realtime
                        └─ InMemoryAdapter  ──► @st/domain (same rules, in memory)
  Supabase: Postgres+PostGIS (RLS) · SECURITY DEFINER RPCs · Edge Functions (pure handle(req,deps)) · pg_cron
- Vendors (server side only): OpenAI moderation · Claude Haiku · DeepL/Google · Stripe/local PSP · Expo Push
+ Vendors (server side only): OpenAI moderation · Claude Haiku · DeepL/Google · Stripe · Expo Push
 ```
 
 ## 2. Platform strategy
@@ -243,7 +243,7 @@ sequenceDiagram
 
 - **Port.** `packages/payments` defines `PaymentProvider` (`createDepositSetup`, `placeHold`, `capture`, `release`, `refund`, `parseWebhook`) with `StripeProvider` and `FakeProvider`. Edge Functions depend on the port only (ADR 0006).
 - **Stripe (primary).** Cards, Apple Pay, Google Pay and local methods through the Payment Element (web) / PaymentSheet (native). At join: SetupIntent (`usage: off_session`). At `startsAt − 24h` (`place_deposit_holds`): PaymentIntent with `capture_method: manual`, because card holds expire after about 7 days. Release on attendance, excuse or game cancel; capture on a no-show once the dispute window closes without a dispute, or after an upheld dispute. If a dispute is still open close to hold expiry, capture and refund on overturn.
-- **Local PSPs.** Stripe does not open merchant accounts for Israeli companies, so an adapter for an Israeli PSP (e.g. PayPlus or Meshulam, with Bit) implements the same port. Provider routing is by merchant-of-record entity and user country.
+- **Single global processor (owner decision, ADR 0006).** A foreign merchant-of-record entity (US/EU/UK) runs Stripe for every country, Israel included (cards, Apple Pay, Google Pay). The `LocalPspProvider` port (e.g. PayPlus with Bit) stays an interface stub for a later phase; `routeFor` sends all card traffic to Stripe.
 - **Records.** `payments` with a unique `idempotency_key` per (user, game, purpose, step). `payments-webhook` verifies signatures and is the only path that advances `status`.
 - **Store rules.** Deposits pay for a real-world service, so in-app purchase is not required (Apple 3.1.5(a); verify with counsel). Host payouts of forfeited deposits need Stripe Connect and are deferred; MVP forfeits go to the platform-held pot.
 
@@ -264,7 +264,7 @@ sequenceDiagram
 - **Location minimisation.** Approximate game location until approval; GPS samples reduced to a verdict; precise location used only in the foreground (CCPA sensitive data, Israeli Amendment 13).
 - **Abuse controls.** Per-user rate limits in `send-message` and report RPCs; reporter qualification and collusion checks; blocked pairs filtered in all reads; spoofing heuristics + App Attest / Play Integrity (planned).
 - **Auditability.** Moderator actions and automated sanctions write `audit_log`; every sanction carries a statement of reasons.
-- **Privacy rights.** In-app deletion, data export (later phase), age gate 16+ with birth year/month only.
+- **Privacy rights.** In-app deletion, data export (later phase), age gate 18+ worldwide (`trust_config.min_age_years`) with birth year/month only.
 - **Supply chain.** Lockfile committed, no runtime CDN scripts, Dependabot (planned), EAS secrets for build-time keys.
 
 ## 9. Observability (planned)

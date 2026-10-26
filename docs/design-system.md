@@ -406,9 +406,9 @@ Each spec lists layout, components, states (**loading / empty / error / offline*
   - Offline: disable Continue with the hint "Connect to the internet to get a code."
 - **A11y:** the OTP field label is "Verification code, 6 digits". The countdown is announced at 10s and 0.
 
-### 13.2 Age gate (16+)
-- Comes right after OTP, before profile creation. Neutral month + year pickers (no prefilled default; the year list starts empty, so no pre‑selected age). Copy: "Sport Talent is for people 16 and older. We ask for your birth month and year only."
-- **Under 16:** a respectful stop screen: "Sorry, you need to be 16 or older to use Sport Talent." Explain that data entered is not kept, and offer **Close**. There's no retry loop: the device is soft‑locked for 24h to discourage age cycling.
+### 13.2 Age gate (18+)
+- Comes right after OTP, before profile creation. Neutral month + year pickers (no prefilled default; the year list starts empty, so no pre‑selected age). Copy: "Sport Talent is for people 18 and older. We ask for your birth month and year only." The minimum comes from `trust_config.min_age_years` (default 18), mirrored as `TrustConfig.minAgeYears` / `MIN_AGE_YEARS`; the copy takes the number from config, never a hard-coded 18.
+- **Under 18:** a respectful stop screen: "Sorry, you need to be 18 or older to use Sport Talent." Explain that data entered is not kept, and offer **Close**. There's no retry loop: the device is soft‑locked for 24h to discourage age cycling.
 - Then a short profile: display name (BidiText preview), primary sport(s) (chips), optional photo, home area (optional; the map works without location).
 - **Location permission:** a pre‑prompt explains the benefit and never blocks. "Not now" keeps the map working by city search.
 

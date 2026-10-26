@@ -48,7 +48,7 @@
    - 3 independent (non-colluding) reporters → temporary visibility restriction for 72h + review queue + notification with reasons and appeal.
 5. **Host safety:** women-only games, the exact location hidden until a request is approved, verified hosts.
 6. **Recurring games**, a WhatsApp invite link with a preview, and a weather alert (later phase).
-7. **Age 16+** at launch. Livestreaming 18+ (later phase). In-app account deletion. Report/block everywhere.
+7. **Age 18+ worldwide** (owner decision; was 16+ in the original plan). In-app account deletion. Report/block everywhere.
 8. **Go-to-market:** global from day one in the product, with one or two seed cities and sports for liquidity, plus game-fill KPIs.
 
 ## Agent team and models
@@ -80,7 +80,7 @@
 - **`packages/i18n`:** i18next + i18next-icu, `locales/{13}/{namespaces}.json`, rtl.ts, check-keys script.
 - **`packages/ui`:** tokens, theme (dark/light), Noto fonts per script, primitives (Button, Chip, Sheet, PinBadge, StatusDot, BidiText), and an eslint rule enforcing logical styles only.
 - **`packages/payments`:** a PaymentProvider port with StripeProvider (cards, Apple Pay, Google Pay and local methods via the Payment Element) and FakeProvider.
-  - The adapter interface also allows a local PSP; documented in an ADR. Stripe doesn't open merchant accounts for Israeli companies, so add an adapter such as PayPlus/Meshulam with Bit support.
+  - The adapter interface also allows a local PSP; documented in an ADR. Owner decision: a foreign entity runs Stripe globally (Israel included); the local PSP adapter (PayPlus/Bit) is deferred.
 - **`supabase/`:** migrations, seed, functions (`send-message`, `translate-message`, `checkin-verify`, `trust-evaluate`, `create-deposit`, `payments-webhook`, `delete-account`, `push-dispatch`), and tests (pglite harness + pgTAP).
   - Each function is a pure `handle(req, deps)`. Domain logic is bundled with esbuild into `_shared/domain.mjs`.
 - **`docs/`:** prd-v5.md (Hebrew + English summary), architecture.md, design-system.md, qa-strategy.md, compliance.md, agents.md, adr/, deferred-phases.md.

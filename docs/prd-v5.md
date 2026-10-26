@@ -2,7 +2,7 @@
 
 | שדה | ערך |
 |---|---|
-| גרסה | 5.0 (מחליפה את v4.0 — ראו `docs/prd-v4-source.md`) |
+| גרסה | 5.0 (מחליפה את v4.0 — ראו `docs/prd-v4-source.md`). עודכן ב-2026-10-26 בשלוש החלטות בעל המוצר (גיל מינימום 18+, Stripe כספק יחיד עם ישות זרה, תל אביב ואז לונדון). ראו Executive Summary |
 | תאריך | 2026-10-26 |
 | סטטוס | מאושר לפיתוח MVP (Core Loop). מודולים נדחים מפורטים ב-`docs/deferred-phases.md` |
 | בעלים | Product Strategy & Compliance |
@@ -46,14 +46,14 @@ Harassment, especially of women, drives a further share of players away.
 5. **Safety by design:**
    - women-only games;
    - the exact location stays hidden until a player is approved;
-   - 16+ at launch with teen protections for ages 16–17;
+   - **18+ worldwide** (owner decision; no 16–17 track). The minimum is configured by `trust_config.min_age_years` (default 18), mirrored as `TrustConfig.minAgeYears` / `MIN_AGE_YEARS`;
    - no 1:1 DMs in the MVP;
    - report and block everywhere;
    - in-app account deletion;
    - a web moderation console.
-6. **Go-to-market:** the product is global from day one (13 locales, local payment methods). Marketing and liquidity are concentrated on two seed cities × one or two sports, built host-first: 50 founding hosts per city, and WhatsApp-group migration through invite links.
+6. **Go-to-market:** the product is global from day one (13 locales, local payment methods). Marketing and liquidity are concentrated on two seed cities × one or two sports, built host-first: 50 founding hosts per city, and WhatsApp-group migration through invite links. **Seed cities (owner decision): Tel Aviv first, then London** (five-a-side culture; Footy Addicts is the incumbent to beat; venue partnerships; GBP deposit tiers; UK GDPR/ICO registration; UK Online Safety Act assessment; see §5.2).
 
-**MVP (this round).** Phone OTP, an age gate and onboarding. The map and venues. The game lifecycle: create, invite, approval, waitlist, recurring games, women-only games, hidden location, teams, results. The full Trust Engine. Ephemeral moderated chat with translation. Deposits through Stripe plus a local-PSP adapter. Sanctions and appeals. The moderation console. Account deletion. 13 locales with RTL.
+**MVP (this round).** Phone OTP, an age gate and onboarding. The map and venues. The game lifecycle: create, invite, approval, waitlist, recurring games, women-only games, hidden location, teams, results. The full Trust Engine. Ephemeral moderated chat with translation. Deposits through Stripe, the single global processor, including for Israeli users (a foreign entity is incorporated; Bit and an Israeli local PSP stay an interface stub for a later phase). Sanctions and appeals. The moderation console. Account deletion. 13 locales with RTL.
 **Deferred:** media and live streaming, the trainer and nutrition marketplace, coupons, geo ads, Pro, boosted events, tournaments, skill rating and weather.
 
 **Monetisation.** The MVP takes no player fees, so liquidity comes first. Proven category revenue comes next, starting in Phase 2:
@@ -67,10 +67,15 @@ Later: booking commission, a trainer marketplace (in-person sessions fall under 
 - cold-start liquidity;
 - store review of location features;
 - brigading or wrongful sanctions;
-- payment-method fragmentation: local push methods like iDEAL, Pix, UPI and Bit cannot place auth holds, and Stripe does not onboard Israeli entities;
-- teen-safety duties (UK Online Safety Act, UK Children's Code).
+- payment-method fragmentation: local push methods like iDEAL, Pix, UPI and Bit cannot place auth holds. Stripe does not onboard Israeli entities, so a foreign entity (US/EU/UK) is needed; entity, VAT (UK VAT, EU OSS, Israeli VAT on digital services) and PCI SAQ-A work are a launch prerequisite;
+- age assurance: at 18+ the UK Online Safety Act children's-access assessment concludes "not likely to be accessed by children", but self-declaration is weak, so counsel must review the strength of age assurance (stronger assurance may be needed for the UK).
 
 Every item that needs legal input is flagged *requires counsel review* in `docs/compliance.md`.
+
+**Owner decisions (2026-10-26).**
+1. **Minimum age 18+ worldwide** (was 16+). All 16–17 protections (SAFE-010, "open to 16–17" games, teen feed, teen tagging limits) are removed; live streaming is no longer a special 18+ case. COPPA and GDPR Art. 8 largely no longer apply. A UK OSA children's-access assessment is still required (conclusion: not likely to be accessed by children, given age assurance). Age assurance is self-declared birth month/year plus a 24h soft lock, flagged for counsel review.
+2. **Payments:** incorporate a foreign entity (US/EU/UK) and use **Stripe as the single global processor**, Israeli users included (cards, Apple Pay, Google Pay). Bit and the Israeli local PSP (`LocalPspProvider`) remain an interface stub for a later phase (ADR 0006). Notes for counsel and the accountant: entity jurisdiction, VAT/GST registration, PCI SAQ-A, Stripe Connect for the future trainer marketplace (module 8, `docs/compliance.md` PAY-10…12).
+3. **Seed cities: Tel Aviv first, then London** (§5.2 and §5.2א, with London KPIs in §3.2א).
 
 ---
 
@@ -198,11 +203,8 @@ Sport Talent היא הרשת העולמית למשחקי ספורט מזדמני
 - **מדדים:** report-to-action time, appeal overturn rate, wrongful sanction rate.
 - **ב-MVP:** כן.
 
-### תת-פרסונה: בני נוער 16–17 `[v5-NEW]`
-גיל המינימום הוא 16 (ראו `ONB-004`). משתמשים בני 16–17 מוגדרים "ילדים" לפי UK Online Safety Act ו-UK Age Appropriate Design Code, ולכן מקבלים הגנות ייעודיות (`SAFE-010`):
-- אין גילוי שלהם על ידי מבוגרים מחוץ למשחקים;
-- הם לא יכולים להצטרף למשחקים שסומנו 18+;
-- ברירות המחדל שלהם הן ברירות המחדל הפרטיות ביותר.
+### הערה: אין תת-פרסונה של בני נוער `[v5.1-REMOVED]`
+גיל המינימום הוא **18** בכל העולם (ראו `ONB-004`; מוגדר ב-`trust_config.min_age_years`, ברירת מחדל 18, ובקוד `TrustConfig.minAgeYears` / `MIN_AGE_YEARS`). לכן אין יותר תת-פרסונה של בני 16–17 ואין מסלול הגנות ייעודי לקטינים (`SAFE-010` הוסר). חשד לחשבון של מי שמתחת ל-18 מטופל ב-`SAFE-011`.
 
 ---
 
@@ -245,6 +247,21 @@ Sport Talent היא הרשת העולמית למשחקי ספורט מזדמני
 | Crash-free sessions | | ≥ 99.5% |
 | Opt-out מהתראות | % מהמשתמשים שמכבים push בתוך 30 יום | < 20% |
 
+### 3.2א יעדי KPI ספציפיים ללונדון `[v5.1-NEW]`
+היעדים נמדדים בלונדון בנפרד מתל אביב (עיר זרע שנייה), ביום 90 מפתיחת הגילוי הציבורי בעיר. יעדי הליבה (Fill rate, Show-up, Host repeat) זהים לטבלה למעלה, כדי שהשוואה בין הערים תהיה הוגנת. היעדים הנוספים:
+
+| KPI (לונדון) | הגדרה | יעד | הערות |
+|---|---|---|---|
+| Founding Hosts פעילים | מארגנים שגויסו ושארגנו משחק שהתקיים בלונדון בתוך 30 יום | ≥ 50 עד סוף שלב 0, ו-≥ 35 פעילים ביום 90 | קבוצות וואטסאפ קיימות של 5-a-side |
+| Liquidity score (לונדון) | כמו בטבלה למעלה, באזורים פעילים (Zones 2–4) | ≥ 60% באזורי הליבה, ≥ 40% בעיר כולה | רדיוס 5 ק"מ, 17:00–21:00 |
+| Show-up rate במשחקי פיקדון | צ'ק-אינים מאומתים חלקי משתתפים מאושרים במשחקים עם פיקדון בלונדון | ≥ 92% | מול ציון אמינות "רך" בלבד אצל Footy Addicts |
+| שיעור משחקים עם פיקדון (£) | % מהמשחקים הציבוריים שהמארגן בחר בהם פיקדון מטבלת `deposit_tiers` (GBP) | ≥ 25% | סף עליון 40%, כדי לא לפגוע ב-fill rate |
+| Migration מוואטסאפ ומ-Footy Addicts | % מהמארגנים המגויסים שהעבירו קבוצה קבועה אחת לפחות דרך קישור הזמנה | ≥ 60% | כמו בשלב 1 ב-5.2 |
+| מתחמים שותפים | מתחמים (Powerleague, Goals, מגרשי עירייה ואחרים) עם שלט QR פעיל או הסכם פיילוט | ≥ 5 מתחמים ביום 90 | ראו 5.2א |
+| Chargebacks על פיקדונות (£) | כמו ב-Guardrails | < 0.5% | Stripe, 3DS חובה בבריטניה (SCA) |
+| Wrongful sanction rate (לונדון) | כמו ב-Guardrails | < 5% | אין חריגה לעיר |
+| תנאי פתיחה (לא KPI) | ישות זרה ו-Stripe פעילים, רישום ICO, הערכת OSA תועדה, רישום VAT בבריטניה לפי הצורך | 100% לפני פתיחת הגילוי | compliance.md PAY-10/11, OSA-03, §13 |
+
 ### 3.3 מכשור (Instrumentation)
 - טקסונומיית אירועים בפורמט `object_action`, למשל `game_created`, `join_requested`, `checkin_succeeded{method}`, `card_issued{reason}`. המפרט המלא ב-architecture.
 - **פרטיות:**
@@ -285,18 +302,30 @@ Sport Talent היא הרשת העולמית למשחקי ספורט מזדמני
 
 ### 5.2 Playbook לנזילות בעיר זרע
 **ערי הזרע המומלצות:**
-- **תל אביב-יפו:** שוק בית, עברית, ריכוז מגרשים ציבוריים, תרבות כדורגל וכדורסל רחוב.
-- **עיר אירופית אחת:** לונדון (תרבות 5-a-side) או מדריד. ההחלטה תלויה במבחן גיוס מארגנים בשבועות 1–4.
+- **תל אביב-יפו (עיר הזרע הראשונה, החלטת בעל המוצר):** שוק בית, עברית, ריכוז מגרשים ציבוריים, תרבות כדורגל וכדורסל רחוב.
+- **לונדון (עיר הזרע השנייה, החלטת בעל המוצר):** תרבות 5-a-side, שוק בוגר של משחקי pickup בתשלום, ומתחמים מסחריים גדולים. נפתחת **אחרי** תל אביב ולא במקביל, פרט לגיוס מארגנים (ראו 5.2א).
 - **ענפים:** כדורגל (5/7-a-side) וכדורסל.
 
 **שלבים:**
 
 | שלב | זמן | פעולות | יציאה |
 |---|---|---|---|
-| 0. הכנת היצע | T−6 עד T−0 שבועות | (1) ייבוא כ-300 מגרשים לעיר מ-OSM, ואימות שטח לכ-100 המובילים. (2) גיוס **50 Founding Hosts** לעיר: מנהלי קבוצות וואטסאפ קיימות, ליגות חובבים ומאמני נוער (גילאי 16+). (3) Onboarding אישי (concierge) | 50 מארגנים עם משחק קבוע אחד לפחות |
+| 0. הכנת היצע | T−6 עד T−0 שבועות | (1) ייבוא כ-300 מגרשים לעיר מ-OSM, ואימות שטח לכ-100 המובילים. (2) גיוס **50 Founding Hosts** לעיר: מנהלי קבוצות וואטסאפ קיימות, ליגות חובבים ומאמני כדורגל (בני 18+, כמו כל המשתמשים). (3) Onboarding אישי (concierge) | 50 מארגנים עם משחק קבוע אחד לפחות |
 | 1. העברת קהילות קיימות | שבועות 1–6 | המארגנים מעבירים את קבוצות הוואטסאפ שלהם דרך קישורי הזמנה (5.4). משחקים פרטיים ואחר כך ציבוריים | לפחות 60% מהמשחקים הקבועים פעילים 4 שבועות ברצף |
 | 2. פתיחת גילוי | שבועות 4–12 | המשחקים נפתחים לציבור, הפניות (referrals), שלטי QR במגרשים ("סרוק למשחק כאן"), שיתופי פעולה עם מתחמים | Fill rate ≥ 60%, Liquidity score ≥ 50% |
 | 3. האצה | אחרי שער 2 | רכישה ממומנת רק אחרי שהמדדים מוכיחים נזילות, אחרת הכסף הולך לדלי דולף | Liquidity ≥ 60% במשך 4 שבועות ← עיר הבאה |
+
+### 5.2א תוכנית השקה בלונדון `[v5.1-NEW]`
+**שער פתיחה:** תל אביב הגיעה לשלב 2 (Fill rate ≥ 60%, Liquidity ≥ 50%), הישות הזרה וחשבון Stripe פעילים, והדרישות המשפטיות בבריטניה מטה הושלמו. גיוס Founding Hosts בלונדון יכול להתחיל במקביל לשלבים 1–2 בתל אביב, בלי פתיחת גילוי ציבורית.
+
+- **תרבות 5-a-side:** המשחק המרכזי הוא כדורגל 5/6-a-side על מגרשי סינתטי מושכרים לפי שעה, בדרך כלל בערבי חול ובסוף שבוע. המארגן שוכר מגרש ומגייס שחקנים (חלקם זרים) בקבוצות וואטסאפ. המוצר, המונחים והאיות בלונדון הם אנגליים-בריטיים (pitch, five-a-side, kit).
+- **המתחרה לנצח: Footy Addicts.** יש להם נזילות קיימת ומודל גבייה מוכח (4.3% + 20p), אבל רק ציון אמינות "רך". **הבידול שלנו:** נוכחות **מאומתת** (GPS, QR, מארגן, עמיתים), **פיקדון אופציונלי** שמחזיר את הכסף בהגעה, ו**סנקציות הוגנות**: חלון ערעור של 48 שעות, בדיקה אנושית וביטול אוטומטי כשלא הוכרע. המסר למארגנים: "אותם שחקנים, פחות חוסר הגעה, בלי להיות הבריון בקבוצה". לא מתקיפים תחרותית בפרסום, אלא מציעים מסלול הגירה (קישור הזמנה) וכלי מארגן חינמי.
+- **שותפויות מתחמים:** פיילוט עם 3–5 מתחמים מסחריים (למשל **Powerleague** ו-**Goals**) ועם מגרשי עירייה ומועצות (council pitches). שלטי QR ("סרוק למשחק כאן"), עמוד מתחם עם דירוגי צ'ק-אין, ובשלב מאוחר claim (Ph2) והזמנת מגרשים בעמלה (Ph3). אין תלות באינטגרציית הזמנות ב-MVP. כל שותפות כפופה לבדיקה משפטית (שימוש בשם ובמיתוג, ODbL לנתוני OSM).
+- **פיקדונות ב-GBP:** המארגן בוחר מטבלת `deposit_tiers` הקיימת במטבע GBP: **£2 / £4 / £8 / £16**. ברירת מחדל מומלצת: £4 (שקול ל-₪20 בישראל), בכפוף לבדיקה מול ה-Founding Hosts. כרטיסים ו-Apple Pay/Google Pay מקבלים hold; Pay by Bank ב-Ph2 הוא charge-and-refund. SCA/3DS חובה (TRUST-061).
+- **UK GDPR ו-ICO:** רישום ב-ICO (data protection fee) לפני הפתיחה, נציג בבריטניה אם הבקר אינו מבוסס שם (GDPR-10 ב-compliance.md), נספח בריטי לתנאי הפרטיות, מנגנון העברת נתונים (UK Addendum/IDTA או adequacy), ו-PECR לשיווק. DPIA כולל את בריטניה.
+- **UK Online Safety Act:** הערכת סיכוני תוכן בלתי חוקי והערכת גישה של ילדים. המסקנה: **"לא סביר שילדים ייגשו לשירות"**, בהינתן גיל מינימום 18+ והבטחת גיל (חודש ושנת לידה, נעילה רכה של 24 שעות, SAFE-011). **סימון counsel:** האם הבטחת הגיל מספיקה בבריטניה או שנדרשת הבטחת גיל חזקה יותר. מנגנוני דיווח, ערעור ותנאי שימוש כמו ב-DSA (OSA-01…05).
+- **תשלומים ומיסוי בבריטניה:** Stripe ב-GBP דרך הישות הזרה (ADR 0006), רישום VAT בבריטניה לפי הצורך (PAY-11), ודיני צרכנות בבריטניה לגבי חילוט פיקדון (PAY-04).
+- **סדר פעולות:** שלב 0 (T−6 עד T−0): ייבוא כ-300 מגרשים מ-OSM, גיוס 50 Founding Hosts, שיחות עם 3–5 מתחמים, השלמת הרישום והערכות. שלבים 1–3 כמו ב-5.2. KPIs בלונדון ב-3.2א.
 
 **תמריצי Founding Host:**
 - תג "Founding Host";
@@ -501,9 +530,9 @@ WhatsApp לא חושף API לקריאת חברי קבוצה, ולכן "ייבו�
 
 | ID | דרישה | עדיפות |
 |---|---|---|
-| TRUST-060 | המארגן בוחר פיקדון מטבלת סכומים קבועים לכל מטבע, בטווח המקביל ל-$2–$20 (למשל ₪10/₪20/₪30/₪50, €3/€5/€10). אין פיקדון במשחקים שמסומנים "קטינים מותרים" עבור משתתפים בני 16–17 (ראו SAFE-010) | MVP |
+| TRUST-060 | המארגן בוחר פיקדון מטבלת סכומים קבועים לכל מטבע, בטווח המקביל ל-$2–$20 (למשל ₪10/₪20/₪30/₪50, €3/€5/€10, £2/£4/£8/£16). | MVP |
 | TRUST-061 | **זרימה:** (1) ההצטרפות או האישור שומרים אמצעי תשלום (SetupIntent עם SCA/3DS); (2) ב-`T−24h`, או ברגע האישור אם הוא מאוחר יותר, נוצר **hold** (PaymentIntent עם `capture_method=manual`); (3) צ'ק-אין מאומת ← שחרור ב-`ends_at` או מוקדם יותר; (4) `no_show` או ביטול מאוחר שלא התמלא, כשהכרטיס לא בוטל ← **capture** ב-`dispute_until` של הכרטיס (48 שעות), כך שערעור מוצלח לא דורש החזר | MVP |
-| TRUST-062 | **אמצעי תשלום שלא תומכים ב-hold** (iDEAL, Pix, UPI, Bit, BLIK וכו'): מודל **"charge-and-refund"**: חיוב בפועל ב-T−24h, והחזר אוטומטי בתוך שעה מצ'ק-אין מאומת. זמני ההחזר לכל אמצעי מוצגים מראש. ראו MON-012 | MVP |
+| TRUST-062 | **אמצעי תשלום שלא תומכים ב-hold** (iDEAL, Pix, UPI, BLIK וכו'. Bit זמין רק אחרי שה-PSP הישראלי יופעל, ראו MON-002): מודל **"charge-and-refund"**: חיוב בפועל ב-T−24h, והחזר אוטומטי בתוך שעה מצ'ק-אין מאומת. זמני ההחזר לכל אמצעי מוצגים מראש. ראו MON-012 | MVP |
 | TRUST-063 | **יעד הפיקדון שנגבה:** ב-MVP, Sport Talent היא ה-merchant of record. הסכום נטו נכנס ל**"קרן הקהילה"** שמממנת ציוד ומגרשים בערי זרע, ומדווחת אחת לרבעון. Ph2: חלוקה למארגן מאומת דרך Stripe Connect (80% למארגן, 20% לפלטפורמה), לכיסוי עלות המקום הריק | MVP / Ph2 |
 | TRUST-064 | **כישלון hold** (כרטיס נדחה ב-T−24h): התראה מיידית ו-6 שעות לתיקון, ואם לא תוקן, המשתתף עובר לרשימת ההמתנה והמקום מוצע לבא בתור. אם נותרו פחות מ-6 שעות למשחק, החלון מתקצר לשעה | MVP |
 | TRUST-065 | **תפוגת הרשאה:** הרשאת כרטיס תקפה כ-7 ימים, ולכן ה-hold נוצר רק ב-T−24h. משחק שנקבע שבועות מראש מחזיק רק SetupIntent | MVP |
@@ -534,8 +563,8 @@ WhatsApp לא חושף API לקריאת חברי קבוצה, ולכן "ייבו�
 | SAFE-003 | **אין צ'ט 1:1 אקראי או אנונימי, ואין DMs ב-MVP.** צ'ט מתקיים רק בתוך משחק, אחרי אישור | MVP | Apple 1.2 (random/anonymous chat) |
 | SAFE-004 | Community Guidelines ו-Terms שמסבירים את הספים, את מנוע האמון ואת מסלולי הערעור (Trust Charter) | MVP | DSA Art. 14 |
 | SAFE-005 | **משחקי נשים בלבד** (ראו GAME-016) ו**מיקום מוסתר עד אישור** (GAME-017) | MVP | findings §A (Her Game Too) |
-| SAFE-010 | **הגנות לבני 16–17:** (1) לא מוצגים ב"שיחקתי עם" ובחיפוש של משתמשים בני 18+, למעט מי ששיחק איתם במשחק; (2) לא יכולים להצטרף למשחקים שסומנו 18+; (3) מארגן יכול לסמן "פתוח גם לבני 16–17", וברירת המחדל לפי ענף ושעה (משחק שמסתיים אחרי 22:00 מסומן 18+ כברירת מחדל); (4) אין פיקדון ואין תשלום, אלא אם החוק המקומי מתיר זאת. מסומן counsel review; (5) פרופיל פרטי כברירת מחדל: שם פרטי ואות ראשונה בלבד; (6) אין פרסום מותאם בכלל, גם בשלבים הבאים | MVP | UK OSA, UK AADC, DSA Art. 28 |
-| SAFE-011 | **חשד לקטין מתחת לגיל 16** (דיווח או סימנים): פריט תור. אם החשד מאומת, החשבון נסגר ונמחק ונשלחת הודעה, בלי שמירת נתונים מעבר לנדרש | MVP | COPPA, GDPR Art. 8 |
+| SAFE-010 | **[הוסר ב-v5.1]** הגנות לבני 16–17 (הסתרה מחיפוש, משחקי "פתוח גם לבני 16–17", איסור פיקדון, פרופיל פרטי כברירת מחדל, איסור פרסום). גיל המינימום הוא 18+ בכל העולם, ולכן אין משתמשים בני 16–17. המזהה נשמר כדי שלא להזיז מזהים יציבים | — | החלטת בעל המוצר (2026-10) |
+| SAFE-011 | **חשד לחשבון של מי שמתחת ל-18** (דיווח או סימנים): פריט תור. אם החשד מאומת, החשבון נסגר ונמחק ונשלחת הודעה, בלי שמירת נתונים מעבר לנדרש. חשד לקטין מתחת ל-13 מטופל באותו נוהל, בעדיפות P0-safety אם יש סימני ניצול (TRUST-045) | MVP | OSA (גישת ילדים), COPPA (שארית) |
 | SAFE-020 | "Safety check" אופציונלי לנשים ולמטיילים (Ph2): שיתוף פרטי המשחק עם איש קשר אמין דרך share sheet, בלי מעקב מיקום | Ph2 | |
 
 ---
@@ -607,7 +636,7 @@ WhatsApp לא חושף API לקריאת חברי קבוצה, ולכן "ייבו�
 | ONB-001 | **התחברות ב-OTP לטלפון** (SMS; WhatsApp OTP כערוץ חלופי במדינות שבהן הוא נפוץ). תמיכה ב-`autocomplete="one-time-code"` ובהדבקה (WCAG 3.3.8) | MVP | v4-KEPT |
 | ONB-002 | **הגנת SMS pumping:** הגבלות לכל IP, מכשיר וקידומת מדינה; Fraud guard של ספק ה-OTP; CAPTCHA שקוף ב-Web | MVP | v5-NEW |
 | ONB-003 | **אין social login ב-MVP.** אם יתווסף בעתיד Google או Facebook, תתווסף גם חלופה שעומדת בדרישות Apple 4.8 (Sign in with Apple) | MVP | v5-NEW |
-| ONB-004 | **שער גיל (Age gate):** חודש ושנת לידה, בממשק נייטרלי (בלי רמז לגיל הנדרש ובלי ערך ברירת מחדל). מתחת ל-16 ← הודעה "Sport Talent מיועדת לגילאי 16+", אין יצירת חשבון, ונשמר flag מקומי לחסימת ניסיון חוזר מיידי. הנתון נשמר ב-`profile_private` | MVP | v5-NEW (COPPA, GDPR Art. 8) |
+| ONB-004 | **שער גיל (Age gate), 18+ בכל העולם:** חודש ושנת לידה, בממשק נייטרלי (בלי רמז לגיל הנדרש ובלי ערך ברירת מחדל). מתחת לגיל המינימום ← הודעה "Sport Talent מיועדת לגילאי 18+", אין יצירת חשבון, ונשמר flag מקומי של 24 שעות (נעילה רכה) לחסימת ניסיון חוזר מיידי. הנתון נשמר ב-`profile_private`. **הגיל המינימלי מוגדר בעמודה `trust_config.min_age_years` (ברירת מחדל 18), ומשוקף ב-`TrustConfig.minAgeYears` ובקבוע `MIN_AGE_YEARS`.** ה-RPC `create_profile` מחזיר `age_restricted`. **סימון counsel:** חוזק הבטחת הגיל (הצהרה עצמית + נעילה רכה), ושקילת הבטחת גיל חזקה יותר בבריטניה | MVP | v5-NEW (UK OSA, COPPA/GDPR Art. 8 כשארית) |
 | ONB-005 | **פרופיל:** שם תצוגה (כל כתב), תמונה אופציונלית (Ph2: מודרציה לתמונות; ב-MVP אווטאר ראשי תיבות), ענפים, ולכל ענף עמדות ורמה עצמית 1–5 עם תיאור לכל רמה | MVP | v4-KEPT |
 | ONB-006 | **מגדר (אופציונלי, פרטי):** "אישה / גבר / א-בינארי / מעדיף/ה לא לציין". **משמש רק לזכאות למשחקי נשים** ולא מוצג בפרופיל הציבורי | MVP | v5-NEW |
 | ONB-007 | **Primers להרשאות:** מסך הסבר לפני כל בקשת הרשאה (מיקום, התראות, מצלמה), עם "לא עכשיו" שווה ערך בנראות (DSA Art. 25, ללא dark patterns) | MVP | v5-NEW |
@@ -637,7 +666,7 @@ WhatsApp לא חושף API לקריאת חברי קבוצה, ולכן "ייבו�
 | GAME-011 | **קבוע שמפספס 3 מופעים ברצף** בלי אישור מקבל הצעה לצאת מהסגל. אין כרטיס על כך | MVP | v5-NEW |
 | GAME-030 | **קישור הזמנה:** `invite_token` לכל משחק או סדרה, וסיבוב (rotate) שלו ע"י המארגן. **Rich Preview (OpenGraph):** ענף, יום ושעה מקומיים, שכונה או אזור (לא כתובת אם המיקום מוסתר), "נותרו X מקומות", ותמונת OG שנוצרת בשרת ב-13 שפות. Deep link פותח את האפליקציה אם מותקנת, ואחרת את ה-Web | MVP | v5-NEW |
 | GAME-031 | **שיתוף לוואטסאפ, טלגרם, SMS ואחרים** דרך ה-share sheet של המערכת. בנוסף כפתור ייעודי `wa.me/?text=` עם תבנית מוכנה | MVP | v4-KEPT |
-| GAME-032 | **הזמנה ממשתתפים קודמים ("שיחקתי עם"):** רשימה של משתמשים ששיחקתי איתם במשחק מאומת ב-12 החודשים האחרונים, בכפוף לחסימות ולהגנות SAFE-010. ההזמנה נשלחת כ-push באפליקציה | MVP | v4-KEPT |
+| GAME-032 | **הזמנה ממשתתפים קודמים ("שיחקתי עם"):** רשימה של משתמשים ששיחקתי איתם במשחק מאומת ב-12 החודשים האחרונים, בכפוף לחסימות. ההזמנה נשלחת כ-push באפליקציה | MVP | v4-KEPT |
 | GAME-033 | **בורר אנשי קשר של המערכת (OS picker):** בחירת איש קשר אחד או כמה, שליחת קישור דרך אפליקציית ה-SMS או הוואטסאפ של המשתמש. **שום מספר לא עולה לשרת ואין הרשאת Contacts** | MVP | v5-CHANGED (Apple 5.1.2(iv)) |
 | GAME-034 | **Facebook:** שיתוף קישור בלבד (share sheet), בלי אינטגרציית API | MVP | v5-CHANGED |
 | GAME-035 | **QR הזמנה להדפסה** (פוסטר A4) לכל משחק או מגרש, לשילוט במגרשים | Ph2 | v5-NEW |
@@ -676,13 +705,13 @@ WhatsApp לא חושף API לקריאת חברי קבוצה, ולכן "ייבו�
   - **When** הוא שולח הזמנה;
   - **Then** נפתחת אפליקציית ההודעות עם הקישור, אף בקשת רשת לא כוללת את מספר הטלפון, והאפליקציה לא מבקשת הרשאת Contacts.
 
-### 3.4 משחקי נשים, מיקום מוסתר ו-18+
+### 3.4 משחקי נשים ומיקום מוסתר
 
 | ID | דרישה | עדיפות | תגית |
 |---|---|---|---|
 | GAME-016 | **משחק נשים בלבד:** המארגנת חייבת להיות משתמשת שהצהירה "אישה". אפשרות "נשים וא-בינאריות" לבחירת המארגנת. הצטרפות מותרת רק למי שההצהרה שלה תואמת, והאכיפה ב-RLS/RPC. **הצהרת מגדר לא ניתנת לשינוי יותר מפעם אחת ב-90 יום** (מניעת עקיפה). דיווח "לא אישה במשחק נשים" ← תור בעדיפות גבוהה (SLA של 24 שעות). מסומן counsel review: חריגי שוויון לפי מדינה | MVP | v5-NEW |
 | GAME-017 | **מיקום מוסתר עד אישור:** ברירת מחדל במשחקי נשים ובמשחקים פרטיים, ואופציונלי בכל משחק. ראו MAP-014. גם ה-Rich Preview וה-ICS לא כוללים כתובת לפני אישור | MVP | v5-NEW |
-| GAME-018 | **משחק 18+:** סימון ע"י המארגן. ברירת מחדל לפי SAFE-010 | MVP | v5-NEW |
+| GAME-018 | **[הוסר ב-v5.1]** סימון "משחק 18+" ע"י המארגן. כל המשתמשים בני 18+, ולכן אין צורך בסימון. המזהה נשמר לשמירה על מזהים יציבים | — | v5-NEW |
 
 ### 3.5 חלוקת קבוצות חכמה (Smart Squad Balancing)
 
@@ -757,7 +786,7 @@ WhatsApp לא חושף API לקריאת חברי קבוצה, ולכן "ייבו�
 
 > **שינוי מ-v4 ולמה `[v5-CHANGED]`:** כל המודול נדחה ל-Phase 3–4. הסיבות:
 > 1. מדיה בלי משחקים חיים היא פיד ריק, ולכן נזילות קודמת.
-> 2. מדיה ושידור הם הסיכון המשפטי והבטיחותי הגבוה ביותר: קטינים, הסכמה לצילום, CSAM, שידור חי של אלימות.
+> 2. מדיה ושידור הם הסיכון המשפטי והבטיחותי הגבוה ביותר: הסכמה לצילום, CSAM, שידור חי של אלימות.
 > 3. עלות המודרציה והתשתית.
 >
 > המפרט המלא, כולל קריטריוני קבלה, ב-`docs/deferred-phases.md` §1–3. כאן מוגדרים **עקרונות הבטיחות המחייבים**, כדי שהארכיטקטורה של ה-MVP לא תסגור עליהם דלתות.
@@ -766,8 +795,8 @@ WhatsApp לא חושף API לקריאת חברי קבוצה, ולכן "ייבו�
 |---|---|---|
 | MEDIA-001 | **חלון העלאה:** עד שעתיים מ-`ends_at` (v4-KEPT). אחר כך הגלריה ננעלת. רק משתתפים מאומתים מעלים | v4 |
 | MEDIA-002 | **Post-Match Vault:** היסטוריית מדיה לכל מגרש עם סינון תאריכים. ברירת המחדל: נראה רק למשתתפי המשחק. פרסום ציבורי דורש הסכמת כל מי שתויג | v4 + GDPR |
-| MEDIA-003 | **תיוג מבוסס הסכמה:** תיוג הוא בקשה. הוא לא נראה עד שהמתויג מאשר. הסרת תיוג אפשרית בכל עת. אפשר לבקש טשטוש פנים. **בני 16–17 לא ניתנים לתיוג ציבורי** | v4 (תיוג באישור) + UK AADC |
-| MEDIA-004 | **שידור חי:** 18+ בלבד, מארגנים מאומתים בלבד, ושידור רק ממשחקים שבהם כל המשתתפים אישרו "ייתכן שידור" בעת ההצטרפות. משחק עם משתתף בן 16–17 ← שידור חסום | Apple 1.2, UK OSA |
+| MEDIA-003 | **תיוג מבוסס הסכמה:** תיוג הוא בקשה. הוא לא נראה עד שהמתויג מאשר. הסרת תיוג אפשרית בכל עת. אפשר לבקש טשטוש פנים. | v4 (תיוג באישור) + GDPR |
+| MEDIA-004 | **שידור חי:** מארגנים מאומתים בלבד, ושידור רק ממשחקים שבהם כל המשתתפים אישרו "ייתכן שידור" בעת ההצטרפות. כל המשתמשים הם 18+, ולכן אין חסימה לפי גיל | Apple 1.2, UK OSA |
 | MEDIA-005 | **Kill switch:** מודרטור יכול לעצור שידור מסוים, כל השידורים במדינה מסוימת, או את כל השידורים, תוך 10 שניות. דיווח על שידור חי ← תור P0-safety | |
 | MEDIA-006 | **סריקה:** hash-matching ל-CSAM על כל תמונה ווידאו לפני פרסום, ומודרציית תמונה ווידאו | חובה חוקית ונוהל NCMEC/INHOPE |
 | MEDIA-007 | **GoPro / מצלמות גוף:** קליטת RTMP דרך Cloudflare Stream (שידור חד-כיווני), LiveKit לשידור אינטראקטיבי | findings §B |
@@ -858,7 +887,7 @@ WhatsApp לא חושף API לקריאת חברי קבוצה, ולכן "ייבו�
 | UX-02 | Onboarding (3 מסכים) | ערך: מצא, תגיע, ארגן. דילוג | — | MVP |
 | UX-03 | טלפון | קידומת מדינה אוטומטית, קלט E.164, תנאים ופרטיות | שגיאה, rate-limit | MVP |
 | UX-04 | OTP | 6 ספרות, autofill/paste, שליחה חוזרת אחרי 30 שניות, ערוץ WhatsApp | שגוי, פג | MVP |
-| UX-05 | **שער גיל** `[v5-NEW]` | חודש ושנה, נייטרלי. מתחת ל-16: מסך חסימה | חסום | MVP |
+| UX-05 | **שער גיל** `[v5-NEW]` | חודש ושנה, נייטרלי. מתחת ל-18: מסך חסימה | חסום | MVP |
 | UX-06 | יצירת פרופיל | שם, ענפים, עמדות ורמה, מגדר אופציונלי | — | MVP |
 | UX-07 | Primers להרשאות | מיקום, התראות, מצלמה (בהקשר) | נדחה ← חלופה | MVP |
 | UX-10 | **מפה** | פינים, clusters, פילטרים (ענף ×3, רדיוס, זמן), חיפוש עיר, מתג רשימה, "חפש כאן", Travel mode | ריק ("אין משחקים — צור אחד!"), טעינה, אופליין | MVP |
@@ -866,7 +895,7 @@ WhatsApp לא חושף API לקריאת חברי קבוצה, ולכן "ייבו�
 | UX-12 | Sheet פילטרים | כל MAP-005 | — | MVP |
 | UX-13 | מגרש | פרטים, דירוגים, משחקים, דווח, הוסף משחק | מוסתר-בבדיקה | MVP |
 | UX-14 | הוספת מגרש | פין, ענפים, מאפיינים, בדיקת כפילות | כפילות | MVP |
-| UX-20 | **פרטי משחק (לפני אישור)** | ענף, זמן, אזור מקורב או מדויק, מארגן (דירוג, תג), משתתפים (אמינות), מקומות, פיקדון, תגיות (נשים, 18+), CTA: בקש / רשימת המתנה | מלא, מבוטל, חסום (סנקציה), לא זכאי (נשים או גיל) | MVP |
+| UX-20 | **פרטי משחק (לפני אישור)** | ענף, זמן, אזור מקורב או מדויק, מארגן (דירוג, תג), משתתפים (אמינות), מקומות, פיקדון, תגיות (נשים), CTA: בקש / רשימת המתנה | מלא, מבוטל, חסום (סנקציה), לא זכאי (נשים) | MVP |
 | UX-21 | פרטי משחק (מאושר) | כתובת, ניווט, צ'ט, צ'ק-אין, קבוצות, ביטול, ICS | — | MVP |
 | UX-22 | **אשף יצירת משחק** | 3 שלבים (GAME-001), תצוגה מקדימה | שגיאות ולידציה | MVP |
 | UX-23 | שיתוף / הזמנה | קישור, WhatsApp, share sheet, "שיחקתי עם", OS picker, QR | — | MVP |
@@ -891,7 +920,7 @@ WhatsApp לא חושף API לקריאת חברי קבוצה, ולכן "ייבו�
 | UX-71 | **מחיקת חשבון** `[v5-NEW]` | אימות OTP ← מה יימחק ומה יישמר (פסאודונימי) ← השפעה על משחקים עתידיים ← אישור ← "החשבון נמחק" | סנקציה פעילה (המחיקה מותרת, עם הסבר), פיקדון פתוח | MVP |
 | UX-72 | ייצוא נתונים | בקשה וקישור הורדה | — | MVP |
 | UX-73 | משפטי | תנאים, פרטיות, Community Guidelines, Trust Charter, Cookies, Imprint, קשר | — | MVP |
-| UX-74 | תשלום | Payment sheet (Stripe או PSP מקומי), אמצעים שמורים, היסטוריית פיקדונות וקבלות | כישלון, 3DS | MVP |
+| UX-74 | תשלום | Payment sheet (Stripe), אמצעים שמורים, היסטוריית פיקדונות וקבלות | כישלון, 3DS | MVP |
 | UX-80 | **קונסולת מודרציה (Web)** `[v5-NEW]` | ראו 7.3 | — | MVP |
 | UX-90 | שגיאה / אופליין / גרסה ישנה | מסכי מערכת | — | MVP |
 
@@ -931,15 +960,22 @@ WhatsApp לא חושף API לקריאת חברי קבוצה, ולכן "ייבו�
 
 | ID | דרישה | עדיפות |
 |---|---|---|
-| MON-001 | **PaymentProvider port**, עם `StripeProvider` (Payment Element ו-Payment Sheet: כרטיסים, Apple Pay, Google Pay, Link ואמצעים מקומיים) ועם **Local PSP adapter** | MVP |
-| MON-002 | **ישראל:** Stripe לא פותח חשבונות סוחר לישויות ישראליות. לכן נדרש מבנה ישויות (ישות EU או US ל-Stripe) ו-**PSP ישראלי** (למשל PayPlus או Grow/Meshulam) לכרטיסים ישראליים ול-**Bit**. החלטה משותפת לכספים ול-counsel, מתועדת ב-ADR | MVP |
+| MON-001 | **PaymentProvider port**, עם `StripeProvider` (Payment Element ו-Payment Sheet: כרטיסים, Apple Pay, Google Pay, Link ואמצעים מקומיים) כ**ספק הגלובלי היחיד**, ועם **Local PSP adapter** כ-stub של ממשק בלבד (`LocalPspProvider` ב-`packages/payments/src/local-psp.ts`), ללא חוזה וללא ניתוב ייצור | MVP |
+| MON-002 | **ישראל וישות זרה (החלטת בעל המוצר):** Stripe לא פותח חשבונות סוחר לישויות ישראליות, ולכן **מקימים ישות זרה (ארה"ב, האיחוד האירופי או בריטניה)** שהיא ה-merchant of record, ו-**Stripe משרת גם משתמשים ישראלים** (כרטיסים, Apple Pay, Google Pay). **Bit וה-PSP הישראלי** (למשל PayPlus או Grow/Meshulam) נשארים **stub של ממשק, נדחים לשלב מאוחר**; עד אז Bit לא מוצע. מתועד ב-ADR 0006 | MVP |
 | MON-010 | **מטריצת אמצעים:** ראו 8.3. המערכת מציגה רק אמצעים שזמינים במדינת המשתמש ובמטבע המשחק | MVP |
 | MON-011 | **Holds** (manual capture) רק בכרטיסים וב-wallets (Apple Pay, Google Pay) | MVP |
 | MON-012 | **אמצעי push** (iDEAL, Pix, UPI, Bit, BLIK, Bancontact): charge-and-refund (TRUST-062), עם זמני החזר שמוצגים מראש | MVP |
 | MON-013 | **SCA/3DS** באיחוד האירופי ובבריטניה, דרך SetupIntent | MVP |
 | MON-014 | **Idempotency** בכל פעולה כספית, ו-webhooks חתומים (`payments-webhook`) כמקור האמת למצב התשלום | MVP |
-| MON-015 | **PCI:** אף נתון כרטיס לא עובר אצלנו (רכיבי Stripe/PSP מאורחים) ← SAQ A | MVP |
-| MON-016 | **מסים:** Stripe Tax או ה-PSP. IAP: החנויות מטפלות ב-VAT. DAC7 / דיווח פלטפורמה ב-Ph2 ואילך, כשמארגנים או מאמנים מקבלים כסף | Ph2 |
+| MON-015 | **PCI:** אף נתון כרטיס לא עובר אצלנו (Stripe Elements / Payment Element / PaymentSheet מאורחים) ← **SAQ A** | MVP |
+| MON-016 | **מסים:** Stripe Tax. IAP: החנויות מטפלות ב-VAT. רישומי VAT/GST של הישות הזרה: מע"מ בריטי, EU OSS, ומע"מ ישראלי על שירותים דיגיטליים לצרכנים ישראלים (ראו 8.2א). DAC7 / דיווח פלטפורמה ב-Ph2 ואילך, כשמארגנים או מאמנים מקבלים כסף | Ph2 |
+
+### 8.2א הערות ליועץ המשפטי ולרואה החשבון `[v5.1-NEW]`
+- **סמכות שיפוט של הישות:** ארה"ב (למשל דלאוור), האיחוד האירופי (למשל אירלנד או הולנד) או בריטניה. שיקולים: תושבות מס של המייסדים בישראל (CFC ו-permanent establishment), תמחור העברה מול חברה ישראלית מפעילה, בעלות על הקניין הרוחני, ותמיכת Stripe במדינה.
+- **רישום VAT/GST:** מע"מ בריטי (בלונדון: פיקדונות, עמלות ושירותים דיגיטליים), EU One-Stop Shop (OSS) לשירותים דיגיטליים לצרכנים, **מע"מ ישראלי על שירותים דיגיטליים של ספק זר לצרכנים ישראלים** (רישום כספק תושב חוץ), ומדינות נוספות לפי ספי מכירות. יש לבדוק את הטיפול במע"מ של פיקדון שחולט מול פיקדון שהוחזר.
+- **PCI:** יעד SAQ A. נתוני כרטיס מוזנים רק ברכיבי Stripe מאורחים (Elements / Payment Element / PaymentSheet), עם CSP ובקרת שלמות סקריפטים בעמוד התשלום.
+- **Stripe Connect לשוק המאמנים העתידי (Ph3):** הישות הזרה היא חשבון הפלטפורמה (Connect Express, KYC, DAC7). יש לוודא כיסוי תשלומים חוצי גבולות למאמנים בישראל ובבריטניה.
+- **צרכנות:** חילוט פיקדון לפי דיני צרכנות בכל שוק, ומודל merchant of record בלי יתרת משתמש (ראו compliance.md PAY-04/06/10/11/12).
 
 ### 8.3 מטריצת אמצעי תשלום (MVP)
 
@@ -949,8 +985,8 @@ WhatsApp לא חושף API לקריאת חברי קבוצה, ולכן "ייבו�
 | איחוד אירופי | iDEAL (NL, במעבר ל-Wero), Bancontact (BE), BLIK (PL), SEPA (לא לפיקדון) | ❌ (charge-and-refund) | Stripe |
 | בריטניה | כרטיסים, wallets, Pay by Bank (Ph2) | ✅ / ❌ | Stripe |
 | ברזיל | Pix, כרטיסים מקומיים | ❌ / ✅ | Stripe |
-| הודו | UPI, RuPay | ❌ | PSP מקומי (Stripe India מוגבל, למשל Razorpay). בחירת ספק נדרשת ב-MVP, וההשקה בהודו תלויה בו |
-| ישראל | כרטיסים ישראליים, Bit, Apple Pay, Google Pay | ✅ (כרטיס) / ❌ (Bit) | PSP ישראלי |
+| הודו | UPI, RuPay | ❌ | PSP מקומי (Stripe India מוגבל, למשל Razorpay). ספק מקומי נבחר לפני השקה בהודו, וההשקה בהודו תלויה בו (מחוץ להחלטת הספק היחיד לשוק ישראל) |
+| ישראל | כרטיסים ישראליים, Apple Pay, Google Pay. **Bit נדחה** (PSP ישראלי הוא stub) | ✅ (כרטיס) | Stripe (דרך הישות הזרה) |
 | סין, יפן | Alipay, WeChat Pay (Stripe), כרטיסים. PayPay ב-Ph2 | ❌ / ✅ | Stripe |
 | מקסיקו, ספרד ואחרים | כרטיסים ו-wallets. אמצעים מבוססי מזומן (OXXO וכד') לא נתמכים לפיקדון | ✅ | Stripe |
 
@@ -966,8 +1002,8 @@ WhatsApp לא חושף API לקריאת חברי קבוצה, ולכן "ייבו�
 | 6 | **עמלת הזמנת מגרש** | המתחם או השחקן | **6–10%** | Ph3 | Playtomic כ-8.4% | אינטגרציות מתחמים |
 | 7 | **עמלת מרקטפלייס מאמנים** | המאמן | **12%** (5% ל-Founding) | Ph3 | — | Apple 3.1.3(d)/(e), Connect, DAC7 |
 | 8 | **חסויות** (ליגות, טורנירים, מתחמים) | מותגים | חבילות sales-led | Ph3 | אין benchmark | סימון תוכן ממומן |
-| 9 | **קופונים ו-affiliate** | עסקים | CPA לכל מימוש | Ph4 | אין benchmark | opt-in שיווקי, ללא קטינים |
-| 10 | **פרסום גיאוגרפי** | עסקים מקומיים | CPM, קונטקסטואלי, ברמת עיר או תא כ-3 ק"מ | Ph4 | — | **מיקום גס בלבד ו-opt-in.** CPRA "Limit Use". ללא ATT tracking. ללא קטינים |
+| 9 | **קופונים ו-affiliate** | עסקים | CPA לכל מימוש | Ph4 | אין benchmark | opt-in שיווקי |
+| 10 | **פרסום גיאוגרפי** | עסקים מקומיים | CPM, קונטקסטואלי, ברמת עיר או תא כ-3 ק"מ | Ph4 | — | **מיקום גס בלבד ו-opt-in.** CPRA "Limit Use". ללא ATT tracking |
 
 **תחזית כיוונית** (לתכנון בלבד, בעיר שמגיעה ל-50K MAU):
 - 30% מהמשחקים בתשלום, בממוצע 10 שחקנים ו-$0.80 עמלה לשחקן. מכאן ההכנסה המרכזית.
@@ -1027,7 +1063,7 @@ WhatsApp לא חושף API לקריאת חברי קבוצה, ולכן "ייבו�
 - **NFR-031:** טבלת שמירה ומחיקה מחייבת: compliance.md §4.
 - **NFR-032:** אנליטיקה פסאודונימית, בלי מיקום מדויק, ושמירה ל-13 חודשים.
 - **NFR-033:** ניהול הסכמות: אנליטיקה, שיווק, auto check-in, תרגום אוטומטי (הודעה נשלחת לספק צד ג').
-- **NFR-034:** DPAs עם כל המעבדים: Supabase, Stripe, PSP, OpenAI, Anthropic, Google, DeepL, ספק OTP, ספק tiles, Sentry.
+- **NFR-034:** DPAs עם כל המעבדים: Supabase, Stripe, OpenAI, Anthropic, Google, DeepL, ספק OTP, ספק tiles, Sentry.
 
 ### 9.5 נגישות — WCAG 2.2 AA
 
@@ -1066,13 +1102,13 @@ WhatsApp לא חושף API לקריאת חברי קבוצה, ולכן "ייבו�
 
 | תחום | מזהים |
 |---|---|
-| Auth ו-Onboarding | ONB-001…011 (OTP, שער גיל 16+, פרופיל, primers, מחיקה, ייצוא, הצטרפות Web מקישור) |
+| Auth ו-Onboarding | ONB-001…011 (OTP, שער גיל 18+, פרופיל, primers, מחיקה, ייצוא, הצטרפות Web מקישור) |
 | מפה ומגרשים | MAP-001…011, 013–016 (ללא claim) |
-| מחזור משחק | GAME-001…004, 010–011, 016–018, 030–034, 040–050, 060–062, 070–073 |
+| מחזור משחק | GAME-001…004, 010–011, 016–017, 030–034, 040–050, 060–062, 070–073 |
 | Trust Engine | TRUST-001…067 כולם. TRUST-002 ב-iOS בלבד מאחורי flag, ו-Android אחרי אישור Play |
-| בטיחות | SAFE-001…005, 010–011 |
+| בטיחות | SAFE-001…005, 011 (010 הוסר) |
 | צ'ט | CHAT-001…042 (מודרציה, תרגום, purge) |
-| תשלומים | MON-001…015, 020–023 (פיקדונות בלבד) |
+| תשלומים | MON-001…015 (Stripe בלבד; Local PSP כ-stub), 020–023 (פיקדונות בלבד) |
 | i18n | I18N-001…011 (13 לוקאלים, RTL) |
 | מסכים | UX-01…90, MOD-001…009 |
 | NFR | כל מודול 9 |
@@ -1092,7 +1128,8 @@ WhatsApp לא חושף API לקריאת חברי קבוצה, ולכן "ייבו�
 ### 10.2 Phase 1.5 — Hardening והשקת ערי זרע (חודשים 0–2 אחרי MVP)
 - EAS builds והגשה לחנויות.
 - הגשת טופס background location ל-Play (auto check-in אופציונלי) עם סרטון הדגמה.
-- Founding Hosts ×50 לכל עיר.
+- Founding Hosts ×50 לכל עיר (תל אביב קודם, אחר כך לונדון, ראו 5.2א).
+- השלמת דרישות לונדון: רישום ICO, הערכת OSA, ישות זרה וחשבון Stripe, רישום VAT לפי הצורך.
 - בדיקת native לכל הלוקאלים ולטקסטים המשפטיים.
 - מבחן חדירה.
 - DPIA סופי (compliance.md).
@@ -1132,13 +1169,13 @@ WhatsApp לא חושף API לקריאת חברי קבוצה, ולכן "ייבו�
 
 | # | סיכון | סבירות | השפעה | מיטיגציה | בעלים |
 |---|---|---|---|---|---|
-| R1 | **Cold start:** מפה ריקה ונטישה | גבוהה | קריטית | ערי זרע, Founding Hosts, single-player mode, ייבוא וואטסאפ, רכישה ממומנת רק אחרי שער | Product / GTM |
+| R1 | **Cold start:** מפה ריקה ונטישה | גבוהה | קריטית | ערי זרע (תל אביב ואז לונדון), Founding Hosts, single-player mode, ייבוא וואטסאפ, רכישה ממומנת רק אחרי שער | Product / GTM |
 | R2 | **דחייה בחנויות** (background location, UGC) | בינונית | גבוהה | אין background ב-Android עד אישור, primers, Report/Block, פרטי קשר, מחיקת חשבון | Compliance |
 | R3 | **סנקציות שגויות ו-brigading** פוגעים באמון | בינונית | גבוהה | סף כפול (כשירות ואי-תיאום), ערעור 48 שעות, fairness-by-default, guardrail של פחות מ-5%, אין קבוע אוטומטי | Trust |
 | R4 | **זיוף GPS** | בינונית | בינונית | Mock/Integrity/Attest, היוריסטיקות שרת, QR מתחלף, אין סנקציה מאות יחיד | Core |
 | R5 | **הטרדת נשים ושחקנים זרים** | בינונית | קריטית | משחקי נשים, מיקום מוסתר, אין DMs, מודרציה מראש, תור P0-safety | Trust & Safety |
-| R6 | **פיצול תשלומים** (Israel/Stripe, אמצעי push בלי hold, הודו) | גבוהה | גבוהה | Port + adapters, charge-and-refund, ADR מבנה ישויות, השקה הדרגתית לפי זמינות PSP | Payments |
-| R7 | **רגולציית קטינים** (UK OSA ו-AADC ל-16–17, COPPA, Australia SMMA) | בינונית | גבוהה | 16+, הגנות SAFE-010, הערכת סיכוני ילדים, counsel. אופציה: 18+ במדינות ספציפיות | Compliance |
+| R6 | **פיצול תשלומים** (אמצעי push בלי hold, הודו, Bit נדחה בישראל) והקמת ישות זרה לצורך Stripe | גבוהה | גבוהה | Stripe כספק יחיד, Port + adapters, charge-and-refund, ADR 0006, ישות זרה וחשבון Stripe כתנאי קדם, רישומי VAT (8.2א), השקה הדרגתית בשווקים עם PSP מקומי | Payments |
+| R7 | **הבטחת גיל חלשה** (הצהרה עצמית) מול UK OSA, Australia SMMA, חוקי age-signal במדינות ארה"ב. בגיל 18+ COPPA ו-GDPR Art. 8 כמעט לא רלוונטיים | בינונית | גבוהה | גיל מינימום 18+ (`trust_config.min_age_years`), נעילה רכה של 24 שעות, SAFE-011, הערכת גישת ילדים בבריטניה ("לא סביר שילדים ייגשו"), **סימון counsel על חוזק הבטחת הגיל** ושקילת הבטחת גיל חזקה יותר בבריטניה | Compliance |
 | R8 | **ספקי מודרציה:** Perspective נסגר בסוף 2026, עלות ושיהוי של LLM, false positives בעברית ובערבית | בינונית | בינונית | שכבות מקבילות, fail-open, golden sets לכל שפה, ניטור FP, החלפת ספק ב-flag | Core |
 | R9 | **איכות תרגומי UI ומשפט** (מכונה) | גבוהה | בינונית | "requires native review", טקסטים משפטיים חסומים עד בדיקה, pseudo-locale | Localization |
 | R10 | **Chargebacks על פיקדונות** ותלונות צרכנים | בינונית | בינונית | ניסוח ברור, capture אחרי חלון ערעור, evidence אוטומטי, ייעוץ משפטי על פיצוי מוסכם | Payments / Legal |
@@ -1183,7 +1220,7 @@ WhatsApp לא חושף API לקריאת חברי קבוצה, ולכן "ייבו�
 | `location_samples_retention_days` | 30 | TRUST-012 |
 | `roster_priority_window_h` | 24 | GAME-010 |
 | `waitlist_confirm_windows` | >6h: 120m. 1–6h: 20m. <1h: flash | GAME-045 |
-| `min_age` / `adult_age` | 16 / 18 | ONB-004, SAFE-010 |
+| `min_age_years` (`trust_config.min_age_years`; בקוד `TrustConfig.minAgeYears` / `MIN_AGE_YEARS`) | 18 (היה 16) | ONB-004 |
 
 ## נספח ב' — הודעת נימוקים (SoR): שדות חובה
 התבנית המלאה ב-compliance.md §6. בתמצית:
@@ -1210,9 +1247,14 @@ WhatsApp לא חושף API לקריאת חברי קבוצה, ולכן "ייבו�
 | ביטול משחק | משתתפים | Push + Inbox | לא |
 | פיקדון: hold / שחרור / גבייה / כישלון | המשתמש | Push + Inbox + קבלה | לא |
 
-## נספח ד' — שאלות פתוחות לבעל המוצר
-1. **עיר זרע שנייה:** לונדון או מדריד? ההחלטה תתקבל אחרי מבחן גיוס מארגנים בשבועות 1–4.
-2. **מבנה ישויות לתשלומים:** ישות EU או US ל-Stripe, ו-PSP ישראלי (MON-002).
-3. **סכום ברירת המחדל לפיקדון בישראל:** ₪20 מומלץ.
-4. **גיל 16+ גלובלי, או 18+ בבריטניה ובאוסטרליה** כדי לפשט חובות OSA/SMMA? ההמלצה: 16+ עם SAFE-010, בכפוף ל-counsel.
-5. **ייעוד קרן הקהילה ושקיפותה:** דוח רבעוני מומלץ.
+## נספח ד' — החלטות בעל המוצר ושאלות פתוחות
+**הוחלט (2026-10-26):**
+1. **ערי זרע:** תל אביב ראשונה, ואחריה לונדון (מדריד הוסרה). ראו 5.2, 5.2א ו-3.2א.
+2. **מבנה ישויות לתשלומים:** ישות זרה (ארה"ב, האיחוד האירופי או בריטניה) ו-Stripe כספק גלובלי יחיד, גם לישראל. Bit ו-PSP ישראלי נדחו (MON-001/002, ADR 0006).
+3. **גיל מינימום:** 18+ בכל העולם (ONB-004, `trust_config.min_age_years`).
+
+**פתוח:**
+1. **סכום ברירת המחדל לפיקדון בישראל:** ₪20 מומלץ. בלונדון £4 מומלץ (5.2א).
+2. **ייעוד קרן הקהילה ושקיפותה:** דוח רבעוני מומלץ.
+3. **סמכות שיפוט של הישות הזרה**, רישומי VAT/GST ו-Connect: ליועץ המשפטי ולרואה החשבון (8.2א).
+4. **חוזק הבטחת הגיל** (הצהרה עצמית + נעילה רכה) בבריטניה: ל-counsel (compliance.md MIN-06, OSA-03).

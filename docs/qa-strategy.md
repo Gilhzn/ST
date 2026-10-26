@@ -16,7 +16,7 @@ Ground truth for behaviour: `docs/prd-v5.md`, `docs/plan.md` (Trust Engine, Data
 | Q4 | **Global from day one**: 13 locale folders, RTL correct for he/ar, plural rules correct. | i18n checker, RTL e2e + screenshots, pseudo-locale run |
 | Q5 | **Accessible**: WCAG 2.1 AA on web; TalkBack/VoiceOver usable on native. | axe (0 serious/critical), manual SR pass per release |
 | Q6 | **Fast on low-end hardware**. | Budgets in §9 enforced in CI |
-| Q7 | **Store and law compliant**: in-app deletion, report/block everywhere, no background location for attendance, 16+ gate. | Release checklist §11 |
+| Q7 | **Store and law compliant**: in-app deletion, report/block everywhere, no background location for attendance, 18+ gate. | Release checklist §11 |
 
 ---
 
@@ -200,6 +200,9 @@ Report rings: 3 reporters created within 48 h → queue only, no restriction. Re
 ### 5.6 Other
 Invite token: 128-bit, not enumerable, private game invisible via `nearby_games`; exact location of women-only/private games hidden before approval (column-level via view); chat after `expires_at` unreadable; secrets never in client bundle (grep the web export for `service_role`, `sk_live`, `sk_test`); dependency audit (`npm audit --omit=dev`, high = S2).
 
+### 5.7 Age gate (minimum age 18+)
+The minimum is `trust_config.min_age_years` (default 18), mirrored as `TrustConfig.minAgeYears` / `MIN_AGE_YEARS`. **SQL tests** (`supabase/tests/games.test.ts` and the golden cases) are now **under-18** cases: `create_profile` with a birth year/month that makes the user 17 years 11 months old fails with `ST:age_restricted`, and exactly 18 passes. Add a case that changes `trust_config.min_age_years` and checks that the RPC follows it, and a TS/SQL parity case for the boundary month. **E2E** uses an under-18 user (E2E-02). Also test that the 24h device soft lock persists after a blocked attempt.
+
 ---
 
 ## 6. i18n checks (`npm run i18n:check`)
@@ -221,7 +224,7 @@ Runs on the static export (`expo export --platform web`) served by `serve -s` wi
 |---|---|---|---|
 | SMK-01 | App boots, SPA deep link | `#root` | 2xx, content rendered, 0 console errors |
 | E2E-01 | Phone → OTP (mock code `000000`) | `auth.phone.input`, `auth.phone.submit`, `auth.otp.input` | lands on age gate |
-| E2E-02 | Age gate 16+ (block 15, allow 16) | `auth.age.year`, `auth.age.month`, `auth.age.submit`, `auth.age.blocked` | under-16 blocked with explanation |
+| E2E-02 | Age gate 18+ (block 17, allow 18; both read from `MIN_AGE_YEARS`) | `auth.age.year`, `auth.age.month`, `auth.age.submit`, `auth.age.blocked` | under-18 blocked with explanation |
 | E2E-03 | Map filters: radius, ≤3 sports, location denied fallback | `map.filter.radius`, `map.filter.sport.<id>`, `map.pin.<id>`, `map.list.toggle` | pin count matches fixture; 4th sport disabled; map usable with geolocation denied |
 | E2E-04 | Create game & join (approval, waitlist promotion) | `game.create.*`, `game.join`, `game.participants.<uid>`, `game.waitlist.position` | capacity respected; promotion shows |
 | E2E-05 | Join game with deposit (mock provider) | `payment.deposit.confirm` | hold created, status shown |
@@ -294,8 +297,8 @@ Trust & Safety bugs are raised one level when they affect a sanction decision.
 - EAS builds green; Maestro suite green on the device matrix (low-end Android + iOS 17 mandatory).
 - Staging Supabase: migrations applied from scratch and as upgrade; RLS matrix re-run against staging via `supabase test db` (pgTAP) or the same suite pointed at a real Postgres; concurrency smoke (parallel joins).
 - Performance budgets met.
-- Manual: native-speaker review signed for launch locales; screen-reader pass; field GPS test at ≥ 3 venues; Stripe/PSP sandbox run; account deletion on both stores + web link.
-- Compliance checklist (`docs/compliance.md`) items ticked: statement of reasons, appeal path, report/block everywhere, 16+ gate, privacy policy, data-safety form.
+- Manual: native-speaker review signed for launch locales; screen-reader pass; field GPS test at ≥ 3 venues; Stripe sandbox run (single global processor; the local PSP is a stub and is tested only through its fake client); account deletion on both stores + web link.
+- Compliance checklist (`docs/compliance.md`) items ticked: statement of reasons, appeal path, report/block everywhere, 18+ gate, privacy policy, data-safety form.
 - Adversarial QA sign-off (M4b) with all findings closed or accepted by owner + QA Lead.
 
 ## 12. Ownership and cadence

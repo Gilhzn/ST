@@ -25,9 +25,9 @@
 
 | Gate | Metric conditions (rolling 4 weeks) | Non-metric conditions |
 |---|---|---|
-| Enter Ph2 | First seed city: fill rate ≥ 60%, show-up ≥ 85%, host repeat ≥ 40%, wrongful sanctions < 5%, crash-free ≥ 99.5% | Store approvals. DPIA signed. Pen test passed |
+| Enter Ph2 | First seed city (Tel Aviv; London follows): fill rate ≥ 60%, show-up ≥ 85%, host repeat ≥ 40%, wrongful sanctions < 5%, crash-free ≥ 99.5% | Store approvals. DPIA signed. Pen test passed |
 | Enter Ph3 | 2 cities with liquidity score ≥ 60%. Payment success ≥ 97%. Chargebacks < 0.5%. P0 report SLA met ≥ 95% | T&S team ≥ 4 FTE-equivalent. Image moderation vendor contracted |
-| Enter Ph4 | ≥ 5 liquid cities. Pro conversion ≥ 1.5%. Media reports actioned within SLA ≥ 95% | Live-moderation runbook. Kill switch drill passed. Counsel sign-off on minors and live |
+| Enter Ph4 | ≥ 5 liquid cities. Pro conversion ≥ 1.5%. Media reports actioned within SLA ≥ 95% | Live-moderation runbook. Kill switch drill passed. Counsel sign-off on live (and on age-assurance strength) |
 
 ### 0.3 Dependency graph
 
@@ -47,14 +47,14 @@ MVP core (games, trust, chat, deposits, payments port)
 
 ## 1. Paid games, court-fee collection and host payouts (Ph2)
 
-**Goal.** Let hosts collect court fees in the app, replacing manual Bit and cash collection. This is the first proven revenue line in the category (Footy Addicts 4.3% + 20p; Playtomic take rate about 8.4%).
+**Goal.** Let hosts collect court fees in the app, replacing manual Bit and cash collection (a pain point mainly in Israel; in the UK, cash and bank transfers). This is the first proven revenue line in the category (Footy Addicts 4.3% + 20p; Playtomic take rate about 8.4%).
 
 **Requirements**
 
 | ID | Requirement |
 |---|---|
 | PAID-001 | The host sets a price per player (currency of the venue country). The price is shown on the game card and before joining |
-| PAID-002 | **Host onboarding: Stripe Connect Express** (KYC, payouts, tax info collection for DAC7). In Israel: the local PSP's marketplace or sub-merchant product (ADR) |
+| PAID-002 | **Host onboarding: Stripe Connect Express** (KYC, payouts, tax info collection for DAC7). The same Stripe Connect platform serves Israel (the foreign entity is the platform, ADR 0006). An Israeli local PSP marketplace is a possible later alternative |
 | PAID-003 | Player pays at approval (or at waitlist promotion). Service fee: **5% + $0.30 equivalent, capped at $2 per player**, shown separately. Founding Hosts pay 0% for 12 months |
 | PAID-004 | **Refunds:** player cancels ≥ 24h before → full refund. Between 24h and 2h → refund if the spot is refilled, otherwise host policy (none / 50% / full). < 2h → no refund (plus the TRUST card rules). Host cancels, or the game doesn't happen → full refund including the service fee |
 | PAID-005 | **Payout** to the host at `ends_at + 48h` (after the dispute window). A paid game that didn't happen withholds the payout and refunds |
@@ -62,7 +62,7 @@ MVP core (games, trust, chat, deposits, payments port)
 | PAID-007 | **Apple 3.1.3(e) / Play Payments policy:** physical-world service, so **non-IAP**. Apple Pay and Google Pay via Stripe are allowed |
 | PAID-008 | DAC7 seller reporting (EU). 1099-K style obligations in the US ⚖️ |
 
-**Dependencies.** MVP payments port, Connect ADR, local PSP marketplace capability, DAC7 data collection.
+**Dependencies.** MVP payments port, the foreign entity and Stripe account (ADR 0006), Connect platform setup, DAC7 data collection.
 
 **Acceptance criteria**
 - **AC-PAID-003.** **Given** a game priced €6 and a player approved. **When** they pay with iDEAL. **Then** they are charged €6 + €0.60 service fee, the host balance shows €6 pending, and the receipt itemises both.
@@ -91,7 +91,7 @@ MVP core (games, trust, chat, deposits, payments port)
 | SUB-003 | **Never paywalled:** joining, hosting (up to 3 series), check-in, reliability, appeals, safety features, data export |
 | SUB-004 | Restore purchases. Grace period and billing retry handled by RevenueCat webhooks → `db.entitlements` |
 | SUB-005 | Paywall placements are contextual only (e.g. tapping "Heatmap"). No interstitial paywalls in core flows. No dark patterns (cancellation is as easy as purchase, per FTC "click-to-cancel" and the EU) |
-| SUB-006 | No subscriptions for users aged 16–17 without the legal basis being verified ⚖️. Default: hidden for teens |
+| SUB-006 | Subscription eligibility follows the 18+ rule (all users are adults). Contract-law checks (UK, EU, Israel auto-renewal and cancellation rules) are still required ⚖️ |
 | SUB-007 | Heatmaps are built from check-in venue IDs, never from location tracks |
 
 **Acceptance criteria**
@@ -110,7 +110,7 @@ MVP core (games, trust, chat, deposits, payments port)
 | ID | Requirement |
 |---|---|
 | BOOST-001 | Products: **24h at $1.99, 72h at $4.99** (localised). Consumable IAP on iOS and Android (digital promotion), Stripe on web |
-| BOOST-002 | Eligibility: public game; host reliability ≥ 80%; no active host suspension; **not women-only, not hidden-location, not 18+ teen-restricted** (avoid amplifying exposure) |
+| BOOST-002 | Eligibility: public game; host reliability ≥ 80%; no active host suspension; **not women-only, not hidden-location** (avoid amplifying exposure) |
 | BOOST-003 | Placement: highlighted pin plus top position in the list for the matching sport and filters within the radius. **At most 1 boosted game per H3 res-7 cell per sport** at a time (auction-free, first-come). Additional purchases queue for the next slot, with an ETA shown |
 | BOOST-004 | Clearly labelled "Promoted" with an info sheet: who paid, why you see it (sport filter and area) (DSA Art. 26 spirit) |
 | BOOST-005 | Boost auto-stops when the game is full. Unused hours become **in-app boost credit** (non-cash, non-transferable). Cancelled game → credit |
@@ -186,7 +186,7 @@ MVP core (games, trust, chat, deposits, payments port)
 | VHOST-ID | **Verified Host with ID** | Ph2 | Stripe Identity (document + selfie). Only a "verified" flag is stored, never the document | Biometric processing by Stripe as processor ⚖️ (GDPR Art. 9 basis = explicit consent) |
 | TRAVEL-ALERT | **Travel alerts** | Ph2 | Notify when matching games appear in a saved trip city and date range. ≤ 1 push/day | — |
 | SAFE-020 | **Safety check** | Ph2 | Share game details with a trusted contact through the share sheet. No live location | — |
-| DM-001 | **DMs between co-players** | Ph3 | Only between users who played together in a verified game within 90 days, **with mutual opt-in**. Same moderation pipeline. Never between adults and 16–17s. Report and block. Retention 30 days | Apple 1.2. UK OSA child-safety duties |
+| DM-001 | **DMs between co-players** | Ph3 | Only between users who played together in a verified game within 90 days, **with mutual opt-in**. Same moderation pipeline. Report and block. Retention 30 days | Apple 1.2. UK OSA user-to-user duties |
 | BOOK-001 | **Venue booking commission** | Ph3 | Integrations with venue booking systems (API partners). Book a court while creating a game. Commission 6–10% | Connect. Venue contracts |
 
 ---
@@ -201,7 +201,7 @@ MVP core (games, trust, chat, deposits, payments port)
 | VAULT-002 | Photos (≤ 20 MB) and videos (≤ 60 s, ≤ 200 MB). Up to 30 items per user per game. Storage: Cloudflare Images/Stream or Supabase Storage plus a CDN |
 | VAULT-003 | **Pre-publication pipeline:** EXIF and GPS strip → CSAM hash match (e.g. Cloudflare CSAM Scanning Tool / PhotoDNA) → image/video moderation (sampled frames for video) → publish. Positive CSAM → block, preserve, report (NCMEC/hotline), account action |
 | VAULT-004 | **Visibility levels:** `participants` (default) → `venue_public` (appears in the venue vault) only when the uploader opts in **and** every tagged person consents. Untagged, recognisable people can request removal or blur |
-| VAULT-005 | **Consent tagging:** a tag is a request. It is invisible until accepted. Tagged users can untag at any time, which also removes the item from `venue_public` if they request it. **16–17s cannot be tagged in `venue_public` items**, and items containing a tagged 16–17 stay at `participants` |
+| VAULT-005 | **Consent tagging:** a tag is a request. It is invisible until accepted. Tagged users can untag at any time, which also removes the item from `venue_public` if they request it. All users are 18+, so there is no age-based exception |
 | VAULT-006 | **Venue vault:** per-venue history with a date filter, showing only `venue_public` items |
 | VAULT-007 | **Retention:** 12 months free (Pro: unlimited while subscribed, then 90 days' grace). Deleted on account deletion. Others' items in which the user was tagged are untagged |
 | VAULT-008 | Report on every item. Copyright notices go through the DSA Art. 16 form |
@@ -210,7 +210,7 @@ MVP core (games, trust, chat, deposits, payments port)
 **Acceptance criteria**
 - **AC-VAULT-001.** **Given** a game ended at 20:00. **When** a participant uploads at 22:05. **Then** the upload is rejected with "Gallery locked 2 hours after the game".
 - **AC-VAULT-004.** **Given** a photo tagging 3 players, 2 of whom accepted. **When** the uploader sets `venue_public`. **Then** the photo stays `participants`-only until the third accepts or is untagged.
-- **AC-VAULT-005.** **Given** a 17-year-old tagged. **When** anyone attempts `venue_public`. **Then** the action is blocked with an explanation.
+- **AC-VAULT-005.** **Given** a tagged user who has not accepted the tag. **When** anyone attempts `venue_public`. **Then** the item stays at `participants` and the action is blocked with an explanation.
 - **AC-VAULT-003.** **Given** an upload matching a CSAM hash. **Then** it is never published, the evidence is preserved under legal hold, a report is filed, and the account is restricted pending human review.
 
 **Dependencies.** IMG-001 pipeline, T&S staffing, a vendor for video moderation.
@@ -224,7 +224,7 @@ MVP core (games, trust, chat, deposits, payments port)
 | REEL-001 | Short clips (≤ 60 s) published from the Vault with `venue_public` consent rules. The Explore tab returns to the tab bar |
 | REEL-002 | **Ranking:** recency, followed sports, nearby (city-level), engagement. **A non-personalised chronological option** is always available. Ranking is explained in the T&C (DSA Art. 27) |
 | REEL-003 | New accounts (< 30 days) or low-reliability accounts: clips are held for pre-moderation before public distribution |
-| REEL-004 | No reels from or of 16–17s in the public feed. Teens see a curated, non-personalised feed |
+| REEL-004 | All users are 18+, so there is no teen feed. Reels still require consent from everyone shown (VAULT-005) |
 | REEL-005 | Comments: off by default. Enabled per reel for adults only, with the full moderation pipeline |
 | REEL-006 | Metrics guardrail: Explore must not reduce WFPS (an A/B holdout is required at launch) |
 
@@ -244,7 +244,7 @@ MVP core (games, trust, chat, deposits, payments port)
 | TRN-004 | **Booking:** availability calendar, request or instant book, a cancellation policy chosen from 3 presets, reminders. Check-in reuses the TRUST QR flow for in-person sessions (provider shows the QR) |
 | TRN-005 | **Reviews only from completed, paid bookings** (v4 kept). One review per booking. The provider can reply once |
 | TRN-006 | **Messaging:** scoped to a booking, open from booking until 7 days after the session. Full moderation pipeline. Report and block |
-| TRN-007 | **Safeguarding:** bookings for 16–17s are disabled in Ph3. A later opt-in requires a background check (e.g. DBS in the UK) ⚖️ |
+| TRN-007 | **Safeguarding:** all customers are 18+. Trainers who coach minors outside the app are out of scope. Trainer background checks (e.g. DBS in the UK) are a trust option, not a minors rule ⚖️ |
 | TRN-008 | **Health data:** nutrition and physio intake forms may include health data (GDPR Art. 9, WA MHMDA). The provider is an independent controller for clinical notes. We store only booking metadata. DPIA addendum ⚖️ |
 | TRN-009 | Disputes: the platform mediates within 7 days. A refund-from-commission policy is defined |
 
@@ -290,7 +290,7 @@ MVP core (games, trust, chat, deposits, payments port)
 
 | ID | Requirement |
 |---|---|
-| LIVE-001 | **18+ only** for streamers and for **any game with a live stream**: a game containing any 16–17 participant cannot be streamed. Viewers must be 16+ signed-in users (no anonymous viewing in the first release) |
+| LIVE-001 | Everyone on the platform is 18+ (`trust_config.min_age_years`, default 18), so there is no separate age gate for streaming. Viewers must be signed-in users (no anonymous viewing in the first release) |
 | LIVE-002 | Streamer eligibility: Verified Host (with ID, VHOST-ID), reliability ≥ 85%, no sanction in 180 days |
 | LIVE-003 | **Consent:** a game can be marked "May be streamed" only at creation. Every participant must accept at join. Opting out later blocks streaming of that game. In-stream indicator for participants |
 | LIVE-004 | **Kill switch:** moderators can end a stream (≤ 10 s), all streams in a country, or all streams globally (MOD-006). An automated trigger ends the stream on a high-confidence violation in sampled frames |
@@ -301,7 +301,7 @@ MVP core (games, trust, chat, deposits, payments port)
 | LIVE-009 | Age rating update in the stores. Counsel sign-off (UK OSA livestreaming measures, DSA) ⚖️ |
 
 **Acceptance criteria**
-- **AC-LIVE-001.** **Given** a game with one 17-year-old participant. **When** the host taps "Go live". **Then** the action is unavailable with "Live isn't available for games with participants under 18".
+- **AC-LIVE-001.** **Given** a game where not every participant accepted "May be streamed" (LIVE-003). **When** the host taps "Go live". **Then** the action is unavailable with an explanation. Anonymous (signed-out) viewers cannot open the stream.
 - **AC-LIVE-004.** **Given** an active stream. **When** a moderator presses "End stream". **Then** ingest is disconnected and playback stops for all viewers within 10 s, the stream key is revoked, and an SoR is sent to the streamer.
 - **AC-LIVE-GoPro.** **Given** a verified host. **When** they request a GoPro stream. **Then** they get an RTMPS URL and a single-use key valid until `ends_at + 30 min`. The stream appears in-app within 15 s of ingest starting.
 
@@ -316,7 +316,7 @@ MVP core (games, trust, chat, deposits, payments port)
 | CPN-001 | **Partners:** sport-supporting local businesses (healthy food, juice bars, sports shops, physio clinics) onboarded through a web portal. Business verification. Map layer "Partners" (toggleable, off for teens) |
 | CPN-002 | **Coupon trigger:** after a **verified check-in** at a venue within ≤ 1 km of the partner. The coupon is issued at `ends_at`, valid 24–72h. **No additional location collection**: the trigger is the check-in record itself (PRD ECO-007) |
 | CPN-003 | **Single-use:** a unique code plus QR. The partner redeems through the portal or a scan. One coupon per user per partner per 7 days |
-| CPN-004 | **Consent:** a "Local offers" opt-in (marketing) is required (ePrivacy, Israel Communications Law §30A). Off by default. Never for 16–17s |
+| CPN-004 | **Consent:** a "Local offers" opt-in (marketing) is required (ePrivacy, Israel Communications Law §30A). Off by default. |
 | CPN-005 | **Partner analytics:** aggregated only (issued, redeemed, by day), with k-anonymity ≥ 20. No user identities shared |
 | CPN-006 | **Nutrition content:** no health claims beyond authorised ones (EU Reg. 1924/2006 and equivalents). "Not medical advice" disclaimer |
 | CPN-007 | Billing: CPA per redemption, invoiced through Stripe |
@@ -332,20 +332,20 @@ MVP core (games, trust, chat, deposits, payments port)
 | ADS-001 | **First-party, contextual ad server.** No third-party ad SDKs and no cross-app tracking, so no ATT prompt is needed |
 | ADS-002 | **Coarse location only:** city or an H3 res-6 cell (about 36 km²), and only with an explicit "Personalised local ads" opt-in. Without opt-in: city-level contextual (from the selected map area), with no stored location |
 | ADS-003 | **Never use precise location**, check-in history or gender for ad targeting. CPRA "Limit Use" honoured. No "sale/share" of personal data |
-| ADS-004 | **No ads to 16–17s.** No ads in chat, sanctions, appeals, check-in or payment flows |
+| ADS-004 | No ads in chat, sanctions, appeals, check-in or payment flows |
 | ADS-005 | **Label** "Ad" plus a "Why am I seeing this?" sheet: advertiser, who paid, main parameters (DSA Art. 26). Frequency cap of 3 per day per advertiser |
 | ADS-006 | Advertiser verification and creative review (prohibited categories: gambling, alcohol to restricted markets, weight-loss claims, adult content) |
 | ADS-007 | Formats: a sponsored card in the list view (max 1 per 10 items), and a sponsored venue pin (partner venues only) |
 | ADS-008 | Guardrail: an A/B holdout must show no statistically significant drop in WFPS or D30 |
 
-**AC-ADS-002.** **Given** a user without opt-in browsing Madrid. **Then** ads are selected by "Madrid + selected sport" only, and no location is persisted in the ad logs.
+**AC-ADS-002.** **Given** a user without opt-in browsing London. **Then** ads are selected by "London + selected sport" only, and no location is persisted in the ad logs.
 
 ---
 
 ## 14. Cross-cutting requirements for all deferred features
 
 1. **Trust first.** No deferred feature may let money, boosts, subscriptions or content buy trust, approval priority or protection from sanctions.
-2. **Minors.** Each feature must state its 16–17 behaviour explicitly (default: off or most protective).
+2. **Age.** The minimum age is 18+ worldwide (`trust_config.min_age_years`, default 18). A feature that would introduce minors or age-differentiated behaviour (for example coaching of under-18s) needs a new owner decision and a counsel review first.
 3. **SoR and appeals.** Any new moderation action, such as removing media, ending a stream or delisting a provider, must use the SoR template (compliance.md §6) and the appeals flow.
 4. **Retention.** Each feature adds rows to the data inventory (compliance.md §4) before development starts.
 5. **i18n.** All 13 locales plus RTL. New legal text is native-reviewed.
