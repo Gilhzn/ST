@@ -1,8 +1,16 @@
 import { describe, expect, it } from "vitest";
 
+import { existsSync, readFileSync } from "node:fs";
+import { fileURLToPath } from "node:url";
+
 import {
+  bundledScripts,
   detectScript,
+  fontAssetNames,
   fontFamilyForLocale,
+  fontFamilyForScript,
+  fontGroupPackages,
+  fontGroupsForLocale,
   fontStacks,
   googleFontsCssUrl,
   isRtlLocale,
@@ -13,19 +21,19 @@ import {
   typeStyleFor,
 } from "../src/fonts";
 
-describe("scriptForLocale / fontFamilyForLocale", () => {
+describe("v2 fonts: Rubik + script fallbacks", () => {
   it.each([
-    ["en", "NotoSans_400Regular"],
-    ["en-US", "NotoSans_400Regular"],
-    ["es", "NotoSans_400Regular"],
-    ["pt-BR", "NotoSans_400Regular"],
-    ["ru", "NotoSans_400Regular"],
-    ["fr", "NotoSans_400Regular"],
-    ["it", "NotoSans_400Regular"],
-    ["de", "NotoSans_400Regular"],
-    ["he", "NotoSansHebrew_400Regular"],
-    ["he-IL", "NotoSansHebrew_400Regular"],
-    ["iw", "NotoSansHebrew_400Regular"],
+    ["en", "Rubik_400Regular"],
+    ["en-US", "Rubik_400Regular"],
+    ["es", "Rubik_400Regular"],
+    ["pt-BR", "Rubik_400Regular"],
+    ["ru", "Rubik_400Regular"],
+    ["fr", "Rubik_400Regular"],
+    ["it", "Rubik_400Regular"],
+    ["de", "Rubik_400Regular"],
+    ["he", "Rubik_400Regular"],
+    ["he-IL", "Rubik_400Regular"],
+    ["iw", "Rubik_400Regular"],
     ["ar", "NotoSansArabic_400Regular"],
     ["ar-EG", "NotoSansArabic_400Regular"],
     ["hi", "NotoSansDevanagari_400Regular"],
@@ -42,19 +50,33 @@ describe("scriptForLocale / fontFamilyForLocale", () => {
     expect(fontFamilyForLocale(locale)).toBe(family);
   });
 
-  it("returns the weight-specific native family", () => {
+  it("returns the weight-specific native family (incl. heavy 800)", () => {
+    expect(fontFamilyForLocale("en", { weight: "bold" })).toBe("Rubik_700Bold");
+    expect(fontFamilyForLocale("he", { weight: "heavy" })).toBe("Rubik_800ExtraBold");
     expect(fontFamilyForLocale("ar", { weight: "bold" })).toBe("NotoSansArabic_700Bold");
-    expect(fontFamilyForLocale("he", { weight: "semibold" })).toBe("NotoSansHebrew_600SemiBold");
+    expect(fontFamilyForLocale("hi", { weight: "semibold" })).toBe("NotoSansDevanagari_600SemiBold");
   });
 
-  it("returns CSS stacks on web with the right primary family", () => {
-    expect(fontFamilyForLocale("he", { platform: "web" }).startsWith('"Noto Sans Hebrew"')).toBe(true);
-    expect(fontFamilyForLocale("ar", { platform: "web" }).startsWith('"Noto Sans Arabic"')).toBe(true);
-    expect(fontFamilyForLocale("hi", { platform: "web" }).startsWith('"Noto Sans Devanagari"')).toBe(true);
-    // CJK: Latin first, then the region-correct Han font (Han unification)
-    expect(fontFamilyForLocale("ja", { platform: "web" })).toMatch(/^"Noto Sans", "Noto Sans JP"/);
+  it("web stacks start with Rubik, then the script family, and end in system fonts", () => {
+    for (const s of Object.values(fontStacks)) {
+      expect(s.web.startsWith('"Rubik"')).toBe(true);
+      expect(s.web.endsWith("sans-serif")).toBe(true);
+    }
+    expect(fontFamilyForLocale("ar", { platform: "web" })).toContain('"Noto Sans Arabic"');
+    expect(fontFamilyForLocale("ja", { platform: "web" })).toContain('"Noto Sans JP"');
     expect(fontFamilyForLocale("zh-Hant", { platform: "web" })).toContain('"Noto Sans TC"');
-    for (const s of Object.values(fontStacks)) expect(s.web.endsWith("sans-serif")).toBe(true);
+  });
+
+  it("registered web stacks lead with the per-weight faces (no synthetic bold)", () => {
+    expect(fontFamilyForScript("latin", { platform: "web", weight: "bold", registered: true }).startsWith("Rubik_700Bold, ")).toBe(true);
+    expect(fontFamilyForScript("arabic", { platform: "web", weight: "medium", registered: true })).toMatch(
+      /^Rubik_500Medium, NotoSansArabic_500Medium, /,
+    );
+  });
+
+  it("legacy mode keeps the v1 Noto names for apps that still load Noto", () => {
+    expect(fontFamilyForScript("latin", { legacy: true })).toBe("NotoSans_400Regular");
+    expect(fontFamilyForScript("hebrew", { legacy: true, weight: "bold" })).toBe("NotoSansHebrew_700Bold");
   });
 
   it("falls back to Latin for unknown/empty locales", () => {
@@ -75,11 +97,46 @@ describe("scriptForLocale / fontFamilyForLocale", () => {
     for (const l of supportedLocales) expect(localeNativeNames[l]).toBeTruthy();
   });
 
-  it("lists font packages and a Google Fonts URL", () => {
+  it("lists font packages and a Google Fonts URL with Rubik first", () => {
+    expect(requiredFontPackages()).toContain("@expo-google-fonts/rubik");
     expect(requiredFontPackages()).toContain("@expo-google-fonts/noto-sans-arabic");
     expect(googleFontsCssUrl(["latin", "hebrew"])).toBe(
-      "https://fonts.googleapis.com/css2?family=Noto+Sans:wght@400;500;600;700&family=Noto+Sans+Hebrew:wght@400;500;600;700&display=swap",
+      "https://fonts.googleapis.com/css2?family=Rubik:wght@400;500;600;700;800&display=swap",
     );
+    expect(googleFontsCssUrl(["arabic"])).toContain("family=Noto+Sans+Arabic:wght@");
+  });
+
+  it("loads only the groups a locale needs", () => {
+    expect(fontGroupsForLocale("en")).toEqual(["rubik"]);
+    expect(fontGroupsForLocale("he")).toEqual(["rubik"]);
+    expect(fontGroupsForLocale("ar")).toEqual(["rubik", "arabic"]);
+    expect(fontGroupsForLocale("hi")).toEqual(["rubik", "devanagari"]);
+    expect(fontGroupsForLocale("ja")).toEqual(["rubik"]);
+    expect(bundledScripts).toEqual(["latin", "hebrew", "arabic", "devanagari"]);
+  });
+});
+
+describe("font assets map (fontAssets.ts ↔ fontAssetNames ↔ installed files)", () => {
+  const root = fileURLToPath(new URL("../../../node_modules/", import.meta.url));
+  const src = readFileSync(fileURLToPath(new URL("../src/fontAssets.ts", import.meta.url)), "utf8");
+
+  it.each(Object.entries(fontAssetNames))("%s: every weight is an installed .ttf and imported by fontAssets.ts", (group, names) => {
+    const pkg = fontGroupPackages[group as keyof typeof fontGroupPackages];
+    expect(names).toHaveLength(5);
+    for (const name of names) {
+      const weightDir = name.split("_")[1]!;
+      expect(existsSync(`${root}${pkg}/${weightDir}/${name}.ttf`), `${pkg}/${weightDir}/${name}.ttf`).toBe(true);
+      expect(src, name).toContain(`import { ${name} } from "${pkg}/${weightDir}";`);
+    }
+  });
+
+  it("every native family the theme can request for a bundled script is in the asset map", () => {
+    const all = new Set(Object.values(fontAssetNames).flat());
+    for (const s of bundledScripts) {
+      for (const w of ["regular", "medium", "semibold", "bold", "heavy"] as const) {
+        expect(all.has(fontFamilyForScript(s, { weight: w })), `${s}/${w}`).toBe(true);
+      }
+    }
   });
 });
 

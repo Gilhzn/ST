@@ -1,728 +1,582 @@
-# Sport Talent Design System
+# Sport Talent Design System — Design Language v2 "Floodlight"
 
-**Owner:** UI/UX Expert. **Code:** `packages/ui` (`@st/ui`). **Status:** v1 for Core MVP (M1c).
+**Owner:** UI/UX Design Lead. **Code:** `packages/ui` (`@st/ui`). **Status:** v2 (replaces v1 "Night Court + Volt"). **Specimen:** `/dev/design` in the app (light/dark/RTL toggles).
 
-This document is the source of truth for visual language, interaction rules, RTL/i18n behaviour, accessibility and screen-level UX. Token values live in `packages/ui/src/tokens.ts`. The tests in `packages/ui/test` enforce the numbers quoted here, so if this doc and the code disagree, the code wins and this doc is the bug.
+This document is the source of truth for visual language, interaction rules, RTL/i18n behaviour, accessibility and screen-level layouts. Token values live in `packages/ui/src/tokens.ts`. Tests in `packages/ui/test` enforce the numbers quoted here; if this doc and the code disagree, the code wins and this doc is the bug.
 
 Contents:
-1. Brand direction
-2. Color system
-3. Sport color coding (map pins)
+0. Why v2 (audit of v1)
+1. Brand
+2. Color
+3. Sport system (colors, gradients, glyphs)
 4. Reliability status
 5. Typography and per-script fonts
 6. Spacing, radius, sizing, elevation
 7. Motion
-8. Iconography
-9. RTL rules
-10. Bidi text (chat, names, numbers)
-11. Accessibility
-12. Information architecture and navigation
-13. Screen specs
-14. UX copy principles
-15. `@st/ui` component inventory and how the app consumes it
-16. Requests to other owners
+8. Haptics
+9. Iconography (Phosphor)
+10. RTL rules
+11. Bidi text
+12. Accessibility
+13. Information architecture and navigation
+14. Component specs
+15. Screen-by-screen v2 layouts
+16. UX copy principles
+17. `@st/ui` API inventory and migration
+18. Tooling (screenshot tour) and requests to other owners
 
 ---
 
-## 1. Brand direction
+## 0. Why v2 — audit of v1 (screenshots: `node apps/mobile-web/scripts/screens.mjs`)
 
-**Personality:** *energetic, trustworthy, sporty, fair.* We're the referee and the scoreboard of pickup sport. We are not a fitness-tracker gradient and not a generic blue SaaS.
+What made v1 read as "amateur", in order of impact:
 
-| Principle | What it means in UI |
+1. **No hierarchy on the money screens.** Game details is a column of same-weight rows: sport dot, title, time, venue, host card, a "7 of 10 players" chip, a flat player list, then three competing buttons (filled, two outlines and a link) in the footer. Nothing says "this is the game, this is when, this is how full". The map sheet peeks at a single card's eyebrow.
+2. **Generic icon set.** MaterialCommunityIcons mixes stroke weights and metaphors (radar for "live", clock-fast, scoreboard). Outline/filled pairs look like two different icons. Sports are a colored *dot* (●■◆) — no sport glyph anywhere.
+3. **Everything is a pill with a border.** Filters, radius chips, segments, tabs, tags and buttons are all 40–48dp outlined capsules with the same 1.5dp grey stroke, so the eye can't tell controls from data. Selected = lavender fill + tiny ✓.
+4. **Flat, grey canvas.** Cards are white on #F6F7FB with a 1px shadow, no color moments except one volt FAB. Dark mode is the same layout inverted; the lavender primary button glows.
+5. **Typography without a voice.** System/Noto at 26/22/18 with 600 weight; numbers (7/10, 90%, 19:05) are the same size as labels. Stats tiles are 13 in 28pt next to an equally loud label.
+6. **Spacing rhythm is uneven.** 16dp gutters everywhere, but 48dp gaps between sections and 4dp inside groups; the map controls stack in three full-width rows that push the map down 40%.
+7. **Map.** A huge brand-colored radius disc dominates; pins are generic circles; clusters are black discs with three tiny shapes stuck underneath.
+8. **Empty states and loading** are a glyph in a disc ("◎") and spinners; no illustration, no brand.
+9. **Navigation and microinteractions.** Tab bar is a flat white strip with a lavender blob; no blur, no haptics, presses only change background color; no motion on selection.
+10. **Auth** opens on a form under an all-caps eyebrow. No brand moment at all.
+
+v2 fixes these with: a sport-led color + glyph system, Phosphor icons, a real type voice (Rubik) with tabular stat numerals, hero game cards with gradient bands, teardrop pins, a blurred tab bar with fill icons, soft layered elevation, SVG illustrations, spring motion and a haptics map.
+
+---
+
+## 1. Brand
+
+**Personality: energetic · premium · trustworthy.** We are the floodlights coming on at the local pitch: dark-indigo night, volt energy, every sport its own color. Not a fitness-tracker rainbow, not a SaaS blue.
+
+| Principle | In the UI |
 |---|---|
-| **Night Court + Volt** | Deep indigo (`#4B2FE0`) carries trust. Volt yellow‑green (`#C5F230`) carries energy. Volt is only ever a *fill* with ink text on it (14:1), never text on white. One volt moment per screen: the Create‑Game FAB, "Live now" markers, the reliability meter tip, the "lane line" on starting‑soon cards. |
-| **Scoreboard clarity** | Numbers (players 6/10, scores, countdowns, km, %) use tabular figures (`numeric` variant, `fontVariant: tabular-nums`) and bold weight. Information is scannable at arm's length outdoors. |
-| **The lane line** | A 4dp volt bar on the *start* edge of a card (`Card accentEdge`) marks "starting within 2h / live". It mirrors in RTL. It's our signature motif and replaces decorative gradients. |
-| **Fair play, not punishment** | Trust UI (cards, bans) is calm and specific. We use neutral surfaces with a status pill. We never show a full‑screen red takeover, and we always offer a next step. |
-| **Outdoor‑ready** | High contrast (body ≥ 15:1), large hit areas (48dp), light theme default in daylight, dark theme for evening games and OLED battery. |
-| **Global by default** | No idioms in iconography. Shapes and icons carry meaning, not color alone. Every layout works mirrored. |
+| **Sport first** | Every game carries its sport: a colored gradient band, a Phosphor glyph, a sport-colored teardrop on the map. Color is never the only cue: the glyph is the identity. |
+| **Floodlight contrast** | Brand moments are deep indigo night (`brandNight`) with white type and one volt highlight. Content surfaces stay calm and neutral (brand-tinted greys). |
+| **Scoreboard numbers** | Time, players (7/10), %, scores and distances are tabular, heavier and bigger than their labels (`statLarge`, `numeric`, `statSmall`). |
+| **One volt moment per screen** | Volt (`#CCFF33`) is a fill with ink content: FAB, "Live" pill, success sparkles, the brand ball. Never text on white. |
+| **Fair play, calm trust** | Sanctions and reliability use neutral surfaces + a status badge (icon + label + %), never full-screen red. Always a next step. |
+| **Global by default** | Every layout mirrors; numbers and times are LTR isolates; illustrations contain no text. |
 
-**Avoid:** stock gradients, glassmorphism over maps (it kills contrast on tiles), emoji as primary UI icons (OK as a fallback only), ALL CAPS outside Latin, and red as a brand color (red is reserved for danger and the red status).
+**Avoid:** emoji as UI icons, outlined pills for everything, more than one gradient per card, glass over map tiles (only the tab bar is translucent), red as a brand color, ALL CAPS outside Latin/Cyrillic overlines.
+
+**Brand mark** (`BrandMark`): indigo squircle (radius 12/40), two white motion arcs, volt ball. Wordmark "Sport Talent" in Rubik 800, −0.3 tracking. Never mirrors.
 
 ---
 
-## 2. Color system
+## 2. Color
 
-Components only use **semantic tokens** (`theme.colors.*`). They never use raw palette values. Light and dark are separate sets with the same keys (`lightColors`, `darkColors`).
+Components use **semantic tokens only** (`theme.colors.*`). Neutrals are **tinted toward the brand hue (~250°)** — tested: the blue channel leads and nothing is pure grey.
 
 ### 2.1 Semantic tokens
 
 | Token | Light | Dark | Use |
 |---|---|---|---|
-| `background` | `#F6F7FB` | `#0A0B12` | App canvas |
-| `surface` | `#FFFFFF` | `#14151F` | Cards, rows |
-| `surfaceRaised` | `#FFFFFF` | `#1C1E2B` | Sheets, menus. In dark mode, elevation = lighter surface. |
-| `surfaceSunken` | `#EDEEF4` | `#0F1018` | Inputs, skeleton, segmented track |
-| `surfaceInverse` / `textInverse` | `#12131C` / `#F2F3F8` | `#F2F3F8` / `#12131C` | Toasts, cluster pins |
-| `text` | `#12131C` | `#F2F3F8` | Primary text |
-| `textSecondary` | `#4B4E63` | `#B4B7CA` | Metadata |
-| `textTertiary` | `#62667D` | `#9094AB` | Placeholders, helper text, timestamps (still AA) |
-| `border` | `#D6D8E3` | `#2B2E40` | Decorative hairlines |
-| `borderStrong` | `#8A8EA6` | `#6B6F88` | Input/chip outlines (≥ 3:1, WCAG 1.4.11) |
-| `primary` / `onPrimary` | `#4B2FE0` / `#FFF` | `#9A8CFF` / `#0A0B12` | Primary actions |
-| `primaryPressed` | `#3A21C0` | `#B3A8FF` | Pressed |
-| `primarySubtle` / `onPrimarySubtle` | `#ECE9FF` / `#3A21C0` | `#262247` / `#C9C1FF` | Selected chips, info highlights |
-| `primaryText` | `#4126D6` | `#B3A8FF` | Links, ghost buttons |
-| `accent` / `onAccent` | `#C5F230` / `#12131C` | `#D2FF45` / `#0A0B12` | Volt moments (FAB, live) |
-| `danger` / `onDanger` / `dangerText` / `dangerSubtle` | `#C21E2B` / `#FFF` / `#A8141F` / `#FDE7E8` | `#FF6B73` / `#0A0B12` / `#FF9198` / `#3A1418` | Destructive actions, errors |
-| `success…` | `#1A7F3C` / `#FFF` / `#146B31` / `#E2F4E7` | `#4CD07D` / `#0A0B12` / `#6EE59A` / `#10301D` | Confirmations |
-| `warning…` | `#F5B700` / `#12131C` / `#6B4A00` / `#FFF3CC` | `#FFC83D` / `#0A0B12` / `#FFD466` / `#33280A` | Caution, offline |
-| `info…` | `#0B5FB0` / — / `#0A4F93` / `#E3EFFB` | `#6CB4FF` / — / `#8EC6FF` / `#0E2540` | Neutral notices |
-| `focusRing` | `#4B2FE0` | `#9A8CFF` | 3dp focus outline, 2dp offset |
-| `scrim` | `rgba(10,11,18,.52)` | `rgba(0,0,0,.64)` | Modal backdrop |
-| `pinRing` / `pinOutline` | `#FFF` / `#12131C` | `#0A0B12` / `#F2F3F8` | Map pin double ring |
+| `background` | `#F6F6FB` | `#0B0A1C` | Canvas |
+| `surface` | `#FFFFFF` | `#17162E` | Cards, list groups |
+| `surfaceRaised` | `#FFFFFF` | `#1F1E3A` | Sheets, menus, segmented thumb (dark) |
+| `surfaceSunken` | `#EFEEF6` | `#100F24` | Inputs, chips, segmented track, skeleton |
+| `surfaceInverse` / `textInverse` | `#121129` / `#F4F4FA` | `#F4F4FA` / `#121129` | Toasts, cluster bubbles, selected chips |
+| `surfaceGlass` | `rgba(255,255,255,.82)` | `rgba(23,22,46,.78)` | Tab bar over blur |
+| `text` (= `textPrimary`) | `#121129` | `#F4F4FA` | Primary text |
+| `textSecondary` | `#4A4968` | `#B9B8D4` | Metadata |
+| `textTertiary` | `#5F5E80` | `#9897B9` | Helper, timestamps, chevrons (AA) |
+| `textOnMedia` | `#FFFFFF` | `#FFFFFF` | Text on sport gradients / hero |
+| `border` | `#E3E2EE` | `#2C2B4A` | Hairlines; dark-mode card edges |
+| `borderStrong` | `#8B8AAE` | `#6E6D92` | Outline buttons (≥ 3:1) |
+| `primary` / `onPrimary` | `#5B3DF5` / `#FFF` | `#8F7DFF` / `#08071A` | Primary actions, active tab, rings |
+| `primaryPressed` | `#3C1FC7` | `#AA9DFF` | Pressed |
+| `primarySubtle` / `onPrimarySubtle` | `#EFEDFF` / `#3C1FC7` | `#221A55` / `#C7BEFF` | Tonal buttons, active tab pill, icon wells |
+| `primaryText` | `#4A2BE6` | `#AA9DFF` | Links, ghost buttons |
+| `accent` / `onAccent` / `accentPressed` | `#CCFF33` / `#121129` / `#B8F000` | `#CCFF33` / `#08071A` / `#E1FF66` | Volt moments |
+| `danger` · `success` · `warning` · `info` (+ `on*`, `*Subtle`, `*Text`) | `#D11F2D` · `#11803F` · `#FFB21E` · `#0A5FC2` | `#FF6B76` · `#3FD98A` · `#FFC24D` · `#6CB6FF` | Status |
+| `focusRing` | `#5B3DF5` | `#8F7DFF` | 3dp outline, 2dp offset |
+| `skeleton` / `skeletonHighlight` | `#EFEEF6` / `#F4F4FA` | `#1F1E3A` / `#2C2B4A` | Shimmer |
+| `pinRing` / `pinOutline` / `mapBase` | `#FFF` / `#121129` / `#F2EFE9` | `#FFF` / `#F4F4FA` / `#1B1D24` | Map markers |
 
-Dark mode is not inverted light mode. Primary becomes a lighter lavender with **ink text** on it. Shadows are replaced by lighter surfaces (`elevation[dark][n].surface`).
+Dark mode is **not** inverted light: primary turns lavender with ink text; elevation becomes lighter surfaces + a `border` hairline (§6.4); sport fills and gradients are identical in both schemes (they sit on their own white glyph/ring).
 
-### 2.2 Verified contrast (WCAG 2.2 AA)
-
-Computed with the WCAG relative‑luminance formula (`packages/ui/src/color.ts`) and asserted in `test/tokens.test.ts`. Minimums: text 4.5:1 (1.4.3) and non‑text UI 3:1 (1.4.11).
+### 2.2 Verified contrast (WCAG 2.2 AA; `test/tokens.test.ts`)
 
 | Pair (fg on bg) | Use | Light | Dark | Min |
 |---|---|---|---|---|
-| `text` on `background` | body on canvas | **17.27** | **17.72** | 4.5 |
-| `text` on `surface` | body on cards | **18.49** | **16.38** | 4.5 |
-| `text` on `surfaceRaised` | body on sheets | **18.49** | **14.92** | 4.5 |
-| `text` on `surfaceSunken` | input text | **15.97** | **17.11** | 4.5 |
-| `textSecondary` on `background` | metadata | **7.64** | **9.88** | 4.5 |
-| `textSecondary` on `surface` | metadata on cards | **8.17** | **9.13** | 4.5 |
-| `textSecondary` on `surfaceRaised` | metadata on sheets | **8.17** | **8.32** | 4.5 |
-| `textTertiary` on `surface` | placeholder/helper | **5.65** | **6.06** | 4.5 |
-| `textTertiary` on `surfaceRaised` | helper on sheets | **5.65** | **5.52** | 4.5 |
-| `textTertiary` on `surfaceSunken` | placeholder | **4.88** | **6.33** | 4.5 |
-| `textInverse` on `surfaceInverse` | toast | **16.69** | **16.69** | 4.5 |
-| `onPrimary` on `primary` | primary button | **7.55** | **7.08** | 4.5 |
-| `onPrimary` on `primaryPressed` | pressed | **9.73** | **9.31** | 4.5 |
-| `onPrimarySubtle` on `primarySubtle` | selected chip | **8.18** | **8.95** | 4.5 |
-| `primaryText` on `surface` | link | **8.49** | **8.61** | 4.5 |
-| `primaryText` on `background` | link on canvas | **7.93** | **9.31** | 4.5 |
-| `onAccent` on `accent` | volt FAB/badge | **14.19** | **16.95** | 4.5 |
-| `onDanger` on `danger` | danger button | **5.98** | **7.11** | 4.5 |
-| `onDanger` on `dangerPressed` | pressed | **7.54** | **9.12** | 4.5 |
-| `dangerText` on `surface` | error text | **7.54** | **8.43** | 4.5 |
-| `dangerText` on `dangerSubtle` | error banner | **6.38** | **7.54** | 4.5 |
-| `onSuccess` on `success` | success button | **5.07** | **9.94** | 4.5 |
-| `successText` on `successSubtle` | success banner | **5.77** | **9.12** | 4.5 |
-| `onWarning` on `warning` | warning fill | **10.26** | **12.70** | 4.5 |
-| `warningText` on `warningSubtle` | warning banner | **7.27** | **10.26** | 4.5 |
-| `infoText` on `infoSubtle` | info banner | **7.05** | **8.60** | 4.5 |
-| `infoText` on `surface` | info text | **8.23** | **10.09** | 4.5 |
-| `disabledText` on `disabledBg` | disabled (exempt; kept legible) | **4.88** | **5.52** | 3 |
-| `borderStrong` on `surface` | input outline | **3.23** | **3.68** | 3 |
-| `borderStrong` on `background` | chip outline | **3.02** | **3.98** | 3 |
-| `focusRing` on `background` | focus | **7.05** | **7.08** | 3 |
-| `focusRing` on `surface` | focus on cards | **7.55** | **6.54** | 3 |
-| `pinOutline` on `mapBase` | pin vs tiles | **16.11** | **15.19** | 3 |
+| `text` on `background` | body on canvas | **17.13** | **17.84** | 4.5 |
+| `text` on `surface` | body on cards | **18.45** | **16.10** | 4.5 |
+| `text` on `surfaceRaised` | sheets | **18.45** | **14.69** | 4.5 |
+| `text` on `surfaceSunken` | inputs, chips | **16.02** | **17.18** | 4.5 |
+| `textSecondary` on `surface` / `surfaceSunken` | metadata, segments | **8.59 / 7.46** | **9.13 / 9.74** | 4.5 |
+| `textTertiary` on `surface` / `background` / `surfaceSunken` | helper, timestamps | **6.18 / 5.73 / 5.36** | **6.27 / 6.95 / 6.69** | 4.5 |
+| `textInverse` on `surfaceInverse` | toasts, clusters, selected chip | **16.84** | **16.84** | 4.5 |
+| `onPrimary` on `primary` / `primaryPressed` | primary button | **6.12 / 9.49** | **6.20 / 8.50** | 4.5 |
+| `onPrimarySubtle` on `primarySubtle` | tonal, active tab | **8.24** | **9.09** | 4.5 |
+| `primaryText` on `surface` / `background` | links | **7.56 / 7.01** | **7.54 / 8.35** | 4.5 |
+| `onAccent` on `accent` / `accentPressed` | volt | **15.75 / 13.62** | **16.97 / 17.71** | 4.5 |
+| `onDanger` on `danger` | danger button | **5.32** | **7.22** | 4.5 |
+| `dangerText` on `surface` / `dangerSubtle` | errors | **6.95 / 5.99** | **8.56 / 7.84** | 4.5 |
+| `onSuccess` on `success`; `successText` on `successSubtle` / `surface` | success | **5.02; 5.89 / 6.61** | **10.90; 9.72 / 11.93** | 4.5 |
+| `warningText` on `warningSubtle` | warning banner | **7.43** | **10.52** | 4.5 |
+| `infoText` on `infoSubtle` / `surface` | info | **6.01 / 7.00** | **9.20 / 10.41** | 4.5 |
+| `borderStrong` on `surface` / `background` | outlines | **3.31 / 3.07** | **3.58 / 3.97** | 3 |
+| `focusRing` on `background` / `surface` | focus | **5.68 / 6.12** | **6.09 / 5.50** | 3 |
+| `primary` on `surface` | active icon, rings | **6.12** | **5.50** | 3 |
+| `pinOutline` on `mapBase` | pin vs tiles | **16.08** | **15.36** | 3 |
 
-Rule: if you add a text/background combination to a component, add it to `contrastPairs` and the test checks it automatically.
+Rule: any new text/background combination goes into `contrastPairs`; the test checks it automatically.
 
 ---
 
-## 3. Sport color coding (map pins)
+## 3. Sport system
 
-Fills come from the **Okabe–Ito** palette, designed for color‑vision deficiency. Color is never the only cue. Each sport also has a **unique silhouette** and a **unique icon**.
+Each sport has: a **marker color** (white glyph ≥ 3:1, WCAG 1.4.11 graphic), a **gradient** (white text ≥ 4.5:1 on both stops), a **tint + text** pair per scheme (≥ 4.5:1), and a unique **Phosphor glyph** — the primary non-color identity cue.
 
-| Sport | Fill | Glyph color / ratio | Shape | Icon (MaterialCommunityIcons) | Fallback glyph |
-|---|---|---|---|---|---|
-| Football | `#009E73` bluish green | ink, 5.74 | circle | `soccer` | ⚽ |
-| Basketball | `#D55E00` vermillion | ink, 5.08 | rounded square | `basketball` | 🏀 |
-| Tennis | `#F0E442` yellow | ink, 14.85 | diamond | `tennis` | 🎾 |
-| Padel | `#0072B2` blue | white, 5.19 | shield | `racquetball` | 🏓 |
-| Running | `#CC79A7` reddish purple | ink, 6.41 | horizontal pill | `run-fast` | 🏃 |
-| Volleyball | `#E69F00` orange | ink, 8.72 | vertical capsule | `volleyball` | 🏐 |
+| Sport | Marker | White glyph | Gradient (band) | White on stops | Light text/tint | Dark text/tint | Glyph |
+|---|---|---|---|---|---|---|---|
+| football | `#00A846` | 3.14 | `#008738` → `#006649` | 4.64 / 7.01 | `#007832` / `#E0FFED` 5.28 | `#70FFAC` / `#104125` 9.19 | `SoccerBall` |
+| basketball | `#FF5E1A` | 3.06 | `#D43F00` → `#B31100` | 4.66 / 7.01 | `#BD3800` / `#FFE9E0` 4.82 | `#FF9B70` / `#411F10` 7.12 | `Basketball` |
+| tennis | `#72A008` | 3.11 | `#5A7E06` → `#166602` | 4.75 / 7.15 | `#507006` / `#F5FEE2` 5.51 | `#D1F877` / `#323F13` 9.38 | `TennisBall` |
+| padel | `#6E89F7` | 3.19 | `#4568F5` → `#3D2FF9` | 4.61 / 7.06 | `#2D54F3` / `#E2E7FD` 4.65 | `#8FA4FA` / `#131C3F` 7.00 | `Racquet` |
+| running | `#E56CA2` | 3.00 | `#D92877` → `#A3177F` | 4.65 / 7.03 | `#C12269` / `#FAE5EF` 4.73 | `#EA86B2` / `#3A1827` 6.38 | `PersonSimpleRun` |
+| volleyball | `#0B9FD0` | 3.05 | `#097EA5` → `#0554B5` | 4.63 / 7.14 | `#086F91` / `#E2F7FD` 5.13 | `#77D8F8` / `#13343F` 8.15 | `Volleyball` |
 
-**Distinctness:** the smallest pairwise CIE76 ΔE is 33.4 in normal vision (basketball/volleyball). Under simulated CVD (Machado 2009, severity 1) it's 22.5 for protanopia (padel/running), 16.9 for deuteranopia (tennis/volleyball) and 16.5 for tritanopia (football/padel). Tests assert ΔE ≥ 25 normal and ≥ 15 for each CVD type. The weakest pairs differ in shape (diamond vs capsule, circle vs shield) and in icon.
+**Distinctness:** min pairwise CIE76 ΔE **31.8** (normal vision, test ≥ 25). Under simulated CVD (Machado 2009): protanopia 12.6, deuteranopia 12.4, tritanopia 12.1 (test ≥ 12). v1 hit ≥ 15 with Okabe–Ito fills, but those could not carry a white glyph (tennis yellow 1.4:1). v2 trades a little CVD separation for a consistent white-glyph marker, and moves identity onto the glyph (unique per sport, tested), which works in grayscale too.
 
-**Pin anatomy** (`PinBadge`): fill + 2dp `pinRing` + 1dp `pinOutline` + soft shadow. The outline gives ≥ 15:1 against light and dark tiles, so even yellow (tennis) on cream tiles stays visible.
-- **Hit area:** 48dp, whatever the visual size. Visual size is 36dp, or 44dp when selected.
-- **States:**
-  - `default`;
-  - `selected`: +8dp primary ring and a larger size;
-  - `live`: volt ring, with a slow 2s pulse only when reduced motion is off;
-  - `full`: **hollow** (surface fill, sport‑colored 3dp border, same icon), so "full" isn't conveyed by color either.
-- **Clusters** (`ClusterBadge`): an ink (`surfaceInverse`) circle with a tabular count, sized in 3 tiers (36/44/52) by count (<10, <100, ≥100), and up to 3 mini sport shapes underneath. Tapping zooms to the cluster's expansion zoom. The screen‑reader label reads "12 games: football, tennis. Double‑tap to zoom in."
-- **Legend:** the filter chips double as the legend (`Chip sport=` shows the same shape and color), so no separate legend is needed.
-- **Venue pins** (no game) use the same shape with a 60% size and the `surface` fill plus a sport‑colored border. Games always outrank venues visually.
+**Gradients** (`gradients` token, `<Gradient name>`): `brand` (`#5B3DF5`→`#3C1FC7`), `brandNight` (`#221A55`→`#0B0A1C`), `volt`, `live`, `scrimBottom`, plus one per sport. Diagonal top-start → bottom-end; horizontal/diagonal gradients mirror in RTL. **Max one gradient per card.**
 
-Adding a sport requires a new color that passes the ΔE tests, a new unused shape (or icon‑only, if we run out of shapes) and a design review.
+Adding a sport: a marker color passing the ΔE tests with white ≥ 3:1, gradient stops ≥ 4.5:1, a Phosphor glyph not already used, an entry in the icon registry, and a design review.
 
 ---
 
 ## 4. Reliability status
 
-The status is derived by the domain (`green` = no yellow card and ≥ 85%, `red` = ban or < 60%, `new` = < 3 games, else `yellow`). The UI **always** shows *glyph + label* (+ % when not new). Shape differs too: rounded pill for green and new, squared corners for yellow and red, and a dashed outline for new.
+Derived by the domain (`green` ≥ 85% and no yellow card, `red` = ban or < 60%, `new` < 3 games, else `yellow`). The UI always shows **icon + label (+ %)**; shape differs too (pill for green/new, squared for yellow/red, dashed outline for new).
 
-| Status | Glyph | Example label (en) | Light fg/bg → ratio | Dark fg/bg → ratio | Solid vs surface (L/D) |
-|---|---|---|---|---|---|
-| green | ✓ | Reliable · 92% | `#146B31`/`#E2F4E7` → 5.77 | `#6EE59A`/`#10301D` → 9.12 | 5.07 / 9.19 |
-| yellow | ! | Caution · 74% | `#6B4A00`/`#FFF3CC` → 7.27 | `#FFD466`/`#33280A` → 10.26 | 3.63 / 11.74 |
-| red | ✕ | Restricted · 52% | `#A8141F`/`#FDE7E8` → 6.38 | `#FF9198`/`#3A1418` → 7.54 | 5.98 / 6.57 |
-| new | ✦ | New player | `#33407A`/`#E8EAF6` → 8.13 | `#B9C2FF`/`#1E2236` → 9.14 | 5.37 / 6.59 |
+| Status | Phosphor (fill) | Label (en) | Light fg/bg | Dark fg/bg |
+|---|---|---|---|---|
+| green | `ShieldCheck` | Reliable · 92% | `#0E6B37` / `#E2F7EA` | `#74EBA9` / `#0D3020` |
+| yellow | `Warning` | Caution · 74% | `#6E4700` / `#FFF3D6` | `#FFD685` / `#35270A` |
+| red | `Prohibit` | Restricted · 52% | `#B3121F` / `#FFE9EB` | `#FF97A0` / `#3D1219` |
+| new | `Sparkle` | New player | `#363F7D` / `#E9EBF8` | `#BAC2FF` / `#1E2140` |
 
-- `StatusBadge` speaks "Reliability: Reliable, 92%". Pass a localized `accessibilityLabel` (component prop; rendered as `aria-label`).
-- `StatusDot` (dense lists) is a solid dot with a glyph. It must have an `accessibilityLabel` and must sit next to the name.
-- The percentage is wrapped in LRI…PDI so "92%" never reorders inside Arabic or Hebrew text. Locale digit shaping comes from `Intl.NumberFormat`.
-- Avoid moralizing labels ("Bad player"). The approved en labels are *Reliable / Caution / Restricted / New player*. The i18n agent owns the translations.
+All fg ≥ 4.5:1 on bg and on surface; solids ≥ 3:1 on surface (tested). The profile hero is a **ReliabilityRing** (status-colored arc, 44/48 `statLarge` %, label under it). The percentage is an LTR isolate. Approved en labels: *Reliable / Caution / Restricted / New player*.
 
 ---
 
 ## 5. Typography and per-script fonts
 
-### 5.1 Scale (Latin base; `typography` in tokens)
+### 5.1 Faces
+- **Rubik** (`@expo-google-fonts/rubik`, weights 400/500/600/700/800) — the brand face for **Latin, Cyrillic and Hebrew** (en, es, pt, fr, it, de, ru, he). Slightly rounded geometric: sporty without being childish; native Hebrew design.
+- **Fallbacks:** Noto Sans Arabic (ar), Noto Sans Devanagari (hi), Noto Sans SC/TC/JP (zh-Hans, zh-Hant, ja; not bundled: system Han font until lazily loaded). On web the stack always starts with Rubik so Latin runs and digits inside Arabic/CJK text render in the brand face.
 
-| Variant | Size / line | Weight | Tracking | Max scale | Role |
+### 5.2 Scale (`typography`, Latin base)
+
+| Variant | Size/line | Weight | Tracking | Use |
+|---|---|---|---|---|
+| `display` | 40/44 | 800 | −1.0 | Auth hero, celebration |
+| `largeTitle` | 32/38 | 700 | −0.6 | `LargeHeader` titles (tab roots) |
+| `title1` | 26/32 | 700 | −0.4 | Screen titles, hero card time |
+| `title2` | 21/28 | 600 | −0.2 | Section titles, empty-state titles |
+| `title3` | 18/24 | 600 | −0.1 | Card titles, sheet titles |
+| `headline` | 16/22 | 600 | 0 | Button labels, row emphasis |
+| `body` | 16/24 | 400 | 0 | Default |
+| `bodyStrong` | 16/24 | 500 | 0 | Emphasis in text |
+| `callout` | 15/22 | 400 | 0 | Secondary paragraphs, values |
+| `label` | 14/20 | 500 | 0.1 | Chips, form labels |
+| `footnote` | 13/18 | 400 | 0.1 | Metadata, helper, pills |
+| `caption` | 12/16 | 400 | 0.2 | Timestamps, tab labels |
+| `overline` | 12/16 | 600 | 1.0, UPPERCASE (Latin/Cyrillic only) | Section eyebrows, band eyebrow |
+| `numeric` | 28/34 | 700 | −0.4, **tabular** | Scores, stat tiles |
+| `statLarge` | 44/48 | 800 | −1.2, **tabular** | Reliability %, result score |
+| `statSmall` | 17/22 | 600 | −0.1, **tabular** | 7/10 in cards, counters |
+
+Rules: numbers are always one step heavier/bigger than their label; tabular numerals (`fontVariant: tabular-nums`, Rubik has `tnum`) on every changing number; emphasis by weight (never italics); `Text weight=` overrides a variant's weight with the matching registered face.
+
+### 5.3 Loading and platform behaviour (`fonts.ts`, `fontAssets.ts`)
+- Native needs one registered family per weight: `fontFamilyForScript("hebrew", { weight: "bold" })` → `Rubik_700Bold`; Arabic → `NotoSansArabic_700Bold`.
+- `useAppFonts(locale)` loads Rubik + the locale's script group (`fontGroupsForLocale`: `rubik`, `arabic`, `devanagari`) via expo-font on **web and native**; pass the result as `<ThemeProvider brandFonts>`. With `brandFonts`, family names carry the weight and `fontWeight` is not set (prevents synthetic bold on Android and browsers). Until loaded, system fonts with `fontWeight`.
+- Legacy: `fontsLoaded` (v1 Noto loader) still works (`legacyFontStacks`) until the app migrates.
+- Web: on a `<html dir="rtl">` page, UI `Text` sets `dir` to the UI direction (react-native-web defaults to `dir="auto"`, which left-aligned Latin/numeric UI strings in Hebrew).
+
+### 5.4 Per-script adjustments (`typeStyleFor`)
+
+| Script | Line-height × | Min size | Tracking | Uppercase | Android font padding |
 |---|---|---|---|---|---|
-| `display` | 32 / 40 | 700 | −0.5 | 1.4× | Onboarding hero, big countdowns. Header role. |
-| `title1` | 26 / 32 | 700 | −0.3 | 1.5× | Screen titles. Header role. |
-| `title2` | 22 / 28 | 600 | −0.2 | 1.6× | Section titles |
-| `title3` | 18 / 24 | 600 | 0 | 1.8× | Card titles, sheet titles |
-| `body` | 16 / 24 | 400 | 0 | 2.0× | Default text |
-| `bodyStrong` | 16 / 24 | 600 | 0 | 2.0× | Button labels, emphasis |
-| `callout` | 15 / 22 | 500 | 0 | 2.0× | Chat bubbles, list primary |
-| `label` | 14 / 20 | 500 | 0.1 | 1.8× | Chips, form labels, small buttons |
-| `caption` | 12 / 16 | 400 | 0.2 | 1.8× | Timestamps, helper text |
-| `overline` | 12 / 16 | 700 | 0.8, UPPERCASE (Latin/Cyrillic only) | 1.6× | Section eyebrow |
-| `numeric` | 28 / 34 | 700 | 0, tabular | 1.4× | Scores, %, countdown |
+| latin (+Cyrillic) | 1.00 | 12 | yes | yes | false |
+| hebrew | 1.05 | 12 | no | n/a | false |
+| arabic | 1.25 | 13 | no (breaks joining) | n/a | true |
+| devanagari | 1.25 | 13 | no (breaks conjuncts) | n/a | true |
+| sc / tc / jp | 1.12 | 12 | no | n/a | false |
 
-### 5.2 Font stacks (`src/fonts.ts`)
-
-| Script | Locales | Family (Google / `@expo-google-fonts`) | Web CSS stack (head) |
-|---|---|---|---|
-| latin (incl. Cyrillic) | en, es, pt, fr, it, de, ru | Noto Sans / `noto-sans` | `"Noto Sans", system-ui, …` |
-| hebrew | he | Noto Sans Hebrew / `noto-sans-hebrew` | `"Noto Sans Hebrew", "Noto Sans", Arial, …` |
-| arabic | ar | Noto Sans Arabic / `noto-sans-arabic` | `"Noto Sans Arabic", "Noto Sans", Tahoma, …` |
-| devanagari | hi | Noto Sans Devanagari / `noto-sans-devanagari` | `"Noto Sans Devanagari", "Noto Sans", "Nirmala UI", …` |
-| sc | zh-Hans | Noto Sans SC / `noto-sans-sc` | `"Noto Sans", "Noto Sans SC", "PingFang SC", …` |
-| tc | zh-Hant | Noto Sans TC / `noto-sans-tc` | `"Noto Sans", "Noto Sans TC", "PingFang TC", …` |
-| jp | ja | Noto Sans JP / `noto-sans-jp` | `"Noto Sans", "Noto Sans JP", "Hiragino Sans", …` |
-
-- **Native** needs one registered family name per weight (`NotoSansArabic_700Bold`). `fontFamilyForLocale(locale, { weight, platform })` returns it. Don't set `fontWeight` together with a weighted family, or Android synthesizes a fake bold. `<Text>` handles this.
-- **CJK:** Latin comes first, then the *region‑correct* Han font. Han unification means the same code point has different glyph forms in JP, SC and TC, so `ja` must get the JP font and `zh-Hant` the TC font. On web, also set `<html lang>` (ThemeProvider does this).
-- **Mixed content:** user text in another script (an Arabic name in a Hebrew UI) uses `detectScript(text, uiLocale)` → `BidiText`/`Avatar` pick that script's font. Native text engines also do per‑glyph system fallback.
-- **Loading strategy:**
-  - Native: always bundle Noto Sans and the active locale's family. Lazy‑load the others on language switch.
-  - CJK families are several MB each, so never bundle all three in the binary. Fetch them on demand with expo-font from the CDN, and use system CJK until loaded (`fontsLoaded=false` → system font).
-  - Web: Google Fonts CSS2 with `display=swap` (`googleFontsCssUrl(scripts)`); `unicode-range` slicing keeps the payload small.
-
-### 5.3 Per-script adjustments (`typeStyleFor(variant, script)`)
-
-| Script | Line-height × | Min size | Tracking | Uppercase | Italic | Android `includeFontPadding` |
-|---|---|---|---|---|---|---|
-| latin | 1.00 | 12 | yes | yes | yes | false |
-| hebrew | 1.05 | 12 | **no** | n/a | **no** (no true italic; use weight) | false |
-| arabic | **1.25** (body 16/30) | **13** | **no** (tracking breaks cursive joining) | n/a | **no** | **true** (tall marks clip) |
-| devanagari | **1.25** (body 16/30) | **13** | **no** (breaks conjuncts) | n/a | **no** | **true** (shirorekha + matras clip) |
-| sc / tc / jp | 1.12 (body 16/27) | 12 | no | n/a | no | false |
-
-Also:
-- **Emphasis:** use weight (600/700), never italics or underline (underline is reserved for links).
-- **Truncation:** use `numberOfLines`, never character counts. Hindi and German run about 30% longer than English, and CJK about 30% shorter. Buttons wrap to 2 lines before they truncate.
-- **Numerals:** use `Intl.NumberFormat(locale)` defaults. Arabic UI may show Arabic‑Indic digits, depending on the locale data. Scores, clocks and phone numbers are LTR isolates (see §10).
+Truncate with `numberOfLines`, design for +40% text expansion, buttons wrap to two lines before truncating.
 
 ---
 
 ## 6. Spacing, radius, sizing, elevation
 
-- **Spacing (4pt grid):** `none 0 · xxs 2 · xs 4 · sm 8 · md 12 · lg 16 · xl 24 · xxl 32 · xxxl 48 · huge 64`.
-  - Screen gutter `lg` (16); on ≥ 768 it's `xl`.
-  - Card padding `lg`.
-  - List row min height 56.
-  - Gap between stacked form fields `lg`.
-  - Gap between chips `sm`.
-- **Radius:** `xs 4 · sm 8 · md 12 (inputs) · lg 16 (cards) · xl 24 (sheet top corners) · pill 999 (buttons, chips)`. Corners are logical (`borderTopStartRadius`).
-- **Sizing:**
-  - Touch target **48** (≥ 44pt iOS / 48dp Android). Avatars 32/40/56/88. Pins 36 (44 selected). FAB 56. Icons 16/20/24.
-  - Breakpoints: md 768, lg 1024, xl 1440.
-  - Rail 80. Split list pane 400. Max reading width 720.
-- **Elevation** (`theme.elevation(level)`): applies a `boxShadow` (RN New Architecture + RNW) and, in dark mode, the lighter surface.
-  - 0: flat
-  - 1: cards
-  - 2: sticky bars, chips over map
-  - 3: bottom sheet, menus
-  - 4: modal dialogs
-  - z-index scale: base 0, sticky 10, fab 20, sheet 30, overlay 40, modal 50, toast 60.
-- **Over the map:** controls (chips, radius selector, locate button) sit on `surface` at elevation 2 and never on translucent glass.
+### 6.1 Spacing — 4pt grid
+`xxs 2 · xs 4 · sm 8 · md 12 · lg 16 · xl 24 · xxl 32 · xxxl 48 · huge 64` (xxs is the only half-step; tested).
+- Screen gutter 16 (24 at ≥ 768). Card padding 16. Section gap 24; title→content 12; inside a group 8.
+- List rows ≥ 56; chips gap 8; form fields gap 16.
+
+### 6.2 Radius — generous, not bubbly
+`xs 6 · sm 10 · md 14 · lg 20 · xl 28 · pill`. Buttons/inputs/segments **14** (sm button 10), cards and list groups **20**, sheets and hero panel **28**, chips/pills/avatars **pill**. Icon wells are squircles (10 or 32% of size). Corners are logical (`borderTopStartRadius`).
+
+### 6.3 Sizing
+Touch target **48** everywhere (smaller visuals extend with `hitSlop`). Buttons 36/48/56. Inputs 52. Icon buttons 36/44/52. Tab bar 64 + safe area. Avatars 24/32/40/56/88. Teardrop pin 40×50 (52×65 selected). FAB 56. Icons 16/20/24/28.
+
+### 6.4 Elevation (`theme.elevation(level)`)
+
+| Level | Light (layered key + ambient, ink-tinted) | Dark | Use |
+|---|---|---|---|
+| 0 | none | none | flat |
+| 1 | `0 1 2 /.05, 0 4 12 /.06` | `surface` + 1px `border` | cards, list groups, stat tiles |
+| 2 | `0 2 4 /.05, 0 10 24 /.10` | `surfaceRaised` + border + `0 8 24 /.36` | hero cards, controls over map |
+| 3 | `0 4 10 /.06, 0 18 44 /.16` | raised + border + `0 16 40 /.48` | bottom sheets, menus |
+| 4 | `0 8 16 /.08, 0 28 72 /.24` | raised + border + `0 24 64 /.60` | dialogs |
+
+Colored glows only on the primary button (indigo) and FAB (volt). Controls over the map are `surface` + level 2 (`IconButton variant="glass"`, `Chip tone="elevated"`), never translucent glass over tiles.
 
 ---
 
 ## 7. Motion
 
-| Token | ms | Use |
+| Token | Value | Use |
 |---|---|---|
-| `fast` | 120 | Press feedback, chip toggle, focus |
-| `base` | 200 | Fades, small moves |
-| `slow` | 320 | Screen transitions |
-| `sheet` | 280 | Sheet detents (spring `damping 22 / stiffness 240`) |
-| `qrRotation` | 30 000 | Host QR refresh (server TOTP step) |
+| `springs.press` | damping 26 · stiffness 520 · mass 0.7 | Press-in scale (0.97 buttons, 0.985 cards, 0.92 icon buttons) |
+| `springs.snappy` | 22 · 380 · 0.9 | Segmented thumb, chip toggle, tab pill |
+| `springs.gentle` | 24 · 220 · 1 | Sheet detents, cards entering |
+| `springs.bouncy` | 12 · 260 · 0.9 | Check-in success, pin select |
+| `duration.fast/base/slow/sheet` | 120 / 200 / 320 / 280 ms | Fades, cross-fades |
+| `duration.shimmer` | 1400 ms | Skeleton sweep |
+| `duration.toast` | 4000 ms | Toast dwell |
+| `duration.qrRotation` | 30 000 ms | Host QR |
 
-- **Easing (cubic-bezier):** standard `0.2,0,0,1` · enter `0,0,0.2,1` · exit `0.4,0,1,1` · emphasized `0.3,0,0,1.15` (FAB only).
-- **Press:** scale 0.97 + pressed color. Hover (web): +opacity.
-- **Meaningful motion only:**
-  - pin select (scale up), sheet detents, check‑in progress ring, waitlist promotion confetti (≤ 800ms, once);
-  - countdowns tick without animation.
-- **Reduced motion** (`theme.reducedMotion` from `AccessibilityInfo`; web `prefers-reduced-motion`):
-  - no scale/translate/spring/parallax/pulse;
-  - durations are capped at 120ms cross‑fades (`motionDuration(key, true)`);
-  - the live‑pin pulse becomes a static volt ring, and confetti becomes a static badge;
-  - QR rotation still happens (it's functional), as an instant swap.
-- **Never** animate more than one large element at once over the map (keeps 60fps on mid‑range Android). No autoplaying motion longer than 5s without a pause control (WCAG 2.2.2).
+- Easing for timing animations: standard `0.2,0,0,1`, enter `0,0,0.2,1`, exit `0.4,0,1,1`.
+- Meaningful motion only: press feedback, selection thumbs, sheet detents, progress rings filling (640ms), live-pin beacon, skeleton shimmer, success celebration (≤ 800ms, once).
+- **Reduced motion** (`theme.reducedMotion`): no scale/spring/pulse/shimmer (`usePressScale` becomes a no-op; rings jump to value; skeleton static; live beacon static); durations capped at 120ms (`motionDuration(key, true)`); QR rotation still happens, instantly.
+- Never animate more than one large element over the map at once. No autoplay > 5s without pause (WCAG 2.2.2).
 
 ---
 
-## 8. Iconography
+## 8. Haptics (`Haptics`, `hapticMap`; silent on web)
 
-- **Library:** `@expo/vector-icons` → MaterialCommunityIcons (it ships with Expo and covers every sport). Size 24 in nav/actions and 20 inline. Icons get `textSecondary` color by default and `primary` when active.
-- **Stroke and style:** outlined icons for inactive tabs and filled for active ones. Active state is never shown by color alone (filled shape + label + indicator bar).
-- Glyph fallbacks in `@st/ui` (✓ ! ✕ ✦ and sport emoji) exist so the package has no icon dependency. The app passes real icons via `icon`/`startIcon`.
-- **Icon‑only buttons** need `aria-label`, and a tooltip on web hover/focus.
-- **Directional icons** are wrapped in `<Mirror>` (see §9). Icons with text baked in (e.g. "A→文" translate) are not mirrored.
-- **Semantic icon map** (keep consistent everywhere):
-  - Map `map-marker-radius`, Games `calendar-star`, Inbox `message-text`, Network `account-group`, Profile `account-circle`.
-  - Create `plus`, Check‑in `map-marker-check`, QR `qrcode-scan`, Report `flag-outline`, Block `account-cancel`, Translate `translate`.
-  - Deposit `shield-lock-outline`, Women‑only `gender-female`, Private `lock-outline`, Waitlist `timer-sand`, Verified host `check-decagram`.
+| Event (`Haptics.trigger(...)`) | Kind | Where |
+|---|---|---|
+| `tabChange`, `chipToggle`, `segmentChange`, `pinSelect`, `scorePlusMinus` | selection | TabBarItem, Chip, Segmented, map, result stepper |
+| `buttonPrimary`, `sheetDetent`, `pullToRefresh` | light | Button primary/accent (default), Sheet, lists |
+| `fab`, `joinGame` | medium | Fab, Join game |
+| `checkInSuccess`, `publishGame`, `resultSubmitted` | success | Check-in, wizard publish, result |
+| `limitReached`, `destructiveConfirm` | warning | 4th sport chip, Delete/Cancel confirm |
+| `actionFailed` | error | Failed network action |
+
+Haptics accompany a visible change; never the only feedback. Max one haptic per user action.
 
 ---
 
-## 9. RTL rules
+## 9. Iconography — Phosphor only
 
-The app runs RTL for `he` and `ar`. **Native:** `I18nManager.forceRTL(true)` + reload (restart prompt, §13.17). **Web:** `<html dir>` + the `direction` style on the root (`ThemeProvider`).
+- **Library:** `phosphor-react-native` through the curated registry in `@st/ui` (`IconName`, ~100 icons, deep per-icon imports; unused icons are not bundled — verified in the web export).
+- **Weights:** `regular` for UI; `fill` for the active tab, selected toggles and glyphs on solid fills (pins, badges); `duotone` for sport and feature illustration (icon wells, stat tiles, chips' sport glyph); `bold` inside buttons and on media.
+- **Sizes:** 16 (inline with footnote/caption), 20 (lists, inputs, buttons), 24 (nav, actions, tab bar), 28 (hero/emphasis). Token `iconSizes`.
+- **Color:** `textSecondary` by default; `primary` for active; sport `text` for sport glyphs on surfaces; white on gradients/pins.
+- **A11y:** decorative by default (`aria-hidden`); pass `label` for a standalone meaningful icon; icon-only buttons are `IconButton` with a required `label`.
+- **RTL mirroring** (`directionalIcons`, automatic in `<Icon>`): `ArrowLeft`, `ArrowRight`, `ArrowSquareOut`, `CaretLeft`, `CaretRight`, `PaperPlaneRight`, `SignOut`, `ListBullets`, `ChatCircleText`, `Share`. Never mirrored: sports, objects, `Check`, clocks, `QrCode`, `MagnifyingGlass`, `Plus`, logos, `Translate`.
 
-### 9.1 Logical properties only
-- Use `marginStart/End`, `paddingStart/End`, `start/end`, `borderStartWidth/Color`, `borderTopStartRadius…`. `flexDirection: "row"` already follows direction.
-- **Forbidden** in `packages/ui` (enforced by `test/logical-styles.test.ts`, and proposed as an app‑wide ESLint rule):
-  - `marginLeft/Right`, `paddingLeft/Right`, `left:`/`right:`;
-  - `textAlign: 'left'|'right'`, `borderLeft*/Right*`, physical corner radii;
-  - `row-reverse` used as an RTL hack, and raw `translateX` without a direction check.
-- **Text alignment:** default/`auto` is start. Only `center` is allowed besides start. Never hard‑align a paragraph to a physical side.
+Semantic map (use these everywhere):
 
-### 9.2 What mirrors
+| Concept | Icon | Concept | Icon |
+|---|---|---|---|
+| Map tab | `MapTrifold` | Games tab | `CalendarStar` |
+| Inbox tab | `ChatsCircle` | Profile tab | `UserCircle` |
+| Create | `Plus` | Check-in | `MapPin` / success `CheckCircle` |
+| Host QR | `QrCode` (scan: `Scan`) | Live | volt `StatusPill tone="live"` (or `Broadcast`) |
+| Starting soon | `ClockCountdown` | Waitlist | `Hourglass` |
+| Deposit | `Coins` | Women only | `GenderFemale` |
+| Private | `LockSimple` | Verified host | `SealCheck` |
+| Hosting | `Strategy` | Players | `Users` / `UsersThree` |
+| Report | `Flag` | Block | `UserMinus` |
+| Translate | `Translate` | Teams reshuffle | `Shuffle` |
+| Result | `Trophy` | Settings | `GearSix` |
+| Locate me | `GpsFix` | Filters | `SlidersHorizontal` |
+| Back | `ArrowLeft` | Disclosure | `CaretRight` |
+
+---
+
+## 10. RTL rules
+
+The app runs RTL for `he` and `ar`. Native: `I18nManager.forceRTL` + reload. Web: `<html dir>` + `direction` on the root (`ThemeProvider`).
+
+### 10.1 Logical properties only
+- `marginStart/End`, `paddingStart/End`, `start/end`, `borderStart*`, `borderTopStartRadius…`. `flexDirection: "row"` already follows direction.
+- **Forbidden** in `packages/ui` (`test/logical-styles.test.ts`): `marginLeft/Right`, `paddingLeft/Right`, `left:`/`right:`, `textAlign: 'left'|'right'`, `borderLeft*/Right*`, physical corner radii, `row-reverse` as an RTL hack, raw `translateX` (animate the logical `start` offset instead — Segmented thumb, Skeleton shimmer).
+- Text alignment: start (default) or center only.
+
+### 10.2 What mirrors
 
 | Mirrors in RTL | Does **not** mirror |
 |---|---|
-| Back/forward arrows, chevrons (`<Mirror>`) | Logos, brand marks, sport icons |
-| List disclosure indicators, breadcrumbs | Media playback controls (play ▶, seek, timelines go LTR) |
-| Progress bars, steppers, wizard order, swipe direction (swipe‑to‑reply goes toward start) | **Maps** (geography is absolute), compass, the locate button position follows layout but the map does not |
-| Sliders (radius selector min at start), toggles' knob travel | Numbers, phone numbers, scores ("3–1" keeps its order; it's an LTR isolate), clocks and time pickers, charts' time axis |
-| Tab order and side rail position (rail on the start side) | Checkmarks ✓, QR codes, camera preview, media thumbnails |
-| Icons depicting direction of text (indent, reply arrow, "send" paper plane) | Icons of real‑world objects (ball, whistle, clock hands) |
-| Bottom sheet handle stays centered; chat bubbles: own messages at *end* | Translate icon "A→文", keyboard‑shortcut glyphs |
+| Directional icons (§9), wizard order, steppers, progress bars, **progress rings** (fill runs counter-clockwise), segmented order, avatar stacks, gradient direction, skeleton sweep | Logos, sport glyphs, map and map markers, QR codes, camera preview, media controls |
+| Tab order (Map at the start edge), rail side, chat bubbles (own at end), swipe direction | Numbers, times, scores ("3–1"), phone numbers, "+3"/"99+" counts (LTR isolates) |
+| Hero illustration composition (art flips with the floating badges) | Checkmarks, clocks, `Translate` |
 
-### 9.3 Practices
-- Mixed‑direction lists (Hebrew UI with English venue names): each row's text is `BidiText` (auto‑detected direction) while the row layout follows the UI direction.
-- Input fields: phone, OTP, email, URL, code, and numbers in forms are `inputDirection="ltr"`. Names and messages use `auto`.
-- Concatenating strings in code is forbidden. Use ICU messages with placeholders, and `isolateValues()` for the values.
-- QA screenshots are taken in `he` and `ar`, and the e2e test asserts `dir=rtl`. Native gets a visual pass on an RTL device.
+### 10.3 Practices
+- UI strings follow the UI direction (`Text` sets web `dir`); user content uses `BidiText`; inline `BidiText` keeps the UI paragraph direction with the value FSI-isolated, block mode (chat bubbles) takes the content's direction.
+- Inputs: phone, OTP, email, URL, codes → `inputDirection="ltr"`; names/messages `auto`.
+- No string concatenation; ICU placeholders + `isolateValues()`.
 
 ---
 
-## 10. Bidi text (chat, names, numbers)
+## 11. Bidi text
 
-- **Isolation:** every interpolated user value is wrapped in **FSI U+2068 … PDI U+2069** (`isolate(v)`), or **LRI U+2066 … PDI** for numbers, phones, scores and URLs (`isolate(v, 'ltr')`).
-  - Example: Hebrew UI "‏{name} הצטרף/ה למשחק" where name = "Dana 2" shows correctly, and the trailing "2" doesn't jump.
-- **Sanitize:** strip LRE/RLE/PDF/LRO/RLO and stray isolates from all user input before display (`stripBidiControls`). This prevents spoofed names/messages ("Trojan Source" style), and the server should also strip on write.
-- **Chat bubble** (`<BidiText mode="block">`):
-  - The paragraph direction comes from the message's first strong character (`detectDirection`), not the UI. An English message in an Arabic UI is left‑aligned inside its bubble.
-  - Bubble placement still follows the UI (own messages at the end side).
-  - Timestamp and status ticks are an LTR isolate in the bubble footer.
-- **Names in sentences:** `<Text>{t('joined', isolateValues({ name }))}</Text>`. A standalone name uses `<BidiText>`.
-- **Translate:** the translated text renders with its *target* language direction and font. The original is one tap away ("Show original").
+- Every interpolated user value is wrapped in **FSI…PDI** (`isolate(v)`), numbers/phones/scores/URLs/counts in **LRI…PDI** (`isolate(v, 'ltr')`).
+- `stripBidiControls` on all user input before display (Trojan-Source style spoofing); the server strips on write too.
+- Chat bubble: `<BidiText mode="block">` — paragraph direction from the first strong character; placement follows the UI; footer time is an LTR isolate.
+- Translate: translated text renders with its target language direction and font; "Show original" one tap away.
 
 ---
 
-## 11. Accessibility (WCAG 2.2 AA, Apple HIG, Material)
+## 12. Accessibility (WCAG 2.2 AA, HIG, Material)
 
-- **Touch targets:** ≥ 48dp everywhere (`sizing.touchTarget`). Small visuals extend with `hitSlop` (Button `sm`, Chip 40 → 48). Keep 8dp spacing between adjacent targets (2.5.8).
-- **Screen readers:**
-  - Every interactive element has a `role` (`button`, `checkbox`, `radio`, `tab`, `link`, `heading`, `img`) and a localized `aria-label`. Labels describe purpose ("Join game"), and `accessibilityHint` (native only) describes the result ("Sends a request to the host").
-  - **Use the modern `role` / `aria-*` props** (`aria-checked`, `aria-selected`, `aria-expanded`, `aria-disabled`, `aria-busy`, `aria-hidden`, `aria-live`), never `accessibilityState` / `accessibilityRole` / `accessibilityLabel` / `importantForAccessibility` / `accessibilityLiveRegion`. react-native-web 0.21 ignores `accessibilityState`, so selection never reaches the DOM. `test/a11y-props.test.ts` enforces this in `packages/ui`. Still allowed: `accessible`, `accessibilityHint`, `accessibilityActions`, `accessibilityLanguage`.
-  - Don't use `slider`/`adjustable` roles unless `aria-valuenow/min/max` are set (axe: critical). The sheet handle is a `button` with `aria-expanded` ("Expand sheet" / "Collapse sheet"), plus expand/collapse custom actions on native.
-  - `aria-selected` only goes on `tab`/`option` roles. Segmented controls are `Chip selectionRole="tab"` inside a `role="tablist"` row. Radius chips are `radio` inside `role="radiogroup"`.
-  - Cards are one focus stop with a summary label: "Football, 6 of 10 players, today 18:00, Park HaYarkon, 1.2 kilometres, deposit 20 shekels".
-  - Map: pins are focusable with labels. A **List view toggle** is always visible, so the map is never the only way to find games.
-  - Live updates (waitlist position, check‑in progress, errors) use `accessibilityLiveRegion="polite"` or `announceForAccessibility`. Errors use `assertive` only when blocking.
-  - Decorative elements (dividers, illustrations, glyphs next to text) are hidden from assistive tech.
-- **Focus:**
-  - The order follows visual reading order in the current direction.
-  - On web, the focus ring is a 3dp `focusRing` with a 2dp offset (2.4.7, 2.4.11 not obscured: sticky headers and the sheet must not cover the focused element).
-  - When a sheet or modal opens, focus moves to its title. Closing returns focus to the trigger. Modals trap focus on web, and Escape closes them.
-- **Dynamic type:** `allowFontScaling` stays on. Each variant has a cap (`maxFontSizeMultiplier`, 1.4–2×). Layouts must reflow at 200%: rows wrap, buttons grow taller, and nothing has a fixed height except pins/avatars. Test with iOS Larger Text XXXL, Android 200% and browser zoom 200% (1.4.4, 1.4.10 reflow at 320 CSS px).
-- **Color independence:** status, sport, selection and errors always pair color with a glyph/shape/text (1.4.1).
-- **Motion:** respect reduced motion (§7). There's no flashing content.
-- **Forms:**
-  - Visible labels (never placeholder‑only). Errors are inline, under the field, with ⚠ + text and announced politely (3.3.1, 3.3.3).
-  - OTP supports paste and autofill (`textContentType="oneTimeCode"`, `autoComplete="sms-otp"`). There are no cognitive tests at login (3.3.8).
-- **Timeouts:**
-  - The sanctions countdown is informational only.
-  - The QR check‑in never requires speed: a code is valid for ±1 step (≈ 90s window).
-  - The OTP resend timer is shown and announced.
-- **Dragging alternatives (2.5.7):** the sheet handle has a tap action and expand/collapse actions, the radius slider is a set of chips, and the teams reshuffle and moves use buttons, not drag‑only.
-- **Language:** set `lang` on web root and use `accessibilityLanguage` on native Text for content in another language (translated chat).
+- **Targets:** ≥ 48dp (`hitSlop` on 36dp buttons, 40dp chips, 36/44dp icon buttons). 8dp between adjacent targets.
+- **Semantics with `role` / `aria-*` only** (`test/a11y-props.test.ts`): `aria-checked`, `aria-selected` (tabs only), `aria-expanded`, `aria-disabled`, `aria-busy`, `aria-pressed`, `aria-hidden`, `aria-live`, `aria-valuenow/min/max/valuetext` (ProgressRing). Never `accessibilityState`/`accessibilityRole`/`accessibilityLabel` (react-native-web 0.21 ignores them). Allowed: `accessible`, `accessibilityHint`, `accessibilityActions`.
+- **Roles by component:** Button/IconButton/Fab/Card(pressable)/GameHeroCard/MapPinMarker/ClusterMarker `button`; Chip `checkbox|radio|tab`; Segmented `radiogroup` + `radio`; TabBar `tablist` + `tab`; ProgressRing `progressbar`; StatusBadge/AvatarStack/Avatar `img`; Toast `status`/`alert`; LargeHeader title `heading`.
+- **One focus stop per card** with a summary `accessibilityLabel` ("Football, Sunset 5v5 at Yarkon, today 19:05, 7 of 10 players, 1.2 km, deposit 20 shekels").
+- **Color independence:** sport = glyph; status = icon + label + shape; selection = fill + check icon/weight; active tab = fill icon + pill + weight; full game = hollow pin + lock icon.
+- **Focus:** 3dp `focusRing` with 2dp offset on every pressable; sheets/modals move focus to the title and return it; web modals trap focus, Escape closes.
+- **Dynamic type:** `allowFontScaling` on with per-variant caps (1.3–2×); layouts reflow at 200%. Fixed sizes only for pins, avatars and badges.
+- **Motion:** §7 reduced motion. **Dragging alternatives:** sheet handle tap + actions; radius as chips; teams moves via buttons.
+- Decorative art (illustrations, gradients, watermark glyphs, dividers) is hidden from assistive tech.
 
 ---
 
-## 12. Information architecture and navigation
+## 13. Information architecture and navigation
 
-### 12.1 Primary destinations
+| Tab | Icon | Purpose | Route |
+|---|---|---|---|
+| Map (default) | `MapTrifold` | Discover games/venues | `(tabs)/map` |
+| Games | `CalendarStar` | Upcoming / hosting / past | `(tabs)/games` |
+| Inbox | `ChatsCircle` | Chats + notifications | `(tabs)/inbox` |
+| Profile | `UserCircle` | Reliability, stats, settings entry | `(tabs)/profile` |
 
-| Tab | Purpose | Route |
-|---|---|---|
-| **Map** (default) | Discover games/venues nearby or in a planned city | `(tabs)/map` |
-| **Games** | My upcoming (hosting / joined / waitlisted / requested), past, invitations | `(tabs)/games` |
-| **Inbox** (phase 1) → **Network** (phase 2) | Game chats + notifications (approvals, waitlist, sanctions). Phase 2 adds friends/follow, and Inbox moves under Network. | `(tabs)/inbox` |
-| **Profile** | Me: reliability card, stats, positions, history; entry to Settings | `(tabs)/profile` |
-
-Settings is reached from Profile (gear in the header) and from the web rail. The PRD's "side menu" is replaced by Profile → Settings on mobile, a familiar pattern with fewer hidden items.
-
-### 12.2 Layout by width
-
-| Width | Navigation | Map screen |
-|---|---|---|
-| < 768 (phones; web mobile) | **Bottom tab bar** (4 items, icon + label always visible, 56dp + safe area). FAB "Create game" floats above the tab bar at the end side. | Full‑bleed map, chips on top, bottom sheet with cards (3 detents: peek 120 / half 45% / full). |
-| 768–1023 (tablets, small laptops) | **Side rail** (80dp) at the start edge: 4 destinations + Create (volt) + Settings at the bottom. | Map with a floating list panel (360dp) at the start edge, collapsible. |
-| ≥ 1024 (web wide) | Rail + optional **split view** | **Map/list split:** list pane 400dp at the start edge, map fills the rest. Hovering a list card highlights its pin and vice versa. The selected game opens a details pane replacing the list (with Back), or in a route on narrow widths. |
-
-- **Deep links:** `invite/[token]`, `game/[id]`, `sanctions/[id]` open over the current tab. Back returns to where the person was.
-- **Modal flows** (Create game, Check‑in, Result entry) are full‑screen modals on phones and centered dialogs (max 560dp) on web wide.
-- **Moderation console:** a separate web‑only area `/(staff)/moderation`, gated by `app_roles`, using its own rail (§13.19).
-
----
-
-## 13. Screen specs
-
-Each spec lists layout, components, states (**loading / empty / error / offline**) and primary actions. These apply to all screens:
-- Skeletons, not spinners, for content (≤ 300ms → show nothing; > 300ms → skeleton).
-- An offline banner (warning tone) sits at the top of the content: "You're offline. Showing saved info." Actions that need the network are disabled, with a hint.
-- Every error says what happened and how to fix it, and offers Retry.
-
-### 13.1 Onboarding and phone OTP
-- **Layout:**
-  1. Welcome: brand mark, `display` headline "Find a game. Show up. Play.", 3 swipeable value cards (map, fair play, chat) with page dots (mirrored order in RTL). Primary **Continue with phone**, then Sign in with Apple and Google, then **Browse first** (guest map, read‑only).
-  2. Phone: country picker (flag + dial code; search; defaults from SIM/locale), `TextField inputDirection="ltr"` with `textContentType="telephoneNumber"`. Consent line linking Terms and Privacy.
-  3. OTP: 6 boxes rendered as one input (better for paste, autofill and screen readers), LTR. Auto‑submits when complete. A "Resend in 0:30" countdown, then a **Resend code** link, plus **Change number**.
-- **States:**
-  - Sending: the button shows a loading state, "Sending code…".
-  - Wrong code: inline error "That code doesn't match. Check the latest SMS or resend."
-  - Too many attempts: "Too many tries. You can request a new code in 10 minutes."
-  - Offline: disable Continue with the hint "Connect to the internet to get a code."
-- **A11y:** the OTP field label is "Verification code, 6 digits". The countdown is announced at 10s and 0.
-
-### 13.2 Age gate (18+)
-- Comes right after OTP, before profile creation. Neutral month + year pickers (no prefilled default; the year list starts empty, so no pre‑selected age). Copy: "Sport Talent is for people 18 and older. We ask for your birth month and year only." The minimum comes from `trust_config.min_age_years` (default 18), mirrored as `TrustConfig.minAgeYears` / `MIN_AGE_YEARS`; the copy takes the number from config, never a hard-coded 18.
-- **Under 18:** a respectful stop screen: "Sorry, you need to be 18 or older to use Sport Talent." Explain that data entered is not kept, and offer **Close**. There's no retry loop: the device is soft‑locked for 24h to discourage age cycling.
-- Then a short profile: display name (BidiText preview), primary sport(s) (chips), optional photo, home area (optional; the map works without location).
-- **Location permission:** a pre‑prompt explains the benefit and never blocks. "Not now" keeps the map working by city search.
-
-### 13.3 Main Map
-- **Top bar (over the map, elevation 2):**
-  - search field ("City, venue or address"), start side;
-  - a filter row of **sport chips** (horizontal scroll; max 3 selected);
-  - a **radius** control.
-- **Sport chips:**
-  - Selected chips get ✓ + fill + the sport shape.
-  - When 3 are selected, the rest show disabled with the hint "You can pick up to 3 sports. Unselect one to add another." A toast also appears on attempt.
-  - Chips have `checkbox` semantics.
-- **Radius selector:** a segmented control of chips with `radio` semantics: **1 · 2 · 5 · 10 · 30 · 50 km** (miles shown for en‑US/en‑GB with the same underlying km steps). The default is "Auto (GPS)" = 5 km. Changing it draws a radius circle on the map briefly (static with reduced motion).
-- **Map:**
-  - Clustered pins (supercluster). `PinBadge` for games, small venue pins at zoom ≥ 14.
-  - Locate‑me button at the end side above the sheet. Map attribution stays visible (license).
-- **Bottom sheet** (`Sheet`, 3 detents):
-  - The header shows "{count} games nearby", the sort (Soonest / Nearest) and a **List** toggle (full‑screen list, a11y‑friendly).
-  - The body shows game cards. Each card shows:
-    - the sport shape;
-    - the title, or the venue name (BidiText);
-    - the time (today 18:00, an LTR isolate);
-    - players `6/10` (tabular) with a progress bar that mirrors in RTL;
-    - distance; the host's reliability `StatusBadge sm`;
-    - badges (Deposit, Women only, Private, Waitlist);
-    - an `accentEdge` when starting < 2h.
-  - Venue cards appear after games ("Venues without games: start one").
-- **FAB:** a volt "Create game" button (56dp, label visible on wide screens and icon + accessibility label on phones), at the end side above the sheet peek.
-- **States:**
-  - Loading: skeleton cards plus the map showing old pins dimmed.
-  - Empty: "No games within 5 km for football." Actions: **Widen to 10 km**, **Create a game**.
-  - Location denied: city search prompt.
-  - Error: "Couldn't load games." **Retry**.
-  - Offline: cached last results, labelled "Saved 12 min ago".
-- **Wide web:** split view (§12.2). The list pane replaces the sheet, and the chips sit above the list.
-
-### 13.4 Venue sheet
-- Opens from a venue pin or card, at the half detent.
-- **Contents:**
-  - Header: name (BidiText), sports offered (SportDots), distance, Directions (opens the OS maps).
-  - **Ratings:** overall 1–5 (stars + numeric "4.2 · 38 ratings") and per‑sport attributes. Pitches: grass/turf, lighting, nets. Tennis: clay/hard/grass. Basketball: hoops, nets. Shown as labelled rows with a 5‑step meter and the value as text.
-  - Upcoming games here (cards). **Rate this venue** (only after playing here).
-- **Report:** under an overflow menu and as a quiet ghost button at the bottom: "**No venue here?** Report it."
-  - The flow: confirm reason (no venue / closed / wrong location / private) → "Thanks. We'll check it. Venues reported by 3 people are hidden while we review."
-  - One report per person: the button becomes "You reported this".
-- **States:** a hidden_pending_review venue isn't listed. If deep‑linked: "This venue is under review."
-
-### 13.5 Create Game wizard
-- A full‑screen modal with a 5‑step **stepper**: progress mirrors in RTL, and the label is "Step 2 of 5" (announced).
-  1. **Sport:** chips (single select), then the format (5v5, 7v7, singles/doubles…).
-  2. **Where:** search, or pick a venue on the map, or drop a pin (requires a venue name). Toggle **Hide exact location until I approve players** (default ON for women‑only).
-  3. **When:** date, start, duration (pickers follow locale, 24h/12h), and a recurring option (weekly) as phase‑2 dimmed.
-  4. **Who:**
-     - capacity (stepper, min/max per sport);
-     - Public / Private (invite link);
-     - Women‑only;
-     - minimum reliability (Any / Caution+ / Reliable only);
-     - approval mode (Auto‑approve / I approve).
-  5. **Deposit (optional):** toggle plus an amount. It explains: "Players place a refundable hold of ₪20. It's released after check‑in, kept if they don't show." Currency follows the venue country.
-- **Review:** a summary card with an Edit link per section. Primary **Publish game**, then the share sheet (WhatsApp link with preview, copy link, QR).
-- **States:**
-  - Validation errors stay inline and are never only at the end.
-  - Leaving mid‑way prompts "Discard draft?". Drafts autosave locally.
-  - Offline: steps 1–4 can be filled, and Publish is disabled with the hint "Publish when you're back online."
-- **Host restrictions:** if host‑suspended, the FAB opens an explanation instead (links to §13.16).
-
-### 13.6 Game details
-- **Header:**
-  - sport shape plus the title;
-  - time (relative + absolute), venue (hidden until approved, if set: "Exact spot shared after the host approves you");
-  - host row (Avatar, name, verified‑host badge, `StatusBadge`).
-- **Facts row:** players 6/10 + waitlist 2, format, level, deposit, women‑only, private.
-- **Participants:** a list of approved players (Avatar + name + StatusDot + position chips). Requested and waitlisted players show in separate sections (visible to the host only).
-- **Primary action** (sticky bottom bar, changes by state):
-  - Guest: **Join game**, or **Request to join** (approval mode), or **Join waitlist (#3)** when full.
-  - The deposit is disclosed *before* the payment sheet: "₪20 hold · released after check‑in".
-  - Requested: "Waiting for host" plus **Cancel request**.
-  - Approved: **Check in** (enabled from 30 min before) plus Chat, Directions, **Can't make it** (warns: "Cancelling less than 2 hours before the start counts as a late cancel and gives you a yellow card." Confirm with a danger button).
-  - Waitlisted: position (live region) plus Leave waitlist.
-- **Host view:** approve/reject per request (two buttons, 48dp each; Reject asks for an optional reason, with templates). Also: Edit, Cancel game (requires a reason; notifies everyone), **Show check‑in QR**, Teams, Enter result.
-- **States:**
-  - Cancelled game: a banner with the reason.
-  - Started: Check‑in emphasized.
-  - Ended: Result + Rate host.
-  - Error/offline: cached details plus disabled actions.
-
-### 13.7 Check-in
-- Opens from Game details → **Check in** (from start −30 min to end).
-- **Layout:**
-  1. **GPS check:** a circular progress ring (mirrors with direction) with 3 sample dots. The status text is a live region: "Checking your location… 2 of 3". Accuracy is shown as text ("±12 m").
-     - Success: green ✓ "You're checked in", with a haptic.
-     - If accuracy is poor or out of range, explain gently: "We can't confirm you're at the venue yet. Move into the open or try another way." No accusation.
-  2. **Other ways** (always visible below the GPS check, not hidden behind failure):
-     - **Scan host QR** (camera with an overlay frame; no mirroring of the camera feed; manual code entry fallback, 6 digits);
-     - **Ask a teammate:** sends a confirmation request to checked‑in players. The status reads "Waiting for 2 confirmations · 1 received".
-- **Web:** GPS when available, with QR as the primary path.
-- **Mock location detected:** never sanction. Show the same "try another way" path.
-- **States:** permission denied → explain and go straight to QR/teammate. Offline → queue the GPS samples with a timestamp: "We'll confirm when you're back online."
-
-### 13.8 Host QR display
-- Full‑screen, max brightness hint (keep‑awake). A large QR on white (always light, even in dark mode, for scanners), at least 240dp and 60% of the screen width.
-- Rotates every **30s**. A thin countdown bar mirrors, and the swap is instant with reduced motion. Shows the 6‑digit fallback code in tabular numerals (LTR isolate).
-- "Players scan this to check in. The code refreshes every 30 seconds." There's a checked‑in counter "7 of 10" (live region, polite, throttled to 1 per 10s).
-- Also **Mark players manually** (host verification) → a list with toggles.
-
-### 13.9 Teams (balanced squads)
-- Two (or N) team columns side by side on wide screens and stacked on phones, with team colors as a **light/dark bib** pattern (striped vs solid header) plus team names "Team A/B", never color alone.
-- Each player chip: name, position glyph (GK, DEF, MID, FWD or C, PG…), and the rating hidden by default (privacy) and shown to the host only.
-- A balance indicator: "Balanced · rating diff 0.3", and position coverage shown as text.
-- Actions:
-  - **Reshuffle** (new seed; "Shuffle again" with a 200ms cross‑fade);
-  - **Move player** (a tap opens "Move to Team B" with an accessible alternative to drag);
-  - **Lock teams** (notifies players).
-- States: < 2 checked‑in players → empty state "Teams appear once players check in."
-
-### 13.10 Result entry
-- Available from game end until end +2h, with a countdown shown ("You can enter the result for 1h 12m").
-- A score stepper per team (big tabular numerals, +/- 48dp buttons, direct input). Teams appear in the same order as the Teams screen, and the layout mirrors, but the score string stays "3–1" (LTR isolate).
-- Optional: MVP pick (avatars), "Didn't play / cancelled". **Submit result** → confirmation "Result saved. Players can dispute it for 24h."
-- After the window: read‑only, "The result window closed at 20:00."
-
-### 13.11 Game chat
-- Header: game title plus the time and an "Messages disappear 3 hours after the game" info chip (tap for details).
-- **Bubbles:**
-  - own messages at the end side with `primarySubtle`, others at the start with `surface`;
-  - the author name above the first bubble of a group (BidiText) plus a StatusDot;
-  - the body is `BidiText mode="block"`;
-  - a footer with the time (LTR isolate).
-  - Long‑press (or the ⋯ button for a11y and web) offers: Reply, Copy, **Translate**, **Report message**, **Block {name}**.
-- **Translate:**
-  - A per‑message "Translate" text button appears when the message language ≠ UI language.
-  - The translated text replaces the original with a "Translated from Arabic · Show original" caption.
-  - A global "Auto‑translate this chat" toggle sits in the chat menu.
-- **Composer:**
-  - auto direction (`inputDirection="auto"`); the send button mirrors (paper plane points to the end).
-  - **Moderation nudge** (the server returns `nudge`): an inline warning card above the composer, never a modal: "This might come across as hurtful. Edit message / Send anyway."
-  - **Block** (`block`): the message isn't sent and stays in the composer. "This message breaks our community rules (threats or hate). Edit it to send." Link: **Community rules**. After the second block in 7 days, add: "One more and chat will be paused for 24 hours."
-  - **Muted:** the composer is replaced by "Chat paused until 18:40 · Why?" → Sanctions screen.
-  - **Allow‑pending** (provider timeout): the message shows normally to the sender with a subtle clock "Checking…" until confirmed.
-- **Report message:** reasons (harassment, hate, threats, spam, sexual content, other + text). "Thanks. We'll review this. The message is kept for 90 days for review." Block is offered right after.
-- **States:**
-  - empty: "Say hi to your teammates. Messages disappear 3 hours after the game."
-  - expired: "This chat has ended."
-  - offline: messages queue with a ⏱ icon, plus "Not sent. Tap to retry".
-
-### 13.12 Profile
-- **Header:** Avatar xl, name (BidiText), home city, sports chips, Edit.
-- **Reliability card** (the hero card):
-  - a big `numeric` "92%" with the label;
-  - `StatusBadge` (glyph + label);
-  - a meter: a horizontal bar that mirrors, with the solid status color and threshold ticks at 60% and 85%, labelled;
-  - "Based on your last 90 days: 23 games, 22 check‑ins, 1 late cancel."
-  - "How this works" link. Yellow cards are shown as a count with expiry ("1 yellow card · expires 12 Nov").
-  - For `new`: "New player · play 3 games to get a reliability score."
-- **Stats:** games played, as host, check‑in rate, favourite venue (cards in a 2×2 grid; tabular numerals).
-- **Positions:** per sport, the primary/secondary position chips.
-- **History:** a list of past games with results.
-- **Other people's profile:** the same layout, with no private stats (phone, exact counts), plus **Report** and **Block** in an overflow menu.
-
-### 13.13 Sanctions and appeal
-- Reached from notifications, the profile reliability card, or a blocked action.
-- **Layout (calm, informational):**
-  1. Status card: what applies ("You can't request to join games"), since when, and **until when** with a countdown ("Ends in 6 days 4 hours", plus the exact date and time). Never only red: info tone with the red status badge.
-  2. **Statement of reasons** (DSA Art.17):
-     - what happened, with the facts (dates, game names);
-     - which rule;
-     - whether the decision was automated ("This was decided automatically based on check‑in records. A person will review it if you appeal.");
-     - what it affects and what it doesn't ("You can still chat in games you're in.").
-  3. **How to fix / what's next:** "Show up to your next 2 games to get back to green". The link for yellow‑card expiry.
-  4. **Appeal / Dispute:**
-     - For a yellow card within 48h: **Dispute this card**. After that: **Appeal**.
-     - The form: a reason select, a text field (min 20 characters, counter, auto direction), optional evidence (screenshot), and the contact language.
-     - Submit → "Appeal received. A person will review it, usually within 72 hours. We'll notify you."
-     - Appeal status timeline: Received → In review → Decided (upheld/overturned, with the reasoning).
-- **States:**
-  - expired sanction: "This ended on …" (read‑only);
-  - dispute window closed: explain that an appeal is still possible;
-  - offline: the form saves a draft.
-
-### 13.14 Settings
-- Sections:
-  - Account (phone, linked logins);
-  - **Language**;
-  - **Theme**;
-  - **Notifications**;
-  - **Privacy and safety**;
-  - Legal;
-  - **Delete account**;
-  - app version (tap ×7 = diagnostics).
-- **Language picker:**
-  - 12 languages (13 entries; Chinese is split) shown in their **native names**, each rendered in its own script/font: English · עברית · العربية · Español · 简体中文 · 繁體中文 · 日本語 · Português · Русский · Français · Italiano · Deutsch · हिन्दी (`localeNativeNames`).
-  - The current one is marked ✓ (radio semantics), with a secondary line in the current UI language ("Hebrew") for orientation.
-  - "Use device language" sits on top.
-  - **Restart prompt:** when switching between LTR↔RTL on native, show a dialog: "**Restart to switch to العربية?** The app needs to restart to change the reading direction. **Restart now** / Later." The dialog text is in the *target* language plus the current one.
-  - Web switches instantly.
-- **Theme:** System / Light / Dark (radio), with a live preview swatch. It persists via `onPreferenceChange`.
-- **Notifications:** per category toggles: join requests, approvals, waitlist promotion, game reminders, chat, sanctions (can't disable: legal notice). There's a link to OS settings if the OS permission is off.
-- **Privacy:**
-  - profile visibility; show my reliability % (always visible to hosts when applying, which is explained);
-  - location: precise vs approximate, background wake‑up check‑in opt‑in (with a prominent disclosure);
-  - blocked users list; download my data.
-- **Delete account:** a danger zone at the bottom. A full screen explains what is deleted and what's kept (pseudonymised sanction records, legal basis). Then: type "DELETE" or confirm by OTP → **Delete my account** (danger). The web link is also available (Play policy).
-
-### 13.15 Inbox (phase 1)
-- Segments: Chats | Notifications. Notifications are grouped by game. Sanction notices are pinned until read and open §13.13. Empty: "No messages yet. Join a game to start chatting."
-
-### 13.16 Host restriction screen
-- A variant of §13.13 for `host_suspension`: same layout, plus "Games you already host stay active" / or not, according to the rule.
-
-### 13.17 Restart for RTL (system dialog spec)
-- Native only. Modal dialog, focus on the title. The primary action calls `I18nManager.forceRTL(...)` and then `Updates.reloadAsync()` (expo-updates) or `DevSettings.reload()` in dev. Pending drafts are saved first.
-
-### 13.18 Invite landing (`invite/[token]`)
-- Game preview card (deposit, women‑only, private badges) and **Join** (or Sign up to join). Expired: "This invite has expired. Ask the host for a new link."
-
-### 13.19 Moderation console (web only, staff)
-- **Gate:** the `moderator` or `admin` role. Desktop‑first (≥ 1024). Dense table density (row 44). Keyboard shortcuts (J/K next/prev, A approve, O overturn, E escalate, `?` help). Every shortcut has a visible button equivalent.
-- **Layout:** start rail with Queues (Reports, Appeals, Venues, Chat blocks, Host reviews) and counts. A center list table (type, subject, age, SLA timer, auto‑decision, priority). An end detail panel.
-- **Detail panel:**
-  - subject profile summary (reliability, history, previous sanctions);
-  - the evidence (retained messages with **original + translation side by side**; check‑in samples rendered as a mini map; reporter list with independence/collusion flags);
-  - the automated decision and its rule;
-  - **Decision form:** Uphold / Overturn / Modify (duration) / Escalate. A **mandatory statement of reasons** (templates per reason code, editable, previewed in the user's language). Also notify the user, and the audit note.
-- Everything is logged in `audit_log`. Show who/when on each item. Two‑person review is required for permanent bans (a "Needs second reviewer" state).
-- **States:** an empty queue shows "Queue clear 🎉" (emoji OK for staff). Conflicts: "Another moderator is reviewing this" (soft lock). SLA breaches are highlighted with a ⚠ icon + text, not only red.
-- **Wellbeing:** sensitive media is blurred by default with click‑to‑reveal. Session break reminders.
-
----
-
-## 14. UX copy principles
-
-**Voice:** a friendly captain, not a referee shouting. Short, direct, active voice, second person. Use sport vocabulary lightly ("Check in", "Join", "Bench" is avoided because it's ambiguous when translated).
-
-1. **Say what happened, then what to do.** "Couldn't load games. Check your connection and try again." Never "Error 500".
-2. **Buttons are verbs that describe the result:** "Join game", "Send request", "Publish game", "Delete my account". Avoid "OK/Submit" when a specific verb exists.
-3. **No blame for system or device limits.** GPS failure → "We can't confirm your location yet", never "You are not at the venue".
-4. **Sanctions copy must be respectful, specific and fixable:**
-   - State the *fact*, the *rule*, the *consequence*, the *duration* and the *way back*, and give the appeal link in the first view.
-   - Be neutral: "You didn't check in to *Sunday Football* on 3 Nov, and it counts as a no‑show." Not "You flaked".
-   - Don't use shaming words (bad, toxic, cheater), don't use exclamation marks, and don't use all‑caps.
-   - Always say whether a human was involved, and that the person can ask for one.
-   - Pattern: **What:** "You can't request to join games for 7 days." → **Why:** "2 yellow cards in 30 days (no‑show on 3 Nov, late cancel on 9 Nov)." → **Way back:** "This ends on 17 Nov at 10:00. Show up to your next games to raise your reliability." → **Disagree?** "Appeal. A person will review it."
-5. **Chat moderation nudges explain and offer a choice.** Never say "Your message was flagged".
-6. **Deposit/payment copy:** the amount, when it's charged, when it's released and the cancel rule appear before the payment sheet. "Hold", not "charge", unless it's captured.
-7. **Inclusive and global:**
-   - No idioms or puns that won't translate; gender‑neutral second person where the language allows.
-   - Hebrew and Arabic: the i18n agent uses ICU `select` for gender if the user chose one, and otherwise neutral/plural forms.
-   - Don't use emoji in system copy (except celebratory moments, and never as the only content).
-8. **Numbers and dates** always come from `Intl` with the user's locale. Relative times ("in 2h") come with an absolute time on details screens.
-9. **Length:** titles ≤ 40 characters, buttons ≤ 20 in en (other languages grow), body ≤ 2 lines in cards. Design for +40% expansion.
-10. **Empty states invite action:** "No games nearby yet. Be the first. Create a game."
-
----
-
-## 15. `@st/ui` component inventory and consumption
-
-| Export | Purpose / notes |
+| Width | Navigation |
 |---|---|
-| `tokens`, `colors`, `lightColors`, `darkColors`, `sportColors`, `reliabilityColors`, `spacing`, `radius`, `sizing`, `typography`, `elevation`, `motion`, `motionDuration`, `contrastPairs`, `RADIUS_OPTIONS_KM`, `MAX_SPORT_FILTERS`, `avatarFills` | Pure tokens (no RN import) |
-| `contrastRatio`, `relativeLuminance`, `deltaE`, `simulateCvd`, `withAlpha` | Color math |
-| `fontFamilyForLocale`, `fontFamilyForScript`, `scriptForLocale`, `isRtlLocale`, `detectScript`, `typeStyleFor`, `fontStacks`, `scriptMetrics`, `supportedLocales`, `localeNativeNames`, `requiredFontPackages`, `googleFontsCssUrl` | Fonts and scripts |
-| `isolate`, `isolateValues`, `stripBidiControls`, `detectDirection`, `containsRtl`, `initialsFor`, `FSI/LRI/RLI/PDI` | Bidi |
-| `ThemeProvider`, `useTheme`, `useMirrorStyle` | Theme context (`colors`, `scheme`, `preference`, `setPreference`, `direction`, `isRTL`, `locale`, `script`, `reducedMotion`, `elevation()`, `fontFamily()`) |
-| `Text` | Variants, semantic color, script‑aware font/line‑height, header role, dynamic‑type caps |
-| `Button` | `primary/secondary/ghost/danger/accent`, `sm/md/lg`, `loading`, start/end icons, focus ring, 48dp target |
-| `Chip`, `SportDot` | Selectable chip (`checkbox`/`radio` via `aria-checked`, `tab` via `aria-selected`; ✓ glyph), sport marker |
-| `Card` | Surface, elevation/outlined, `accentEdge` lane line, pressable |
-| `Sheet` | Bottom sheet with detents: drag, tap, and a handle `button` with `aria-expanded` |
-| `StatusBadge`, `StatusDot` | Reliability glyph + label (+%) |
-| `PinBadge`, `ClusterBadge` | Sport map markers, clusters |
-| `BidiText` | FSI/PDI isolation, sanitization, writingDirection, script font |
-| `Stack`, `Row` | Gap, logical alignment, padding tokens |
-| `TextField` | Label, helper, error (⚠ + live region), start/end adornments, `inputDirection` |
-| `Avatar` | Image or initials (grapheme/CJK aware), badge slot |
-| `EmptyState` | empty/error/offline/restricted with actions |
-| `Divider`, `Mirror` | Hairline; RTL flip wrapper for directional icons |
+| < 768 | `TabBar` (blur on iOS/web, solid on Android, 64dp + safe area, hairline top, active pill + fill icon + semibold label, selection haptic). FAB "Create game" floats 16dp above the tab bar at the end edge. |
+| 768–1023 | Rail 80dp at the start edge: volt `Fab` (Create) on top, `TabBarItem vertical` items, Settings `IconButton` at the bottom. |
+| ≥ 1024 | Rail + map/list split (list pane 400dp at the start edge). |
 
-### How the app consumes it
-
-```tsx
-// apps/mobile-web/src/app/_layout.tsx
-import { useFonts } from "expo-font";
-import { NotoSans_400Regular, NotoSans_500Medium, NotoSans_600SemiBold, NotoSans_700Bold } from "@expo-google-fonts/noto-sans";
-// + the active locale's family (e.g. @expo-google-fonts/noto-sans-hebrew), CJK lazily
-import { ThemeProvider } from "@st/ui";
-
-export default function RootLayout() {
-  const locale = useLocale();                 // from @st/i18n
-  const [fontsLoaded] = useFonts({ NotoSans_400Regular, NotoSans_500Medium, NotoSans_600SemiBold, NotoSans_700Bold /* … */ });
-  const stored = useStoredThemePreference();  // "system" | "light" | "dark"
-  return (
-    <ThemeProvider
-      locale={locale}
-      fontsLoaded={fontsLoaded}               // native: system font until true; web uses CSS stacks
-      initialPreference={stored}
-      onPreferenceChange={persistThemePreference}
-      // direction: omit → native uses I18nManager.isRTL, web derives from locale
-    >
-      <Stack />
-    </ThemeProvider>
-  );
-}
-```
-
-- Screens use `useTheme()` for colors, `isRTL` and `reducedMotion`. Pass `theme.scheme` to the map style (light/dark tiles) and to `StatusBar`.
-- Web: add `googleFontsCssUrl([...scripts])` as a `<link rel="stylesheet">` in `app/+html.tsx`, with `preconnect` to fonts.gstatic.com.
-- The template's `constants/theme.ts`, `themed-text.tsx` and `themed-view.tsx` should be replaced by `@st/ui` (`Text`, `useTheme().colors`).
-- Navigation colors: tab bar background `surface`, active `primary` + filled icon + label, inactive `textSecondary`, top border `border`.
+Modal flows (Create, Check-in, Result) are full-screen on phones and centered 560dp dialogs on wide web.
 
 ---
 
-## 16. Requests to other owners
+## 14. Component specs (`@st/ui`)
 
-- **Orchestrator (deps):** add to `apps/mobile-web`: `@expo-google-fonts/noto-sans`, `noto-sans-hebrew`, `noto-sans-arabic`, `noto-sans-devanagari`, `noto-sans-sc`, `noto-sans-tc`, `noto-sans-jp` (CJK lazily loaded), plus `expo-font` (if not already present) and `@expo/vector-icons`. Also consider an app‑wide ESLint `no-restricted-syntax` rule mirroring `packages/ui/test/logical-styles.test.ts`.
-- **i18n:** use `isolateValues()` for all interpolations with user data; use the endonyms from `localeNativeNames`; ICU gender `select` for he/ar; add the copy keys from §13/§14.
-- **DB/Functions:** strip bidi control characters (`U+202A–U+202E`, `U+2066–U+2069`) from names, venue names and chat on write. Return the moderation outcome as `allow | nudge | block | allow_pending`, plus a reason code for copy.
-- **QA:** axe on web for each screen in en/he/ar; screenshot each screen at 200% text; assert `dir="rtl"`; CVD simulation spot checks of the map.
+**Button** — heights 36/48/56, radius 14 (10 for sm), label `headline` (sm `label`), icon 20 bold (`icon` start, `iconEnd` end), gap 8. Variants: `primary` (brand fill + indigo glow on light), `secondary` (tonal `primarySubtle`), `outline` (hairline `borderStrong`), `ghost` (text `primaryText`), `danger`, `accent` (volt + volt glow). Spring press 0.97; haptic `buttonPrimary` on primary/accent. Loading: spinner replaces the icon, width stable, `aria-busy`. One primary per view; footers: primary full-width `lg`, secondary actions as `outline`/`ghost` on one row below.
+
+**IconButton** — 36/44/52 round; `plain` | `tonal` (sunken) | `filled` (brand) | `glass` (surface + elevation 2, over map/media) | `inverse`. Required `label`. Optional `badge` (number or dot), `selected` → `aria-pressed` + fill icon.
+
+**Fab** — 56 round or extended pill; volt gradient + ink `Plus` (bold 24) + volt glow; `tone="primary"` for brand. Medium haptic.
+
+**Chip** — pill, 40 (sm 32). Unselected `surfaceSunken` (dark: + hairline); selected **inverse fill** (ink on light, near-white on dark) + bold `Check`. `sport` shows the duotone sport glyph in sport color. `tone="elevated"` for chips over the map. Roles checkbox/radio/tab.
+
+**Segmented** — sunken track radius 14, padding 3, raised thumb (surface + soft shadow; dark: raised + border) sliding with `springs.snappy`; equal widths; optional icon and count badge per option. `radiogroup`/`radio`.
+
+**Card** — radius 20, padding 16, `elevated` (default) | `outlined` | `filled`; pressable cards scale 0.985.
+
+**GameHeroCard** — the v2 game card (props only):
+- *Band* (sport gradient, padding 16, min 104): start: `SportGlyphBadge variant="glass"` 44 squircle; then column: `overline` sport label (white 88%), **time** `title1` bold tabular white (LTR isolate), day · relative `footnote` white; end: `StatusPill` (glass; `live` = volt). Watermark: the sport glyph at 132dp, fill, white 16%, bleeding off the bottom-end corner.
+- *Body* (padding 16, gap 12): title `title3` (2 lines, BidiText); `MapPin` 16 + venue `footnote` + "·" + distance (LTR isolate); tag row: host `StatusBadge sm`, deposit pill (`Coins`, warning tone), tags (neutral pills).
+- Hairline, then *footer*: `AvatarStack` (sm, max 4, "+N"), `7/10` `statSmall` + "7 of 10 players" caption, `ProgressRing` 40/4 at the end (brand; sport color at ≥ 75%; grey + `LockSimple` when full).
+- Elevation 2 (dark: 1 = border). One focus stop with `accessibilityLabel`.
+
+**MapPinMarker** — 40×50 teardrop (`MAP_PIN_ANCHOR` = bottom tip), sport fill, 2.6 white ring, 55% ink hairline, contact-shadow ellipse, white `fill` glyph (46% of width) centered in the head. `selected`: 52×65 + 7px brand halo. `full`: white fill, sport ring 3.2, sport-colored glyph. `live`: volt beacon at the top-end (pulses 1.6s unless reduced motion). Hit area ≥ 48 wide.
+
+**ClusterMarker** — 40/48/56 (<10/<100/≥100) inverse disc, white outer ring, sport-colored **ring segments** proportional to each sport's share (2.5 gaps), tabular count (`999+` max, LTR isolate), layered shadow. Anchor center.
+
+**TabBar / TabBarItem** — see §13. Item: 56×32 pill (`primarySubtle` when active), 24 icon (fill active / regular inactive), 11.5 caption label; badge (count or dot) at the icon's top-end.
+
+**LargeHeader** — action row 52 (back `IconButton` + end actions), eyebrow `footnote`, `largeTitle`, subtitle `callout`, then optional children (Segmented, search). Background = canvas.
+
+**ListItem / ListGroup** — 56+ rows: 36 squircle icon well (duotone icon on tone tint, or sport tint), title `body`, subtitle `footnote`, value `callout` tertiary, trailing slot, `CaretRight` 18 bold tertiary (mirrors). Groups: overline header (start-inset 16), radius-20 card at elevation 1, inset hairlines, footnote footer. `destructive` → danger text + danger well.
+
+**StatTile** — elevation 1, radius 20, padding 16; 36 icon well (brand or sport tint, duotone); `numeric` value; `footnote` label; optional caption (+3 this month, positive tone). 2×2 grid on Profile.
+
+**ProgressRing / ReliabilityRing** — SVG arc, round caps, track `surfaceSunken`, optional two-stop gradient, animates from 0 (640ms), mirrors in RTL. ReliabilityRing 132: stroke 12, status solid color, % at 24% of size + label.
+
+**Avatar / AvatarStack** — jewel-tone fills (≥ 4.5:1 white initials), Rubik 600 initials; `ring` for stacks/media; stack overlap 30%, "+N" bubble on sunken.
+
+**StatusBadge / StatusDot / StatusPill** — §4; StatusPill tones neutral/brand/success/warning/danger/info/live/glass, 24 (sm) or 30 tall, 14/16 bold icon.
+
+**TextField** — label `label` secondary above; field 52, radius 14, **filled** `surfaceSunken`; focus: surface + 2dp `focusRing` border + 4dp brand halo; error: danger border + `WarningCircle` + footnote message (live region). Optional start `icon`.
+
+**Sheet** — radius 28 top, grabber 36×5 (`textTertiary` 40%), elevation 3, detents with `springs.gentle` and a light haptic; handle is a button with expand/collapse actions.
+
+**Skeleton / SkeletonText / SkeletonGameCard** — `skeleton` blocks with a highlight sweep from the start edge (1.4s); static with reduced motion; containers set `aria-busy`.
+
+**Toast** — inverse card radius 20, 32 tone disc (success green, error red, warning amber, info sky, neutral brand) with bold icon, title `label` 600 + message footnote 78%, optional action (indigo on inverse) and close. Top of screen under the status bar; 4s; `status`/`alert`.
+
+**Gradient** — expo-linear-gradient with tokens; RTL-aware.
+
+**Illustration** — 160 (120 in cards) SVG spot art: `emptyGames`, `noChat`, `noNotifications`, `success`, `location`, `ageGate`, `offline`, `error`. Brand blob backdrop, contact shadow, indigo gradient objects, volt accents; no text; themed for dark.
+
+**AuthHero / BrandMark** — night-stadium panel (brand-night gradient, floodlight beams, faint perspective pitch, volt ball flight), four floating solid sport badges in the top-end quadrant, brand mark + wordmark top-start, `display` headline + body subtitle at the bottom; bottom corners 28; always dark.
+
+**EmptyState** — Illustration + `title2` + `callout` body + primary (with icon) and ghost actions.
+
+**Haptics** — `Haptics.selection()/light()/medium()/success()/warning()/error()`, `Haptics.trigger(event)`; no-op on web.
+
+---
+
+## 15. Screen-by-screen v2 layouts
+
+Shared rules: skeletons not spinners (show after 300ms); offline = warning `Toast`/banner "You're offline. Showing saved info."; every error says what happened + Retry. Gutters 16. Section spacing 24.
+
+### 15.1 Auth: phone → OTP → age → onboarding
+- **Phone:** `AuthHero` (height 380 + safe top; headline "Find a game. Show up. Play.") then a sheet-like panel (canvas, overlapping the hero by 0 — content starts 24 below): `title2` "What's your phone number?", `callout` helper, country picker as a `TextField`-styled select with flag + dial code, phone `TextField icon="Phone" inputDirection="ltr"`, primary `lg` full-width "Send code", legal footnote with links. Demo hint as an info `StatusPill`.
+- **OTP:** `LargeHeader` with back, title "Enter the code", subtitle "Sent to +972 …" (LTR isolate) + "Change"; 6 boxed cells (52×56, radius 14, sunken; focused cell brand border) rendered over one input; countdown footnote → "Resend code" ghost. Success → light haptic.
+- **Age gate:** `Illustration ageGate` (120), title2 + copy, month/year selects side by side, primary "Continue". Under-18 stop: `EmptyState tone="restricted"`.
+- **Onboarding:** title "Set up your profile"; name field; "Your sports" as a 2-column grid of **sport tiles** (Card filled, `SportGlyphBadge tint` 40 + name; selected = sport-colored 2dp border + check), positions as chips; primary "Start playing".
+- **Location pre-prompt:** bottom sheet with `Illustration location`, title, body, primary "Allow location", ghost "Not now".
+
+### 15.2 Map (home)
+- Full-bleed map (light/dark tiles by scheme). **Top overlay** (safe top + 8): one row — search field (sunken→surface, elevation 2, `MagnifyingGlass`, radius 14, flex) + `IconButton glass` `SlidersHorizontal` (opens filter sheet with sport chips + radius segmented). Below: a horizontally scrolling row of **elevated sport chips** (max 3, `tone="elevated"`). The radius chips move into the filter sheet (v1 spent a whole row on them).
+- **Radius:** a subtle 1.5dp dashed brand circle with 6% fill, shown only while changing radius (fades out after 1.2s; static with reduced motion).
+- **Markers:** `MapPinMarker` per game, `ClusterMarker` for clusters; tap pin → `selected` + selection haptic + sheet scrolls to the card.
+- **End-edge stack** above the sheet: `IconButton glass` `GpsFix`, `ListBullets` (list view).
+- **Sheet** (peek 148 / half 45% / full): header row — `title3` "8 games nearby" + sort as a small tonal `Segmented` (Soonest | Nearest); body: `GameHeroCard`s, gap 12; venues after games as `ListItem`s with sport wells.
+- **FAB** (volt, 56) at end edge 16 above the sheet peek.
+- States: loading → 2 `SkeletonGameCard`; empty → `EmptyState emptyGames` ("No games within 5 km", Widen to 10 km / Create a game); location denied → search prompt card; error → `EmptyState error` + Retry.
+
+### 15.3 Venue sheet
+Half detent. Header: `SportGlyphBadge`s of sports offered, venue `title2` (BidiText), `MapPin` + address + distance, actions row: primary "Start a game here", outline "Directions" (`ArrowSquareOut`). Rating row: big `numeric` 4.2 + stars (`Star` fill, volt-free, warning color) + "38 ratings"; attributes as `ListGroup` rows with a 5-segment meter. "Upcoming here" `GameHeroCard`s. Footer ghost "No venue here? Report it" (`Flag`).
+
+### 15.4 Game details
+- **Hero:** full-width sport gradient header (height 220 + safe top, bottom corners 28): top row back `IconButton inverse-on-media` (white glyph on 20% white), share and overflow at the end; sport overline; title `title1` white (2 lines); time row `title2` tabular + date; watermark glyph 180dp at 14%.
+- **Facts strip** (overlapping the hero by −24, Card elevation 2, radius 20): three columns separated by hairlines — Players `7/10` (`statSmall`) + ProgressRing 32 · Starts `in 45 min` · Distance `1.2 km`; below, pills: deposit, women only, private, level.
+- **Venue card:** `ListItem` with `MapPin` well, venue + address, trailing "Directions" link; hidden location → `LockSimple` + "Exact spot shared after the host approves you".
+- **Host:** `ListItem` Avatar md, "Hosted by Yossi", `SealCheck` verified, trailing `StatusBadge sm`.
+- **Players:** `title3` "Players · 7/10" + AvatarStack; `ListGroup` of participants (Avatar + name + StatusDot + position chips; "Checked in" success pill). Host-only sections "Requests" (approve = primary sm, reject = outline sm) and "Waitlist".
+- **Sticky footer** (surface + top hairline, blur on iOS/web): primary `lg` full-width by state (Join game `Lightning` / Request to join / Join waitlist #3 / Check in `MapPin`); below it one row of `IconButton tonal`s — Chat (`ChatsCircle`, unread badge), Directions, Share — and a ghost "Can't make it". Deposit disclosure line above the button when relevant.
+- States: cancelled banner (danger tone card), ended → Result + Rate host.
+
+### 15.5 Create game wizard
+Full-screen modal. Header: close `X`, title "Create game", **segmented progress** (5 equal bars, brand fill, 4dp, gap 4; mirrors), "Step 2 of 5" caption (live). Step 1 Sport: 2×3 grid of sport tiles (as onboarding) + title field + team count `Segmented`. Step 2 Where: search field + venue `ListItem`s with sport wells and distance; map pin-drop card; "Hide exact location" switch row. Step 3 When: day chips (horizontal scroll), time field, duration `Segmented`. Step 4 Who: capacity and minimum players as big steppers (`IconButton tonal` −/+ around a `statLarge` value), visibility as two selectable cards (`GlobeHemisphereWest` public / `LockSimple` private), women-only switch row. Step 5 Deposit: switch + amount field + explainer card (`Coins`). Review: `ListGroup` with an "Edit" per row. Footer: outline Back + primary Next/Publish (`lg`). Publish → `Illustration success` screen + share buttons (WhatsApp, Copy link) + success haptic.
+
+### 15.6 Teams
+Two team cards side by side (stacked < 360dp): header with bib pattern (Team A solid brand, Team B striped neutral) + name + average; players as rows with position chips. Balance card: `ProgressRing` (balance score) + "Balanced · rating diff 0.3". Footer: outline `Shuffle` "Reshuffle" + primary `LockSimple` "Lock teams".
+
+### 15.7 Chat
+Header: back + sport badge 32 + game title + time; info `StatusPill` "Messages disappear 3h after the game". Bubbles: radius 20 with a 6 tail corner at the sender side; own `primary` fill / white text at the end, others `surface` elevation 1 at the start; author name + StatusDot above the first of a group; time footer caption (LTR). Composer: sunken field radius 24 + send `IconButton filled` (`PaperPlaneRight`, mirrors). Nudge/block cards: warning/danger `Toast`-styled inline cards above the composer. Empty: `EmptyState noChat`.
+
+### 15.8 Check-in
+Center stage `ProgressRing` 200 (stroke 14, `live` gradient) with `MapPin` 48 fill inside → on success morphs to `CheckCircle` + bouncy spring + success haptic + "You're checked in" `title1`. Accuracy text under it (live region). "Other ways" `ListGroup`: Scan host QR (`Scan`), Enter code (`QrCode`), Ask a teammate (`UsersThree`).
+
+### 15.9 Host QR
+Dark `brandNight` full screen (always dark, keep awake). QR on white 280 in a radius-28 card, 30s countdown as a ring around a small timer pill under it; 6-digit fallback code in `numeric` tabular with letter-spacing 4; checked-in counter "7 of 10 checked in" with AvatarStack. Secondary: "Mark players manually" outline (white).
+
+### 15.10 Result
+Two team columns with big `statLarge` scores between −/+ `IconButton tonal lg` steppers (selection haptic), "–" separator, LTR isolate preview "2–1"; window countdown `StatusPill info`. Primary "Submit result" → success toast + haptic.
+
+### 15.11 Games tab
+`LargeHeader` ("Games", subtitle "3 upcoming") with `Segmented` Upcoming | Hosting | Past (counts). Section headers as overlines ("You're in", "On the waitlist", "Hosting") above `GameHeroCard`s. Pull to refresh (light haptic). Empty: `EmptyState emptyGames` + "Find a game".
+
+### 15.12 Inbox
+`LargeHeader` "Inbox" + `Segmented` Notifications | Chats (unread counts). Notifications: `ListItem` rows with tone wells (`ShieldWarning` warning for sanctions, pinned first with "Pinned until you read it" pill; `UserPlus` brand for requests), unread dot at the end. Chats: rows with sport badge 40, game title, last message, time, unread count. Empty: `noNotifications` / `noChat`.
+
+### 15.13 Profile
+Header band: `brandNight` gradient panel (radius 28 bottom) with Avatar xl (ring), name `title1` white, "Member since" footnote, sports as glass chips with glyphs; settings `IconButton` (`GearSix`) at the end of the top row. **Reliability card** (elevation 2, overlapping the band by −32): `ReliabilityRing` 132 at the start + `StatusBadge` + "Based on your last 90 days…" + yellow-card row (`Warning`) + "How this works" link. **Stats** 2×2 `StatTile`s (Games played `SoccerBall`, Verified check-ins `CheckCircle`, As host `Strategy`, No-shows `Prohibit`). Sports & positions as `ListGroup` rows with sport wells. Sanctions: warning-tone `ListItem` → §15.14. History: compact game rows.
+
+### 15.14 Sanctions
+Calm: `LargeHeader` "Account status"; status card (warning tint, `ShieldWarning` well, what applies + "Ends in 6 days" `statSmall`); statement of reasons as `ListGroup` sections; "Way back" card with a progress ring ("Show up to 2 more games"); primary "Appeal" / "Dispute this card"; appeal timeline as a vertical stepper (dots + hairline, mirrors).
+
+### 15.15 Settings and language
+`LargeHeader` "Settings". `ListGroup`s: Account (Phone, Linked logins), Preferences (Language `Translate` info, Theme `Moon` neutral, Notifications `Bell` warning), Privacy & safety (`ShieldCheck` success, Blocked users `UserMinus`), Legal (`FileText`), Danger zone (`Trash` destructive "Delete account"), Sign out (`SignOut` destructive, no chevron). Version caption centered. Theme: `Segmented` System | Light | Dark with icons. Language: `ListGroup` of native names (each in its own script), radio semantics, selected = brand `Check` at the end; "Use device language" on top.
+
+---
+
+## 16. UX copy principles
+
+Voice: a friendly captain. Short, direct, active, second person.
+1. Say what happened, then what to do ("Couldn't load games. Check your connection and try again.").
+2. Buttons are verbs describing the result ("Join game", "Publish game").
+3. No blame for system/device limits ("We can't confirm your location yet").
+4. Sanctions: fact, rule, consequence, duration, way back, appeal — neutral, no shaming, no exclamation marks; say whether a human was involved.
+5. Moderation nudges explain and offer a choice.
+6. Deposit copy: amount, when held, when released, cancel rule — before payment; "hold", not "charge".
+7. Inclusive/global: no idioms, gender-neutral where possible, ICU `select` for he/ar, no emoji in system copy.
+8. Numbers and dates via `Intl`; relative + absolute on details.
+9. Titles ≤ 40 chars, buttons ≤ 20 (en), card body ≤ 2 lines; design for +40%.
+10. Empty states invite action ("No games nearby yet. Be the first.").
+
+---
+
+## 17. `@st/ui` API inventory and migration
+
+### 17.1 Exports
+- **Tokens:** `palette`, `colors`, `lightColors`, `darkColors`, `contrastPairs`, `sportColors`, `sportKeys`, `gradients`, `reliabilityColors`, `avatarFills`, `spacing`, `radius`, `iconSizes`, `sizing`, `borderWidth`, `typography`, `fontWeights`, `elevation`, `motion`, `motionDuration`, `hapticMap`, `zIndex`, `tokens`, `RADIUS_OPTIONS_KM`, `MAX_SPORT_FILTERS`.
+- **Fonts:** `fontStacks`, `brandFont`, `legacyFontStacks`, `fontFamilyForLocale/Script`, `fontAssetNames`, `fontGroupsForLocale`, `bundledScripts`, `requiredFontPackages`, `googleFontsCssUrl`, `typeStyleFor`, `scriptForLocale`, `detectScript`, `isRtlLocale`, `supportedLocales`, `localeNativeNames`; RN: `fontAssets`, `fontAssetsForLocale`, `useAppFonts(locale)`.
+- **Theme:** `ThemeProvider` (`locale`, `brandFonts`, `fontsLoaded` (legacy), `initialPreference`, `onPreferenceChange`, `direction`), `useTheme()` (+ `sport(key)`, `gradients`, `brandFonts`), `useMirrorStyle`.
+- **Icons:** `Icon`, `SportIcon`, `SportGlyphBadge`, `IconName`, `iconRegistry`, `iconNames`, `resolveIcon`, `directionalIcons`, `isDirectionalIcon`, `legacyIconMap`.
+- **Components:** `Text`, `Button`, `IconButton`, `Fab`, `Chip`, `SportDot` (deprecated), `Segmented`, `Card`, `GameHeroCard`, `ListItem`, `ListGroup`, `StatTile`, `ProgressRing`, `ReliabilityRing`, `Sheet`, `StatusBadge`, `StatusDot`, `StatusPill`, `PinBadge`/`ClusterBadge` (deprecated), `MapPinMarker`, `ClusterMarker`, `MAP_PIN_ANCHOR`, `mapPinSize`, `TabBar`, `TabBarItem`, `LargeHeader`, `Skeleton`, `SkeletonText`, `SkeletonGameCard`, `Toast`, `Gradient`, `Illustration`, `BrandMark`, `AuthHero`, `BidiText`, `Stack`, `Row`, `TextField`, `Avatar`, `AvatarStack`, `EmptyState`, `Divider`, `Mirror`, `Haptics`, `usePressScale`; bidi/color helpers as v1.
+
+### 17.2 Back-compat (app keeps compiling)
+- All v1 names still exported. `Button variant="secondary"` is now **tonal**; use `outline` for the old look. `Card outlined` → `variant="outlined"`. `fontsLoaded` keeps the Noto mapping; switch to `brandFonts={useAppFonts(locale)}` to get Rubik.
+- `sportColors[s].icon` (MCI name) and `.shape/.glyph` remain (deprecated); new `.phosphor`, `.gradient`, `.tint`, `.text`.
+- `PinBadge`/`ClusterBadge` keep the v1 center anchor; `MapPinMarker` anchors at the tip (`MAP_PIN_ANCHOR`) — change the marker anchor when migrating.
+
+### 17.3 Migration steps for app developers
+1. Root: `const brandFonts = useAppFonts(locale)` (from `@st/ui`) → `<ThemeProvider brandFonts={brandFonts}>`; delete `src/platform/fonts*.ts`.
+2. Replace `src/components/Icon.tsx` with `@st/ui`'s `Icon` (Phosphor names, `legacyIconMap` for the table in §17.4); outline/filled pairs become `weight="regular" | "fill"`.
+3. `AppNav` → `TabBar` + `TabBarItem` (wrap in `TabTrigger asChild`; keep `testID`s); rail → `TabBarItem vertical` + `Fab`.
+4. `GameCard` → `GameHeroCard`; `ReliabilityBadge` → `StatusBadge`/`ReliabilityRing`; `SegmentedControl` → `Segmented` (keeps `aria-checked` on segments); settings rows → `ListGroup`/`ListItem`; `States.tsx` → `EmptyState` + `Skeleton*`; `Toast` visuals → `Toast`.
+5. Map: `PinBadge` → `MapPinMarker` (anchor bottom), `ClusterBadge` → `ClusterMarker` with per-sport counts.
+
+### 17.4 MaterialCommunityIcons → Phosphor (every name used in apps/mobile-web/src)
+
+| MCI | Phosphor | MCI | Phosphor |
+|---|---|---|---|
+| account-cancel(-outline) | UserMinus | map-marker-check | CheckCircle (check-in) |
+| account-circle(-outline) | UserCircle | map-marker-plus-outline | MapPinPlus |
+| account-group | UsersThree | map-marker-radius(-outline), map-outline | MapTrifold |
+| account-plus-outline | UserPlus | message-off-outline | ChatSlash |
+| alert-circle-outline | WarningCircle | message-text(-outline) | ChatsCircle |
+| alert-outline | Warning | minus / plus | Minus / Plus |
+| arrow-left | ArrowLeft | open-in-new | ArrowSquareOut |
+| bell-outline | Bell | party-popper | Confetti |
+| calendar-clock | CalendarDots | pencil-outline | PencilSimple |
+| calendar-remove-outline | CalendarX | phone(-outline) | Phone |
+| calendar-star(-outline) | CalendarStar | qrcode-scan | QrCode |
+| check / check-circle(-outline) | Check / CheckCircle | radar | Broadcast |
+| check-decagram(-outline) | SealCheck | refresh | ArrowClockwise |
+| chevron-down/up/right | CaretDown/CaretUp/CaretRight | scoreboard-outline | Trophy |
+| circle-outline | Circle | send | PaperPlaneRight |
+| clock-fast | ClockCountdown | shield-alert-outline | ShieldWarning |
+| clock-outline | Clock | shield-check-outline | ShieldCheck |
+| close / close-circle-outline | X / XCircle | shield-lock-outline (deposit) | Coins |
+| cog-outline | GearSix | timer-sand | Hourglass |
+| crosshairs-gps | GpsFix | translate | Translate |
+| delete-outline | Trash | whistle-outline (hosting) | Strategy |
+| dots-horizontal | DotsThree | soccer · basketball · tennis | SoccerBall · Basketball · TennisBall |
+| download-outline | DownloadSimple | racquetball · run-fast · volleyball | Racquet · PersonSimpleRun · Volleyball |
+| earth | GlobeHemisphereWest | email-outline | EnvelopeSimple |
+| file-document-outline | FileText | flag-outline | Flag |
+| format-list-bulleted | ListBullets | gender-female | GenderFemale |
+| lock-outline | LockSimple | magnify | MagnifyingGlass |
+
+---
+
+## 18. Tooling and requests
+
+**Screenshot tour** — `apps/mobile-web/scripts/screens.mjs` (Playwright, Pixel 7, static server with SPA fallback, in-app navigation only):
+```
+EXPO_PUBLIC_DATA=mock npx expo export --platform web --output-dir dist   # in apps/mobile-web
+node scripts/screens.mjs                                  # all screens × en,he × light,dark
+node scripts/screens.mjs --only map,game,design --locale he --scheme dark
+node scripts/screens.mjs --list                           # screen names
+SCREENS_OUT=/tmp/shots node scripts/screens.mjs --full    # scrolled screens as .NN.png parts
+```
+Screens: phone, otp, age, onboarding, map, map-list, venue-sheet, game, chat, checkin, games, result, inbox, profile, sanctions, settings, language, create-1…5, create-review, game-host, host-qr, teams, design.
+
+**Requests:**
+- *App devs:* §17.3 migration; add the `screens.mjs` run to visual QA; consider an app-wide ESLint rule mirroring `logical-styles.test.ts`.
+- *i18n:* keys for the new copy (§15), ICU for "N of M players", "+N".
+- *QA:* axe on each screen in en/he/ar; 200% text; reduced-motion pass; CVD spot checks of the map (glyphs must stay legible at 40dp).

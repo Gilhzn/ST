@@ -2,6 +2,8 @@ import { type ComponentRef, type Ref, useId, useState, type ReactNode } from "re
 import { Platform, TextInput, View, type StyleProp, type TextInputProps, type ViewStyle } from "react-native";
 
 import { typeStyleFor } from "../fonts";
+import { Icon } from "../icons/Icon";
+import type { IconName } from "../icons/registry";
 import { useTheme } from "../theme";
 import { borderWidth, fontWeights, radius, sizing, spacing } from "../tokens";
 import { Text } from "./Text";
@@ -12,7 +14,9 @@ export interface TextFieldProps extends Omit<TextInputProps, "style" | "placehol
   helperText?: string;
   /** Error message. Rendered with ⚠ glyph, announced politely, and sets the danger outline. */
   error?: string;
-  /** Adornment at the start edge (e.g. country code, search icon). */
+  /** v2: Phosphor icon at the start edge (e.g. "MagnifyingGlass", "Phone"). */
+  icon?: IconName;
+  /** Adornment at the start edge (e.g. country code). */
   start?: ReactNode;
   /** Adornment at the end edge (e.g. clear button, show-password). */
   end?: ReactNode;
@@ -29,6 +33,7 @@ export function TextField({
   label,
   helperText,
   error,
+  icon,
   start,
   end,
   inputDirection = "auto",
@@ -46,12 +51,13 @@ export function TextField({
   const id = useId();
   const t = typeStyleFor("body", theme.script);
   const family = theme.fontFamily("regular");
+  const weighted = Boolean(family) && theme.usesWeightedFamilies;
   const describedBy = error ?? helperText;
   const webDir = Platform.OS === "web" ? ({ dir: inputDirection } as object) : null;
 
   return (
-    <View style={[{ gap: spacing.xs }, containerStyle]}>
-      <Text variant="label" color="text" nativeID={`${id}-label`}>
+    <View style={[{ gap: spacing.xs + 2 }, containerStyle]}>
+      <Text variant="label" color="textSecondary" nativeID={`${id}-label`}>
         {label}
         {required ? (
           <Text variant="label" color="dangerText" aria-hidden>
@@ -64,15 +70,17 @@ export function TextField({
           flexDirection: "row",
           alignItems: "center",
           gap: spacing.sm,
-          minHeight: sizing.touchTarget,
-          paddingStart: spacing.md,
+          minHeight: sizing.inputHeight,
+          paddingStart: spacing.lg,
           paddingEnd: spacing.md,
           borderRadius: radius.md,
-          backgroundColor: editable ? c.surface : c.disabledBg,
-          borderWidth: focused || error ? borderWidth.thick : borderWidth.regular,
-          borderColor: error ? c.danger : focused ? c.focusRing : c.borderStrong,
+          backgroundColor: !editable ? c.disabledBg : focused ? c.surface : c.surfaceSunken,
+          borderWidth: borderWidth.thick,
+          borderColor: error ? c.danger : focused ? c.focusRing : theme.scheme === "dark" ? c.border : "transparent",
+          ...(focused && !error ? { boxShadow: `0px 0px 0px 4px ${theme.scheme === "dark" ? "rgba(143, 125, 255, 0.22)" : "rgba(91, 61, 245, 0.14)"}` } : null),
         }}
       >
+        {icon ? <Icon name={icon} size={20} color={focused ? "primary" : "textTertiary"} /> : null}
         {start}
         <TextInput
           ref={ref}
@@ -96,7 +104,7 @@ export function TextField({
               color: editable ? c.text : c.disabledText,
               fontSize: t.fontSize,
               ...(family ? { fontFamily: family } : null),
-              ...(theme.usesWeightedFamilies ? null : { fontWeight: fontWeights.regular }),
+              ...(weighted ? null : { fontWeight: fontWeights.regular }),
               ...(inputDirection === "auto" ? null : { writingDirection: inputDirection }),
               paddingTop: spacing.sm,
               paddingBottom: spacing.sm,
@@ -110,15 +118,13 @@ export function TextField({
       </View>
       {error ? (
         <View aria-live="polite" style={{ flexDirection: "row", gap: spacing.xs, alignItems: "flex-start" }}>
-          <Text variant="caption" color="dangerText" aria-hidden>
-            ⚠
-          </Text>
-          <Text variant="caption" color="dangerText" style={{ flex: 1 }}>
+          <Icon name="WarningCircle" size={16} weight="bold" color="dangerText" style={{ marginTop: 1 }} />
+          <Text variant="footnote" color="dangerText" style={{ flex: 1 }}>
             {error}
           </Text>
         </View>
       ) : helperText ? (
-        <Text variant="caption" color="textTertiary">
+        <Text variant="footnote" color="textTertiary">
           {helperText}
         </Text>
       ) : null}

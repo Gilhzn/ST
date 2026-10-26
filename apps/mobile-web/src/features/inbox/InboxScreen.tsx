@@ -33,7 +33,7 @@ const ICONS: Partial<Record<NotificationKind, IconName>> = {
   result_requested: 'scoreboard-outline',
   sanction_issued: 'shield-alert-outline',
   sanction_decided: 'shield-check-outline',
-  appeal_decided: 'gavel',
+  appeal_decided: 'SealCheck',
   chat_muted: 'message-off-outline',
   deposit_action_required: 'shield-lock-outline',
 };

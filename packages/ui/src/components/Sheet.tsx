@@ -10,6 +10,8 @@ import {
   type ViewStyle,
 } from "react-native";
 
+import { withAlpha } from "../color";
+import { Haptics } from "../haptics";
 import { useTheme } from "../theme";
 import { motion, motionDuration, radius, spacing, zIndex } from "../tokens";
 
@@ -68,7 +70,7 @@ export function Sheet({
           easing: Easing.linear,
           useNativeDriver: false,
         })
-      : Animated.spring(height, { toValue: to, ...motion.spring, useNativeDriver: false });
+      : Animated.spring(height, { toValue: to, ...motion.springs.gentle, useNativeDriver: false });
     anim.start();
   }, [current, points.join(","), theme.reducedMotion]);
 
@@ -103,6 +105,7 @@ export function Sheet({
   const go = (i: number) => {
     const n = clampIndex(i);
     if (n !== current) {
+      Haptics.trigger("sheetDetent");
       onIndexChange(n);
       AccessibilityInfo.announceForAccessibility?.(n > current ? expandLabel : collapseLabel);
     }
@@ -140,10 +143,10 @@ export function Sheet({
           ]}
           onAccessibilityAction={(e) => go(e.nativeEvent.actionName === "expand" ? current + 1 : current - 1)}
           onPress={() => go(atTop ? 0 : current + 1)}
-          style={{ alignItems: "center", justifyContent: "center", minHeight: 32, paddingTop: spacing.sm }}
+          style={{ alignItems: "center", justifyContent: "center", minHeight: 28, paddingTop: spacing.sm }}
           hitSlop={{ top: 8, bottom: 8 }}
         >
-          <View style={{ width: 40, height: 5, borderRadius: radius.pill, backgroundColor: c.borderStrong }} />
+          <View style={{ width: 36, height: 5, borderRadius: radius.pill, backgroundColor: withAlpha(c.textTertiary, 0.4) }} />
         </Pressable>
         {header ? (
           <View style={{ paddingStart: spacing.lg, paddingEnd: spacing.lg, paddingBottom: spacing.sm }}>{header}</View>

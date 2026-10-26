@@ -78,7 +78,7 @@ export function GameCard({
           <Text variant="caption" color="textSecondary" numberOfLines={1} style={{ flex: 1 }}>
             {sport}
           </Text>
-          {live ? <Tag label={t('map:card.live')} tone="info" icon="broadcast" /> : soon ? <Tag label={t('map:card.startsSoon')} icon="clock-fast" /> : null}
+          {live ? <Tag label={t('map:card.live')} tone="info" icon="Broadcast" /> : soon ? <Tag label={t('map:card.startsSoon')} icon="clock-fast" /> : null}
         </Row>
         <BidiText variant="title3" numberOfLines={2}>
           {game.title}

@@ -1,11 +1,13 @@
 import { createContext, useCallback, useContext, useEffect, useMemo, useState, type ReactNode } from "react";
 import { AccessibilityInfo, I18nManager, Platform, useColorScheme, View, type ViewStyle } from "react-native";
 
-import { fontFamilyForScript, scriptForLocale, scriptMetrics, type Script } from "./fonts";
+import { bundledScripts, fontFamilyForScript, scriptForLocale, scriptMetrics, type Script } from "./fonts";
 import {
   colors as colorSets,
   elevation as elevationSets,
+  gradients,
   reliabilityColors as reliabilitySets,
+  sportColors,
   tokens,
   type ColorScheme,
   type ElevationLevel,
@@ -13,7 +15,21 @@ import {
   type ReliabilityStatus,
   type ReliabilityToken,
   type SemanticColors,
+  type SportKey,
 } from "./tokens";
+
+/** Sport colors resolved for the current scheme. */
+export interface ResolvedSport {
+  key: SportKey;
+  /** Marker / glyph-well fill (white glyph on it). */
+  color: string;
+  on: string;
+  gradient: readonly [string, string];
+  /** Sport-colored label on surfaces and on `tint`. */
+  text: string;
+  /** Tinted well / chip background. */
+  tint: string;
+}
 
 export type ThemePreference = "light" | "dark" | "system";
 export type Direction = "ltr" | "rtl";
@@ -26,6 +42,9 @@ export interface Theme {
   colors: SemanticColors;
   reliability: Record<ReliabilityStatus, ReliabilityToken>;
   elevation: (level: ElevationLevel) => ViewStyle;
+  /** Scheme-resolved sport colors (tint/text switch between light and dark). */
+  sport: (key: SportKey) => ResolvedSport;
+  gradients: typeof gradients;
   tokens: typeof tokens;
   direction: Direction;
   isRTL: boolean;
@@ -35,8 +54,10 @@ export interface Theme {
   reducedMotion: boolean;
   /** Font family for the current locale (falls back to system fonts until loaded on native). */
   fontFamily: (weight?: FontWeightKey, script?: Script) => string | undefined;
-  /** Whether `fontWeight` must be set (web, system fonts) or is baked into the family (native Noto). */
+  /** Whether `fontWeight` is baked into the family (registered per-weight faces) instead of set separately. */
   usesWeightedFamilies: boolean;
+  /** True when the v2 brand fonts (Rubik + script fallbacks from `fontAssets`) are registered. */
+  brandFonts: boolean;
   setPreference: (p: ThemePreference) => void;
 }
 
@@ -52,8 +73,13 @@ export interface ThemeProviderProps {
   locale?: string;
   /** Layout direction. Defaults to I18nManager.isRTL on native, or the locale on web. */
   direction?: Direction;
-  /** Native only: set true once Noto fonts are loaded via expo-font; until then system fonts are used. */
+  /**
+   * @deprecated v1: native Noto fonts loaded by the app's own loader. Use `brandFonts`.
+   * Native only: true once Noto fonts are loaded via expo-font; until then system fonts are used.
+   */
   fontsLoaded?: boolean;
+  /** v2: true once `useAppFonts(locale)` (Rubik + script fallback) has loaded. Web and native. */
+  brandFonts?: boolean;
   /** Wraps children in a View with `direction` so logical styles resolve (default true). */
   applyDirection?: boolean;
 }
@@ -65,6 +91,7 @@ export function ThemeProvider({
   locale = "en",
   direction,
   fontsLoaded = false,
+  brandFonts = false,
   applyDirection = true,
 }: ThemeProviderProps) {
   const system = useColorScheme();
@@ -109,29 +136,34 @@ export function ThemeProvider({
 
   const theme = useMemo<Theme>(() => {
     const isWeb = Platform.OS === "web";
-    const useNoto = isWeb || fontsLoaded;
+    const fontFamily = (weight: FontWeightKey = "regular", s: Script = script): string | undefined => {
+      if (brandFonts && bundledScripts.includes(s)) {
+        return fontFamilyForScript(s, { weight, platform: isWeb ? "web" : "native", registered: true });
+      }
+      if (isWeb) return fontFamilyForScript(s, { weight, platform: "web" });
+      if (fontsLoaded && bundledScripts.includes(s)) return fontFamilyForScript(s, { weight, legacy: true });
+      return undefined;
+    };
     return {
       preference,
       scheme,
       colors: colorSets[scheme],
       reliability: reliabilitySets[scheme],
-      elevation: (level: ElevationLevel): ViewStyle => {
-        const e = elevationSets[scheme][level];
-        if (level === 0) return {};
-        return { boxShadow: e.boxShadow, backgroundColor: colorSets[scheme][e.surface], zIndex: e.zIndex };
-      },
+      elevation: (level: ElevationLevel): ViewStyle => elevationStyle(scheme, level),
+      sport: (key: SportKey) => resolveSport(scheme, key),
+      gradients,
       tokens,
       direction: resolvedDirection,
       isRTL: resolvedDirection === "rtl",
       locale,
       script,
       reducedMotion,
-      fontFamily: (weight: FontWeightKey = "regular", s: Script = script) =>
-        useNoto ? fontFamilyForScript(s, { weight, platform: isWeb ? "web" : "native" }) : undefined,
-      usesWeightedFamilies: !isWeb && fontsLoaded,
+      fontFamily,
+      usesWeightedFamilies: brandFonts || (!isWeb && fontsLoaded),
+      brandFonts,
       setPreference,
     };
-  }, [preference, scheme, resolvedDirection, locale, script, reducedMotion, fontsLoaded, setPreference]);
+  }, [preference, scheme, resolvedDirection, locale, script, reducedMotion, fontsLoaded, brandFonts, setPreference]);
 
   return (
     <ThemeContext.Provider value={theme}>
@@ -157,8 +189,9 @@ const fallbackTheme: Theme = {
   scheme: "light",
   colors: colorSets.light,
   reliability: reliabilitySets.light,
-  elevation: (level) =>
-    level === 0 ? {} : { boxShadow: elevationSets.light[level].boxShadow, backgroundColor: colorSets.light.surface },
+  elevation: (level) => elevationStyle("light", level),
+  sport: (key) => resolveSport("light", key),
+  gradients,
   tokens,
   direction: "ltr",
   isRTL: false,
@@ -167,8 +200,33 @@ const fallbackTheme: Theme = {
   reducedMotion: false,
   fontFamily: () => undefined,
   usesWeightedFamilies: false,
+  brandFonts: false,
   setPreference: () => undefined,
 };
+
+function elevationStyle(scheme: ColorScheme, level: ElevationLevel): ViewStyle {
+  if (level === 0) return {};
+  const e = elevationSets[scheme][level];
+  const c = colorSets[scheme];
+  return {
+    ...(e.boxShadow !== "none" ? { boxShadow: e.boxShadow } : null),
+    backgroundColor: c[e.surface],
+    ...(e.border ? { borderWidth: 1, borderColor: c[e.border] } : null),
+    zIndex: e.zIndex,
+  };
+}
+
+function resolveSport(scheme: ColorScheme, key: SportKey): ResolvedSport {
+  const t = sportColors[key];
+  return {
+    key,
+    color: t.color,
+    on: t.on,
+    gradient: t.gradient,
+    text: scheme === "dark" ? t.textDark : t.text,
+    tint: scheme === "dark" ? t.tintDark : t.tint,
+  };
+}
 
 /** Style that mirrors a directional glyph (back arrow, chevron, progress) in RTL. */
 export function useMirrorStyle(): ViewStyle | undefined {

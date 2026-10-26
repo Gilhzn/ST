@@ -3,16 +3,18 @@ import { Platform, Text as RNText, type TextProps as RNTextProps, type TextStyle
 
 import { typeStyleFor, type Script } from "../fonts";
 import { useTheme } from "../theme";
-import { fontWeights, type ColorToken, type TextVariant } from "../tokens";
+import { fontWeights, type ColorToken, type FontWeightKey, type TextVariant } from "../tokens";
 
 export interface TextProps extends RNTextProps {
   variant?: TextVariant;
-  /** Semantic color token (default `text`). */
-  color?: ColorToken;
+  /** Semantic color token (default `text`) or a raw color (sport text, text on media). */
+  color?: ColorToken | (string & {});
   /** Override script (e.g. user content in another script; see `detectScript`). */
   script?: Script;
   /** Paragraph alignment. "start" follows the layout direction. Physical sides are not offered. */
   align?: "start" | "center";
+  /** Override the variant's weight (e.g. a bold caption). Uses the matching registered face. */
+  weight?: FontWeightKey;
 }
 
 /**
@@ -24,6 +26,7 @@ export function Text({
   color = "text",
   script,
   align,
+  weight,
   style,
   role,
   maxFontSizeMultiplier,
@@ -33,17 +36,19 @@ export function Text({
   const theme = useTheme();
   const s = script ?? theme.script;
   const t = typeStyleFor(variant, s);
-  const family = theme.fontFamily(t.weight, s);
-  const isHeading = variant === "display" || variant.startsWith("title");
+  const w = weight ?? t.weight;
+  const family = theme.fontFamily(w, s);
+  const isHeading = variant === "display" || variant === "largeTitle" || variant.startsWith("title");
 
   const base: TextStyle = {
-    color: theme.colors[color],
+    color: color in theme.colors ? theme.colors[color as ColorToken] : color,
     fontSize: t.fontSize,
     lineHeight: t.lineHeight,
     letterSpacing: t.letterSpacing,
     ...(family ? { fontFamily: family } : null),
-    // Native Noto families embed the weight; setting fontWeight too makes Android synthesize bold.
-    ...(theme.usesWeightedFamilies ? null : { fontWeight: fontWeights[t.weight] }),
+    // Registered per-weight faces (Rubik_700Bold) embed the weight; setting fontWeight too
+    // makes Android / browsers synthesize a fake bold on top.
+    ...(family && theme.usesWeightedFamilies ? null : { fontWeight: fontWeights[w] }),
     ...(t.uppercase ? { textTransform: "uppercase" } : null),
     ...(t.tabularNums ? { fontVariant: ["tabular-nums"] } : null),
     ...(Platform.OS === "android" ? { includeFontPadding: t.includeFontPadding } : null),
@@ -53,6 +58,10 @@ export function Text({
   return (
     <RNText
       ref={ref}
+      // Web: react-native-web defaults Text to dir="auto", which left-aligns Latin/numeric UI
+      // strings ("19:05", "7/10") inside an RTL layout. UI strings follow the UI direction;
+      // user content uses BidiText, which passes its own `dir` (spread below wins).
+      {...(Platform.OS === "web" ? ({ dir: theme.direction } as object) : null)}
       role={role ?? (isHeading ? "heading" : undefined)}
       maxFontSizeMultiplier={maxFontSizeMultiplier ?? t.maxFontSizeMultiplier}
       style={[base, style]}

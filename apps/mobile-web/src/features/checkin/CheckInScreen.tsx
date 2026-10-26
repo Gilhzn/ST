@@ -214,7 +214,7 @@ export function CheckInScreen({ gameId }: { gameId: string }) {
                   </ProgressRing>
                   <Row gap="xs" accessibilityElementsHidden importantForAccessibility="no-hide-descendants">
                     {Array.from({ length: SAMPLE_COUNT }, (_, i) => (
-                      <Icon key={i} name={i < samples.length ? 'circle' : 'circle-outline'} size={12} color={i < samples.length ? 'primary' : 'textTertiary'} />
+                      <Icon key={i} name="Circle" weight={i < samples.length ? 'fill' : 'regular'} size={12} color={i < samples.length ? 'primary' : 'textTertiary'} />
                     ))}
                   </Row>
                   <Text variant="callout" color="textSecondary" accessibilityLiveRegion="polite" testID="checkin.gps.progress">

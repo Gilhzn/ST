@@ -42,11 +42,14 @@ export function BidiText({
   const resolved = direction === "auto" ? detectDirection(clean, theme.direction) : direction;
   const contentScript = script ?? (detectFont ? (detectScript(clean, theme.locale) ?? undefined) : undefined);
   const content = mode === "inline" ? isolate(clean, direction) : clean;
-  const webDir =
-    Platform.OS === "web" ? ({ dir: mode === "inline" && direction === "auto" ? "auto" : resolved } as object) : null;
+  // inline: the content is already FSI/LRI-isolated, so the paragraph keeps the UI direction
+  // (an English venue name in a Hebrew card aligns to the UI start edge, punctuation stays put).
+  // block: the paragraph takes the content's own direction (chat bubbles).
+  const paragraphDir = mode === "inline" ? theme.direction : resolved;
+  const webDir = Platform.OS === "web" ? ({ dir: paragraphDir } as object) : null;
 
   return (
-    <Text ref={ref} script={contentScript} style={[{ writingDirection: resolved }, style]} {...webDir} {...rest}>
+    <Text ref={ref} script={contentScript} style={[{ writingDirection: paragraphDir }, style]} {...webDir} {...rest}>
       {content}
     </Text>
   );

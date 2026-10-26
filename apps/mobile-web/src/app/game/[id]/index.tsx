@@ -253,7 +253,7 @@ export default function GameDetailsScreen() {
             <Text variant="label" color="textSecondary">
               {sport}
             </Text>
-            {live ? <Tag label={t('map:card.live')} tone="info" icon="broadcast" /> : null}
+            {live ? <Tag label={t('map:card.live')} tone="info" icon="Broadcast" /> : null}
           </Row>
           <BidiText variant="title1" accessibilityRole="header" testID="game.title">
             {g.title}

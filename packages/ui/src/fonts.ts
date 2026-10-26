@@ -1,11 +1,15 @@
 /**
- * Per-script font stacks and typographic adjustments.
+ * Per-script font stacks and typographic adjustments (Design Language v2).
  * Pure (no react-native import) so it is testable in Node.
+ *
+ * Brand face: Rubik (Latin, Cyrillic, Hebrew), weights 400/500/600/700/800.
+ * Script fallbacks: Noto Sans Arabic, Noto Sans Devanagari, Noto Sans SC/TC/JP.
  *
  * Native: `fontFamily` must be ONE registered family name (no fallback stacks), so we
  * expose the @expo-google-fonts registration names per weight. Native text engines
  * (CoreText / Minikin) still fall back per glyph to system fonts for mixed-script text.
- * Web: a CSS stack with the locale font first (Latin first for CJK).
+ * Web: a CSS stack with Rubik first, then the script family, then system fonts.
+ * The font files themselves are listed in `fontAssets.ts` (RN-only module).
  */
 import { typography, type FontWeightKey, type TextVariant, type TypeSpec } from "./tokens";
 
@@ -135,20 +139,109 @@ export interface FontStack {
   expoPackage: string;
   /** Registration names per weight (as exported by @expo-google-fonts/*). */
   native: Record<FontWeightKey, string>;
-  /** CSS font-family stack for react-native-web. */
+  /** CSS font-family stack for react-native-web when brand fonts are NOT registered (Google Fonts / system). */
   web: string;
 }
 
+const WEIGHT_SUFFIX: Record<FontWeightKey, string> = {
+  regular: "400Regular",
+  medium: "500Medium",
+  semibold: "600SemiBold",
+  bold: "700Bold",
+  heavy: "800ExtraBold",
+};
+
 const nativeNames = (prefix: string): Record<FontWeightKey, string> => ({
-  regular: `${prefix}_400Regular`,
-  medium: `${prefix}_500Medium`,
-  semibold: `${prefix}_600SemiBold`,
-  bold: `${prefix}_700Bold`,
+  regular: `${prefix}_${WEIGHT_SUFFIX.regular}`,
+  medium: `${prefix}_${WEIGHT_SUFFIX.medium}`,
+  semibold: `${prefix}_${WEIGHT_SUFFIX.semibold}`,
+  bold: `${prefix}_${WEIGHT_SUFFIX.bold}`,
+  heavy: `${prefix}_${WEIGHT_SUFFIX.heavy}`,
 });
 
 const SYSTEM_TAIL = 'system-ui, -apple-system, "Segoe UI", Roboto, sans-serif';
 
+/** Rubik: the v2 brand face. Covers Latin, Latin-Ext, Cyrillic and Hebrew. */
+export const brandFont: FontStack = {
+  family: "Rubik",
+  expoPackage: "@expo-google-fonts/rubik",
+  native: nativeNames("Rubik"),
+  web: `"Rubik", ${SYSTEM_TAIL}`,
+};
+
+const RUBIK_WEB = '"Rubik"';
+
+/**
+ * v2 per-script stacks. Latin/Cyrillic and Hebrew use Rubik; Arabic, Devanagari and CJK use
+ * the matching Noto family (Rubik has no glyphs for them). On web the Rubik face is listed first
+ * so Latin runs inside Arabic/CJK text still render in the brand face (per-glyph fallback).
+ */
 export const fontStacks: Record<Script, FontStack> = {
+  latin: brandFont,
+  hebrew: { ...brandFont, web: `"Rubik", "Noto Sans Hebrew", Arial, ${SYSTEM_TAIL}` },
+  arabic: {
+    family: "Noto Sans Arabic",
+    expoPackage: "@expo-google-fonts/noto-sans-arabic",
+    native: nativeNames("NotoSansArabic"),
+    web: `${RUBIK_WEB}, "Noto Sans Arabic", Tahoma, ${SYSTEM_TAIL}`,
+  },
+  devanagari: {
+    family: "Noto Sans Devanagari",
+    expoPackage: "@expo-google-fonts/noto-sans-devanagari",
+    native: nativeNames("NotoSansDevanagari"),
+    web: `${RUBIK_WEB}, "Noto Sans Devanagari", "Nirmala UI", "Kohinoor Devanagari", ${SYSTEM_TAIL}`,
+  },
+  sc: {
+    family: "Noto Sans SC",
+    expoPackage: "@expo-google-fonts/noto-sans-sc",
+    native: nativeNames("NotoSansSC"),
+    web: `${RUBIK_WEB}, "Noto Sans SC", "PingFang SC", "Microsoft YaHei", ${SYSTEM_TAIL}`,
+  },
+  tc: {
+    family: "Noto Sans TC",
+    expoPackage: "@expo-google-fonts/noto-sans-tc",
+    native: nativeNames("NotoSansTC"),
+    web: `${RUBIK_WEB}, "Noto Sans TC", "PingFang TC", "Microsoft JhengHei", ${SYSTEM_TAIL}`,
+  },
+  jp: {
+    family: "Noto Sans JP",
+    expoPackage: "@expo-google-fonts/noto-sans-jp",
+    native: nativeNames("NotoSansJP"),
+    web: `${RUBIK_WEB}, "Noto Sans JP", "Hiragino Sans", "Yu Gothic UI", Meiryo, ${SYSTEM_TAIL}`,
+  },
+};
+
+/** Scripts whose font files ship in the app via `fontAssets` (CJK stays on system fonts / lazy CDN). */
+export const bundledScripts: readonly Script[] = ["latin", "hebrew", "arabic", "devanagari"];
+
+/** Font groups the app registers with expo-font (`fontAssets` in fontAssets.ts mirrors these names). */
+export type FontGroup = "rubik" | "arabic" | "devanagari";
+const GROUP_PREFIX: Record<FontGroup, string> = { rubik: "Rubik", arabic: "NotoSansArabic", devanagari: "NotoSansDevanagari" };
+export const fontGroupPackages: Record<FontGroup, string> = {
+  rubik: "@expo-google-fonts/rubik",
+  arabic: "@expo-google-fonts/noto-sans-arabic",
+  devanagari: "@expo-google-fonts/noto-sans-devanagari",
+};
+const WEIGHT_KEYS: FontWeightKey[] = ["regular", "medium", "semibold", "bold", "heavy"];
+
+/** Registration names per group, e.g. rubik → ["Rubik_400Regular", …, "Rubik_800ExtraBold"]. */
+export const fontAssetNames: Record<FontGroup, string[]> = {
+  rubik: WEIGHT_KEYS.map((w) => `${GROUP_PREFIX.rubik}_${WEIGHT_SUFFIX[w]}`),
+  arabic: WEIGHT_KEYS.map((w) => `${GROUP_PREFIX.arabic}_${WEIGHT_SUFFIX[w]}`),
+  devanagari: WEIGHT_KEYS.map((w) => `${GROUP_PREFIX.devanagari}_${WEIGHT_SUFFIX[w]}`),
+};
+
+/** Which font groups a locale needs (Rubik always: Latin runs, digits and brand UI). */
+export function fontGroupsForLocale(locale: string | undefined | null): FontGroup[] {
+  const s = scriptForLocale(locale);
+  if (s === "arabic") return ["rubik", "arabic"];
+  if (s === "devanagari") return ["rubik", "devanagari"];
+  return ["rubik"];
+}
+
+/** @deprecated v1 Noto-only stacks (kept for apps that still load Noto Sans for Latin). */
+export const legacyFontStacks: Record<Script, FontStack> = {
+  ...fontStacks,
   latin: {
     family: "Noto Sans",
     expoPackage: "@expo-google-fonts/noto-sans",
@@ -160,36 +253,6 @@ export const fontStacks: Record<Script, FontStack> = {
     expoPackage: "@expo-google-fonts/noto-sans-hebrew",
     native: nativeNames("NotoSansHebrew"),
     web: `"Noto Sans Hebrew", "Noto Sans", Arial, ${SYSTEM_TAIL}`,
-  },
-  arabic: {
-    family: "Noto Sans Arabic",
-    expoPackage: "@expo-google-fonts/noto-sans-arabic",
-    native: nativeNames("NotoSansArabic"),
-    web: `"Noto Sans Arabic", "Noto Sans", Tahoma, ${SYSTEM_TAIL}`,
-  },
-  devanagari: {
-    family: "Noto Sans Devanagari",
-    expoPackage: "@expo-google-fonts/noto-sans-devanagari",
-    native: nativeNames("NotoSansDevanagari"),
-    web: `"Noto Sans Devanagari", "Noto Sans", "Nirmala UI", "Kohinoor Devanagari", ${SYSTEM_TAIL}`,
-  },
-  sc: {
-    family: "Noto Sans SC",
-    expoPackage: "@expo-google-fonts/noto-sans-sc",
-    native: nativeNames("NotoSansSC"),
-    web: `"Noto Sans", "Noto Sans SC", "PingFang SC", "Microsoft YaHei", ${SYSTEM_TAIL}`,
-  },
-  tc: {
-    family: "Noto Sans TC",
-    expoPackage: "@expo-google-fonts/noto-sans-tc",
-    native: nativeNames("NotoSansTC"),
-    web: `"Noto Sans", "Noto Sans TC", "PingFang TC", "Microsoft JhengHei", ${SYSTEM_TAIL}`,
-  },
-  jp: {
-    family: "Noto Sans JP",
-    expoPackage: "@expo-google-fonts/noto-sans-jp",
-    native: nativeNames("NotoSansJP"),
-    web: `"Noto Sans", "Noto Sans JP", "Hiragino Sans", "Yu Gothic UI", Meiryo, ${SYSTEM_TAIL}`,
   },
 };
 
@@ -232,22 +295,34 @@ export function isRtlLocale(locale: string | undefined | null): boolean {
 export interface FontFamilyOptions {
   weight?: FontWeightKey;
   platform?: "web" | "native";
+  /**
+   * Web only: the weighted faces are registered with expo-font (`fontAssets`), so the stack
+   * starts with the per-weight family (`Rubik_700Bold`) and `fontWeight` must NOT be set.
+   */
+  registered?: boolean;
+  /** Use the v1 Noto mapping (apps that have not migrated their font loader yet). */
+  legacy?: boolean;
 }
 
 /**
  * The font family string for a locale.
- * - web: CSS stack (`"Noto Sans Hebrew", "Noto Sans", …`)
- * - native: registered family for the weight (`NotoSansHebrew_700Bold`)
+ * - native: registered family for the weight (`Rubik_700Bold`, `NotoSansArabic_700Bold`)
+ * - web: CSS stack (`"Rubik", …`); with `registered`, the per-weight faces come first.
  */
 export function fontFamilyForLocale(locale: string | undefined | null, opts: FontFamilyOptions = {}): string {
   return fontFamilyForScript(scriptForLocale(locale), opts);
 }
 
 export function fontFamilyForScript(script: Script, opts: FontFamilyOptions = {}): string {
-  const stack = fontStacks[script];
+  const stacks = opts.legacy ? legacyFontStacks : fontStacks;
+  const stack = stacks[script];
+  const weight = opts.weight ?? "regular";
   const platform = opts.platform ?? "native";
-  if (platform === "web") return stack.web;
-  return stack.native[opts.weight ?? "regular"];
+  if (platform === "native") return stack.native[weight];
+  if (!opts.registered) return stack.web;
+  const rubik = brandFont.native[weight];
+  const scriptFace = script === "latin" || script === "hebrew" ? null : stack.native[weight];
+  return [rubik, scriptFace, stack.web].filter(Boolean).join(", ");
 }
 
 /**
@@ -313,15 +388,15 @@ export function typeStyleFor(variant: TextVariant, script: Script): ResolvedType
   };
 }
 
-/** All font packages the app must load (native) — for the app dev's font loader. */
+/** All font packages the app loads natively (v2: Rubik + script fallbacks). */
 export function requiredFontPackages(): string[] {
-  return Object.values(fontStacks).map((s) => s.expoPackage);
+  return Array.from(new Set(Object.values(fontStacks).map((s) => s.expoPackage)));
 }
 
 /** Google Fonts CSS2 URL for the web shell (`display=swap`; browser subsets via unicode-range). */
 export function googleFontsCssUrl(scripts: Script[] = ["latin"]): string {
-  const families = Array.from(new Set(scripts.map((s) => fontStacks[s].family)))
-    .map((f) => `family=${f.replace(/ /g, "+")}:wght@400;500;600;700`)
+  const families = Array.from(new Set(["Rubik", ...scripts.map((s) => fontStacks[s].family)]))
+    .map((f) => `family=${f.replace(/ /g, "+")}:wght@400;500;600;700;800`)
     .join("&");
   return `https://fonts.googleapis.com/css2?${families}&display=swap`;
 }
