@@ -2,3 +2,4 @@
 _shared/domain.mjs
 _shared/payments.mjs
 _shared/notifications.json
+_shared/invite-copy.json

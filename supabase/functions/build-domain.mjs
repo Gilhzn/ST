@@ -5,7 +5,8 @@
  * 1. Bundles @st/domain → _shared/domain.mjs and @st/payments → _shared/payments.mjs
  *    (plain ESM; payments keeps `@st/domain` external so both share one copy).
  * 2. Collects packages/i18n/locales/<locale>/notifications.json → _shared/notifications.json
- *    (push-dispatch renders push copy in the recipient's locale).
+ *    (push-dispatch renders push copy in the recipient's locale) and the invite preview copy
+ *    (common:sports, games:invite, invite:preview) → _shared/invite-copy.json (invite-preview).
  * 3. Writes import_map.json mapping every bare specifier the sources use
  *    (`@st/domain`, `@st/payments`, `#shared/*`, `#fn/*`) to files, so Deno
  *    resolves exactly what Node/tsc resolve through package.json "imports".
@@ -93,5 +94,25 @@ if (existsSync(localesDir)) {
 }
 if (!catalogs.en) console.warn('warning: no en notifications catalog found; push copy will use generic text');
 writeFileSync(join(shared, 'notifications.json'), `${JSON.stringify(catalogs)}\n`);
+
+// Invite rich-preview copy (invite-preview): common:sports, games:invite and the optional invite:preview.
+const readJson = (file) => (existsSync(file) ? JSON.parse(readFileSync(file, 'utf8')) : null);
+const inviteCopy = {};
+if (existsSync(localesDir)) {
+  for (const locale of readdirSync(localesDir).sort()) {
+    const dir = join(localesDir, locale);
+    if (!statSync(dir).isDirectory()) continue;
+    const entry = {
+      sports: readJson(join(dir, 'common.json'))?.sports,
+      invite: readJson(join(dir, 'games.json'))?.invite,
+      preview: readJson(join(dir, 'invite.json'))?.preview,
+    };
+    const kept = Object.fromEntries(Object.entries(entry).filter(([, v]) => v && typeof v === 'object'));
+    if (Object.keys(kept).length > 0) inviteCopy[locale] = kept;
+  }
+}
+writeFileSync(join(shared, 'invite-copy.json'), `${JSON.stringify(inviteCopy)}\n`);
 writeFileSync(mapPath, mapText);
-console.log(`built domain.mjs, payments.mjs, notifications.json (${Object.keys(catalogs).length} locales), import_map.json`);
+console.log(
+  `built domain.mjs, payments.mjs, notifications.json (${Object.keys(catalogs).length} locales), invite-copy.json (${Object.keys(inviteCopy).length} locales), import_map.json`,
+);

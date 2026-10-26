@@ -26,6 +26,8 @@ export const HTTP_STATUS: Readonly<Record<ErrorCode, number>> = {
   game_full: 409,
   game_not_open: 409,
   outside_window: 409,
+  /** Contract v3: joining a series occurrence inside its roster-only window. */
+  roster_priority: 409,
   too_many_sports: 400,
   invalid_radius: 400,
   dispute_window_closed: 409,

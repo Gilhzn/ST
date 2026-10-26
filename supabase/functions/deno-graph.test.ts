@@ -40,22 +40,27 @@ const denoResolver: Plugin = {
   },
 };
 
-/** Stands in for the generated notifications.json when build-domain.mjs has not run. */
+/** Stands in for the generated catalogs (notifications.json, invite-copy.json) when build-domain.mjs has not run. */
 const catalogStub: Plugin = {
   name: 'catalog-stub',
   setup(b) {
-    b.onResolve({ filter: /notifications\.json$/ }, () => ({ path: 'notifications.json', namespace: 'stub' }));
+    b.onResolve({ filter: /(notifications|invite-copy)\.json$/ }, (args) => ({ path: args.path, namespace: 'stub' }));
     b.onLoad({ filter: /.*/, namespace: 'stub' }, () => ({ contents: '{}', loader: 'json' }));
   },
 };
 
 describe('Deno module graph', () => {
   it('has functions', () => {
-    expect(functions).toEqual(expect.arrayContaining(['send-message', 'translate-message', 'checkin-verify', 'trust-evaluate', 'create-deposit', 'payments-webhook', 'settle-deposits', 'delete-account', 'push-dispatch']));
+    expect(functions).toEqual(
+      expect.arrayContaining([
+        'send-message', 'translate-message', 'checkin-verify', 'trust-evaluate', 'create-deposit', 'payments-webhook', 'settle-deposits', 'delete-account', 'push-dispatch',
+        'media-upload', 'media-process', 'media-purge', 'rating-period', 'series-jobs', 'invite-preview',
+      ]),
+    );
   });
 
   it.each(functions)('%s/index.ts resolves with import_map.json', async (fn) => {
-    const notifications = join(here, '_shared/notifications.json');
+    const generated = existsSync(join(here, '_shared/notifications.json')) && existsSync(join(here, '_shared/invite-copy.json'));
     const result = await build({
       entryPoints: [join(here, fn, 'index.ts')],
       bundle: true,
@@ -63,7 +68,7 @@ describe('Deno module graph', () => {
       format: 'esm',
       platform: 'neutral',
       logLevel: 'silent',
-      plugins: existsSync(notifications) ? [denoResolver] : [denoResolver, catalogStub],
+      plugins: generated ? [denoResolver] : [denoResolver, catalogStub],
     });
     expect(result.errors).toEqual([]);
   });
