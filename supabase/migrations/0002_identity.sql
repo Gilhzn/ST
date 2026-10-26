@@ -172,6 +172,16 @@ as $$
            or coalesce(p.visibility_restricted_until > public.st_now(), false)))
 $$;
 
+-- Caller-relative wrappers: the only helpers granted to clients (policies and views use them),
+-- so a client cannot probe block/role relations between arbitrary users.
+create function public.st_am_moderator() returns boolean
+language sql stable security definer set search_path = ''
+as $$ select public.st_is_moderator(auth.uid()) $$;
+
+create function public.st_my_blocked(p_other uuid) returns boolean
+language sql stable security definer set search_path = ''
+as $$ select public.st_is_blocked(p_other, auth.uid()) $$;
+
 -- Public card of a user (DSA-safe: no private columns). Definer view with explicit row filters:
 -- hides deleted, blocked-pair and (to others) visibility-restricted users.
 create view public.public_profiles with (security_barrier = true) as
@@ -187,8 +197,8 @@ create view public.public_profiles with (security_barrier = true) as
     and p.deleted_at is null
     and (
       p.id = auth.uid()
-      or public.st_is_moderator()
-      or (not public.st_is_blocked(p.id, auth.uid())
+      or public.st_am_moderator()
+      or (not public.st_my_blocked(p.id)
           and not p.permanently_banned
           and not coalesce(p.visibility_restricted_until > public.st_now(), false))
     );

@@ -1,0 +1,70 @@
+{
+  "join_requested": {
+    "title": "新的加入申请",
+    "body": "{name}想加入《{gameTitle}》。请批准或拒绝这个申请。"
+  },
+  "join_approved": {
+    "title": "你已加入",
+    "body": "组织者已批准你参加 {time}的《{gameTitle}》。"
+  },
+  "join_rejected": {
+    "title": "申请未通过",
+    "body": "组织者未能接受你加入《{gameTitle}》的申请。地图上还有其他比赛在等你。"
+  },
+  "join_waitlisted": {
+    "title": "你已进入候补名单",
+    "body": "《{gameTitle}》已满员。你目前排在候补第 {position} 位，有空位时我们会通知你。"
+  },
+  "waitlist_promoted": {
+    "title": "有空位了",
+    "body": "你已加入 {time}的《{gameTitle}》。"
+  },
+  "participant_removed": {
+    "title": "你已被移出比赛",
+    "body": "组织者已将你移出《{gameTitle}》。打开比赛查看详情。"
+  },
+  "game_cancelled": {
+    "title": "比赛已取消",
+    "body": "组织者取消了 {time}的《{gameTitle}》。"
+  },
+  "game_reminder": {
+    "title": "比赛即将开始",
+    "body": "《{gameTitle}》将于 {time}开始。开赛前{minutes, plural, other {# 分钟}}开放签到。"
+  },
+  "checkin_open": {
+    "title": "现在可以签到",
+    "body": "到达后，请为《{gameTitle}》签到。"
+  },
+  "result_requested": {
+    "title": "比赛结果如何？",
+    "body": "请录入《{gameTitle}》的比分，还剩{hours, plural, other {# 小时}}。"
+  },
+  "sanction_issued": {
+    "title": "你的账号有新动态",
+    "body": "我们对你的账号作出了一项决定。请打开应用，查看发生了什么以及如何申诉。"
+  },
+  "sanction_decided": {
+    "title": "关于你账号的决定",
+    "body": "审核员已复核你的账号。请打开应用，查看决定及原因。"
+  },
+  "appeal_decided": {
+    "title": "你的申诉已有结果",
+    "body": "{outcome, select, overturned {我们已撤销原决定。请打开应用查看详情。} upheld {原决定维持不变。请打开应用查看原因。} other {请打开应用查看决定。}}"
+  },
+  "visibility_restricted": {
+    "title": "你的个人资料可见度降低",
+    "body": "未来{hours, plural, other {# 小时}}内，其他玩家较难看到你的个人资料。请打开应用查看原因。"
+  },
+  "chat_muted": {
+    "title": "聊天已暂停",
+    "body": "在 {time}之前你无法发送消息。请打开应用查看原因。"
+  },
+  "venue_hidden": {
+    "title": "有场地正在审核中",
+    "body": "在我们审核相关举报期间，{venueName}将被隐藏。"
+  },
+  "deposit_action_required": {
+    "title": "押金需要你处理",
+    "body": "我们需要你确认《{gameTitle}》的 {amount} 押金预授权。请打开应用继续。"
+  }
+}

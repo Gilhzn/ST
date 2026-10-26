@@ -1,0 +1,58 @@
+{
+  "title": "الملف الشخصي",
+  "edit": "تعديل الملف الشخصي",
+  "homeCity": "مدينة السكن: {city}",
+  "memberSince": "عضو منذ {date}",
+  "sportsTitle": "الرياضات",
+  "stats": {
+    "title": "الإحصاءات",
+    "gamesPlayed": "المباريات التي لُعبت",
+    "gamesHosted": "المباريات المستضافة",
+    "checkInRate": "نسبة تسجيل الحضور",
+    "favoriteVenue": "الملعب المفضل",
+    "none": "لا يوجد بعد"
+  },
+  "positions": {
+    "title": "المراكز",
+    "primary": "أساسي",
+    "secondary": "ثانوي",
+    "none": "لم تُحدَّد مراكز"
+  },
+  "history": {
+    "title": "السجل",
+    "empty": "لا توجد مباريات بعد. انضم إلى مباراة للبدء.",
+    "result": "النتيجة: {score}",
+    "noResult": "لا توجد نتيجة"
+  },
+  "reliabilityCard": {
+    "a11y": "بطاقة الموثوقية"
+  },
+  "other": {
+    "report": "الإبلاغ عن اللاعب",
+    "block": "حظر اللاعب",
+    "overflow": "خيارات إضافية",
+    "blocked": "لقد حظرت هذا اللاعب."
+  },
+  "report": {
+    "title": "الإبلاغ عن {name}",
+    "category": {
+      "violence": "عنف أو تهديدات",
+      "unsportsmanlike": "سلوك غير رياضي",
+      "harassment": "مضايقة",
+      "spam": "محتوى غير مرغوب فيه",
+      "other": "سبب آخر"
+    },
+    "noteLabel": "أضف تفاصيل (اختياري)",
+    "submit": "إرسال البلاغ",
+    "thanks": "شكرًا. سنراجع الأمر."
+  },
+  "editForm": {
+    "title": "تعديل الملف الشخصي",
+    "displayNameLabel": "الاسم المعروض",
+    "bioLabel": "نبذة عنك",
+    "bioHint": "اختياري. اكتب ما تحب لعبه.",
+    "changePhoto": "تغيير الصورة",
+    "removePhoto": "إزالة الصورة",
+    "saved": "تم حفظ الملف الشخصي."
+  }
+}

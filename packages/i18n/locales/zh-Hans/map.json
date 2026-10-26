@@ -1,0 +1,68 @@
+{
+  "search": {
+    "label": "搜索",
+    "placeholder": "城市、场地或地址"
+  },
+  "filters": {
+    "sports": "运动项目",
+    "limitHint": "最多可选择{max, plural, other {# 项运动}}。取消一个后才能再选其他。",
+    "limitToast": "请先取消一项运动，再添加其他。"
+  },
+  "radius": {
+    "label": "搜索半径",
+    "auto": "自动（GPS）",
+    "a11y": "搜索半径：{distance}"
+  },
+  "sheet": {
+    "title": "{count, plural, =0 {附近没有比赛} other {附近有 # 场比赛}}",
+    "sortLabel": "排序方式",
+    "sortSoonest": "最早开始",
+    "sortNearest": "距离最近",
+    "showList": "列表",
+    "showMap": "地图"
+  },
+  "card": {
+    "distanceAway": "距你 {distance}",
+    "players": "{joined}/{capacity} 名玩家",
+    "startsSoon": "即将开始",
+    "live": "进行中",
+    "badge": {
+      "deposit": "押金",
+      "womenOnly": "仅限女性",
+      "private": "私密",
+      "waitlist": "候补",
+      "full": "已满"
+    }
+  },
+  "cluster": {
+    "a11y": "{count, plural, other {# 场比赛}}：{sports}。双击放大。"
+  },
+  "venues": {
+    "sectionTitle": "暂无比赛的场地",
+    "startOne": "发起比赛",
+    "pinA11y": "{name}，场地"
+  },
+  "locate": {
+    "label": "显示我的位置"
+  },
+  "createGame": {
+    "fab": "创建比赛"
+  },
+  "empty": {
+    "title": "{distance}内没有{sports}比赛。",
+    "widen": "扩大到 {distance}",
+    "create": "创建比赛"
+  },
+  "locationDenied": {
+    "title": "位置服务已关闭",
+    "body": "请搜索城市或地址，查找你附近的比赛。",
+    "search": "搜索地点"
+  },
+  "error": {
+    "title": "无法加载比赛。",
+    "body": "请检查网络连接后重试。"
+  },
+  "offline": {
+    "cachedNote": "正在显示已保存的比赛。"
+  }
+}

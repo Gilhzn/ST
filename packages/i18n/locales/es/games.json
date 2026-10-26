@@ -1,0 +1,279 @@
+{
+  "venue": {
+    "sportsHere": "Deportes disponibles",
+    "directions": "Cómo llegar",
+    "overflow": "Más opciones",
+    "rating": {
+      "summary": "{rating} · {count, plural, one {# valoración} many {# de valoraciones} other {# valoraciones}}",
+      "none": "Aún no hay valoraciones",
+      "scoreOf5": "{score} de 5",
+      "title": "Valoraciones"
+    },
+    "attribute": {
+      "surface": "Superficie",
+      "lighting": "Iluminación",
+      "goals_nets": "Porterías y redes",
+      "hoops": "Aros",
+      "nets": "Redes",
+      "walls": "Paredes",
+      "water_access": "Acceso a agua",
+      "net": "Red"
+    },
+    "attributeValue": {
+      "natural_grass": "Césped natural",
+      "artificial_turf": "Césped artificial",
+      "hard": "Pista dura",
+      "indoor": "Cubierta",
+      "outdoor_hard": "Pista dura exterior",
+      "indoor_wood": "Parqué interior",
+      "rubber": "Caucho",
+      "clay": "Tierra batida",
+      "grass": "Césped",
+      "carpet": "Moqueta",
+      "glass": "Cristal",
+      "masonry": "Obra",
+      "track": "Pista de atletismo",
+      "road": "Carretera",
+      "trail": "Sendero",
+      "mixed": "Mixto",
+      "sand": "Arena"
+    },
+    "upcoming": "Próximos partidos aquí",
+    "noUpcoming": "Aún no hay partidos aquí.",
+    "startGame": "Crear un partido aquí",
+    "underReview": "Este lugar está en revisión.",
+    "rate": {
+      "cta": "Valorar este lugar",
+      "onlyAfterPlaying": "Puedes valorar un lugar después de haber jugado en él.",
+      "title": "Valorar {venue}",
+      "overall": "Valoración general",
+      "optionalHint": "Omite lo que no tengas claro.",
+      "submit": "Enviar valoración",
+      "thanks": "Gracias por valorar este lugar."
+    },
+    "report": {
+      "cta": "¿No hay ningún lugar aquí? Infórmanos.",
+      "title": "¿Qué le pasa a este lugar?",
+      "reason": {
+        "no_venue_here": "Aquí no hay ningún lugar",
+        "wrong_location": "La ubicación es incorrecta",
+        "closed": "Está cerrado",
+        "duplicate": "Aparece repetido",
+        "unsafe": "No es seguro",
+        "other": "Otro motivo"
+      },
+      "submit": "Enviar denuncia",
+      "thanks": "Gracias. Lo revisaremos. Un lugar se oculta mientras lo revisamos cuando {count, plural, one {# persona lo ha denunciado} many {# de personas lo han denunciado} other {# personas lo han denunciado}}.",
+      "done": "Ya has denunciado este lugar"
+    }
+  },
+  "wizard": {
+    "title": "Crear partido",
+    "stepOf": "Paso {current} de {total}",
+    "stepName": {
+      "sport": "Deporte",
+      "where": "Dónde",
+      "when": "Cuándo",
+      "who": "Quiénes",
+      "deposit": "Depósito"
+    },
+    "sport": {
+      "title": "¿Qué deporte?",
+      "gameTitleLabel": "Título del partido",
+      "gameTitleHint": "Opcional. Por ejemplo: «Fútbol del domingo».",
+      "formatTitle": "Formato",
+      "formatVs": "{a} contra {b}",
+      "singles": "Individuales",
+      "doubles": "Dobles",
+      "teamCount": "Número de equipos"
+    },
+    "where": {
+      "title": "¿Dónde vais a jugar?",
+      "search": "Busca un lugar o una dirección",
+      "pickOnMap": "Elegir en el mapa",
+      "dropPin": "Colocar un marcador",
+      "venueNameLabel": "Nombre del lugar",
+      "venueNameHint": "Ponle nombre al sitio para que los jugadores lo encuentren.",
+      "hideExactLabel": "Ocultar la ubicación exacta hasta que apruebe a los jugadores",
+      "hideExactHelp": "Los jugadores ven primero la zona. Compartes el punto exacto cuando los apruebas."
+    },
+    "when": {
+      "title": "¿Cuándo?",
+      "date": "Fecha",
+      "start": "Hora de inicio",
+      "duration": "Duración",
+      "repeatWeekly": "Repetir cada semana",
+      "comingSoon": "Próximamente"
+    },
+    "who": {
+      "title": "¿Quién puede unirse?",
+      "capacity": "Jugadores",
+      "capacityRange": "De {min} a {max} jugadores",
+      "visibility": "Visibilidad",
+      "public": "Público",
+      "publicHelp": "Cualquier persona cercana puede encontrar este partido.",
+      "private": "Privado",
+      "privateHelp": "Solo quien tenga tu enlace de invitación puede ver este partido.",
+      "womenOnly": "Solo mujeres",
+      "womenOnlyHelp": "Solo las mujeres pueden unirse a este partido.",
+      "minReliability": "Fiabilidad mínima",
+      "minAny": "Cualquiera",
+      "minCaution": "Precaución o mejor",
+      "minReliable": "Solo fiables",
+      "approval": "Unirse",
+      "approvalAuto": "Aprobar jugadores automáticamente",
+      "approvalManual": "Apruebo a cada jugador"
+    },
+    "deposit": {
+      "title": "Depósito (opcional)",
+      "toggle": "Pedir un depósito",
+      "amount": "Importe del depósito",
+      "explain": "Los jugadores hacen una retención reembolsable de {amount}. Se libera tras el check-in y se conserva si no se presentan.",
+      "currencyNote": "La moneda depende del país del lugar."
+    },
+    "review": {
+      "title": "Revisa tu partido",
+      "edit": "Editar",
+      "publish": "Publicar partido",
+      "publishing": "Publicando…",
+      "offlineHint": "Publícalo cuando vuelvas a tener conexión."
+    },
+    "published": {
+      "title": "Tu partido ya está publicado",
+      "shareTitle": "Comparte tu partido",
+      "whatsapp": "Compartir por WhatsApp",
+      "copyLink": "Copiar enlace",
+      "linkCopied": "Enlace copiado.",
+      "showQr": "Mostrar código QR"
+    },
+    "discard": {
+      "title": "¿Descartar el borrador?",
+      "body": "Perderás lo que has introducido hasta ahora.",
+      "keep": "Seguir editando",
+      "discard": "Descartar borrador",
+      "saved": "Borrador guardado en este dispositivo."
+    },
+    "validation": {
+      "sportRequired": "Elige un deporte.",
+      "venueRequired": "Elige un lugar o coloca un marcador.",
+      "startInPast": "Elige una hora de inicio futura.",
+      "capacityRange": "Elige entre {min} y {max} jugadores.",
+      "depositRange": "Introduce un importe entre {min} y {max}."
+    },
+    "hostSuspended": {
+      "title": "Ahora no puedes organizar partidos",
+      "body": "La organización está en pausa en tu cuenta. Consulta el motivo y cuándo termina.",
+      "action": "Ver detalles"
+    }
+  },
+  "details": {
+    "hiddenLocation": "El punto exacto se comparte cuando el organizador te apruebe",
+    "host": {
+      "approve": "Aprobar",
+      "reject": "Rechazar",
+      "rejectReasonLabel": "Motivo (opcional)",
+      "rejectTemplate": {
+        "full": "El partido está completo.",
+        "level": "Este partido no es el más adecuado.",
+        "unknown": "Todavía no te conozco. Escribe antes al grupo."
+      },
+      "pendingCount": "{count, plural, one {Tienes # solicitud pendiente} many {Tienes # de solicitudes pendientes} other {Tienes # solicitudes pendientes}}",
+      "edit": "Editar partido",
+      "cancelGame": "Cancelar partido",
+      "cancelReasonLabel": "Motivo",
+      "cancelHelp": "Se avisará a todos los que se hayan unido.",
+      "cancelConfirm": "Cancelar este partido",
+      "showQr": "Mostrar QR de check-in",
+      "teams": "Equipos",
+      "enterResult": "Introducir resultado"
+    },
+    "facts": {
+      "players": "{joined} de {capacity} jugadores",
+      "waitlist": "{count, plural, one {# jugador en lista de espera} many {# de jugadores en lista de espera} other {# jugadores en lista de espera}}",
+      "deposit": "Depósito de {amount}",
+      "womenOnly": "Solo mujeres",
+      "private": "Partido privado",
+      "format": "Formato: {format}"
+    },
+    "sections": {
+      "players": "Jugadores",
+      "requests": "Solicitudes",
+      "waitlist": "Lista de espera"
+    },
+    "noPlayersYet": "Aún no hay jugadores. Sé el primero en unirte.",
+    "action": {
+      "join": "Unirme al partido",
+      "request": "Solicitar unirme",
+      "joinWaitlist": "Unirme a la lista de espera · n.º {position}",
+      "cancelRequest": "Cancelar solicitud",
+      "waitingForHost": "Esperando al organizador",
+      "checkIn": "Hacer check-in",
+      "checkInOpens": "El check-in abre {time}",
+      "chat": "Chat",
+      "directions": "Cómo llegar",
+      "cantMakeIt": "No puedo ir",
+      "leaveWaitlist": "Salir de la lista de espera",
+      "waitlistPosition": "Eres el n.º {position} en la lista de espera."
+    },
+    "outcome": {
+      "joined": "Estás dentro. Nos vemos allí.",
+      "requestSent": "Solicitud enviada. El organizador responderá pronto.",
+      "waitlisted": "Estás en la lista de espera. Te avisaremos si se libera una plaza."
+    },
+    "cancel": {
+      "title": "¿Cancelar tu plaza?",
+      "lateWarning": "Cancelar con menos de {hours, plural, one {# hora} many {# de horas} other {# horas}} de antelación al inicio cuenta como cancelación tardía y te da una tarjeta amarilla.",
+      "freeUntil": "Puedes cancelar sin penalización hasta {time}.",
+      "confirm": "Cancelar mi plaza",
+      "keep": "Mantener mi plaza"
+    },
+    "deposit": {
+      "disclosure": "Retención de {amount} · se libera tras el check-in",
+      "sheetTitle": "Retención del depósito",
+      "body": "Retendremos {amount} en tu tarjeta el {time}. Se libera cuando hagas el check-in. Si no te presentas y no cancelas a tiempo, se conserva.",
+      "continue": "Continuar al pago",
+      "status": {
+        "held": "Retenido",
+        "released": "Liberado",
+        "forfeited": "Conservado",
+        "failed": "Retención fallida"
+      }
+    },
+    "banner": {
+      "cancelled": "Este partido se ha cancelado. Motivo: {reason}",
+      "cancelledNoReason": "Este partido se ha cancelado.",
+      "ended": "Este partido ha terminado.",
+      "rateHost": "Valorar al organizador"
+    }
+  },
+  "invite": {
+    "title": "Te han invitado",
+    "join": "Unirme",
+    "signUpToJoin": "Regístrate para unirte",
+    "expired": "Esta invitación ha caducado. Pide un enlace nuevo al organizador."
+  },
+  "teams": {
+    "title": "Equipos",
+    "empty": "Los equipos aparecen cuando los jugadores hacen el check-in.",
+    "teamName": "Equipo {letter}",
+    "balance": "Equilibrado · diferencia de nivel {diff}",
+    "coverage": "Cobertura de posiciones: {summary}",
+    "reshuffle": "Mezclar de nuevo",
+    "movePlayer": "Mover jugador",
+    "moveTo": "Mover al {team}",
+    "lock": "Bloquear equipos",
+    "locked": "Los equipos están bloqueados. Se ha avisado a los jugadores."
+  },
+  "result": {
+    "title": "Introducir resultado",
+    "window": "Puedes introducir el resultado durante {duration}.",
+    "scoreFor": "Resultado de {team}",
+    "increase": "Sumar uno a {team}",
+    "decrease": "Restar uno a {team}",
+    "mvpLabel": "Jugador más valioso (opcional)",
+    "didntPlay": "No jugamos",
+    "submit": "Guardar resultado",
+    "saved": "Resultado guardado. Los jugadores pueden impugnarlo durante {hours, plural, one {# hora} many {# de horas} other {# horas}}.",
+    "closed": "El plazo para el resultado terminó a las {time}."
+  }
+}

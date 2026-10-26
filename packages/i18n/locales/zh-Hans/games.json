@@ -1,0 +1,279 @@
+{
+  "venue": {
+    "sportsHere": "可玩项目",
+    "directions": "路线",
+    "overflow": "更多选项",
+    "rating": {
+      "summary": "{rating} · {count, plural, other {# 条评分}}",
+      "none": "暂无评分",
+      "scoreOf5": "{score} 分（满分 5 分）",
+      "title": "评分"
+    },
+    "attribute": {
+      "surface": "场地表面",
+      "lighting": "照明",
+      "goals_nets": "球门和球网",
+      "hoops": "篮筐",
+      "nets": "球网",
+      "walls": "围墙",
+      "water_access": "饮水便利度",
+      "net": "球网"
+    },
+    "attributeValue": {
+      "natural_grass": "天然草坪",
+      "artificial_turf": "人造草坪",
+      "hard": "硬地",
+      "indoor": "室内",
+      "outdoor_hard": "室外硬地",
+      "indoor_wood": "室内木地板",
+      "rubber": "橡胶",
+      "clay": "红土",
+      "grass": "草地",
+      "carpet": "地毯",
+      "glass": "玻璃",
+      "masonry": "砖石",
+      "track": "跑道",
+      "road": "公路",
+      "trail": "越野小径",
+      "mixed": "混合",
+      "sand": "沙地"
+    },
+    "upcoming": "此处即将开始的比赛",
+    "noUpcoming": "这里暂时没有比赛。",
+    "startGame": "在这里发起比赛",
+    "underReview": "此场地正在审核中。",
+    "rate": {
+      "cta": "为场地评分",
+      "onlyAfterPlaying": "在这里打过球之后才能评分。",
+      "title": "为{venue}评分",
+      "overall": "总体评分",
+      "optionalHint": "不确定的项目可以跳过。",
+      "submit": "提交评分",
+      "thanks": "感谢你为场地评分。"
+    },
+    "report": {
+      "cta": "这里没有场地？去举报。",
+      "title": "这个场地有什么问题？",
+      "reason": {
+        "no_venue_here": "这里没有场地",
+        "wrong_location": "位置不对",
+        "closed": "已关闭",
+        "duplicate": "重复收录",
+        "unsafe": "不安全",
+        "other": "其他原因"
+      },
+      "submit": "提交举报",
+      "thanks": "感谢你，我们会进行核实。当{count, plural, other {有 # 人}}举报某个场地后，该场地会在审核期间被隐藏。",
+      "done": "你已举报过此场地"
+    }
+  },
+  "wizard": {
+    "title": "创建比赛",
+    "stepOf": "第 {current} 步，共 {total} 步",
+    "stepName": {
+      "sport": "运动",
+      "where": "地点",
+      "when": "时间",
+      "who": "人员",
+      "deposit": "押金"
+    },
+    "sport": {
+      "title": "哪项运动？",
+      "gameTitleLabel": "比赛名称",
+      "gameTitleHint": "选填。例如“周日踢球”。",
+      "formatTitle": "赛制",
+      "formatVs": "{a} 对 {b}",
+      "singles": "单打",
+      "doubles": "双打",
+      "teamCount": "队伍数量"
+    },
+    "where": {
+      "title": "在哪里打？",
+      "search": "搜索场地或地址",
+      "pickOnMap": "在地图上选择",
+      "dropPin": "放置图钉",
+      "venueNameLabel": "场地名称",
+      "venueNameHint": "给这个地点起个名字，方便玩家找到。",
+      "hideExactLabel": "在我批准玩家之前隐藏确切位置",
+      "hideExactHelp": "玩家会先看到大致区域。你批准后，再分享确切地点。"
+    },
+    "when": {
+      "title": "什么时候？",
+      "date": "日期",
+      "start": "开始时间",
+      "duration": "时长",
+      "repeatWeekly": "每周重复",
+      "comingSoon": "即将推出"
+    },
+    "who": {
+      "title": "谁可以加入？",
+      "capacity": "玩家人数",
+      "capacityRange": "{min} 到 {max} 名玩家",
+      "visibility": "可见范围",
+      "public": "公开",
+      "publicHelp": "附近的任何人都能找到这场比赛。",
+      "private": "私密",
+      "privateHelp": "只有拿到邀请链接的人才能看到这场比赛。",
+      "womenOnly": "仅限女性",
+      "womenOnlyHelp": "只有女性可以加入这场比赛。",
+      "minReliability": "最低可靠度",
+      "minAny": "不限",
+      "minCaution": "“注意”及以上",
+      "minReliable": "仅限可靠玩家",
+      "approval": "加入方式",
+      "approvalAuto": "自动批准玩家",
+      "approvalManual": "我逐个批准"
+    },
+    "deposit": {
+      "title": "押金（选填）",
+      "toggle": "收取押金",
+      "amount": "押金金额",
+      "explain": "玩家会预授权 {amount} 的可退还押金。签到后释放，如果玩家爽约则会扣留。",
+      "currencyNote": "币种由场地所在国家或地区决定。"
+    },
+    "review": {
+      "title": "确认比赛信息",
+      "edit": "编辑",
+      "publish": "发布比赛",
+      "publishing": "正在发布…",
+      "offlineHint": "恢复网络后再发布。"
+    },
+    "published": {
+      "title": "你的比赛已发布",
+      "shareTitle": "分享你的比赛",
+      "whatsapp": "分享到 WhatsApp",
+      "copyLink": "复制链接",
+      "linkCopied": "链接已复制。",
+      "showQr": "显示二维码"
+    },
+    "discard": {
+      "title": "放弃草稿？",
+      "body": "你目前填写的内容将会丢失。",
+      "keep": "继续编辑",
+      "discard": "放弃草稿",
+      "saved": "草稿已保存在此设备上。"
+    },
+    "validation": {
+      "sportRequired": "请选择一项运动。",
+      "venueRequired": "请选择场地或放置图钉。",
+      "startInPast": "请选择一个未来的开始时间。",
+      "capacityRange": "请选择 {min} 到 {max} 名玩家。",
+      "depositRange": "请输入 {min} 到 {max} 之间的金额。"
+    },
+    "hostSuspended": {
+      "title": "你暂时无法组织比赛",
+      "body": "你的账号已暂停组织比赛。请查看原因和结束时间。",
+      "action": "查看详情"
+    }
+  },
+  "details": {
+    "hiddenLocation": "组织者批准你加入后，会分享确切地点",
+    "host": {
+      "approve": "批准",
+      "reject": "拒绝",
+      "rejectReasonLabel": "原因（选填）",
+      "rejectTemplate": {
+        "full": "比赛已满员。",
+        "level": "这场比赛可能不太适合你。",
+        "unknown": "我还不太了解你，请先在群里打个招呼。"
+      },
+      "pendingCount": "{count, plural, other {有 # 个申请等待你处理}}",
+      "edit": "编辑比赛",
+      "cancelGame": "取消比赛",
+      "cancelReasonLabel": "原因",
+      "cancelHelp": "所有已加入的玩家都会收到通知。",
+      "cancelConfirm": "取消这场比赛",
+      "showQr": "显示签到二维码",
+      "teams": "分队",
+      "enterResult": "录入比分"
+    },
+    "facts": {
+      "players": "{joined}/{capacity} 名玩家",
+      "waitlist": "{count, plural, other {候补 # 人}}",
+      "deposit": "押金 {amount}",
+      "womenOnly": "仅限女性",
+      "private": "私密比赛",
+      "format": "赛制：{format}"
+    },
+    "sections": {
+      "players": "玩家",
+      "requests": "申请",
+      "waitlist": "候补名单"
+    },
+    "noPlayersYet": "还没有玩家，来当第一个加入的人吧。",
+    "action": {
+      "join": "加入比赛",
+      "request": "申请加入",
+      "joinWaitlist": "加入候补 · 第 {position} 位",
+      "cancelRequest": "取消申请",
+      "waitingForHost": "等待组织者处理",
+      "checkIn": "签到",
+      "checkInOpens": "{time}开放签到",
+      "chat": "聊天",
+      "directions": "路线",
+      "cantMakeIt": "我去不了",
+      "leaveWaitlist": "退出候补",
+      "waitlistPosition": "你目前排在候补第 {position} 位。"
+    },
+    "outcome": {
+      "joined": "你已加入，到时见。",
+      "requestSent": "申请已发送，组织者很快会回复。",
+      "waitlisted": "你已进入候补名单，有空位时我们会通知你。"
+    },
+    "cancel": {
+      "title": "要取消你的名额吗？",
+      "lateWarning": "在开始前不到{hours, plural, other {# 小时}}取消，会被视为临时取消，并记一张黄牌。",
+      "freeUntil": "在 {time}前取消不会受到处罚。",
+      "confirm": "取消我的名额",
+      "keep": "保留我的名额"
+    },
+    "deposit": {
+      "disclosure": "预授权 {amount} · 签到后释放",
+      "sheetTitle": "押金预授权",
+      "body": "我们将在 {time}对你的银行卡预授权 {amount}。你签到后会释放。如果你没有到场，又没有及时取消，这笔款项将被扣留。",
+      "continue": "继续付款",
+      "status": {
+        "held": "已预授权",
+        "released": "已释放",
+        "forfeited": "已扣留",
+        "failed": "预授权失败"
+      }
+    },
+    "banner": {
+      "cancelled": "这场比赛已取消。原因：{reason}",
+      "cancelledNoReason": "这场比赛已取消。",
+      "ended": "这场比赛已结束。",
+      "rateHost": "为组织者评分"
+    }
+  },
+  "invite": {
+    "title": "你收到了邀请",
+    "join": "加入",
+    "signUpToJoin": "注册后加入",
+    "expired": "此邀请已过期，请向组织者索取新的链接。"
+  },
+  "teams": {
+    "title": "分队",
+    "empty": "玩家签到后会显示分队。",
+    "teamName": "{letter} 队",
+    "balance": "均衡 · 评分差 {diff}",
+    "coverage": "位置覆盖：{summary}",
+    "reshuffle": "重新分队",
+    "movePlayer": "调整玩家",
+    "moveTo": "移到{team}",
+    "lock": "锁定分队",
+    "locked": "分队已锁定，已通知玩家。"
+  },
+  "result": {
+    "title": "录入比分",
+    "window": "你还可以在{duration}内录入比分。",
+    "scoreFor": "{team}的得分",
+    "increase": "给{team}加 1 分",
+    "decrease": "给{team}减 1 分",
+    "mvpLabel": "最佳球员（选填）",
+    "didntPlay": "我们没有比赛",
+    "submit": "保存比分",
+    "saved": "比分已保存。玩家可以在{hours, plural, other {# 小时}}内提出异议。",
+    "closed": "录入比分的时间已于 {time}截止。"
+  }
+}

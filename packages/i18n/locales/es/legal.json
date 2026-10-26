@@ -1,0 +1,82 @@
+{
+  "title": "Información legal",
+  "lastUpdated": "Última actualización: {date}",
+  "placeholderNotice": "Esto es un borrador. Nuestro equipo jurídico revisará el texto final antes del lanzamiento.",
+  "privacy": {
+    "title": "Política de privacidad",
+    "intro": "Esta página explica qué información recoge Sport Talent, por qué la recoge y qué opciones tienes. La política completa se publicará aquí antes del lanzamiento.",
+    "collect": {
+      "title": "Qué recogemos",
+      "body": "Tu número de teléfono, tu mes y año de nacimiento, tu nombre visible, los partidos a los que te unes, los resultados de los check-ins y los mensajes de chat. La ubicación precisa solo se usa con la app abierta."
+    },
+    "use": {
+      "title": "Cómo la usamos",
+      "body": "Para mostrarte partidos cercanos, confirmar la asistencia, mantener segura la comunidad y enviarte las notificaciones que pides."
+    },
+    "share": {
+      "title": "Con quién la compartimos",
+      "body": "Otros jugadores ven tu nombre visible y tu fiabilidad. Los proveedores de servicios tratan datos por nuestra cuenta con un contrato. No vendemos tus datos personales."
+    },
+    "retention": {
+      "title": "Cuánto tiempo la conservamos",
+      "body": "Los mensajes de chat se eliminan poco después de que termine un partido. Los mensajes denunciados se conservan durante un tiempo limitado para su revisión. Puedes eliminar tu cuenta en cualquier momento."
+    },
+    "rights": {
+      "title": "Tus derechos",
+      "body": "Puedes acceder a tus datos, corregirlos, descargarlos o eliminarlos, y puedes oponerte a algunos usos. Contáctanos para ejercer estos derechos."
+    },
+    "age": {
+      "title": "Edad mínima",
+      "body": "Sport Talent es para personas de 16 años o más."
+    }
+  },
+  "terms": {
+    "title": "Condiciones del servicio",
+    "intro": "Estas condiciones explican cómo puedes usar Sport Talent. Las condiciones completas se publicarán aquí antes del lanzamiento.",
+    "account": {
+      "title": "Tu cuenta",
+      "body": "Debes tener 16 años o más. Mantén seguros tus datos de acceso y danos información veraz."
+    },
+    "conduct": {
+      "title": "Juego limpio y conducta",
+      "body": "Trata con respeto a los demás jugadores. Preséntate a los partidos a los que te unes o cancela con tiempo. No publiques nada ilegal, que incite al odio o que amenace."
+    },
+    "games": {
+      "title": "Partidos y lugares",
+      "body": "Los partidos los organizan los jugadores, no Sport Talent. Eres responsable de tu propia seguridad y de cumplir las normas de cada lugar."
+    },
+    "deposits": {
+      "title": "Depósitos",
+      "body": "Un organizador puede pedir un depósito reembolsable. Se libera tras tu check-in y puede conservarse si no te presentas y no cancelas a tiempo."
+    },
+    "sanctions": {
+      "title": "Avisos y restricciones",
+      "body": "Podemos advertir o restringir cuentas que incumplan estas condiciones. Explicamos cada decisión y puedes apelarla."
+    },
+    "changes": {
+      "title": "Cambios en estas condiciones",
+      "body": "Podemos actualizar estas condiciones. Te avisaremos de los cambios importantes."
+    }
+  },
+  "communityRules": {
+    "title": "Normas de la comunidad",
+    "intro": "Sport Talent funciona cuando todos se sienten bienvenidos. Estas normas se aplican a los chats, los perfiles y los partidos.",
+    "respect": "Sé respetuoso. Nada de acoso, odio ni amenazas.",
+    "safety": "Mantén la seguridad. Nada de violencia ni de compartir datos personales de otras personas.",
+    "honesty": "Sé honesto. Usa tus datos reales y añade solo lugares reales.",
+    "reliability": "Preséntate o cancela con tiempo.",
+    "content": "Nada de spam, publicidad ni contenido sexual."
+  },
+  "contact": {
+    "title": "Contacto",
+    "body": "¿Tienes preguntas, comentarios o una solicitud sobre tus datos? Escríbenos y te responderemos lo antes posible.",
+    "emailLabel": "Correo electrónico",
+    "email": "support@sporttalent.example",
+    "addressLabel": "Dirección de la empresa",
+    "address": "[Dirección de la empresa pendiente de añadir]"
+  },
+  "reportContent": {
+    "title": "Denunciar contenido ilegal",
+    "body": "Si ves contenido que crees que es ilegal, cuéntanos qué es y dónde está, y lo revisaremos."
+  }
+}

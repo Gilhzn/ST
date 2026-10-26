@@ -1,0 +1,117 @@
+{
+  "app": {
+    "name": "Sport Talent",
+    "tagline": "למצוא משחק. להגיע. לשחק."
+  },
+  "actions": {
+    "continue": "המשך",
+    "back": "חזרה",
+    "next": "הבא",
+    "done": "סיום",
+    "cancel": "ביטול",
+    "close": "סגירה",
+    "save": "שמירה",
+    "edit": "עריכה",
+    "delete": "מחיקה",
+    "retry": "ניסיון חוזר",
+    "confirm": "אישור",
+    "share": "שיתוף",
+    "copy": "העתקה",
+    "search": "חיפוש",
+    "clear": "ניקוי",
+    "apply": "החלה",
+    "skip": "דילוג",
+    "notNow": "לא עכשיו",
+    "learnMore": "מידע נוסף",
+    "viewAll": "הצגת הכול",
+    "dismiss": "הסתרה",
+    "undo": "ביטול הפעולה",
+    "report": "דיווח",
+    "block": "חסימה",
+    "unblock": "ביטול חסימה",
+    "openSettings": "פתיחת ההגדרות",
+    "send": "שליחה",
+    "gotIt": "הבנתי"
+  },
+  "status": {
+    "loading": "טוען…",
+    "saving": "שומר…",
+    "offlineBanner": "אין חיבור לאינטרנט. מוצג מידע שמור.",
+    "offlineHint": "יש להתחבר לאינטרנט כדי לבצע פעולה זו.",
+    "savedAgo": "נשמר לפני {minutes, plural, one {דקה} two {שתי דקות} other {# דקות}}",
+    "savedJustNow": "נשמר ממש עכשיו"
+  },
+  "errorState": {
+    "title": "לא הצלחנו לטעון",
+    "body": "כדאי לבדוק את החיבור לאינטרנט ולנסות שוב."
+  },
+  "a11y": {
+    "back": "חזרה",
+    "close": "סגירה",
+    "moreOptions": "אפשרויות נוספות"
+  },
+  "validation": {
+    "required": "שדה חובה.",
+    "tooShort": "יש להזין לפחות {min, plural, one {תו אחד} two {שני תווים} other {# תווים}}.",
+    "tooLong": "אפשר להזין עד {max, plural, one {תו אחד} two {שני תווים} other {# תווים}}."
+  },
+  "players": {
+    "count": "{count, plural, one {שחקן אחד} two {שני שחקנים} other {# שחקנים}}",
+    "spotsLeft": "{count, plural, =0 {מלא} one {נשאר מקום אחד} two {נשארו שני מקומות} other {נשארו # מקומות}}"
+  },
+  "sports": {
+    "football": "כדורגל",
+    "basketball": "כדורסל",
+    "tennis": "טניס",
+    "padel": "פאדל",
+    "running": "ריצה",
+    "volleyball": "כדורעף"
+  },
+  "positions": {
+    "goalkeeper": "שוער",
+    "defender": "מגן",
+    "midfielder": "קשר",
+    "forward": "חלוץ",
+    "point_guard": "רכז",
+    "shooting_guard": "גארד קלעי",
+    "small_forward": "פורוורד קטן",
+    "power_forward": "פורוורד חזק",
+    "center": "סנטר",
+    "left_side": "צד שמאל",
+    "right_side": "צד ימין",
+    "setter": "מוסר",
+    "outside_hitter": "תוקף חיצוני",
+    "opposite": "תוקף נגדי",
+    "middle_blocker": "חוסם אמצעי",
+    "libero": "ליברו"
+  },
+  "positionsShort": {
+    "goalkeeper": "שוער",
+    "defender": "מגן",
+    "midfielder": "קשר",
+    "forward": "חלוץ",
+    "point_guard": "רכז",
+    "shooting_guard": "קלע",
+    "small_forward": "כנף",
+    "power_forward": "כוח",
+    "center": "סנטר",
+    "left_side": "שמאל",
+    "right_side": "ימין",
+    "setter": "מוסר",
+    "outside_hitter": "תוקף",
+    "opposite": "נגדי",
+    "middle_blocker": "חוסם",
+    "libero": "ליברו"
+  },
+  "reliability": {
+    "status": {
+      "green": "אמין/ה",
+      "yellow": "זהירות",
+      "red": "מוגבל/ת",
+      "new": "שחקן/ית חדש/ה"
+    },
+    "withPercent": "{status} · {percent}",
+    "a11y": "אמינות: {status}, {percent}",
+    "a11yNew": "אמינות: שחקן/ית חדש/ה"
+  }
+}

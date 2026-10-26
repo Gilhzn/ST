@@ -1,0 +1,96 @@
+{
+  "title": "Ajustes",
+  "section": {
+    "account": "Cuenta",
+    "language": "Idioma",
+    "theme": "Tema",
+    "notifications": "Notificaciones",
+    "privacy": "Privacidad y seguridad",
+    "legal": "Información legal",
+    "about": "Acerca de"
+  },
+  "account": {
+    "phone": "Número de teléfono",
+    "linkedLogins": "Inicios de sesión vinculados",
+    "signOut": "Cerrar sesión",
+    "signOutConfirm": "¿Cerrar sesión de Sport Talent en este dispositivo?"
+  },
+  "language": {
+    "title": "Idioma",
+    "useDevice": "Usar el idioma del dispositivo",
+    "deviceNow": "Idioma del dispositivo: {language}",
+    "current": "Idioma actual",
+    "restart": {
+      "title": "¿Reiniciar para cambiar a {language}?",
+      "body": "La app necesita reiniciarse para cambiar la dirección de lectura. Antes guardaremos tus borradores.",
+      "restartNow": "Reiniciar ahora",
+      "later": "Más tarde",
+      "pending": "El nuevo idioma se usará cuando reinicies."
+    }
+  },
+  "theme": {
+    "title": "Tema",
+    "system": "Sistema",
+    "light": "Claro",
+    "dark": "Oscuro",
+    "preview": "Vista previa"
+  },
+  "notifications": {
+    "title": "Notificaciones",
+    "joinRequests": "Solicitudes para unirse",
+    "approvals": "Aprobaciones",
+    "waitlist": "Plazas de la lista de espera",
+    "reminders": "Recordatorios de partidos",
+    "chat": "Mensajes del chat",
+    "safety": "Cuenta y seguridad",
+    "safetyLocked": "Siempre activadas. Estamos obligados a informarte de las decisiones sobre tu cuenta.",
+    "osOff": "Las notificaciones están desactivadas en los ajustes de tu dispositivo.",
+    "osOffAction": "Abrir ajustes del dispositivo"
+  },
+  "privacy": {
+    "title": "Privacidad y seguridad",
+    "profileVisibility": "Quién puede ver mi perfil",
+    "visibilityEveryone": "Todos",
+    "visibilityParticipants": "Jugadores de mis partidos",
+    "showReliability": "Mostrar mi fiabilidad",
+    "showReliabilityHelp": "Los organizadores siempre ven tu fiabilidad cuando pides unirte a su partido.",
+    "location": {
+      "title": "Ubicación",
+      "precise": "Ubicación precisa",
+      "approximate": "Ubicación aproximada",
+      "preciseHelp": "Solo se usa con la app abierta, para hacer tu check-in y mostrarte partidos cercanos."
+    },
+    "background": {
+      "title": "Check-in automático",
+      "help": "Permite que Sport Talent use tu ubicación en segundo plano para detectar cuándo llegas a un partido al que te has unido. Solo busca cerca del lugar y a la hora del partido."
+    },
+    "blocked": {
+      "title": "Jugadores bloqueados",
+      "empty": "No has bloqueado a nadie.",
+      "unblockConfirm": "¿Desbloquear a {name}?"
+    },
+    "data": {
+      "download": "Descargar mis datos",
+      "help": "Solicita una copia de tus datos. Te avisaremos cuando esté lista."
+    }
+  },
+  "delete": {
+    "title": "Eliminar cuenta",
+    "dangerZone": "Zona de peligro",
+    "intro": "Eliminar tu cuenta es permanente. No se puede deshacer.",
+    "deletedTitle": "Qué eliminamos",
+    "deleted": "Tu perfil, tu foto, tu número de teléfono, tus mensajes de chat y los partidos que aún no has jugado.",
+    "keptTitle": "Qué conservamos",
+    "kept": "Conservamos los registros de avisos y bloqueos de forma que no te identifica, para que las normas sigan siendo justas para todos. Solo los guardamos mientras la ley lo permita.",
+    "confirmTyped": "Escribe {word} para confirmar.",
+    "confirmOtp": "O confirma con un código que enviaremos por SMS al número {phone}.",
+    "button": "Eliminar mi cuenta",
+    "deleting": "Eliminando tu cuenta…",
+    "done": "Tu cuenta se ha eliminado.",
+    "webLink": "También puedes eliminar tu cuenta en la web: {url}"
+  },
+  "about": {
+    "version": "Versión {version}",
+    "diagnosticsOn": "Diagnóstico activado."
+  }
+}

@@ -1,0 +1,68 @@
+{
+  "search": {
+    "label": "بحث",
+    "placeholder": "مدينة أو ملعب أو عنوان"
+  },
+  "filters": {
+    "sports": "الرياضات",
+    "limitHint": "يمكنك اختيار {max, plural, zero {# رياضة} one {رياضة واحدة} two {رياضتين} few {# رياضات} many {# رياضة} other {# رياضة}} كحد أقصى. ألغِ اختيار رياضة لإضافة أخرى.",
+    "limitToast": "ألغِ اختيار رياضة لإضافة أخرى."
+  },
+  "radius": {
+    "label": "نطاق البحث",
+    "auto": "تلقائي (GPS)",
+    "a11y": "نطاق البحث: {distance}"
+  },
+  "sheet": {
+    "title": "{count, plural, =0 {لا توجد مباريات قريبة} zero {لا توجد مباريات قريبة} one {مباراة واحدة قريبة} two {مباراتان قريبتان} few {# مباريات قريبة} many {# مباراة قريبة} other {# مباراة قريبة}}",
+    "sortLabel": "ترتيب حسب",
+    "sortSoonest": "الأقرب موعدًا",
+    "sortNearest": "الأقرب مسافة",
+    "showList": "قائمة",
+    "showMap": "خريطة"
+  },
+  "card": {
+    "distanceAway": "على بُعد {distance}",
+    "players": "{joined}/{capacity} لاعبين",
+    "startsSoon": "تبدأ قريبًا",
+    "live": "جارية الآن",
+    "badge": {
+      "deposit": "عربون",
+      "womenOnly": "للنساء فقط",
+      "private": "خاصة",
+      "waitlist": "قائمة انتظار",
+      "full": "مكتملة"
+    }
+  },
+  "cluster": {
+    "a11y": "{count, plural, zero {# مباراة} one {مباراة واحدة} two {مباراتان} few {# مباريات} many {# مباراة} other {# مباراة}}: {sports}. انقر مرتين للتقريب."
+  },
+  "venues": {
+    "sectionTitle": "ملاعب بلا مباريات",
+    "startOne": "ابدأ مباراة",
+    "pinA11y": "{name}، ملعب"
+  },
+  "locate": {
+    "label": "إظهار موقعي"
+  },
+  "createGame": {
+    "fab": "إنشاء مباراة"
+  },
+  "empty": {
+    "title": "لا توجد مباريات ضمن {distance} في {sports}.",
+    "widen": "التوسيع إلى {distance}",
+    "create": "إنشاء مباراة"
+  },
+  "locationDenied": {
+    "title": "خدمة الموقع متوقفة",
+    "body": "ابحث عن مدينة أو عنوان للعثور على مباريات قريبة منك.",
+    "search": "البحث عن مكان"
+  },
+  "error": {
+    "title": "تعذّر تحميل المباريات.",
+    "body": "يُرجى التحقق من الاتصال بالإنترنت والمحاولة مرة أخرى."
+  },
+  "offline": {
+    "cachedNote": "تُعرض المباريات المحفوظة."
+  }
+}

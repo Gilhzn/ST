@@ -24,9 +24,10 @@ create table public.games (
   women_only boolean not null default false,
   status public.game_status not null default 'scheduled',
   team_count int not null default 2 check (team_count between 1 and 16),
-  invite_token text not null unique default encode(extensions.gen_random_bytes(18), 'hex'),
+  -- Purged (null) qrSecretRetentionHours after ends_at (compliance retention table).
+  invite_token text unique default encode(extensions.gen_random_bytes(18), 'hex'),
   -- HMAC key for rotating QR tokens. No client grant on this column, ever (not even the host).
-  qr_secret bytea not null default extensions.gen_random_bytes(32),
+  qr_secret bytea default extensions.gen_random_bytes(32),
   cancelled_at timestamptz,
   created_at timestamptz not null default now(),
   updated_at timestamptz not null default now(),
@@ -66,6 +67,14 @@ create table public.game_participants (
   team int check (team is null or team >= 0),
   position text,
   late_cancel boolean not null default false,
+  -- TRUST-021: the late-cancelled spot was refilled and the replacement checked in → card voided,
+  -- late cancel not counted in reliability.
+  late_cancel_refilled boolean not null default false,
+  -- The late canceller whose spot this participant took (set on approval/offer acceptance).
+  replaces_user_id uuid,
+  -- GAME-045: a waitlist offer the player must accept before this time (flash fill: all waitlisted).
+  offer_expires_at timestamptz,
+  offer_is_flash boolean not null default false,
   -- False while a required deposit payment method is not yet saved (request hidden from host).
   payment_ready boolean not null default true,
   check_in_method public.checkin_method,
@@ -76,7 +85,7 @@ create table public.game_participants (
   cancelled_at timestamptz,
   primary key (game_id, user_id),
   check ((attendance = 'verified') = (check_in_method is not null and checked_in_at is not null)),
-  check (not late_cancel or status = 'cancelled')
+  check (offer_expires_at is null or status = 'waitlisted')
 );
 create index game_participants_user_idx on public.game_participants (user_id);
 create index game_participants_waitlist_idx on public.game_participants (game_id, waitlisted_at) where status = 'waitlisted';
@@ -198,6 +207,23 @@ as $$
                  where gp.game_id = p_game_id and gp.user_id = p_uid and gp.status = 'approved')
 $$;
 
+-- Caller-relative wrappers granted to clients (see 0002).
+create function public.st_my_game_visible(p_game_id uuid) returns boolean
+language sql stable security definer set search_path = ''
+as $$ select public.st_can_see_game(p_game_id, auth.uid()) $$;
+
+create function public.st_my_exact(p_game_id uuid) returns boolean
+language sql stable security definer set search_path = ''
+as $$ select public.st_can_see_exact(p_game_id, auth.uid()) $$;
+
+create function public.st_am_host(p_game_id uuid) returns boolean
+language sql stable security definer set search_path = ''
+as $$ select public.st_is_host(p_game_id, auth.uid()) $$;
+
+create function public.st_am_approved(p_game_id uuid) returns boolean
+language sql stable security definer set search_path = ''
+as $$ select public.st_is_approved(p_game_id, auth.uid()) $$;
+
 -- The game as the current viewer may see it (types.ts Game/GameSummary). Definer view with an
 -- explicit row filter; exact location, venue and invite token are masked per viewer.
 create view public.game_views with (security_barrier = true) as
@@ -228,8 +254,8 @@ create view public.game_views with (security_barrier = true) as
          (select count(*)::int from public.game_participants gp where gp.game_id = g.id and gp.status = 'waitlisted') as waitlist_count,
          (g.host_id = auth.uid()) as is_host
   from public.games g
-  cross join lateral (select public.st_can_see_exact(g.id) as exact) x
-  where public.st_can_see_game(g.id);
+  cross join lateral (select public.st_my_exact(g.id) as exact) x
+  where public.st_my_game_visible(g.id);
 
 -- Participants with 1-based waitlist rank (types.ts Participant). Row filter mirrors the
 -- game_participants RLS policy.
@@ -246,6 +272,9 @@ create view public.participant_views with (security_barrier = true) as
                and (w.waitlisted_at, w.user_id) <= (gp.waitlisted_at, gp.user_id))
          end as waitlist_rank,
          gp.late_cancel,
+         gp.late_cancel_refilled,
+         gp.offer_expires_at,
+         gp.offer_is_flash,
          gp.payment_ready,
          gp.check_in_method,
          gp.checked_in_at,
@@ -256,10 +285,10 @@ create view public.participant_views with (security_barrier = true) as
   where auth.uid() is not null
     and (
       gp.user_id = auth.uid()
-      or public.st_is_moderator()
-      or (public.st_is_host(gp.game_id) and (gp.payment_ready or gp.status <> 'requested'))
-      or (public.st_is_approved(gp.game_id)
+      or public.st_am_moderator()
+      or (public.st_am_host(gp.game_id) and (gp.payment_ready or gp.status <> 'requested'))
+      or (public.st_am_approved(gp.game_id)
           and gp.status in ('approved', 'waitlisted')
-          and not public.st_is_blocked(gp.user_id, auth.uid())
+          and not public.st_my_blocked(gp.user_id)
           and not public.st_is_hidden_user(gp.user_id))
     );

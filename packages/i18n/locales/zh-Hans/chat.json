@@ -1,0 +1,94 @@
+{
+  "title": "比赛聊天",
+  "infoChip": "消息将在比赛结束{hours, plural, other {# 小时}}后消失",
+  "infoDetail": "比赛结束后聊天会关闭。消息会在{hours, plural, other {# 小时}}后删除；被举报的消息除外，我们会保留{days, plural, other {# 天}}以供审核。",
+  "empty": "和队友打个招呼吧。消息将在比赛结束{hours, plural, other {# 小时}}后消失。",
+  "expired": "此聊天已结束。",
+  "composer": {
+    "placeholder": "输入消息",
+    "send": "发送消息"
+  },
+  "message": {
+    "reply": "回复",
+    "copy": "复制",
+    "translate": "翻译",
+    "report": "举报消息",
+    "block": "屏蔽{name}",
+    "moreOptions": "消息选项",
+    "checking": "检查中…",
+    "notSent": "未发送，点按重试",
+    "queued": "等待发送"
+  },
+  "translate": {
+    "translatedFrom": "译自{language}",
+    "showOriginal": "显示原文",
+    "showTranslation": "显示译文",
+    "autoTranslate": "自动翻译此聊天",
+    "failed": "无法翻译这条消息，请重试。"
+  },
+  "moderation": {
+    "nudge": {
+      "title": "这条消息可能会让人感到受伤。",
+      "body": "不妨换个说法，让大家都感到受欢迎。",
+      "edit": "修改消息",
+      "sendAnyway": "仍然发送",
+      "harassment": "这条消息可能让人感到受伤，或像是针对某个人。不妨换个说法。",
+      "hate": "这条消息可能会冒犯某一群体。不妨换个说法。",
+      "threat": "这条消息可能被理解为威胁。不妨换个说法。",
+      "violence": "这条消息提到了暴力。不妨换个说法。",
+      "sexual": "这条消息可能不适合体育聊天。不妨换个说法。",
+      "sexual_minors": "这条消息无法发送，请修改后再试。",
+      "self_harm": "如果你正在经历艰难的时刻，你并不孤单。可以和信任的人聊聊，或联系当地的求助热线。",
+      "profanity": "这条消息包含较激烈的用语，可能让其他人不舒服。不妨换个说法。",
+      "spam": "这条消息看起来像垃圾信息或广告。不妨换个说法。",
+      "personal_data": "这条消息似乎包含个人信息，比如电话号码或地址。请只分享给你信任的人。",
+      "other": "这条消息可能不符合我们的社区规则。不妨换个说法。"
+    },
+    "block": {
+      "title": "这条消息违反了我们的社区规则。修改后才能发送。",
+      "rulesLink": "社区规则",
+      "oneMoreWarning": "如果再发生一次，聊天将暂停{hours, plural, other {# 小时}}。",
+      "harassment": "这条消息违反了我们的社区规则（骚扰）。修改后才能发送。",
+      "hate": "这条消息违反了我们的社区规则（仇恨言论）。修改后才能发送。",
+      "threat": "这条消息违反了我们的社区规则（威胁）。修改后才能发送。",
+      "violence": "这条消息违反了我们的社区规则（暴力）。修改后才能发送。",
+      "sexual": "这条消息违反了我们的社区规则（色情内容）。修改后才能发送。",
+      "sexual_minors": "这条消息违反了我们的社区规则，无法发送。",
+      "self_harm": "这条消息无法发送。如果你正在经历艰难的时刻，请和信任的人聊聊，或联系当地的求助热线。",
+      "profanity": "这条消息违反了我们的社区规则（辱骂性语言）。修改后才能发送。",
+      "spam": "这条消息违反了我们的社区规则（垃圾信息）。修改后才能发送。",
+      "personal_data": "这条消息包含不能在聊天中分享的个人信息。修改后才能发送。",
+      "other": "这条消息违反了我们的社区规则。修改后才能发送。"
+    },
+    "muted": "聊天已暂停，至 {time}",
+    "mutedWhy": "为什么？"
+  },
+  "report": {
+    "title": "举报消息",
+    "reasonsTitle": "出了什么问题？",
+    "category": {
+      "harassment": "骚扰",
+      "violence": "暴力或威胁",
+      "unsportsmanlike": "违反体育精神",
+      "spam": "垃圾信息",
+      "other": "其他"
+    },
+    "detailsLabel": "补充说明（选填）",
+    "submit": "提交举报",
+    "thanks": "感谢你，我们会进行审核。这条消息会保留{days, plural, other {# 天}}以供审核。",
+    "blockOffer": "是否同时屏蔽{name}？"
+  },
+  "block": {
+    "title": "要屏蔽{name}吗？",
+    "body": "你将看不到对方的消息，对方也看不到你的消息。",
+    "confirm": "屏蔽{name}",
+    "done": "已屏蔽{name}。"
+  },
+  "inbox": {
+    "title": "收件箱",
+    "tabChats": "聊天",
+    "tabNotifications": "通知",
+    "empty": "还没有消息。加入一场比赛，开始聊天吧。",
+    "pinned": "已置顶，阅读后取消"
+  }
+}

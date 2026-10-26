@@ -1,0 +1,157 @@
+{
+  "reliability": {
+    "title": "可靠度",
+    "basedOn": "基于你最近{days, plural, other {# 天}}的记录：{games, plural, other {# 场比赛}}，{checkIns, plural, other {# 次签到}}，{lateCancels, plural, other {# 次临时取消}}。",
+    "newPlayer": "新玩家 · 参加{games, plural, other {# 场比赛}}后即可获得可靠度评分。",
+    "meter": {
+      "restrictedBelow": "低于 {percent} 为受限",
+      "reliableFrom": "{percent} 起为可靠",
+      "a11y": "你的可靠度为 {percent}。低于 {red} 为受限，{green} 起为可靠。"
+    },
+    "yellowCards": "{count, plural, other {# 张黄牌 · 最早的一张将于 {date}到期}}",
+    "howItWorks": "计算方式",
+    "how": {
+      "title": "可靠度如何计算",
+      "body": "评分反映了你在最近{days, plural, other {# 天}}内，对已加入的比赛的到场情况。签到会加分；爽约会扣分，临时取消按半次爽约计算。你参加{games, plural, other {# 场比赛}}后才会显示评分。",
+      "green": "可靠：{percent} 及以上，且没有生效中的黄牌。",
+      "yellow": "注意：低于可靠水平，或有生效中的黄牌。",
+      "red": "受限：低于 {percent}，或已暂停加入比赛。",
+      "new": "新玩家：比赛场次还不够，暂无评分。"
+    }
+  },
+  "sanctions": {
+    "title": "账号状态",
+    "kind": {
+      "yellow_card": {
+        "name": "黄牌",
+        "effect": "这是一次警告，不会限制你的操作。",
+        "stillAllowed": "你仍然可以加入比赛、组织比赛和聊天。"
+      },
+      "join_ban": {
+        "name": "暂停加入比赛",
+        "effect": "你无法申请加入比赛。",
+        "stillAllowed": "你仍然可以在已加入的比赛中聊天。"
+      },
+      "chat_mute": {
+        "name": "暂停聊天",
+        "effect": "你无法在比赛聊天中发送消息，但仍可以阅读。",
+        "stillAllowed": "你仍然可以加入比赛并参加比赛。"
+      },
+      "visibility_restriction": {
+        "name": "降低可见度",
+        "effect": "其他玩家较难看到你的个人资料。",
+        "stillAllowed": "你仍然可以加入比赛和聊天。"
+      },
+      "host_suspension": {
+        "name": "暂停组织比赛",
+        "effect": "你无法创建新比赛。",
+        "stillAllowed": "你仍然可以作为玩家加入比赛。"
+      },
+      "permanent_ban": {
+        "name": "账号已关闭",
+        "effect": "你无法再使用此账号登录 Sport Talent。",
+        "stillAllowed": "你可以对这一决定提出申诉。"
+      }
+    },
+    "status": {
+      "active": "生效中",
+      "disputed": "已提出异议，裁定前仍然有效。",
+      "upheld": "维持原决定",
+      "overturned": "已撤销决定",
+      "expired": "已结束"
+    },
+    "since": "自 {date}起",
+    "until": "{date}结束",
+    "endsIn": "{duration}后结束",
+    "ended": "已于 {date}结束。",
+    "noEndDate": "此决定没有结束日期，由审核员作出。",
+    "statement": {
+      "title": "原因说明",
+      "ruleLabel": "适用规则",
+      "automated": "此决定是根据签到记录自动作出的。如果你提出申诉，将由人工复核。",
+      "human": "此决定由审核员作出。",
+      "askPerson": "你可以要求由人工复核任何决定。",
+      "affectsTitle": "影响范围",
+      "stillAllowedTitle": "你仍然可以做的事"
+    },
+    "rule": {
+      "late_cancel": "临时取消规则",
+      "no_show": "到场规则",
+      "chat_blocks": "聊天规则",
+      "escalation_two_cards": "重复警告规则",
+      "escalation_three_cards": "重复警告规则",
+      "toxicity_reports": "尊重与安全规则",
+      "fake_venue": "场地真实性规则",
+      "low_host_rating": "组织者质量规则",
+      "moderator_decision": "审核员复核"
+    },
+    "reason": {
+      "late_cancel": "{date}，你在《{gameTitle}》开始前不到{hours, plural, other {# 小时}}取消了参加。根据临时取消规则，这会被记一张黄牌。",
+      "no_show": "你没有在 {date}签到《{gameTitle}》，这会被视为爽约。根据到场规则，爽约会被记一张黄牌。",
+      "chat_blocks": "你在比赛聊天中有{count, plural, other {# 条消息}}因违反社区规则，在{days, plural, other {# 天}}内被拦截。根据聊天规则，反复被拦截会被记一张黄牌，并暂停聊天一小段时间。",
+      "escalation_two_cards": "最近{days, plural, other {# 天}}内，你有{cards, plural, other {# 张黄牌}}仍在生效。根据重复警告规则，这会让你在一段时间内无法申请加入比赛。",
+      "escalation_three_cards": "最近{days, plural, other {# 天}}内，你有{cards, plural, other {# 张黄牌}}仍在生效。根据重复警告规则，这会让你在较长一段时间内无法申请加入比赛。",
+      "toxicity_reports": "最近{days, plural, other {# 天}}内，有{reporters, plural, other {# 名玩家}}举报了你的行为，经我们核查，这些举报可信。根据尊重与安全规则，你的个人资料在短时间内对其他玩家的展示会减少。",
+      "fake_venue": "其他玩家举报了你添加的场地“{venueName}”，我们无法确认它是真实可用的运动场地。根据场地真实性规则，添加不存在的场地可能会导致账号受到限制。",
+      "low_host_rating": "你作为组织者最近的{count, plural, other {# 条评分}}平均为 {average} 分（满分 5 分），低于组织比赛所需的水平。根据组织者质量规则，在我们审核你的账号期间，组织比赛将被暂停。",
+      "moderator_decision": "审核员复核了你的账号并作出此决定。备注：{reason}"
+    },
+    "fix": {
+      "title": "如何恢复",
+      "late_cancel": "下次请在比赛开始前{hours, plural, other {# 小时}}以上取消。你按时到场的比赛越多，可靠度恢复得越快。",
+      "no_show": "请在接下来的比赛中签到。如果无法参加，请尽早在应用中取消。你按时到场的比赛越多，可靠度恢复得越快。",
+      "chat_blocks": "请修改违反规则的消息；如不确定，请阅读社区规则。暂停结束后聊天会重新开放。",
+      "escalation_two_cards": "暂停结束后，请按时参加接下来的{games, plural, other {# 场比赛}}，即可恢复为绿色。黄牌会在{days, plural, other {# 天}}后自动失效。",
+      "escalation_three_cards": "暂停结束后，请按时参加接下来的{games, plural, other {# 场比赛}}，即可恢复为绿色。黄牌会在{days, plural, other {# 天}}后自动失效。",
+      "toxicity_reports": "请在聊天和比赛中保持友善。可见度降低会自行结束，你无需做任何操作。",
+      "fake_venue": "请只添加真实可以运动的地点。如果我们判断有误，请提出申诉，并告诉我们如何找到这个场地。",
+      "low_host_rating": "请查看组织者评分中的反馈。审核结束后，你就可以再次组织比赛。",
+      "moderator_decision": "请阅读上面的备注。如果你不同意，可以提出申诉。",
+      "expiresOn": "这张黄牌将于 {date}到期。",
+      "communityRules": "社区规则"
+    },
+    "dispute": {
+      "cta": "对这张黄牌提出异议",
+      "window": "你可以在 {date}前对这张黄牌提出异议。",
+      "windowClosed": "异议期已结束，但你仍然可以提出申诉。"
+    },
+    "appeal": {
+      "cta": "对此决定提出申诉",
+      "title": "请告诉我们发生了什么",
+      "reasonLabel": "原因",
+      "reason": {
+        "was_present": "我当时在比赛现场",
+        "cancelled_in_time": "我已及时取消",
+        "technical_problem": "GPS 或应用出了问题",
+        "not_my_message": "那不是我发的",
+        "disagree": "我认为我没有违反规则",
+        "other": "其他"
+      },
+      "messageLabel": "发生了什么？",
+      "messageHint": "请至少写{min, plural, other {# 个字符}}。",
+      "counter": "{count} / {max}",
+      "evidenceLabel": "添加截图（选填）",
+      "contactLanguage": "回复所用语言",
+      "submit": "提交申诉",
+      "received": "已收到你的申诉。将由人工审核，通常在{hours, plural, other {# 小时}}内完成。结果出来后我们会通知你。",
+      "draftSaved": "草稿已保存，恢复网络前我们会一直保留。",
+      "timeline": {
+        "received": "已收到",
+        "inReview": "审核中",
+        "decided": "已裁定"
+      },
+      "outcome": {
+        "upheld": "维持原决定。",
+        "overturned": "决定已撤销。"
+      },
+      "reviewerNote": "审核员备注"
+    }
+  },
+  "hostRestriction": {
+    "title": "你暂时无法组织比赛",
+    "body": "你的账号在 {date}前暂停组织比赛。",
+    "gamesStay": "你已经在组织的比赛不受影响。",
+    "gamesCancelled": "你组织的、尚未开始的比赛已被取消，并已通知玩家。",
+    "seeDetails": "查看原因"
+  }
+}

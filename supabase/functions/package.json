@@ -1,0 +1,8 @@
+{
+  "private": true,
+  "type": "module",
+  "description": "Edge Functions source. Not a workspace: this file only provides the #shared/* subpath imports used by Node (tsc, vitest); Deno resolves the same specifiers through import_map.json.",
+  "imports": {
+    "#shared/*": "./_shared/*.ts"
+  }
+}

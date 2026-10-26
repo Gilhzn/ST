@@ -1,0 +1,117 @@
+{
+  "app": {
+    "name": "Sport Talent",
+    "tagline": "اعثر على مباراة. احضر. والعب."
+  },
+  "actions": {
+    "continue": "متابعة",
+    "back": "رجوع",
+    "next": "التالي",
+    "done": "تم",
+    "cancel": "إلغاء",
+    "close": "إغلاق",
+    "save": "حفظ",
+    "edit": "تعديل",
+    "delete": "حذف",
+    "retry": "إعادة المحاولة",
+    "confirm": "تأكيد",
+    "share": "مشاركة",
+    "copy": "نسخ",
+    "search": "بحث",
+    "clear": "مسح",
+    "apply": "تطبيق",
+    "skip": "تخطي",
+    "notNow": "ليس الآن",
+    "learnMore": "معرفة المزيد",
+    "viewAll": "عرض الكل",
+    "dismiss": "تجاهل",
+    "undo": "تراجع",
+    "report": "إبلاغ",
+    "block": "حظر",
+    "unblock": "إلغاء الحظر",
+    "openSettings": "فتح الإعدادات",
+    "send": "إرسال",
+    "gotIt": "حسنًا"
+  },
+  "status": {
+    "loading": "جارٍ التحميل…",
+    "saving": "جارٍ الحفظ…",
+    "offlineBanner": "لا يوجد اتصال بالإنترنت. تُعرض المعلومات المحفوظة.",
+    "offlineHint": "يلزم الاتصال بالإنترنت لتنفيذ هذا الإجراء.",
+    "savedAgo": "تم الحفظ قبل {minutes, plural, zero {# دقيقة} one {دقيقة واحدة} two {دقيقتين} few {# دقائق} many {# دقيقة} other {# دقيقة}}",
+    "savedJustNow": "تم الحفظ الآن"
+  },
+  "errorState": {
+    "title": "تعذّر التحميل",
+    "body": "يُرجى التحقق من الاتصال بالإنترنت والمحاولة مرة أخرى."
+  },
+  "a11y": {
+    "back": "رجوع",
+    "close": "إغلاق",
+    "moreOptions": "خيارات إضافية"
+  },
+  "validation": {
+    "required": "هذا الحقل مطلوب.",
+    "tooShort": "يجب إدخال {min, plural, zero {# حرف} one {حرف واحد} two {حرفين} few {# أحرف} many {# حرفًا} other {# حرف}} على الأقل.",
+    "tooLong": "الحد الأقصى هو {max, plural, zero {# حرف} one {حرف واحد} two {حرفين} few {# أحرف} many {# حرفًا} other {# حرف}}."
+  },
+  "players": {
+    "count": "{count, plural, zero {# لاعب} one {لاعب واحد} two {لاعبان} few {# لاعبين} many {# لاعبًا} other {# لاعب}}",
+    "spotsLeft": "{count, plural, =0 {اكتمل العدد} zero {اكتمل العدد} one {بقي مكان واحد} two {بقي مكانان} few {بقيت # أماكن} many {بقي # مكانًا} other {بقي # مكان}}"
+  },
+  "sports": {
+    "football": "كرة القدم",
+    "basketball": "كرة السلة",
+    "tennis": "التنس",
+    "padel": "البادل",
+    "running": "الجري",
+    "volleyball": "الكرة الطائرة"
+  },
+  "positions": {
+    "goalkeeper": "حارس مرمى",
+    "defender": "مدافع",
+    "midfielder": "لاعب وسط",
+    "forward": "مهاجم",
+    "point_guard": "صانع ألعاب",
+    "shooting_guard": "مدافع مسدِّد",
+    "small_forward": "جناح صغير",
+    "power_forward": "جناح قوي",
+    "center": "لاعب ارتكاز",
+    "left_side": "الجانب الأيسر",
+    "right_side": "الجانب الأيمن",
+    "setter": "معدّ",
+    "outside_hitter": "ضارب خارجي",
+    "opposite": "ضارب مقابل",
+    "middle_blocker": "مصدّ أوسط",
+    "libero": "ليبرو"
+  },
+  "positionsShort": {
+    "goalkeeper": "حارس",
+    "defender": "مدافع",
+    "midfielder": "وسط",
+    "forward": "مهاجم",
+    "point_guard": "صانع",
+    "shooting_guard": "مسدّد",
+    "small_forward": "جناح",
+    "power_forward": "قوي",
+    "center": "ارتكاز",
+    "left_side": "يسار",
+    "right_side": "يمين",
+    "setter": "معدّ",
+    "outside_hitter": "ضارب",
+    "opposite": "مقابل",
+    "middle_blocker": "مصدّ",
+    "libero": "ليبرو"
+  },
+  "reliability": {
+    "status": {
+      "green": "موثوق",
+      "yellow": "تنبيه",
+      "red": "مقيَّد",
+      "new": "لاعب جديد"
+    },
+    "withPercent": "{status} · {percent}",
+    "a11y": "الموثوقية: {status}، {percent}",
+    "a11yNew": "الموثوقية: لاعب جديد"
+  }
+}

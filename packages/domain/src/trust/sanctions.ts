@@ -78,6 +78,8 @@ export interface SystemSanctionArgs {
   gameId?: GameId | null;
   causedBy?: readonly SanctionId[];
   dedupeKey: string;
+  /** Defaults to `system`. A moderator may issue the same temporary measures. */
+  decidedBy?: 'system' | 'moderator';
 }
 
 /** Builds a system sanction starting at `now`. Never permanent (enforced by type and at runtime). */
@@ -99,7 +101,7 @@ export function buildSystemSanction(args: SystemSanctionArgs, now: EpochMs): New
     gameId: args.gameId ?? null,
     causedBy: args.causedBy ?? [],
     dedupeKey: args.dedupeKey,
-    decidedBy: 'system',
+    decidedBy: args.decidedBy ?? 'system',
   };
 }
 

@@ -15,11 +15,17 @@ export {
   canDispute,
   canSubmitResult,
   chatExpiresAt,
+  checkCreateGameEligibility,
+  checkJoinEligibility,
+  combineModerationVerdicts,
+  decideJoinOutcome,
+  evaluateChatBlocks,
   generateQrToken,
   haversineMeters,
   isChatOpen,
   isCheckInOpen,
   isLateCancel,
+  matchBlocklist,
   materializeSanction,
   mulberry32,
   seedFromString,
@@ -31,3 +37,4 @@ export {
   verifyPeer,
   verifyQr,
 } from '@st/domain';
+export type { ChatBlockRecord } from '@st/domain';

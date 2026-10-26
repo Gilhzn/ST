@@ -1,0 +1,70 @@
+{
+  "join_requested": {
+    "title": "Nueva solicitud para unirse",
+    "body": "{name} quiere unirse a {gameTitle}. Aprueba o rechaza la solicitud."
+  },
+  "join_approved": {
+    "title": "Estás dentro",
+    "body": "El organizador te ha aprobado para {gameTitle} el {time}."
+  },
+  "join_rejected": {
+    "title": "Solicitud no aceptada",
+    "body": "El organizador no ha podido aceptar tu solicitud para {gameTitle}. Hay otros partidos esperándote en el mapa."
+  },
+  "join_waitlisted": {
+    "title": "Estás en la lista de espera",
+    "body": "{gameTitle} está completo. Eres el n.º {position} en la lista de espera y te avisaremos si se libera una plaza."
+  },
+  "waitlist_promoted": {
+    "title": "Se ha liberado una plaza",
+    "body": "Ya estás dentro de {gameTitle} el {time}."
+  },
+  "participant_removed": {
+    "title": "Te han quitado de un partido",
+    "body": "El organizador te ha quitado de {gameTitle}. Abre el partido para ver los detalles."
+  },
+  "game_cancelled": {
+    "title": "Partido cancelado",
+    "body": "El organizador ha cancelado {gameTitle} del {time}."
+  },
+  "game_reminder": {
+    "title": "Tu partido se acerca",
+    "body": "{gameTitle} empieza a las {time}. El check-in abre {minutes, plural, one {# minuto} many {# de minutos} other {# minutos}} antes."
+  },
+  "checkin_open": {
+    "title": "El check-in está abierto",
+    "body": "Haz el check-in en {gameTitle} cuando llegues."
+  },
+  "result_requested": {
+    "title": "¿Qué tal ha ido?",
+    "body": "Introduce el resultado de {gameTitle}. Te quedan {hours, plural, one {# hora} many {# de horas} other {# horas}}."
+  },
+  "sanction_issued": {
+    "title": "Novedades sobre tu cuenta",
+    "body": "Hemos tomado una decisión sobre tu cuenta. Abre la app para ver qué ha pasado y cómo apelar."
+  },
+  "sanction_decided": {
+    "title": "Decisión sobre tu cuenta",
+    "body": "Un moderador ha revisado tu cuenta. Abre la app para leer la decisión y sus motivos."
+  },
+  "appeal_decided": {
+    "title": "Tu apelación ya tiene respuesta",
+    "body": "{outcome, select, overturned {Hemos revocado la decisión. Abre la app para ver los detalles.} upheld {La decisión se mantiene. Abre la app para leer los motivos.} other {Abre la app para leer la decisión.}}"
+  },
+  "visibility_restricted": {
+    "title": "Tu perfil es menos visible",
+    "body": "Durante {hours, plural, one {# hora} many {# de horas} other {# horas}}, otros jugadores verán menos tu perfil. Abre la app para ver el motivo."
+  },
+  "chat_muted": {
+    "title": "Chat en pausa",
+    "body": "No puedes enviar mensajes hasta las {time}. Abre la app para ver el motivo."
+  },
+  "venue_hidden": {
+    "title": "Un lugar está en revisión",
+    "body": "{venueName} está oculto mientras revisamos las denuncias sobre él."
+  },
+  "deposit_action_required": {
+    "title": "Hace falta una acción con tu depósito",
+    "body": "Necesitamos que confirmes la retención de {amount} del depósito de {gameTitle}. Abre la app para continuar."
+  }
+}

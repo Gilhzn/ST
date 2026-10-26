@@ -1,0 +1,70 @@
+{
+  "join_requested": {
+    "title": "New request to join",
+    "body": "{name} wants to join {gameTitle}. Approve or reject the request."
+  },
+  "join_approved": {
+    "title": "You’re in",
+    "body": "The host approved you for {gameTitle} on {time}."
+  },
+  "join_rejected": {
+    "title": "Request not accepted",
+    "body": "The host couldn’t accept your request for {gameTitle}. Other games are waiting for you on the map."
+  },
+  "join_waitlisted": {
+    "title": "You’re on the waitlist",
+    "body": "{gameTitle} is full. You’re #{position} on the waitlist, and we’ll tell you if a spot opens."
+  },
+  "waitlist_promoted": {
+    "title": "A spot opened up",
+    "body": "You’re now in {gameTitle} on {time}."
+  },
+  "participant_removed": {
+    "title": "You were removed from a game",
+    "body": "The host removed you from {gameTitle}. Open the game for details."
+  },
+  "game_cancelled": {
+    "title": "Game cancelled",
+    "body": "{gameTitle} on {time} was cancelled by the host."
+  },
+  "game_reminder": {
+    "title": "Game coming up",
+    "body": "{gameTitle} starts at {time}. Check-in opens {minutes, plural, one {# minute} other {# minutes}} before."
+  },
+  "checkin_open": {
+    "title": "Check-in is open",
+    "body": "Check in to {gameTitle} when you arrive."
+  },
+  "result_requested": {
+    "title": "How did it go?",
+    "body": "Enter the result of {gameTitle}. You have {hours, plural, one {# hour} other {# hours}} left."
+  },
+  "sanction_issued": {
+    "title": "Update on your account",
+    "body": "We’ve made a decision about your account. Open the app to see what happened and how to appeal."
+  },
+  "sanction_decided": {
+    "title": "Decision on your account",
+    "body": "A moderator reviewed your account. Open the app to read the decision and the reasons."
+  },
+  "appeal_decided": {
+    "title": "Your appeal has been decided",
+    "body": "{outcome, select, overturned {We reversed the decision. Open the app for details.} upheld {The decision stands. Open the app to read the reasons.} other {Open the app to read the decision.}}"
+  },
+  "visibility_restricted": {
+    "title": "Your profile is less visible",
+    "body": "For the next {hours, plural, one {# hour} other {# hours}}, other players will see your profile less. Open the app to see why."
+  },
+  "chat_muted": {
+    "title": "Chat paused",
+    "body": "You can’t send messages until {time}. Open the app to see why."
+  },
+  "venue_hidden": {
+    "title": "A venue is under review",
+    "body": "{venueName} is hidden while we review reports about it."
+  },
+  "deposit_action_required": {
+    "title": "Action needed for your deposit",
+    "body": "We need you to confirm the {amount} deposit hold for {gameTitle}. Open the app to continue."
+  }
+}

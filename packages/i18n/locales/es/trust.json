@@ -1,0 +1,157 @@
+{
+  "reliability": {
+    "title": "Fiabilidad",
+    "basedOn": "Basado en tus últimos {days, plural, one {# día} many {# de días} other {# días}}: {games, plural, one {# partido} many {# de partidos} other {# partidos}}, {checkIns, plural, one {# check-in} many {# de check-ins} other {# check-ins}}, {lateCancels, plural, one {# cancelación tardía} many {# de cancelaciones tardías} other {# cancelaciones tardías}}.",
+    "newPlayer": "Jugador nuevo · juega {games, plural, one {# partido} many {# de partidos} other {# partidos}} para obtener una puntuación de fiabilidad.",
+    "meter": {
+      "restrictedBelow": "Restringido por debajo de {percent}",
+      "reliableFrom": "Fiable desde {percent}",
+      "a11y": "Tu fiabilidad es {percent}. Restringido por debajo de {red}, fiable desde {green}."
+    },
+    "yellowCards": "{count, plural, one {# tarjeta amarilla · caduca el {date}} many {# de tarjetas amarillas · la primera caduca el {date}} other {# tarjetas amarillas · la primera caduca el {date}}}",
+    "howItWorks": "Cómo funciona",
+    "how": {
+      "title": "Cómo funciona la fiabilidad",
+      "body": "Tu puntuación refleja con qué frecuencia te presentas a los partidos a los que te has unido en los últimos {days, plural, one {# día} many {# de días} other {# días}}. Hacer el check-in cuenta a tu favor. Un plantón cuenta en tu contra y una cancelación tardía cuenta como medio plantón. Mostramos una puntuación cuando has jugado {games, plural, one {# partido} many {# de partidos} other {# partidos}}.",
+      "green": "Fiable: {percent} o más, sin ninguna tarjeta amarilla activa.",
+      "yellow": "Precaución: por debajo del nivel fiable, o con una tarjeta amarilla activa.",
+      "red": "Restringido: por debajo de {percent}, o con la unión a partidos en pausa.",
+      "new": "Jugador nuevo: aún no hay suficientes partidos para una puntuación."
+    }
+  },
+  "sanctions": {
+    "title": "Estado de la cuenta",
+    "kind": {
+      "yellow_card": {
+        "name": "Tarjeta amarilla",
+        "effect": "Es un aviso. No limita lo que puedes hacer.",
+        "stillAllowed": "Puedes seguir uniéndote a partidos, organizándolos y chateando."
+      },
+      "join_ban": {
+        "name": "Unirse a partidos en pausa",
+        "effect": "No puedes solicitar unirte a partidos.",
+        "stillAllowed": "Aún puedes chatear en los partidos en los que estás."
+      },
+      "chat_mute": {
+        "name": "Chat en pausa",
+        "effect": "No puedes enviar mensajes en los chats de los partidos. Sí puedes leerlos.",
+        "stillAllowed": "Aún puedes unirte a partidos y jugar."
+      },
+      "visibility_restriction": {
+        "name": "Visibilidad reducida",
+        "effect": "Tu perfil es menos visible para otros jugadores.",
+        "stillAllowed": "Aún puedes unirte a partidos y chatear."
+      },
+      "host_suspension": {
+        "name": "Organización en pausa",
+        "effect": "No puedes crear partidos nuevos.",
+        "stillAllowed": "Aún puedes unirte a partidos como jugador."
+      },
+      "permanent_ban": {
+        "name": "Cuenta cerrada",
+        "effect": "No puedes usar Sport Talent con esta cuenta.",
+        "stillAllowed": "Puedes apelar esta decisión."
+      }
+    },
+    "status": {
+      "active": "En vigor",
+      "disputed": "Impugnación presentada. Sigue en vigor hasta que se resuelva.",
+      "upheld": "Decisión confirmada",
+      "overturned": "Decisión revocada",
+      "expired": "Finalizada"
+    },
+    "since": "Desde el {date}",
+    "until": "Termina el {date}",
+    "endsIn": "Termina en {duration}",
+    "ended": "Esto terminó el {date}.",
+    "noEndDate": "Esta decisión no tiene fecha de fin. La tomó un moderador.",
+    "statement": {
+      "title": "Por qué ha ocurrido",
+      "ruleLabel": "Norma",
+      "automated": "Esto se decidió automáticamente a partir de los registros de check-in. Una persona lo revisará si apelas.",
+      "human": "Un moderador tomó esta decisión.",
+      "askPerson": "Puedes pedir que una persona revise cualquier decisión.",
+      "affectsTitle": "Qué afecta",
+      "stillAllowedTitle": "Qué puedes seguir haciendo"
+    },
+    "rule": {
+      "late_cancel": "Norma de cancelación tardía",
+      "no_show": "Norma de asistencia",
+      "chat_blocks": "Normas del chat",
+      "escalation_two_cards": "Norma de avisos repetidos",
+      "escalation_three_cards": "Norma de avisos repetidos",
+      "toxicity_reports": "Norma de respeto y seguridad",
+      "fake_venue": "Norma de exactitud de los lugares",
+      "low_host_rating": "Norma de calidad de la organización",
+      "moderator_decision": "Revisión de un moderador"
+    },
+    "reason": {
+      "late_cancel": "El {date} cancelaste {gameTitle} con menos de {hours, plural, one {# hora} many {# de horas} other {# horas}} de antelación al inicio. Según la norma de cancelación tardía, esto conlleva una tarjeta amarilla.",
+      "no_show": "No hiciste el check-in en {gameTitle} el {date}, y cuenta como un plantón. Según la norma de asistencia, un plantón conlleva una tarjeta amarilla.",
+      "chat_blocks": "{count, plural, one {Se bloqueó # de tus mensajes} many {Se bloquearon # de tus mensajes} other {Se bloquearon # de tus mensajes}} en chats de partidos en {days, plural, one {# día} many {# de días} other {# días}} por incumplir las normas de nuestra comunidad. Según las normas del chat, los mensajes bloqueados repetidos conllevan una tarjeta amarilla y una breve pausa del chat.",
+      "escalation_two_cards": "Tienes {cards, plural, one {# tarjeta amarilla} many {# de tarjetas amarillas} other {# tarjetas amarillas}} activas de los últimos {days, plural, one {# día} many {# de días} other {# días}}. Según la norma de avisos repetidos, esto pausa durante un tiempo determinado tu posibilidad de solicitar unirte a partidos.",
+      "escalation_three_cards": "Tienes {cards, plural, one {# tarjeta amarilla} many {# de tarjetas amarillas} other {# tarjetas amarillas}} activas de los últimos {days, plural, one {# día} many {# de días} other {# días}}. Según la norma de avisos repetidos, esto pausa durante más tiempo tu posibilidad de solicitar unirte a partidos.",
+      "toxicity_reports": "{reporters, plural, one {# jugador} many {# de jugadores} other {# jugadores}} denunciaron tu comportamiento en los últimos {days, plural, one {# día} many {# de días} other {# días}}, y nuestras comprobaciones consideraron creíbles las denuncias. Según la norma de respeto y seguridad, tu perfil se muestra menos a otros jugadores durante un tiempo breve.",
+      "fake_venue": "Otros jugadores denunciaron el lugar «{venueName}» que añadiste y no hemos podido confirmar que sea un sitio real para jugar. Según la norma de exactitud de los lugares, añadir sitios que no existen puede conllevar una restricción.",
+      "low_host_rating": "{count, plural, one {Tu última valoración} many {Tus últimas # de valoraciones} other {Tus últimas # valoraciones}} como organizador tuvieron una media de {average} sobre 5, por debajo del nivel que necesitamos para organizar partidos. Según la norma de calidad de la organización, la organización queda en pausa mientras revisamos tu cuenta.",
+      "moderator_decision": "Un moderador revisó tu cuenta y tomó esta decisión. Su nota: {reason}"
+    },
+    "fix": {
+      "title": "Cómo volver al buen camino",
+      "late_cancel": "La próxima vez, cancela con más de {hours, plural, one {# hora} many {# de horas} other {# horas}} de antelación al inicio del partido. Tu fiabilidad mejora a medida que te presentas a los partidos.",
+      "no_show": "Haz el check-in en tus próximos partidos. Si no puedes ir a alguno, cancela en la app lo antes posible. Tu fiabilidad mejora a medida que te presentas.",
+      "chat_blocks": "Reformula los mensajes que incumplan las normas y lee las normas de la comunidad si tienes dudas. El chat se abrirá de nuevo cuando termine la pausa.",
+      "escalation_two_cards": "Cuando termine la pausa, preséntate a tus próximos {games, plural, one {# partido} many {# de partidos} other {# partidos}} para volver al verde. Las tarjetas amarillas caducan solas a los {days, plural, one {# día} many {# de días} other {# días}}.",
+      "escalation_three_cards": "Cuando termine la pausa, preséntate a tus próximos {games, plural, one {# partido} many {# de partidos} other {# partidos}} para volver al verde. Las tarjetas amarillas caducan solas a los {days, plural, one {# día} many {# de días} other {# días}}.",
+      "toxicity_reports": "Mantén los chats y los partidos amistosos. La visibilidad reducida termina sola y no necesitas hacer nada.",
+      "fake_venue": "Añade solo lugares donde se pueda jugar de verdad. Si nos hemos equivocado, apela y cuéntanos cómo encontrar el lugar.",
+      "low_host_rating": "Lee los comentarios de tus valoraciones como organizador. Podrás volver a organizar partidos cuando termine la revisión.",
+      "moderator_decision": "Lee la nota anterior. Si no estás de acuerdo, puedes apelar.",
+      "expiresOn": "Esta tarjeta amarilla caduca el {date}.",
+      "communityRules": "Normas de la comunidad"
+    },
+    "dispute": {
+      "cta": "Impugnar esta tarjeta",
+      "window": "Puedes impugnar esta tarjeta hasta el {date}.",
+      "windowClosed": "El plazo de impugnación ha terminado, pero aún puedes apelar."
+    },
+    "appeal": {
+      "cta": "Apelar esta decisión",
+      "title": "Cuéntanos qué pasó",
+      "reasonLabel": "Motivo",
+      "reason": {
+        "was_present": "Estuve en el partido",
+        "cancelled_in_time": "Cancelé a tiempo",
+        "technical_problem": "El GPS o la app no funcionaron",
+        "not_my_message": "Yo no escribí eso",
+        "disagree": "No creo haber incumplido la norma",
+        "other": "Otro motivo"
+      },
+      "messageLabel": "¿Qué pasó?",
+      "messageHint": "Escribe al menos {min, plural, one {# carácter} many {# de caracteres} other {# caracteres}}.",
+      "counter": "{count} / {max}",
+      "evidenceLabel": "Añade una captura de pantalla (opcional)",
+      "contactLanguage": "Idioma de nuestra respuesta",
+      "submit": "Enviar apelación",
+      "received": "Apelación recibida. Una persona la revisará, normalmente en {hours, plural, one {# hora} many {# de horas} other {# horas}}. Te avisaremos.",
+      "draftSaved": "Borrador guardado. Lo conservaremos hasta que vuelvas a tener conexión.",
+      "timeline": {
+        "received": "Recibida",
+        "inReview": "En revisión",
+        "decided": "Resuelta"
+      },
+      "outcome": {
+        "upheld": "La decisión se mantiene.",
+        "overturned": "La decisión se ha revocado."
+      },
+      "reviewerNote": "Nota de quien revisó"
+    }
+  },
+  "hostRestriction": {
+    "title": "Ahora no puedes organizar partidos",
+    "body": "La organización está en pausa en tu cuenta hasta el {date}.",
+    "gamesStay": "Los partidos que ya organizas siguen activos.",
+    "gamesCancelled": "Los partidos que organizabas y aún no habían empezado se han cancelado, y se ha avisado a los jugadores.",
+    "seeDetails": "Ver el motivo"
+  }
+}

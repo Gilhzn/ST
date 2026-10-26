@@ -1,0 +1,96 @@
+{
+  "title": "设置",
+  "section": {
+    "account": "账号",
+    "language": "语言",
+    "theme": "主题",
+    "notifications": "通知",
+    "privacy": "隐私与安全",
+    "legal": "法律信息",
+    "about": "关于"
+  },
+  "account": {
+    "phone": "手机号",
+    "linkedLogins": "已关联的登录方式",
+    "signOut": "退出登录",
+    "signOutConfirm": "要在此设备上退出 Sport Talent 吗？"
+  },
+  "language": {
+    "title": "语言",
+    "useDevice": "使用设备语言",
+    "deviceNow": "设备语言：{language}",
+    "current": "当前语言",
+    "restart": {
+      "title": "重启后切换为{language}？",
+      "body": "应用需要重启才能更改阅读方向。重启前我们会先保存你的草稿。",
+      "restartNow": "立即重启",
+      "later": "稍后",
+      "pending": "重启后将使用新语言。"
+    }
+  },
+  "theme": {
+    "title": "主题",
+    "system": "跟随系统",
+    "light": "浅色",
+    "dark": "深色",
+    "preview": "预览"
+  },
+  "notifications": {
+    "title": "通知",
+    "joinRequests": "加入申请",
+    "approvals": "审批结果",
+    "waitlist": "候补名额",
+    "reminders": "比赛提醒",
+    "chat": "聊天消息",
+    "safety": "账号与安全",
+    "safetyLocked": "始终开启。我们有义务将账号相关的决定通知你。",
+    "osOff": "通知已在设备设置中关闭。",
+    "osOffAction": "打开设备设置"
+  },
+  "privacy": {
+    "title": "隐私与安全",
+    "profileVisibility": "谁可以查看我的个人资料",
+    "visibilityEveryone": "所有人",
+    "visibilityParticipants": "我所在比赛的玩家",
+    "showReliability": "显示我的可靠度",
+    "showReliabilityHelp": "当你申请加入组织者的比赛时，组织者始终可以看到你的可靠度。",
+    "location": {
+      "title": "位置",
+      "precise": "精确位置",
+      "approximate": "大致位置",
+      "preciseHelp": "仅在应用打开时使用，用于签到和显示附近的比赛。"
+    },
+    "background": {
+      "title": "自动签到",
+      "help": "允许 Sport Talent 在后台使用你的位置，以便发现你已到达所加入的比赛现场。它只会在比赛时间前后、场地附近查看位置。"
+    },
+    "blocked": {
+      "title": "已屏蔽的玩家",
+      "empty": "你还没有屏蔽任何人。",
+      "unblockConfirm": "要取消屏蔽{name}吗？"
+    },
+    "data": {
+      "download": "下载我的数据",
+      "help": "申请获取你的数据副本，准备好后我们会通知你。"
+    }
+  },
+  "delete": {
+    "title": "删除账号",
+    "dangerZone": "危险操作",
+    "intro": "删除账号是永久性的，无法撤销。",
+    "deletedTitle": "我们会删除的内容",
+    "deleted": "你的个人资料、照片、手机号、聊天消息，以及你尚未参加的比赛。",
+    "keptTitle": "我们会保留的内容",
+    "kept": "警告和封禁记录会以无法识别你身份的形式保留，以确保规则对所有人公平。保留期限不会超过法律允许的范围。",
+    "confirmTyped": "请输入 {word} 以确认。",
+    "confirmOtp": "或使用我们发送到 {phone} 的验证码确认。",
+    "button": "删除我的账号",
+    "deleting": "正在删除你的账号…",
+    "done": "你的账号已删除。",
+    "webLink": "你也可以在网页上删除账号：{url}"
+  },
+  "about": {
+    "version": "版本 {version}",
+    "diagnosticsOn": "已开启诊断模式。"
+  }
+}

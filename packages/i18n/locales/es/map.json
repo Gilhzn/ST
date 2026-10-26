@@ -1,0 +1,68 @@
+{
+  "search": {
+    "label": "Buscar",
+    "placeholder": "Ciudad, lugar o dirección"
+  },
+  "filters": {
+    "sports": "Deportes",
+    "limitHint": "Puedes elegir hasta {max, plural, one {# deporte} many {# de deportes} other {# deportes}}. Quita uno para añadir otro.",
+    "limitToast": "Quita un deporte para añadir otro."
+  },
+  "radius": {
+    "label": "Radio de búsqueda",
+    "auto": "Automático (GPS)",
+    "a11y": "Radio de búsqueda: {distance}"
+  },
+  "sheet": {
+    "title": "{count, plural, =0 {No hay partidos cerca} one {# partido cerca} many {# de partidos cerca} other {# partidos cerca}}",
+    "sortLabel": "Ordenar por",
+    "sortSoonest": "Más pronto",
+    "sortNearest": "Más cerca",
+    "showList": "Lista",
+    "showMap": "Mapa"
+  },
+  "card": {
+    "distanceAway": "A {distance}",
+    "players": "{joined}/{capacity} jugadores",
+    "startsSoon": "Empieza pronto",
+    "live": "En directo",
+    "badge": {
+      "deposit": "Depósito",
+      "womenOnly": "Solo mujeres",
+      "private": "Privado",
+      "waitlist": "Lista de espera",
+      "full": "Completo"
+    }
+  },
+  "cluster": {
+    "a11y": "{count, plural, one {# partido} many {# de partidos} other {# partidos}}: {sports}. Toca dos veces para acercar."
+  },
+  "venues": {
+    "sectionTitle": "Lugares sin partidos",
+    "startOne": "Crear un partido",
+    "pinA11y": "{name}, lugar"
+  },
+  "locate": {
+    "label": "Mostrar mi ubicación"
+  },
+  "createGame": {
+    "fab": "Crear partido"
+  },
+  "empty": {
+    "title": "No hay partidos en {distance} de {sports}.",
+    "widen": "Ampliar a {distance}",
+    "create": "Crear un partido"
+  },
+  "locationDenied": {
+    "title": "La ubicación está desactivada",
+    "body": "Busca una ciudad o una dirección para encontrar partidos cerca de ti.",
+    "search": "Buscar un lugar"
+  },
+  "error": {
+    "title": "No se pudieron cargar los partidos.",
+    "body": "Comprueba tu conexión e inténtalo de nuevo."
+  },
+  "offline": {
+    "cachedNote": "Mostrando partidos guardados."
+  }
+}

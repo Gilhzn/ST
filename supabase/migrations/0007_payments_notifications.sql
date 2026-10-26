@@ -27,6 +27,9 @@ create table public.payments (
   deposit_state public.deposit_state not null default 'setup',
   -- Requested settlement (set by jobs/apply_effects; payments-webhook confirms the final state).
   settlement_requested text check (settlement_requested is null or settlement_requested in ('release', 'forfeit')),
+  settlement_requested_at timestamptz,
+  -- Last time place_deposit_holds() dispatched a hold request (re-dispatched after 15 minutes).
+  hold_requested_at timestamptz,
   idempotency_key text not null unique check (char_length(idempotency_key) between 1 and 255),
   created_at timestamptz not null default now(),
   updated_at timestamptz not null default now()

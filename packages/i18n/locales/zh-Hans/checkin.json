@@ -1,0 +1,87 @@
+{
+  "title": "签到",
+  "opensAt": "{time}开放签到。",
+  "closed": "这场比赛的签到已关闭。",
+  "alreadyCheckedIn": "你已经签到了。",
+  "gps": {
+    "title": "正在确认你的位置",
+    "progress": "正在确认你的位置… {done}/{total}",
+    "accuracy": "精度：{accuracy}",
+    "retry": "再试一次"
+  },
+  "success": {
+    "title": "签到成功",
+    "method": "{method, select, gps {已通过 GPS 确认} qr {已通过二维码确认} peer {已由队友确认} host {已由组织者确认} other {已确认}}"
+  },
+  "unconfirmed": {
+    "title": "暂时无法确认你已到达场地",
+    "body": "请移动到空旷处，或换一种方式。"
+  },
+  "reject": {
+    "not_participant": "你不在这场比赛的玩家名单中。",
+    "already_checked_in": "你已经签到了。",
+    "outside_window": "现在还不能签到，开始前{minutes, plural, other {# 分钟}}开放。",
+    "insufficient_samples": "我们还需要几次位置读数。请待在原地，再试一次。",
+    "samples_too_close": "我们需要更多时间来确认你的位置。请等几秒钟再试一次。",
+    "low_accuracy": "你的位置精度还不够。请移动到空旷处，或换一种方式。",
+    "too_far": "暂时无法确认你已到达场地。请再靠近一些，或换一种方式。",
+    "spread_too_large": "几次位置读数相差太远。请待在同一个位置，再试一次。",
+    "suspected_spoofing": "无法用这种方式确认你的位置。请换一种方式签到。",
+    "invalid_qr": "这个二维码无法使用，请检查后重试。",
+    "expired_qr": "这个二维码已过期，请向组织者索取最新的。",
+    "not_host": "只有组织者可以执行此操作。",
+    "insufficient_peers": "还需要更多队友确认。请让另一位已签到的玩家帮你确认。",
+    "reciprocal_only": "你确认过的队友不能是仅有的确认你的人，请找其他人确认。",
+    "blocked_pair": "无法使用这次确认，请换另一位玩家。"
+  },
+  "other": {
+    "title": "其他签到方式"
+  },
+  "qr": {
+    "scan": "扫描组织者的二维码",
+    "hint": "将相机对准组织者屏幕上的二维码。",
+    "enterCode": "改为输入验证码",
+    "codeLabel": "6 位数字码",
+    "scanInstead": "改为扫描二维码"
+  },
+  "peer": {
+    "ask": "请队友确认",
+    "hint": "我们会请已签到的玩家确认你已到场。",
+    "waiting": "等待{needed, plural, other {# 个确认}} · 已收到 {received} 个",
+    "sent": "已向你的队友发送请求。"
+  },
+  "permission": {
+    "location": {
+      "title": "位置信息有助于确认你已到场",
+      "body": "你在场地时，我们会检查几次你的位置，之后不会再追踪。",
+      "allow": "允许访问位置",
+      "denied": "位置服务已关闭。请扫描组织者的二维码，或请队友确认。"
+    },
+    "camera": {
+      "title": "相机权限",
+      "body": "我们只用相机扫描组织者的二维码。",
+      "allow": "允许使用相机",
+      "denied": "相机已关闭。请改为输入 6 位数字码。"
+    },
+    "background": {
+      "title": "自动签到",
+      "body": "开启后，Sport Talent 会在后台使用你的位置，以便发现你已到达所加入的比赛现场。它只会在比赛时间前后、场地附近查看位置。你可以随时在“设置”中关闭。",
+      "enable": "开启",
+      "decline": "不用了"
+    }
+  },
+  "offline": {
+    "queued": "恢复网络后，我们会为你确认。"
+  },
+  "host": {
+    "title": "签到码",
+    "instruction": "玩家扫描此二维码即可签到。二维码每{seconds, plural, other {# 秒}}刷新一次。",
+    "fallbackCode": "或输入此验证码",
+    "counter": "已签到 {checkedIn}/{total}",
+    "markManually": "手动标记玩家",
+    "manualTitle": "标记玩家",
+    "markPresent": "将 {name} 标记为已到场",
+    "present": "已到场",
+    "notHere": "未到场"
+  }
+}

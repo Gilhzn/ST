@@ -1,0 +1,87 @@
+{
+  "title": "Check-in",
+  "opensAt": "El check-in abre {time}.",
+  "closed": "El check-in de este partido ya ha cerrado.",
+  "alreadyCheckedIn": "Ya has hecho el check-in.",
+  "gps": {
+    "title": "Comprobando tu ubicación",
+    "progress": "Comprobando tu ubicación… {done} de {total}",
+    "accuracy": "Precisión: {accuracy}",
+    "retry": "Intentar de nuevo"
+  },
+  "success": {
+    "title": "Check-in hecho",
+    "method": "{method, select, gps {Confirmado por GPS} qr {Confirmado con código QR} peer {Confirmado por compañeros} host {Confirmado por el organizador} other {Confirmado}}"
+  },
+  "unconfirmed": {
+    "title": "Todavía no podemos confirmar que estés en el lugar",
+    "body": "Sal a un espacio abierto o prueba de otra forma."
+  },
+  "reject": {
+    "not_participant": "No estás en la lista de jugadores de este partido.",
+    "already_checked_in": "Ya has hecho el check-in.",
+    "outside_window": "El check-in no está abierto ahora. Abre {minutes, plural, one {# minuto} many {# de minutos} other {# minutos}} antes del inicio.",
+    "insufficient_samples": "Necesitamos algunas lecturas más de tu ubicación. Quédate donde estás e inténtalo de nuevo.",
+    "samples_too_close": "Necesitamos un poco más de tiempo para comprobar tu ubicación. Espera unos segundos e inténtalo de nuevo.",
+    "low_accuracy": "Tu ubicación todavía no es lo bastante precisa. Sal a un espacio abierto o prueba de otra forma.",
+    "too_far": "Todavía no podemos confirmar que estés en el lugar. Acércate más o prueba de otra forma.",
+    "spread_too_large": "Las lecturas de tu ubicación estaban demasiado separadas. Quédate en un mismo sitio e inténtalo de nuevo.",
+    "suspected_spoofing": "No podemos confirmar tu ubicación así. Prueba otra forma de hacer el check-in.",
+    "invalid_qr": "Ese código no ha funcionado. Revísalo e inténtalo de nuevo.",
+    "expired_qr": "Ese código ha caducado. Pide al organizador el código actual.",
+    "not_host": "Solo el organizador puede hacer esto.",
+    "insufficient_peers": "Necesitamos más confirmaciones de compañeros. Pídeselo a otro jugador que ya haya hecho el check-in.",
+    "reciprocal_only": "Los compañeros a los que has confirmado tú no pueden ser los únicos que te confirmen. Pídeselo a otra persona.",
+    "blocked_pair": "No hemos podido usar esa confirmación. Pídeselo a otro jugador."
+  },
+  "other": {
+    "title": "Otras formas de hacer el check-in"
+  },
+  "qr": {
+    "scan": "Escanear el QR del organizador",
+    "hint": "Apunta la cámara al código que aparece en la pantalla del organizador.",
+    "enterCode": "Introducir el código",
+    "codeLabel": "Código de 6 dígitos",
+    "scanInstead": "Escanear el código QR"
+  },
+  "peer": {
+    "ask": "Pedírselo a un compañero",
+    "hint": "Pediremos a los jugadores que ya han hecho el check-in que confirmen que estás aquí.",
+    "waiting": "Esperando {needed, plural, one {# confirmación} many {# de confirmaciones} other {# confirmaciones}} · Recibidas: {received}",
+    "sent": "Solicitud enviada a tus compañeros."
+  },
+  "permission": {
+    "location": {
+      "title": "La ubicación ayuda a confirmar que estás aquí",
+      "body": "Comprobamos tu ubicación unas cuantas veces mientras estás en el lugar. Después no te seguimos.",
+      "allow": "Permitir ubicación",
+      "denied": "La ubicación está desactivada. Escanea el QR del organizador o pídeselo a un compañero."
+    },
+    "camera": {
+      "title": "Acceso a la cámara",
+      "body": "Usamos la cámara solo para escanear el código QR del organizador.",
+      "allow": "Permitir cámara",
+      "denied": "La cámara está desactivada. Introduce el código de 6 dígitos."
+    },
+    "background": {
+      "title": "Check-in automático",
+      "body": "Si lo activas, Sport Talent usa tu ubicación en segundo plano para detectar cuándo llegas a un partido al que te has unido. Solo te busca cerca del lugar y a la hora del partido. Puedes desactivarlo en cualquier momento en Ajustes.",
+      "enable": "Activar",
+      "decline": "No, gracias"
+    }
+  },
+  "offline": {
+    "queued": "Lo confirmaremos cuando vuelvas a tener conexión."
+  },
+  "host": {
+    "title": "Código de check-in",
+    "instruction": "Los jugadores escanean esto para hacer el check-in. El código se renueva cada {seconds, plural, one {# segundo} many {# de segundos} other {# segundos}}.",
+    "fallbackCode": "O introduce este código",
+    "counter": "{checkedIn} de {total} han hecho el check-in",
+    "markManually": "Marcar jugadores manualmente",
+    "manualTitle": "Marcar jugadores",
+    "markPresent": "Marcar a {name} como presente",
+    "present": "Presente",
+    "notHere": "No está"
+  }
+}

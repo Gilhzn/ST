@@ -1,0 +1,58 @@
+{
+  "title": "个人资料",
+  "edit": "编辑资料",
+  "homeCity": "所在城市：{city}",
+  "memberSince": "{date}加入",
+  "sportsTitle": "运动项目",
+  "stats": {
+    "title": "数据",
+    "gamesPlayed": "参加比赛",
+    "gamesHosted": "组织比赛",
+    "checkInRate": "签到率",
+    "favoriteVenue": "常去场地",
+    "none": "暂无"
+  },
+  "positions": {
+    "title": "位置",
+    "primary": "主要位置",
+    "secondary": "次要位置",
+    "none": "尚未设置位置"
+  },
+  "history": {
+    "title": "历史记录",
+    "empty": "还没有比赛。加入一场比赛，开始吧。",
+    "result": "比分：{score}",
+    "noResult": "暂无比分"
+  },
+  "reliabilityCard": {
+    "a11y": "可靠度卡片"
+  },
+  "other": {
+    "report": "举报玩家",
+    "block": "屏蔽玩家",
+    "overflow": "更多选项",
+    "blocked": "你已屏蔽此玩家。"
+  },
+  "report": {
+    "title": "举报{name}",
+    "category": {
+      "violence": "暴力或威胁",
+      "unsportsmanlike": "违反体育精神",
+      "harassment": "骚扰",
+      "spam": "垃圾信息",
+      "other": "其他"
+    },
+    "noteLabel": "补充说明（选填）",
+    "submit": "提交举报",
+    "thanks": "感谢你，我们会进行审核。"
+  },
+  "editForm": {
+    "title": "编辑资料",
+    "displayNameLabel": "显示名称",
+    "bioLabel": "个人简介",
+    "bioHint": "选填。说说你喜欢玩什么。",
+    "changePhoto": "更换照片",
+    "removePhoto": "移除照片",
+    "saved": "资料已保存。"
+  }
+}

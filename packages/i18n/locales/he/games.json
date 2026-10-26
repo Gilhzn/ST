@@ -1,0 +1,283 @@
+{
+  "venue": {
+    "sportsHere": "ענפי ספורט כאן",
+    "directions": "הוראות הגעה",
+    "overflow": "אפשרויות נוספות",
+    "rating": {
+      "summary": "{rating} · {count, plural, one {דירוג אחד} two {שני דירוגים} other {# דירוגים}}",
+      "none": "אין דירוגים עדיין",
+      "scoreOf5": "{score} מתוך 5",
+      "title": "דירוגים"
+    },
+    "attribute": {
+      "surface": "משטח",
+      "lighting": "תאורה",
+      "goals_nets": "שערים ורשתות",
+      "hoops": "טבעות",
+      "nets": "רשתות",
+      "walls": "קירות",
+      "water_access": "גישה למים",
+      "net": "רשת"
+    },
+    "attributeValue": {
+      "natural_grass": "דשא טבעי",
+      "artificial_turf": "דשא סינתטי",
+      "hard": "מגרש קשיח",
+      "indoor": "מקורה",
+      "outdoor_hard": "מגרש קשיח פתוח",
+      "indoor_wood": "פרקט מקורה",
+      "rubber": "גומי",
+      "clay": "חימר",
+      "grass": "דשא",
+      "carpet": "שטיח",
+      "glass": "זכוכית",
+      "masonry": "בנוי",
+      "track": "מסלול אתלטיקה",
+      "road": "כביש",
+      "trail": "שביל",
+      "mixed": "מעורב",
+      "sand": "חול"
+    },
+    "upcoming": "משחקים קרובים כאן",
+    "noUpcoming": "אין עדיין משחקים כאן.",
+    "startGame": "פתיחת משחק כאן",
+    "underReview": "המגרש הזה נמצא בבדיקה.",
+    "rate": {
+      "cta": "דירוג המגרש",
+      "onlyAfterPlaying": "אפשר לדרג מגרש אחרי ששיחקו בו.",
+      "title": "דירוג {venue}",
+      "overall": "כללי",
+      "optionalHint": "אפשר לדלג על מה שלא בטוחים בו.",
+      "submit": "שליחת הדירוג",
+      "thanks": "תודה על דירוג המגרש."
+    },
+    "report": {
+      "cta": "אין כאן מגרש? אפשר לדווח.",
+      "title": "מה לא בסדר במגרש הזה?",
+      "reason": {
+        "no_venue_here": "אין כאן מגרש",
+        "wrong_location": "המיקום שגוי",
+        "closed": "המגרש סגור",
+        "duplicate": "המגרש מופיע פעמיים",
+        "unsafe": "המגרש לא בטוח",
+        "other": "משהו אחר"
+      },
+      "submit": "שליחת הדיווח",
+      "thanks": "תודה. נבדוק את זה. מגרש מוסתר בזמן הבדיקה אחרי ש{count, plural, one {אדם אחד דיווח} two {שני אנשים דיווחו} other {# אנשים דיווחו}} עליו.",
+      "done": "דיווחת על המגרש הזה"
+    }
+  },
+  "wizard": {
+    "title": "יצירת משחק",
+    "stepOf": "שלב {current} מתוך {total}",
+    "stepName": {
+      "sport": "ענף",
+      "where": "איפה",
+      "when": "מתי",
+      "who": "מי",
+      "deposit": "פיקדון"
+    },
+    "sport": {
+      "title": "איזה ענף ספורט?",
+      "gameTitleLabel": "שם המשחק",
+      "gameTitleHint": "לא חובה. לדוגמה: ״כדורגל של יום שישי״.",
+      "formatTitle": "פורמט",
+      "formatVs": "{a} נגד {b}",
+      "singles": "יחידים",
+      "doubles": "זוגות",
+      "teamCount": "מספר קבוצות"
+    },
+    "where": {
+      "title": "איפה משחקים?",
+      "search": "חיפוש מגרש או כתובת",
+      "pickOnMap": "בחירה במפה",
+      "dropPin": "הצבת סיכה",
+      "venueNameLabel": "שם המגרש",
+      "venueNameHint": "כדאי לתת שם למקום כדי שהשחקנים ימצאו אותו.",
+      "hideExactLabel": "להסתיר את המיקום המדויק עד שאאשר שחקנים",
+      "hideExactHelp": "השחקנים יראו קודם את האזור. את המקום המדויק תשתפו אחרי האישור."
+    },
+    "when": {
+      "title": "מתי?",
+      "date": "תאריך",
+      "start": "שעת התחלה",
+      "duration": "משך",
+      "repeatWeekly": "חזרה כל שבוע",
+      "comingSoon": "בקרוב"
+    },
+    "who": {
+      "title": "מי יכול להצטרף?",
+      "capacity": "שחקנים",
+      "capacityRange": "{min} עד {max} שחקנים",
+      "visibility": "חשיפה",
+      "public": "ציבורי",
+      "publicHelp": "כל מי שנמצא בסביבה יכול למצוא את המשחק.",
+      "private": "פרטי",
+      "privateHelp": "רק מי שיש לו את קישור ההזמנה יכול לראות את המשחק.",
+      "womenOnly": "לנשים בלבד",
+      "womenOnlyHelp": "רק נשים יכולות להצטרף למשחק הזה.",
+      "minReliability": "אמינות מינימלית",
+      "minAny": "כולם",
+      "minCaution": "זהירות ומעלה",
+      "minReliable": "אמינים בלבד",
+      "approval": "הצטרפות",
+      "approvalAuto": "אישור אוטומטי של שחקנים",
+      "approvalManual": "אישור כל שחקן בנפרד"
+    },
+    "deposit": {
+      "title": "פיקדון (לא חובה)",
+      "toggle": "בקשת פיקדון",
+      "amount": "סכום הפיקדון",
+      "explain": "השחקנים מניחים הקפאה זמנית של {amount} שניתנת להחזר. היא משוחררת אחרי הצ׳ק-אין ונשארת אצלנו אם הם לא מגיעים.",
+      "currencyNote": "המטבע נקבע לפי המדינה של המגרש."
+    },
+    "review": {
+      "title": "סקירת המשחק",
+      "edit": "עריכה",
+      "publish": "פרסום המשחק",
+      "publishing": "מפרסם…",
+      "offlineHint": "אפשר לפרסם כשחוזרים לאינטרנט."
+    },
+    "published": {
+      "title": "המשחק פורסם",
+      "shareTitle": "שיתוף המשחק",
+      "whatsapp": "שיתוף ב-WhatsApp",
+      "copyLink": "העתקת הקישור",
+      "linkCopied": "הקישור הועתק.",
+      "showQr": "הצגת קוד QR"
+    },
+    "discard": {
+      "title": "לוותר על הטיוטה?",
+      "body": "הפרטים שהוזנו עד עכשיו יימחקו.",
+      "keep": "להמשיך לערוך",
+      "discard": "מחיקת הטיוטה",
+      "saved": "הטיוטה נשמרה במכשיר הזה."
+    },
+    "validation": {
+      "sportRequired": "יש לבחור ענף ספורט.",
+      "venueRequired": "יש לבחור מגרש או להציב סיכה.",
+      "startInPast": "יש לבחור שעת התחלה בעתיד.",
+      "capacityRange": "יש לבחור בין {min} ל-{max} שחקנים.",
+      "depositRange": "יש להזין סכום בין {min} ל-{max}."
+    },
+    "hostSuspended": {
+      "title": "אי אפשר לארח כרגע",
+      "body": "האירוח מושהה בחשבון. אפשר לראות למה ומתי זה נגמר.",
+      "action": "לפרטים"
+    }
+  },
+  "details": {
+    "hiddenLocation": "המקום המדויק יישלח אחרי שהמארח יאשר את ההצטרפות",
+    "host": {
+      "hostedBy": "מארח: {name}",
+      "verified": "מארח מאומת"
+    },
+    "facts": {
+      "players": "{joined} מתוך {capacity} שחקנים",
+      "waitlist": "{count, plural, one {שחקן אחד ברשימת המתנה} two {שני שחקנים ברשימת המתנה} other {# שחקנים ברשימת המתנה}}",
+      "deposit": "פיקדון של {amount}",
+      "womenOnly": "לנשים בלבד",
+      "private": "משחק פרטי",
+      "format": "פורמט: {format}"
+    },
+    "sections": {
+      "players": "שחקנים",
+      "requests": "בקשות",
+      "waitlist": "רשימת המתנה"
+    },
+    "noPlayersYet": "אין שחקנים עדיין. אפשר להיות הראשונים להצטרף.",
+    "action": {
+      "join": "הצטרפות למשחק",
+      "request": "בקשה להצטרף",
+      "joinWaitlist": "הצטרפות לרשימת ההמתנה · #{position}",
+      "cancelRequest": "ביטול הבקשה",
+      "waitingForHost": "ממתין למארח",
+      "checkIn": "צ׳ק-אין",
+      "checkInOpens": "הצ׳ק-אין נפתח ב-{time}",
+      "chat": "צ׳אט",
+      "directions": "הוראות הגעה",
+      "cantMakeIt": "לא מגיעים",
+      "leaveWaitlist": "יציאה מרשימת ההמתנה",
+      "waitlistPosition": "אתם במקום #{position} ברשימת ההמתנה."
+    },
+    "outcome": {
+      "joined": "נרשמתם. נתראה במשחק.",
+      "requestSent": "הבקשה נשלחה. המארח ישיב בקרוב.",
+      "waitlisted": "אתם ברשימת ההמתנה. נעדכן אם יתפנה מקום."
+    },
+    "cancel": {
+      "title": "לבטל את ההשתתפות?",
+      "lateWarning": "ביטול פחות {hours, plural, one {משעה} two {משעתיים} other {מ-# שעות}} לפני תחילת המשחק נחשב לביטול מאוחר ומוסיף כרטיס צהוב.",
+      "freeUntil": "אפשר לבטל בלי השלכות עד {time}.",
+      "confirm": "ביטול ההשתתפות",
+      "keep": "להישאר במשחק"
+    },
+    "deposit": {
+      "disclosure": "הקפאה של {amount} · משוחררת אחרי הצ׳ק-אין",
+      "sheetTitle": "הקפאת פיקדון",
+      "body": "ב-{time} נקפיא {amount} בכרטיס האשראי. הסכום ישוחרר אחרי הצ׳ק-אין. אם לא תגיעו ולא תבטלו בזמן, הוא יישאר אצלנו.",
+      "continue": "המשך לתשלום",
+      "status": {
+        "held": "מוקפא",
+        "released": "שוחרר",
+        "forfeited": "נשאר אצלנו",
+        "failed": "ההקפאה נכשלה"
+      }
+    },
+    "host": {
+      "approve": "אישור",
+      "reject": "דחייה",
+      "rejectReasonLabel": "סיבה (לא חובה)",
+      "rejectTemplate": {
+        "full": "המשחק מלא.",
+        "level": "המשחק הזה לא מתאים.",
+        "unknown": "אנחנו עדיין לא מכירים. כדאי לכתוב קודם בקבוצה."
+      },
+      "pendingCount": "{count, plural, one {בקשה אחת ממתינה} two {שתי בקשות ממתינות} other {# בקשות ממתינות}} לך",
+      "edit": "עריכת המשחק",
+      "cancelGame": "ביטול המשחק",
+      "cancelReasonLabel": "סיבה",
+      "cancelHelp": "כל מי שהצטרף יקבל הודעה.",
+      "cancelConfirm": "ביטול המשחק הזה",
+      "showQr": "הצגת קוד QR לצ׳ק-אין",
+      "teams": "קבוצות",
+      "enterResult": "הזנת תוצאה"
+    },
+    "banner": {
+      "cancelled": "המשחק בוטל. סיבה: {reason}",
+      "cancelledNoReason": "המשחק בוטל.",
+      "ended": "המשחק הסתיים.",
+      "rateHost": "דירוג המארח"
+    }
+  },
+  "invite": {
+    "title": "הוזמנתם",
+    "join": "הצטרפות",
+    "signUpToJoin": "הרשמה כדי להצטרף",
+    "expired": "תוקף ההזמנה פג. אפשר לבקש מהמארח קישור חדש."
+  },
+  "teams": {
+    "title": "קבוצות",
+    "empty": "הקבוצות יופיעו אחרי שהשחקנים יבצעו צ׳ק-אין.",
+    "teamName": "קבוצה {letter}",
+    "balance": "מאוזן · פער דירוג {diff}",
+    "coverage": "כיסוי עמדות: {summary}",
+    "reshuffle": "ערבוב מחדש",
+    "movePlayer": "העברת שחקן",
+    "moveTo": "העברה אל {team}",
+    "lock": "נעילת הקבוצות",
+    "locked": "הקבוצות ננעלו. השחקנים קיבלו הודעה."
+  },
+  "result": {
+    "title": "הזנת תוצאה",
+    "window": "אפשר להזין את התוצאה במשך {duration}.",
+    "scoreFor": "תוצאה של {team}",
+    "increase": "הוספת נקודה אל {team}",
+    "decrease": "הפחתת נקודה מ-{team}",
+    "mvpLabel": "השחקן המצטיין (לא חובה)",
+    "didntPlay": "לא שיחקנו",
+    "submit": "שמירת התוצאה",
+    "saved": "התוצאה נשמרה. אפשר לערער עליה במשך {hours, plural, one {שעה} two {שעתיים} other {# שעות}}.",
+    "closed": "זמן הזנת התוצאה הסתיים ב-{time}."
+  }
+}

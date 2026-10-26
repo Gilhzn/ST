@@ -1,40 +1,66 @@
 /**
  * Toxicity reports → temporary visibility restriction (never a silent shadowban).
+ * PRD v5 TRUST-041…048.
  *
- * A report counts when it is about the target, inside `toxicityWindowDays`,
+ * A report is *counted* when it is about the target, inside `toxicityWindowDays`,
  * filed after the target's latest `toxicity_reports` sanction started (reports
- * are consumed by a restriction), and its reporter **qualifies**:
- * - not the target, has a profile;
- * - account at least `minReporterAccountAgeDays` old **when the report was filed**;
- * - reliability status not `red`;
- * - not spamming: at most {@link REPORT_SPAM_MAX_PER_7D} reports filed in the 7 days before `now`.
+ * are consumed by a restriction), and it qualifies:
+ * - reporter ≠ target and has a profile; reliability not `red`;
+ * - not spamming: ≤ {@link REPORT_SPAM_MAX_PER_7D} reports filed in the 7 days before `now`;
+ * - accurate: once ≥ {@link REPORTER_ACCURACY_MIN_RESOLVED} of their reports were resolved,
+ *   ≥ {@link REPORTER_MIN_ACCURACY} of them were upheld;
+ * - account ≥ `minReporterAccountAgeDays` old **when the report was filed**;
+ * - co-attendance (TRUST-041): the report names a game in which the target was an
+ *   approved participant and the reporter was an approved participant with attendance
+ *   `verified` — or, for a reported chat message, any approved participant (same chat).
  *
- * With ≥ `toxicityReporters` distinct qualifying reporters:
- * - all of them created within `collusionCreationWindowHours` of each other → collusion:
- *   `EnqueueReview(collusion_suspected)` only, no restriction;
- * - otherwise → `visibility_restriction` for `visibilityRestrictionHours` +
- *   `RestrictVisibility` + `Notify(visibility_restricted)` with the statement key +
- *   `EnqueueReview(toxicity_reports)`.
- * Nothing new is issued while a toxicity restriction is in force.
+ * With n ≥ `toxicityReporters` distinct qualifying reporters, collusion is
+ * suspected (review only, no restriction, no notice to the target) when:
+ * - (a) the reporters are not *independent*: their account creation times can be
+ *   covered by fewer than `toxicityReporters` windows of `collusionCreationWindowHours`
+ *   (so two accounts created within 48 h count once);
+ * - (c) every counted report is from one game and all reporters were on the same team,
+ *   which is not the target's team (a rival team brigading).
+ * Both tests are monotone: removing a reporter never increases severity.
+ * Overturn protection (TRUST-048): if a toxicity restriction of the target was
+ * overturned within {@link OVERTURN_PROTECTION_DAYS}, the outcome is review only.
+ * Otherwise → `visibility_restriction` for `visibilityRestrictionHours` +
+ * `RestrictVisibility` + `Notify(visibility_restricted)` with the statement key +
+ * `EnqueueReview(toxicity_reports)`. Nothing new is issued while one is in force.
+ * Severe categories (TRUST-045, `violence`): every qualifying report also enqueues a
+ * high-priority review due in {@link SEVERE_REPORT_SLA_HOURS}.
  */
 import {
   DEFAULT_TRUST_CONFIG,
+  type AttendanceStatus,
   type Effect,
   type EpochMs,
+  type GameId,
   type IsoDateTime,
+  type ParticipantStatus,
   type ReliabilityStatus,
   type Sanction,
+  type SanctionId,
+  type TeamIndex,
   type TrustConfig,
   type UserId,
   type UserReport,
+  type UserReportCategory,
   type UserReportId,
 } from '../types';
 import { deriveSanctionId } from '../crypto/uuid';
-import { DAY_MS, HOUR_MS, toEpochMs } from '../time';
+import { DAY_MS, HOUR_MS, toEpochMs, toIso } from '../time';
+import {
+  OVERTURN_PROTECTION_DAYS,
+  REPORT_SPAM_MAX_PER_7D,
+  REPORTER_ACCURACY_MIN_RESOLVED,
+  REPORTER_MIN_ACCURACY,
+  SEVERE_REPORT_SLA_HOURS,
+} from './constants';
 import { buildReviewItem, buildSystemSanction, isInForce, issueEffects } from './sanctions';
 
-/** Reporters filing more than this many reports in 7 days are treated as spamming. */
-export const REPORT_SPAM_MAX_PER_7D = 10;
+/** Categories that always reach a human quickly (TRUST-045). */
+export const SEVERE_REPORT_CATEGORIES: readonly UserReportCategory[] = ['violence'];
 
 /** What the engine needs to know about a reporter. */
 export interface ReporterProfile {
@@ -44,18 +70,58 @@ export interface ReporterProfile {
   reliabilityStatus: ReliabilityStatus;
   /** Reports this user filed (about anyone) in the 7 days before `now`. */
   reportsLast7d: number;
+  /** Reports by this user that a moderator resolved (for accuracy), if tracked. */
+  reportsResolved?: number;
+  /** Of those, how many were upheld. */
+  reportsUpheld?: number;
 }
 
-export type ReporterExclusion = 'self' | 'unknown_profile' | 'account_too_new' | 'red_status' | 'spamming';
+/** One participation, used for the co-attendance and team checks. */
+export interface GameAttendanceRecord {
+  gameId: GameId;
+  userId: UserId;
+  status: ParticipantStatus;
+  attendance: AttendanceStatus;
+  team: TeamIndex | null;
+}
+
+/** When a sanction was overturned (from `ModeratorDecided.at` / the review item). */
+export interface OverturnRecord {
+  sanctionId: SanctionId;
+  at: IsoDateTime;
+}
+
+/** Optional context for {@link evaluateReports}. */
+export interface ReportContext {
+  /** The target's sanctions (consumption, in-force and protection checks). */
+  sanctions?: readonly Sanction[];
+  /** Participations in the games named by the reports. */
+  attendance?: readonly GameAttendanceRecord[];
+  overturns?: readonly OverturnRecord[];
+}
+
+export type ReporterExclusion =
+  | 'self'
+  | 'unknown_profile'
+  | 'red_status'
+  | 'spamming'
+  | 'low_accuracy'
+  | 'account_too_new'
+  | 'not_co_attendee';
+
+export type CollusionReason = 'creation_window' | 'rival_team' | 'overturn_protection';
 
 export interface ReportEvaluation {
-  /** `restrict` = visibility restriction issued; `review_only` = collusion suspected; `none` otherwise. */
+  /** `restrict` = restriction issued; `review_only` = collusion/protection; `none` below threshold. */
   outcome: 'none' | 'review_only' | 'restrict' | 'already_restricted';
   targetUserId: UserId | null;
   /** Distinct qualifying reporters, sorted. */
   qualifyingReporterIds: UserId[];
   /** Reports that individually qualified, sorted by time then id. */
   countedReportIds: UserReportId[];
+  /** Independent reporter count (minimum number of creation windows covering them). */
+  independentReporters: number;
+  reviewReasons: CollusionReason[];
   excluded: { reporterId: UserId; reason: ReporterExclusion }[];
   effects: Effect[];
 }
@@ -64,16 +130,55 @@ function byTimeThenId(a: UserReport, b: UserReport): number {
   return toEpochMs(a.createdAt) - toEpochMs(b.createdAt) || (a.id < b.id ? -1 : a.id > b.id ? 1 : 0);
 }
 
+/** Minimum number of windows of length `windowMs` covering all `times` (greedy is optimal). */
+export function independentCount(times: readonly number[], windowMs: number): number {
+  const sorted = times.slice().sort((a, b) => a - b);
+  let count = 0;
+  let windowStart = -Infinity;
+  for (const t of sorted) {
+    if (t - windowStart > windowMs) {
+      count++;
+      windowStart = t;
+    }
+  }
+  return count;
+}
+
+function reporterExclusion(
+  r: UserReport,
+  target: UserId,
+  p: ReporterProfile | undefined,
+  attendance: ReadonlyMap<string, GameAttendanceRecord>,
+  minAgeMs: number,
+): ReporterExclusion | null {
+  if (r.reporterId === target) return 'self';
+  if (!p) return 'unknown_profile';
+  if (p.reliabilityStatus === 'red') return 'red_status';
+  if (p.reportsLast7d > REPORT_SPAM_MAX_PER_7D) return 'spamming';
+  const resolved = p.reportsResolved ?? 0;
+  if (resolved >= REPORTER_ACCURACY_MIN_RESOLVED && (p.reportsUpheld ?? 0) < REPORTER_MIN_ACCURACY * resolved) {
+    return 'low_accuracy';
+  }
+  if (toEpochMs(r.createdAt) - toEpochMs(p.createdAt) < minAgeMs) return 'account_too_new';
+  if (r.gameId === null) return 'not_co_attendee';
+  const mine = attendance.get(`${r.gameId}|${r.reporterId}`);
+  const theirs = attendance.get(`${r.gameId}|${target}`);
+  const coAttended =
+    theirs?.status === 'approved' &&
+    mine?.status === 'approved' &&
+    (mine.attendance === 'verified' || r.messageId !== null);
+  return coAttended ? null : 'not_co_attendee';
+}
+
 /**
  * @param reports reports about one target (the target of the latest report is used; others are ignored).
- * @param sanctions the target's sanctions (for consumption and the in-force check).
  */
 export function evaluateReports(
   reports: readonly UserReport[],
   reporterProfiles: readonly ReporterProfile[],
   now: EpochMs,
   config: TrustConfig = DEFAULT_TRUST_CONFIG,
-  sanctions: readonly Sanction[] = [],
+  context: ReportContext = {},
 ): ReportEvaluation {
   const sorted = reports.slice().sort(byTimeThenId);
   const target = sorted.length > 0 ? (sorted[sorted.length - 1] as UserReport).targetUserId : null;
@@ -82,12 +187,15 @@ export function evaluateReports(
     targetUserId: target,
     qualifyingReporterIds: [],
     countedReportIds: [],
+    independentReporters: 0,
+    reviewReasons: [],
     excluded: [],
     effects: [],
   };
   if (target === null) return result;
 
-  const toxicity = sanctions.filter((s) => s.userId === target && s.reasonCode === 'toxicity_reports');
+  const sanctions = (context.sanctions ?? []).filter((s) => s.userId === target);
+  const toxicity = sanctions.filter((s) => s.reasonCode === 'toxicity_reports');
   const consumedUntil = Math.max(-Infinity, ...toxicity.map((s) => toEpochMs(s.startsAt)));
   const windowStart = now - config.toxicityWindowDays * DAY_MS;
   const relevant = sorted.filter((r) => {
@@ -96,32 +204,47 @@ export function evaluateReports(
   });
 
   const profiles = new Map(reporterProfiles.map((p) => [p.id, p] as const));
+  const attendance = new Map((context.attendance ?? []).map((a) => [`${a.gameId}|${a.userId}`, a] as const));
   const minAge = config.minReporterAccountAgeDays * DAY_MS;
   const qualifying = new Map<UserId, ReporterProfile>();
   const exclusion = new Map<UserId, ReporterExclusion>();
-  const counted: UserReportId[] = [];
+  const counted: UserReport[] = [];
   for (const r of relevant) {
     const id = r.reporterId;
     const p = profiles.get(id);
-    let reason: ReporterExclusion | null = null;
-    if (id === target) reason = 'self';
-    else if (!p) reason = 'unknown_profile';
-    else if (p.reliabilityStatus === 'red') reason = 'red_status';
-    else if (p.reportsLast7d > REPORT_SPAM_MAX_PER_7D) reason = 'spamming';
-    else if (toEpochMs(r.createdAt) - toEpochMs(p.createdAt) < minAge) reason = 'account_too_new';
+    const reason = reporterExclusion(r, target, p, attendance, minAge);
     if (reason === null && p) {
       qualifying.set(id, p);
       exclusion.delete(id);
-      counted.push(r.id);
+      counted.push(r);
     } else if (reason !== null && !qualifying.has(id) && !exclusion.has(id)) {
       exclusion.set(id, reason);
     }
   }
   result.qualifyingReporterIds = [...qualifying.keys()].sort();
-  result.countedReportIds = counted;
+  result.countedReportIds = counted.map((r) => r.id);
   result.excluded = [...exclusion.entries()]
     .sort(([a], [b]) => (a < b ? -1 : 1))
     .map(([reporterId, reason]) => ({ reporterId, reason }));
+  const created = [...qualifying.values()].map((p) => toEpochMs(p.createdAt));
+  result.independentReporters = independentCount(created, config.collusionCreationWindowHours * HOUR_MS);
+
+  for (const r of counted) {
+    if (!SEVERE_REPORT_CATEGORIES.includes(r.category)) continue;
+    const item = buildReviewItem(
+      {
+        kind: 'toxicity_reports',
+        priority: 'high',
+        dedupeKey: `severe_report:${r.id}`,
+        subjectUserId: target,
+        gameId: r.gameId,
+        reportIds: [r.id],
+        evidence: { category: r.category, severe: true },
+      },
+      now,
+    );
+    result.effects.push({ type: 'EnqueueReview', item: { ...item, dueBy: toIso(now + SEVERE_REPORT_SLA_HOURS * HOUR_MS) } });
+  }
 
   if (qualifying.size < config.toxicityReporters) return result;
   if (toxicity.some((s) => s.kind === 'visibility_restriction' && isInForce(s, now))) {
@@ -129,24 +252,43 @@ export function evaluateReports(
     return result;
   }
 
+  if (result.independentReporters < config.toxicityReporters) result.reviewReasons.push('creation_window');
+  const games = new Set(counted.map((r) => r.gameId));
+  const onlyGame = counted[0]?.gameId ?? null;
+  if (games.size === 1 && onlyGame !== null) {
+    const teamOf = (u: UserId) => attendance.get(`${onlyGame}|${u}`)?.team ?? null;
+    const teams = new Set(result.qualifyingReporterIds.map(teamOf));
+    const [team] = [...teams];
+    const targetTeam = teamOf(target);
+    if (teams.size === 1 && team !== null && team !== undefined && targetTeam !== null && targetTeam !== team) {
+      result.reviewReasons.push('rival_team');
+    }
+  }
+  const protectedSince = now - OVERTURN_PROTECTION_DAYS * DAY_MS;
+  const restrictionIds = new Set(toxicity.map((s) => s.id));
+  if ((context.overturns ?? []).some((o) => restrictionIds.has(o.sanctionId) && toEpochMs(o.at) > protectedSince)) {
+    result.reviewReasons.push('overturn_protection');
+  }
+
   const firstReportId = result.countedReportIds[0] as UserReportId;
-  const created = [...qualifying.values()].map((p) => toEpochMs(p.createdAt));
-  const colluding = Math.max(...created) - Math.min(...created) <= config.collusionCreationWindowHours * HOUR_MS;
   const evidence = {
     reporters: qualifying.size,
+    independentReporters: result.independentReporters,
     windowDays: config.toxicityWindowDays,
     excludedReporters: result.excluded.length,
-    creationSpreadHours: Math.round(((Math.max(...created) - Math.min(...created)) / HOUR_MS) * 100) / 100,
+    collusionSuspected: result.reviewReasons.some((r) => r !== 'overturn_protection'),
+    reviewReasons: result.reviewReasons.join(','),
   };
-  if (colluding) {
+  if (result.reviewReasons.length > 0) {
     result.outcome = 'review_only';
+    const collusion = evidence.collusionSuspected;
     result.effects.push({
       type: 'EnqueueReview',
       item: buildReviewItem(
         {
-          kind: 'collusion_suspected',
+          kind: collusion ? 'collusion_suspected' : 'toxicity_reports',
           priority: 'normal',
-          dedupeKey: `collusion_suspected:${target}:${firstReportId}`,
+          dedupeKey: `${collusion ? 'collusion_suspected' : 'protected_reports'}:${target}:${firstReportId}`,
           subjectUserId: target,
           reportIds: result.countedReportIds,
           evidence,

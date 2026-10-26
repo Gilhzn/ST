@@ -6,8 +6,11 @@
  * 1. A venue created by the host was confirmed fake (moderator removed it):
  *    reason `fake_venue`, one suspension per venue.
  * 2. Average host rating ≤ `hostLowRatingMax` over ≥ `hostLowRatingMinCount`
- *    ratings: reason `low_host_rating`. Only ratings submitted after the
- *    latest `low_host_rating` suspension started count (a fresh start).
+ *    ratings in the last {@link HOST_RATING_WINDOW_DAYS} days (TRUST-051(b)):
+ *    reason `low_host_rating`. Only ratings submitted after the latest
+ *    `low_host_rating` suspension started count (a fresh start).
+ * Not implemented here (no data in the contract yet): TRUST-051(a) "fake game"
+ * by ≥ 3 checked-in reporters and (c) 2 late game cancellations in 30 days.
  * Nothing is issued while a host suspension is in force.
  */
 import {
@@ -24,6 +27,7 @@ import {
 } from '../types';
 import { deriveSanctionId } from '../crypto/uuid';
 import { DAY_MS, toEpochMs } from '../time';
+import { HOST_RATING_WINDOW_DAYS } from './constants';
 import { buildReviewItem, buildSystemSanction, isInForce, issueEffects } from './sanctions';
 
 /** One `host_ratings` row (unique per game + rater). */
@@ -71,7 +75,8 @@ export function evaluateHostReliability(
   const unique = new Map<string, HostRatingRecord>();
   for (const r of input.ratings) {
     if (r.hostId !== hostId || r.raterId === hostId) continue;
-    if (toEpochMs(r.at) <= consumedUntil || toEpochMs(r.at) > now) continue;
+    const at = toEpochMs(r.at);
+    if (at <= consumedUntil || at > now || at <= now - HOST_RATING_WINDOW_DAYS * DAY_MS) continue;
     const k = ratingKey(r);
     const prev = unique.get(k);
     if (!prev || toEpochMs(r.at) > toEpochMs(prev.at)) unique.set(k, r);
@@ -106,7 +111,7 @@ export function evaluateHostReliability(
   const last = ratings[ratings.length - 1];
   const dedupeKey =
     fakeVenue !== undefined ? `fake_venue:${hostId}:${fakeVenue}` : `low_host_rating:${hostId}:${last ? ratingKey(last) : ''}`;
-  const statementParams =
+  const statementParams: Readonly<Record<string, string | number>> =
     fakeVenue !== undefined
       ? { venueId: fakeVenue, days }
       : { average: averageRating ?? 0, ratings: ratings.length, days };

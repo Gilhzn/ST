@@ -1,0 +1,8 @@
+{
+  "version": 8,
+  "name": "Sport Talent blank (offline)",
+  "sources": {},
+  "layers": [
+    { "id": "background", "type": "background", "paint": { "background-color": "#E8EBF2" } }
+  ]
+}

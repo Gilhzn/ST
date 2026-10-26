@@ -1,11 +1,14 @@
 /**
- * Peer check-in: a player is verified once at least `peerMinConfirmations`
- * *qualifying* attendees confirm them. A confirmation from C for target T
- * qualifies when C ≠ T, C is an approved participant with attendance
- * `verified`, C and T have not blocked each other (either direction), and the
- * pair is not *reciprocal-only*: C was itself verified by peers **and** T
- * confirmed C. A confirmer verified independently (GPS / QR / host) counts even
- * if T confirmed them too, because their own presence does not depend on T.
+ * Peer check-in (TRUST-009): a player is verified once at least
+ * `peerMinConfirmations` *qualifying* attendees confirm them. A confirmation
+ * from C for target T qualifies when:
+ * - C ≠ T and C is an approved participant with attendance `verified`
+ *   **by GPS or QR** (independent evidence of presence);
+ * - C and T have not blocked each other (either direction);
+ * - it is among C's first {@link PEER_MAX_CONFIRMATIONS_PER_CONFIRMER}
+ *   confirmations in this game (list order = chronological order).
+ * A peer-verified confirmer never qualifies; if T also confirmed them the pair
+ * is *reciprocal-only* (reported as `reciprocal_only`), otherwise they are ignored.
  *
  * Mirrored by SQL `peer_confirm` (golden kind `checkin.verifyPeer`).
  */
@@ -20,6 +23,7 @@ import {
   type UserId,
 } from '../types';
 import { isCheckInOpen, type GameWindow } from '../games/windows';
+import { PEER_MAX_CONFIRMATIONS_PER_CONFIRMER } from '../trust/constants';
 
 /** One stored peer confirmation (`peer_confirmations` row) within a game. */
 export interface PeerConfirmation {
@@ -56,16 +60,29 @@ export function qualifyingPeerConfirmers(input: PeerCheckInInput): {
     if (b.blockerId === t) blocked.add(b.blockedId);
     if (b.blockedId === t) blocked.add(b.blockerId);
   }
-  const confirmers = [...new Set(input.confirmations.filter((c) => c.targetId === t).map((c) => c.confirmerId))].sort();
+  const perConfirmer = new Map<UserId, number>();
+  const confirmers = new Set<UserId>();
+  const seenPairs = new Set<string>();
+  for (const c of input.confirmations) {
+    const pair = `${c.confirmerId}|${c.targetId}`;
+    if (seenPairs.has(pair)) continue;
+    seenPairs.add(pair);
+    const n = (perConfirmer.get(c.confirmerId) ?? 0) + 1;
+    perConfirmer.set(c.confirmerId, n);
+    if (c.targetId === t && n <= PEER_MAX_CONFIRMATIONS_PER_CONFIRMER) confirmers.add(c.confirmerId);
+  }
   const qualifying: UserId[] = [];
   const excludedReciprocal: UserId[] = [];
   const excludedBlocked: UserId[] = [];
-  for (const c of confirmers) {
+  for (const c of [...confirmers].sort()) {
     const p = byId.get(c);
     if (c === t || !p || p.status !== 'approved' || p.attendance !== 'verified') continue;
-    if (blocked.has(c)) excludedBlocked.push(c);
-    else if (p.checkInMethod === 'peer' && targetConfirmed.has(c)) excludedReciprocal.push(c);
-    else qualifying.push(c);
+    if (p.checkInMethod === 'gps' || p.checkInMethod === 'qr') {
+      if (blocked.has(c)) excludedBlocked.push(c);
+      else qualifying.push(c);
+    } else if (p.checkInMethod === 'peer' && targetConfirmed.has(c) && !blocked.has(c)) {
+      excludedReciprocal.push(c);
+    }
   }
   return { qualifying, excludedReciprocal, excludedBlocked };
 }

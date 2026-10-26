@@ -1,0 +1,58 @@
+{
+  "title": "פרופיל",
+  "edit": "עריכת הפרופיל",
+  "homeCity": "עיר מגורים: {city}",
+  "memberSince": "חבר/ה מאז {date}",
+  "sportsTitle": "ענפי ספורט",
+  "stats": {
+    "title": "נתונים",
+    "gamesPlayed": "משחקים ששוחקו",
+    "gamesHosted": "משחקים שאירחתם",
+    "checkInRate": "שיעור צ׳ק-אין",
+    "favoriteVenue": "המגרש המועדף",
+    "none": "עדיין אין"
+  },
+  "positions": {
+    "title": "עמדות",
+    "primary": "ראשית",
+    "secondary": "משנית",
+    "none": "לא הוגדרו עמדות"
+  },
+  "history": {
+    "title": "היסטוריה",
+    "empty": "אין משחקים עדיין. אפשר להצטרף למשחק כדי להתחיל.",
+    "result": "תוצאה: {score}",
+    "noResult": "אין תוצאה"
+  },
+  "reliabilityCard": {
+    "a11y": "כרטיס אמינות"
+  },
+  "other": {
+    "report": "דיווח על שחקן/ית",
+    "block": "חסימת שחקן/ית",
+    "overflow": "אפשרויות נוספות",
+    "blocked": "חסמתם את השחקן/ית הזה/זו."
+  },
+  "report": {
+    "title": "דיווח על {name}",
+    "category": {
+      "violence": "אלימות או איומים",
+      "unsportsmanlike": "התנהגות לא ספורטיבית",
+      "harassment": "הטרדה",
+      "spam": "ספאם",
+      "other": "משהו אחר"
+    },
+    "noteLabel": "פרטים נוספים (לא חובה)",
+    "submit": "שליחת הדיווח",
+    "thanks": "תודה. נבדוק את זה."
+  },
+  "editForm": {
+    "title": "עריכת הפרופיל",
+    "displayNameLabel": "שם תצוגה",
+    "bioLabel": "קצת עליכם",
+    "bioHint": "לא חובה. אפשר לכתוב במה אוהבים לשחק.",
+    "changePhoto": "החלפת תמונה",
+    "removePhoto": "הסרת תמונה",
+    "saved": "הפרופיל נשמר."
+  }
+}

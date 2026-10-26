@@ -43,6 +43,8 @@ create table public.moderation_retained (
   reason text not null check (reason in ('blocked', 'reported')),
   categories text[] not null default '{}',
   report_id uuid,
+  -- Legal hold (compliance §4/§9) suspends the purge for this record.
+  legal_hold boolean not null default false,
   retained_at timestamptz not null default now(),
   expires_at timestamptz not null
 );
@@ -63,3 +65,7 @@ create table public.message_translations (
 create function public.st_can_read_chat(p_game_id uuid, p_uid uuid default auth.uid()) returns boolean
 language sql stable security definer set search_path = ''
 as $$ select p_uid is not null and public.st_is_approved(p_game_id, p_uid) $$;
+
+create function public.st_my_chat(p_game_id uuid) returns boolean
+language sql stable security definer set search_path = ''
+as $$ select public.st_can_read_chat(p_game_id, auth.uid()) $$;

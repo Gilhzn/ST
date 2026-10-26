@@ -36,6 +36,14 @@ end $$;
 create trigger venues_validate before insert or update of sports on public.venues
   for each row execute function public.st_venues_validate();
 
+-- Venue rows with lat/lng for clients. security_invoker: filtered by the venues RLS policy.
+create view public.venue_views with (security_invoker = true) as
+  select v.id, v.name,
+         extensions.st_y(v.geog::extensions.geometry) as lat,
+         extensions.st_x(v.geog::extensions.geometry) as lng,
+         v.address, v.country_code, v.sports, v.status, v.rating_avg, v.rating_count, v.created_by, v.created_at
+  from public.venues v;
+
 -- ---------------------------------------------------------------------------
 -- venue_ratings: one per (venue, user, sport); attributes validated against sports.rating_attributes
 -- ---------------------------------------------------------------------------
