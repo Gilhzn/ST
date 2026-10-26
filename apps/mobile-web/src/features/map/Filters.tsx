@@ -32,7 +32,7 @@ export function SportFilterBar({
         const blocked = atLimit && !on;
         return (
           // A blocked chip is disabled; the wrapper catches the attempt to show the limit toast.
-          <Pressable key={s} accessible={false} focusable={false} disabled={!blocked} onPress={onLimit} testID={`map.filter.sport.${s}.wrap`}>
+          <Pressable key={s} accessible={false} focusable={false} onPress={blocked ? onLimit : undefined} testID={`map.filter.sport.${s}.wrap`}>
             <ChoiceChip
               disabled={blocked}
               testID={`map.filter.sport.${s}`}

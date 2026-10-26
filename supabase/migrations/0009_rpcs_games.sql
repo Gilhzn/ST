@@ -508,7 +508,6 @@ begin
   perform public.st_apply_effects(jsonb_build_array(
     jsonb_build_object('type', 'PromoteWaitlist', 'gameId', g.id, 'userId', uid),
     public.dm_notify(uid, 'waitlist_promoted', jsonb_build_object('mode', offer.mode), g.id, null)));
-  if spots = 1 then delete from public.waitlist_offers o where o.game_id = g.id; end if;
   return public.st_participant_view(g.id, uid);
 end $$;
 

@@ -151,7 +151,7 @@ describe("request_join", () => {
 });
 
 describe("decide_join and the waitlist (GAME-045)", () => {
-  it("is host only, waitlists when full and offers freed spots FIFO", async () => {
+  it("is host only, waitlists when full and offers freed spots FIFO (standard 2h offer, then the next player)", async () => {
     const host = await makeUser(db);
     const [a, b, c] = [await makeUser(db), await makeUser(db), await makeUser(db)];
     const g = await makeGame(db, host, { capacity: 2 });
@@ -167,28 +167,39 @@ describe("decide_join and the waitlist (GAME-045)", () => {
     expect((await decide(c))[0]).toMatchObject({ status: "waitlisted", waitlist_rank: 2 });
     await expectSt(decide(a), "conflict");
 
-    // a cancels > 6h before start: b gets a 2h offer, c does not.
+    // a cancels > 6h before start: b (first in line) gets a 120-minute offer, c does not.
     const now = { now: at(-10 * HOUR) };
     await asUser(db, a, `select public.cancel_participation($1)`, [g], now);
-    const offers = await db.query<{ user_id: string; offer_expires_at: Date; offer_is_flash: boolean }>(
-      `select user_id, offer_expires_at, offer_is_flash from game_participants where game_id = $1 and offer_expires_at is not null`, [g]);
-    expect(offers).toEqual([{ user_id: b, offer_expires_at: at(-8 * HOUR), offer_is_flash: false }]);
-    await expectSt(asUser(db, c, `select public.accept_waitlist_offer($1)`, [g], now), "conflict");
+    const offers = await db.query<{ user_id: string; accept_by: Date; mode: string }>(
+      `select user_id, accept_by, mode from waitlist_offers where game_id = $1`, [g]);
+    expect(offers).toEqual([{ user_id: b, accept_by: at(-8 * HOUR), mode: "standard" }]);
+    const [mine] = await asUser<{ offer_accept_by: Date; offer_mode: string }>(db, b,
+      `select offer_accept_by, offer_mode from participant_views where game_id = $1 and user_id = $2`, [g, b], now);
+    expect(mine).toEqual({ offer_accept_by: at(-8 * HOUR), offer_mode: "standard" });
+    await expectSt(asUser(db, c, `select public.accept_waitlist_offer($1)`, [g], now), "not_found");
 
-    // Offer expires → b goes to the back, c gets an offer (between 6h and 1h: 20 minutes).
-    const later = { now: at(-5 * HOUR) };
+    // b lets the offer expire → the next pass offers c (still > 6h: 120 minutes); b cannot accept late.
+    const later = { now: at(-7 * HOUR) };
     expect((await asService<{ n: number }>(db, `select public.expire_waitlist_offers() as n`, [], later))[0]!.n).toBe(1);
-    const [cOffer] = await db.query<{ offer_expires_at: Date }>(`select offer_expires_at from game_participants where game_id = $1 and user_id = $2`, [g, c]);
-    expect(cOffer!.offer_expires_at).toEqual(at(-5 * HOUR + 20 * MIN));
+    await expectSt(asUser(db, b, `select public.accept_waitlist_offer($1)`, [g], later), "outside_window");
     const [acc] = await asUser<{ status: string }>(db, c, `select * from public.accept_waitlist_offer($1)`, [g], later);
     expect(acc!.status).toBe("approved");
-    const [rank] = await db.query<{ waitlist_rank: number }>(`select waitlist_rank from participant_views where game_id = $1 and user_id = $2`, [g, b]);
-    expect(rank).toBeUndefined(); // superuser has no auth.uid(): the view hides everything
     const [bRow] = await asUser<{ status: string; waitlist_rank: number }>(db, b, `select * from participant_views where game_id = $1 and user_id = $2`, [g, b]);
     expect(bRow).toMatchObject({ status: "waitlisted", waitlist_rank: 1 });
   });
 
-  it("flash fill under 1h: everyone on the waitlist is offered, first to accept wins", async () => {
+  it("between 6h and 1h before start the offer window is 20 minutes", async () => {
+    const host = await makeUser(db);
+    const [a, b] = [await makeUser(db), await makeUser(db)];
+    const g = await makeGame(db, host, { capacity: 2 });
+    await addParticipant(db, g, a);
+    await addParticipant(db, g, b, "waitlisted");
+    await asUser(db, a, `select public.cancel_participation($1)`, [g], { now: at(-3 * HOUR) });
+    const [o] = await db.query<{ accept_by: Date; mode: string }>(`select accept_by, mode from waitlist_offers where game_id = $1`, [g]);
+    expect(o).toEqual({ accept_by: at(-3 * HOUR + 20 * MIN), mode: "short" });
+  });
+
+  it("flash fill under 1h: everyone on the waitlist is offered, first to accept wins, others get game_full", async () => {
     const host = await makeUser(db);
     const a = await makeUser(db);
     const g = await makeGame(db, host, { capacity: 2 });
@@ -197,16 +208,18 @@ describe("decide_join and the waitlist (GAME-045)", () => {
     for (const [i, u] of w.entries()) await addParticipant(db, g, u, "waitlisted", { waitlistedAt: at(-5 * DAY + i * MIN) });
     const now = { now: at(-40 * MIN) };
     await asUser(db, a, `select public.cancel_participation($1)`, [g], now);
-    const flash = await db.query<{ n: number }>(`select count(*)::int n from game_participants where game_id = $1 and offer_is_flash`, [g]);
+    const flash = await db.query<{ n: number }>(`select count(*)::int n from waitlist_offers where game_id = $1 and mode = 'flash' and accept_by = $2`,
+      [g, iso(T0)]);
     expect(flash[0]!.n).toBe(3);
     const notified = await db.query<{ n: number }>(`select count(*)::int n from notifications where kind = 'waitlist_promoted' and game_id = $1`, [g]);
     expect(notified[0]!.n).toBe(3);
     const [win] = await asUser<{ status: string }>(db, w[2]!, `select * from public.accept_waitlist_offer($1)`, [g], now);
     expect(win!.status).toBe("approved");
-    // Others' offers were withdrawn with a "spot taken" notice; they stay waitlisted.
-    await expectSt(asUser(db, w[0]!, `select public.accept_waitlist_offer($1)`, [g], now), "conflict");
+    await expectSt(asUser(db, w[0]!, `select public.accept_waitlist_offer($1)`, [g], now), "game_full");
     const taken = await db.query<{ n: number }>(`select count(*)::int n from notifications where kind = 'join_waitlisted' and game_id = $1`, [g]);
     expect(taken[0]!.n).toBe(2);
+    // After the start nothing is offered or accepted.
+    await expectSt(asUser(db, w[0]!, `select public.accept_waitlist_offer($1)`, [g], { now: at(MIN) }), "game_not_open");
   });
 
   it("game_full when the spot was taken between offer and acceptance", async () => {
@@ -214,8 +227,8 @@ describe("decide_join and the waitlist (GAME-045)", () => {
     const [a, b] = [await makeUser(db), await makeUser(db)];
     const g = await makeGame(db, host, { capacity: 2 });
     await addParticipant(db, g, b, "waitlisted");
-    await db.query(`update game_participants set offer_expires_at = $3, offer_is_flash = true where game_id = $1 and user_id = $2`,
-      [g, b, iso(at(HOUR))]);
+    await db.query(`insert into waitlist_offers (game_id, user_id, offered_at, accept_by, mode) values ($1, $2, $3, $4, 'flash')`,
+      [g, b, iso(at(-HOUR)), iso(T0)]);
     await addParticipant(db, g, a);
     await expectSt(asUser(db, b, `select public.accept_waitlist_offer($1)`, [g], { now: at(-30 * MIN) }), "game_full");
   });
@@ -230,42 +243,45 @@ describe("decide_join and the waitlist (GAME-045)", () => {
     await expectSt(asUser(db, host, `select public.remove_participant($1, $2)`, [g, host], before), "validation");
     const [r] = await asUser<{ status: string }>(db, host, `select * from public.remove_participant($1, $2)`, [g, a], before);
     expect(r!.status).toBe("removed");
-    const [o] = await db.query<{ offer_expires_at: Date | null }>(`select offer_expires_at from game_participants where game_id = $1 and user_id = $2`, [g, b]);
-    expect(o!.offer_expires_at).not.toBeNull();
+    const [o] = await db.query<{ mode: string }>(`select mode from waitlist_offers where game_id = $1 and user_id = $2`, [g, b]);
+    expect(o!.mode).toBe("standard");
     const [n] = await db.query<{ n: number }>(`select count(*)::int n from notifications where user_id = $1 and kind = 'participant_removed'`, [a]);
     expect(n!.n).toBe(1);
   });
 });
 
 describe("cancel_participation", () => {
-  it("> 2h before start: no card; < 2h: provisional yellow card with statement key and 48h dispute window", async () => {
+  it("≥ 2h before start is free; < 2h is a late cancel whose card is decided at finalisation", async () => {
     const host = await makeUser(db);
-    const [early, late] = [await makeUser(db), await makeUser(db)];
+    const [early, late, v1, v2] = [await makeUser(db), await makeUser(db), await makeUser(db), await makeUser(db)];
     const g = await makeGame(db, host);
-    await addParticipant(db, g, early);
-    await addParticipant(db, g, late);
+    for (const u of [early, late]) await addParticipant(db, g, u);
+    for (const u of [v1, v2]) await addParticipant(db, g, u, "approved", { attendance: "verified" });
     const [r1] = await asUser<{ r: { sanction: unknown; participant: { late_cancel: boolean } } }>(
-      db, early, `select public.cancel_participation($1) as r`, [g], { now: at(-3 * HOUR) });
+      db, early, `select public.cancel_participation($1) as r`, [g], { now: at(-2 * HOUR) });
     expect(r1!.r.sanction).toBeNull();
-    expect(r1!.r.participant.late_cancel).toBe(false);
+    expect(r1!.r.participant.late_cancel).toBe(false); // exactly 2h before: not late
 
-    const now = at(-90 * MIN);
-    const [r2] = await asUser<{ r: { sanction: Record<string, unknown>; participant: { late_cancel: boolean } } }>(
-      db, late, `select public.cancel_participation($1) as r`, [g], { now });
+    const cancelAt = at(-90 * MIN);
+    const [r2] = await asUser<{ r: { sanction: unknown; participant: { late_cancel: boolean } } }>(
+      db, late, `select public.cancel_participation($1) as r`, [g], { now: cancelAt });
     expect(r2!.r.participant.late_cancel).toBe(true);
-    expect(r2!.r.sanction).toMatchObject({
-      kind: "yellow_card",
-      reason_code: "late_cancel",
-      statement_key: "sanctions.reason.late_cancel",
-      status: "active",
-      decided_by: "system",
-      dedupe_key: `late_cancel:${g}:${late}`,
-    });
-    expect(new Date(r2!.r.sanction.dispute_until as string)).toEqual(new Date(now.getTime() + 48 * HOUR));
-    expect(new Date(r2!.r.sanction.expires_at as string)).toEqual(new Date(now.getTime() + 30 * DAY));
+    expect(r2!.r.sanction).toBeNull();
+    expect(await sanctionsOf(db, late)).toHaveLength(0);
+    expect((await profileOf(db, late)).reliability_late_cancel_count).toBe(1);
+
+    const close = at(90 * MIN + 2 * HOUR);
+    await asService(db, `select public.process_no_shows()`, [], { now: close });
+    const [card] = await sanctionsOf(db, late);
+    expect(card).toMatchObject({ kind: "yellow_card", reason_code: "late_cancel", status: "active", dedupe_key: `late_cancel:${g}:${late}` });
+    expect(card!.dispute_until).toEqual(new Date(close.getTime() + 48 * HOUR));
+    expect(card!.expires_at).toEqual(new Date(close.getTime() + 30 * DAY));
+    const [{ statement_params }] = await db.query<{ statement_params: Record<string, unknown> }>(
+      `select statement_params from sanctions where id = $1`, [card!.id]);
+    expect(statement_params).toEqual({ windowHours: 2, minutesBeforeStart: 90, disputeHours: 48, appealPath: "dispute" });
     const [n] = await db.query<{ n: number }>(`select count(*)::int n from notifications where user_id = $1 and kind = 'sanction_issued'`, [late]);
     expect(n!.n).toBe(1);
-    expect((await profileOf(db, late)).reliability_late_cancel_count).toBe(1);
+    expect(await sanctionsOf(db, early)).toHaveLength(0);
   });
 
   it("host cannot cancel participation; cancelling twice conflicts", async () => {
@@ -278,7 +294,7 @@ describe("cancel_participation", () => {
     await expectSt(asUser(db, p, `select public.cancel_participation($1)`, [g], before), "conflict");
   });
 
-  it("TRUST-021: the card is voided at closure when the replacement checked in", async () => {
+  it("TRUST-021: no card when the spot was refilled before the start and the replacement checked in", async () => {
     const host = await makeUser(db);
     const [leaver, sub, other] = [await makeUser(db), await makeUser(db), await makeUser(db)];
     const g = await makeGame(db, host, { capacity: 3 });
@@ -292,19 +308,18 @@ describe("cancel_participation", () => {
     await db.query(`update game_participants set attendance = 'verified', check_in_method = 'qr', checked_in_at = $3 where game_id = $1 and user_id = $2`,
       [g, sub, iso(T0)]);
     await asService(db, `select public.process_no_shows()`, [], { now: at(4 * HOUR) });
-    const [card] = await sanctionsOf(db, leaver);
-    expect(card).toMatchObject({ status: "overturned", void_reason: "refilled" });
+    expect(await sanctionsOf(db, leaver)).toHaveLength(0);
     const p = await profileOf(db, leaver);
     expect(p.reliability_late_cancel_count).toBe(0);
-    const [note] = await db.query<{ params: { decision: string } }>(`select params from notifications where user_id = $1 and kind = 'sanction_decided'`, [leaver]);
-    expect(note!.params.decision).toBe("voided_refilled");
+    expect(await db.query(`select 1 from audit_log where action = 'late_cancel.refilled' and subject_user_id = $1`, [leaver])).toHaveLength(1);
   });
 
-  it("TRUST-021: the card stays when the replacement did not check in", async () => {
+  it("TRUST-021: the card is issued when the replacement did not check in (game happened)", async () => {
     const host = await makeUser(db);
-    const [leaver, sub] = [await makeUser(db), await makeUser(db)];
-    const g = await makeGame(db, host, { capacity: 2 });
+    const [leaver, sub, v1, v2] = [await makeUser(db), await makeUser(db), await makeUser(db), await makeUser(db)];
+    const g = await makeGame(db, host, { capacity: 4 });
     await addParticipant(db, g, leaver);
+    for (const u of [v1, v2]) await addParticipant(db, g, u, "approved", { attendance: "verified" });
     await addParticipant(db, g, sub, "waitlisted");
     await asUser(db, leaver, `select public.cancel_participation($1)`, [g], { now: at(-90 * MIN) });
     await asUser(db, sub, `select public.accept_waitlist_offer($1)`, [g], { now: at(-80 * MIN) });
@@ -313,6 +328,22 @@ describe("cancel_participation", () => {
     expect(cards.map((c) => [c.reason_code, c.status])).toEqual([["late_cancel", "active"]]);
     // The sub became a no-show instead.
     expect((await sanctionsOf(db, sub)).map((c) => c.reason_code)).toEqual(["no_show"]);
+  });
+
+  it("TRUST-011: a game that did not happen (< 2 verified) gives no cards and excuses everyone", async () => {
+    const host = await makeUser(db);
+    const [a, b] = [await makeUser(db), await makeUser(db)];
+    const g = await makeGame(db, host);
+    await addParticipant(db, g, a);
+    await addParticipant(db, g, b, "approved", { attendance: "verified" });
+    await asService(db, `select public.process_no_shows()`, [], { now: at(4 * HOUR) });
+    expect(await sanctionsOf(db, a)).toHaveLength(0);
+    const [{ attendance }] = await db.query<{ attendance: string }>(`select attendance from game_participants where game_id = $1 and user_id = $2`, [g, a]);
+    expect(attendance).toBe("excused");
+    const [q] = await db.query<{ kind: string; dedupe_key: string }>(`select kind, dedupe_key from review_queue`);
+    expect(q).toEqual({ kind: "host_reliability", dedupe_key: `game_not_happened:${g}` });
+    const [{ happened }] = await db.query<{ happened: boolean }>(`select happened from games where id = $1`, [g]);
+    expect(happened).toBe(false);
   });
 });
 

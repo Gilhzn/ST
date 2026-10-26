@@ -101,7 +101,8 @@ test.describe("APP-03 map filters", () => {
     for (const s of ["football", "basketball", "tennis"]) await page.getByTestId(`map.filter.sport.${s}`).click();
     const fourth = page.getByTestId("map.filter.sport.padel");
     await expect(fourth).toHaveAttribute("aria-disabled", "true");
-    await fourth.click();
+    // A real tap on the disabled chip lands on its wrapper, which explains the limit.
+    await page.getByTestId("map.filter.sport.padel.wrap").click();
     await expect(page.getByTestId("toast")).toBeVisible();
     await page.getByTestId("map.filter.radius.10").click();
     await expect(page.getByTestId("map.filter.radius.10")).toHaveAttribute("aria-checked", "true");
