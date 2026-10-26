@@ -155,14 +155,17 @@ describe("network: played-with, friends, privacy", () => {
     await asUser(db, a, `select public.request_friend($1)`, [b], { now: T0 });
     const [d] = await asUser<{ v: { friend: string } }>(db, b, `select public.respond_friend($1, false) v`, [a], { now: T0 });
     expect(d!.v.friend).toBe("none");
+    // 30-day cooldown for the pair after a decline (security review #2 M2).
+    await expectSt(asUser(db, a, `select public.request_friend($1)`, [b], { now: at(DAY) }), "rate_limited");
+    const later = { now: at(31 * DAY) };
     // A block deletes the friendship and prevents (re)requests; the pair is hidden from both lists.
-    await asUser(db, a, `select public.request_friend($1)`, [b], { now: T0 });
-    await asUser(db, b, `select public.respond_friend($1, true)`, [a], { now: T0 });
-    await asUser(db, a, `select public.block_user($1)`, [b], { now: T0 });
+    await asUser(db, a, `select public.request_friend($1)`, [b], later);
+    await asUser(db, b, `select public.respond_friend($1, true)`, [a], later);
+    await asUser(db, a, `select public.block_user($1)`, [b], later);
     expect(first(await db.query<{ f: string | null }>(`select friend_status::text f from connections`)).f).toBeNull();
-    await expectSt(asUser(db, b, `select public.request_friend($1)`, [a], { now: T0 }), "blocked");
-    expect(await asUser(db, a, `select * from public.list_network('all')`, [], { now: T0 })).toHaveLength(0);
-    expect(await asUser(db, b, `select * from connections`, [], { now: T0 })).toHaveLength(0);
+    await expectSt(asUser(db, b, `select public.request_friend($1)`, [a], later), "blocked");
+    expect(await asUser(db, a, `select * from public.list_network('all')`, [], later)).toHaveLength(0);
+    expect(await asUser(db, b, `select * from connections`, [], later)).toHaveLength(0);
   });
 
   it("friends_upcoming_games: friends' public games only, privacy respected, location masked, blocked hosts hidden", async () => {

@@ -104,5 +104,6 @@ begin
     where g.id = aj.game_id and g.ends_at <= t - interval '90 days'
     returning 1)
   select count(*) into n_aj from d;
-  return jsonb_build_object('seriesTokens', n_tok, 'autoJoins', n_aj, 'media', public.purge_media());
+  return jsonb_build_object('seriesTokens', n_tok, 'autoJoins', n_aj, 'media', public.purge_media(),
+                            'orphanOriginals', public.purge_orphan_originals());
 end $$;

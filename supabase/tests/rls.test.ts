@@ -178,7 +178,7 @@ beforeAll(async () => {
       ('${SER2}', '${P}', 'regular', false, 'host');
     insert into series_auto_joins (game_id, series_id, user_id, joined_as) values ('${G}', '${SER}', '${P}', 'approved');
     insert into invite_joins (kind, series_id, user_id) values ('series', '${SER}', '${P}');
-    insert into result_confirmations (game_id, user_id, verdict) values ('${G}', '${P}', 'confirm');
+    insert into result_confirmations (game_id, user_id, verdict, team_scores) values ('${G}', '${P}', 'confirm', '{1,0}');
     insert into peer_ratings (game_id, rater_id, ratee_id, sport, scores) values ('${G}', '${P}', '${H}', 'football', '{"overall": 4}');
     insert into skill_ratings (user_id, sport, format_family, r, rd, sigma) values ('${P}', 'football', 'small_sided', 1500, 350, 0.06);
     insert into rating_periods (period, starts_at, ends_at) values ('2026-W44', '2026-10-26T00:00:00Z', '2026-11-02T00:00:00Z');
@@ -243,7 +243,7 @@ describe("catalog invariants", () => {
     "set_always_in", "set_network_privacy", "set_visibility", "skip_occurrence", "st_am_approved", "st_am_host",
     "st_am_media_uploader", "st_am_moderator", "st_am_regular", "st_am_series_host", "st_hhmm", "st_hidden_from_me",
     "st_media_object_readable", "st_media_object_uploadable", "st_my_blocked", "st_my_chat", "st_my_exact",
-    "st_my_game_visible", "st_my_media_visible", "st_my_series_exact", "st_my_series_visible", "st_now", "st_raise",
+    "st_my_game_visible", "st_my_media_visible", "st_my_series_exact", "st_my_series_visible", "st_now", "st_priority_hidden_from_me", "st_raise",
     "st_realtime_can_read", "submit_checkin", "submit_peer_ratings", "submit_result", "tag_user", "trust_config_json",
     "unblock_user", "untag", "update_series", "venue_vault"
     ]);

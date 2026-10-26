@@ -195,6 +195,29 @@ Functions when dispatch is configured. Removed media objects are deleted by the 
 
 New ErrorCode: `roster_priority`.
 
+**Media object deletion requires dispatch.** `purge_media`, `st_remove_media`, account deletion and
+`purge_orphan_originals` only change rows; the objects are deleted by the `media-purge` Edge Function through
+`st_dispatch`, so `st.functions_url` and the Vault secret `st_functions_key` MUST be configured in production
+(otherwise removed and orphaned originals stay in Storage).
+
+### Security hardening (review #2, `security_regressions2.test.ts`)
+
+- **H1** `RestrictAccountPendingReview` creates a durable `account_review_holds` row: it projects join ban, visibility
+  restriction, chat mute **and host suspension**, survives `st_recompute_projections`, blocks uploads, and follows the
+  phone through delete-and-re-register (`sanction_phone_hmac.hold_until`, re-applied by `create_profile`).
+- **H2** Confirmations store the score they confirmed; only verdicts on the current score count, and `submit_result`
+  with a new score resets them and asks the confirmers again.
+- **M1** The venue vault requires a public, non-women-only game with a venue and a visible location; changing the game
+  demotes its items. **M3** declined/vetoed tags are final (no re-request, no uploader removal).
+- **M2** friend requests: limit counted from `audit_log` (append-only), 30-day pair cooldown after a decline/cancel,
+  one notice per pair per day; `roster_added` once per member. **M4** `update_series`: 10 edits/24 h per host, one
+  schedule change per series/24 h; rescheduled occurrences nobody joined are hard-deleted.
+- **L1** `save_teams` only before kickoff. **L2** in-window occurrences are hidden from non-regulars in `game_views` and
+  `series_occurrences`. **L4** no reliability ⇒ frozen in Glicko (domain + mirror). **L5** a held account gets a bare
+  `ST:forbidden`; CSAM blocks send the same generic policy notice.
+- **Retention** blocked non-CSAM items expire like others; never-completed intents after 24 h; orphaned originals are
+  found by `purge_orphan_originals` (guarded when the storage schema is absent).
+
 ## TrustConfig parity
 
 Every `trust_config` column is a `TrustConfig` field (contract v2) with the same default, including the PRD v5

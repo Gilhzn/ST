@@ -38,7 +38,7 @@ describe('Phase 1.5 edge branches', () => {
   });
   it('rating period output sorts users and keeps sport groups apart', () => {
     const g = (id: string, a: string, b: string) => ({ gameId: id, sport: 'tennis' as const, formatFamily: 'singles' as const, endsAt: '2026-11-03T20:00:00.000Z', teams: [[a], [b]], teamScores: [1, 0] });
-    const out = processRatingPeriod({ period: '2026-W45', games: [g('g1', U3, U1), g('g2', U2, U3)], ratings: [], reliability: {} }, undefined, Date.parse('2026-11-05T00:00:00.000Z'));
+    const out = processRatingPeriod({ period: '2026-W45', games: [g('g1', U3, U1), g('g2', U2, U3)], ratings: [], reliability: { [U1]: 0.9, [U2]: 0.9, [U3]: 0.9 } }, undefined, Date.parse('2026-11-05T00:00:00.000Z'));
     expect(out.ratings.map((r) => [r.userId, r.games])).toEqual([[U1, 1], [U2, 1], [U3, 2]]);
   });
 });

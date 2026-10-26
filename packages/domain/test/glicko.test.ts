@@ -246,7 +246,8 @@ describe('processRatingPeriod', () => {
   it('groups by sport/family; 3 sides rate pairwise; multiple games accumulate', () => {
     const g3: RatedGameInput = { ...game('g3', [[U1], [U2], [U3]], [3, 2, 2]), sport: 'basketball', formatFamily: 'half_court' };
     const out = processRatingPeriod(
-      { period: P, games: [game('g1', [[U4], [U5]], [1, 0]), game('g2', [[U4], [U5]], [1, 0]), g3], ratings: [], reliability: {} },
+      { period: P, games: [game('g1', [[U4], [U5]], [1, 0]), game('g2', [[U4], [U5]], [1, 0]), g3], ratings: [],
+        reliability: { [U1]: 0.9, [U2]: 0.9, [U3]: 0.9, [U4]: 0.9, [U5]: 0.9 } },
       C,
       NOW,
     );

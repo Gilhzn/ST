@@ -170,9 +170,13 @@ describe("roster priority window (AC-GAME-010)", () => {
     expect((await list(stranger, plus(HOUR))).map((g) => g.id)).not.toContain(occ.game_id);
     expect((await list(regular, plus(HOUR))).map((g) => g.id)).toContain(occ.game_id);
     expect((await list(stranger, plus(25 * HOUR))).map((g) => g.id)).toContain(occ.game_id);
-    const [gv] = await asUser<{ priority_until: Date; series_id: string }>(db, stranger,
+    // Hidden from game_views and series_occurrences too during the window (security review #2 L2).
+    expect(await asUser(db, stranger, `select 1 from game_views where id = $1`, [occ.game_id], { now: plus(HOUR) })).toHaveLength(0);
+    expect(await asUser(db, stranger, `select 1 from series_occurrences where game_id = $1`, [occ.game_id], { now: plus(HOUR) })).toHaveLength(0);
+    const [gv] = await asUser<{ priority_until: Date; series_id: string }>(db, regular,
       `select priority_until, series_id from game_views where id = $1`, [occ.game_id], { now: plus(HOUR) });
     expect(iso(gv!.priority_until)).toBe(iso(occ.priority_until));
+    expect(await asUser(db, stranger, `select 1 from game_views where id = $1`, [occ.game_id], { now: plus(25 * HOUR) })).toHaveLength(1);
   });
 
   it("regulars see private occurrences; waitlist offers go to regulars first (GAME-044)", async () => {
@@ -389,7 +393,9 @@ describe("skip / edit / end", () => {
     // Horizon: (now, now + 4 weeks] → 2026-11-12 19:00 IST is beyond 2026-11-11 12:00Z.
     expect(live.map((o) => o.occurrence_key)).toEqual([before[0]!.occurrence_key, `${s.id}:1:2026-10-29`, `${s.id}:1:2026-11-05`]);
     expect(iso(live[1]!.starts_at)).toBe("2026-10-29T17:00:00.000Z"); // 19:00 IST (+2)
-    expect(after.filter((o) => o.status === "cancelled").map((o) => o.slot_date)).toEqual(["2026-10-27", "2026-11-03", "2026-11-10"]);
+    // Only the occurrence someone had joined stays as cancelled; never-joined ones are hard-deleted (security review #2 M4).
+    expect(after.filter((o) => o.status === "cancelled").map((o) => o.slot_date)).toEqual(["2026-10-27"]);
+    expect(await db.query(`select 1 from games where id = $1`, [before[2]!.game_id])).toHaveLength(0);
     expect(await db.query(`select 1 from notifications where user_id = $1 and kind = 'occurrence_rescheduled'`, [p])).toHaveLength(1);
     // Template-only edit on the following ones (no reschedule): titles change, no new revision.
     await asUser(db, host, `select public.update_series($1, 'following', $2, $3::jsonb)`,

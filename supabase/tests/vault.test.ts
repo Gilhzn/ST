@@ -79,7 +79,7 @@ describe("create_upload_intent (VAULT-001/002)", () => {
 });
 
 describe("finalize_media (service role, VAULT-003)", () => {
-  it("clients cannot finalise; publish is idempotent; paths are confined to the item; block notifies; CSAM is held silently", async () => {
+  it("clients cannot finalise; publish is idempotent; paths are confined to the item; block notifies; CSAM is held with the same generic notice", async () => {
     const { g, up } = await scenario();
     const { mediaId } = first(await intent(up, g)).i;
     const v = (decision: string, extra = {}) => JSON.stringify({ decision, categories: [], exifStripped: true, csamHashMatch: false, source: "vision", reasonKey: null, ...extra });
@@ -99,7 +99,9 @@ describe("finalize_media (service role, VAULT-003)", () => {
     const csam = first(await intent(up, g)).i.mediaId;
     await asService(db, `select public.finalize_media($1, 'blocked', $2::jsonb)`, [csam, v("csam", { csamHashMatch: true, source: "hash" })], during);
     expect(await item(csam)).toMatchObject({ status: "blocked", legal_hold: true });
-    expect(await db.query(`select 1 from notifications where user_id = $1 and kind = 'media_blocked'`, [up])).toHaveLength(1);
+    // Same generic policy notice as any block (security review #2 L5).
+    const notes = await db.query<{ p: { reasonKey: string } }>(`select params p from notifications where user_id = $1 and kind = 'media_blocked'`, [up]);
+    expect(notes.map((n) => n.p.reasonKey)).toEqual(["media.blocked.policy", "media.blocked.policy"]);
   });
 
   it("CSAM review hold (RestrictAccountPendingReview via apply_effects): no uploads/joins/chat/hosting until a moderator dismisses", async () => {
@@ -151,8 +153,10 @@ describe("consent tagging and venue_public (VAULT-004/005)", () => {
     expect((await item(id)).visibility).toBe("participants");
     await asUser(db, a, `select public.respond_tag($1, false)`, [id], during); // decline = veto
     await asUser(db, b, `select public.respond_tag($1, true)`, [id], during);
-    await asUser(db, up, `select public.untag($1, false, $2)`, [id, a], during);
-    expect((await item(id)).visibility).toBe("participants"); // the veto persists after the tag is removed
+    // The uploader can neither remove nor re-request a declined tag (security review #2 M3); the veto stands.
+    await expect(asUser(db, up, `select public.untag($1, false, $2)`, [id, a], during)).rejects.toThrow(/^ST:conflict$/);
+    await expect(asUser(db, up, `select public.tag_user($1, $2::uuid[])`, [id, [a]], during)).rejects.toThrow(/^ST:forbidden$/);
+    expect((await item(id)).visibility).toBe("participants");
     const id2 = await published(up, g);
     await asUser(db, up, `select public.tag_user($1, $2::uuid[])`, [id2, [b]], during);
     await asUser(db, b, `select public.respond_tag($1, true)`, [id2], during);

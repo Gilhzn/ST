@@ -44,7 +44,7 @@ async function ratedGame(verified: number, opts: { confirm?: boolean; publishTea
     [g, host, iso(END)]);
   if (opts.confirm ?? true) {
     for (const u of users.slice(0, Math.min(verified, 5))) {
-      await db.query(`insert into result_confirmations (game_id, user_id, verdict) values ($1, $2, 'confirm')`, [g, u]);
+      await db.query(`insert into result_confirmations (game_id, user_id, verdict, team_scores) values ($1, $2, 'confirm', '{3,1}')`, [g, u]);
     }
   }
   await db.query(`update games set status = 'completed', happened = true where id = $1`, [g]);
@@ -92,7 +92,7 @@ describe("Glicko-2 rating period (GLK-001..004)", () => {
     await db.query(`insert into skill_ratings (user_id, sport, format_family, r, rd, sigma, games, last_period)
                     values ($1, 'football', 'small_sided', 1600, 80, 0.06, 12, '2026-W40')`, [frozen]);
     const n = first(await asService<{ n: number }>(db, `select public.run_rating_period() n`, [], { now: AFTER_PERIOD })).n;
-    expect(n).toBe(7);
+    expect(n).toBe(7); // 5 updated + 2 frozen (0.65, and player 5 with no reliability yet: L4)
     const [st] = await db.query<{ eligible: boolean; reason: string | null }>(`select eligible, reason from game_rating_status where game_id = $1`, [g]);
     expect(st).toEqual({ eligible: true, reason: null });
     // TS reference on the same input.
@@ -111,7 +111,7 @@ describe("Glicko-2 rating period (GLK-001..004)", () => {
       expect(Math.abs(row.sigma - t.sigma)).toBeLessThan(1e-6);
       expect([row.games, row.last_period]).toEqual([t.games, PERIOD]);
     }
-    expect(rows).toHaveLength(7); // 6 updated + the frozen player's untouched row
+    expect(rows).toHaveLength(6); // 5 updated + the frozen player's untouched row (null reliability: no row, L4)
     const fz = rows.find((x) => x.user_id === frozen)!;
     expect([fz.r, fz.rd, fz.games, fz.last_period]).toEqual([1600, 80, 12, "2026-W40"]);
     const [u] = await db.query<{ frozen: boolean; r_before: number; r_after: number }>(
@@ -227,7 +227,7 @@ describe("peer ratings (RATE-001..005)", () => {
        order by 1`);
     const allowed = new Set(["confirm_result", "delete_my_account", "game_rating_status", "game_skill_bands", "my_peer_summary",
       "my_skill_ratings", "run_rating_period", "st_peer_eligibility", "st_peer_summary", "st_phase15_delete_account", "st_result_summary",
-      "submit_peer_ratings"]);
+      "submit_peer_ratings", "submit_result"]);
     expect(readers.map((r) => r.f).filter((f) => !allowed.has(f))).toEqual([]);
     for (const f of readers.map((r) => r.f)) expect(f).not.toMatch(/sanction|escalat|report|reliab|evaluate|no_show|effects/);
   });

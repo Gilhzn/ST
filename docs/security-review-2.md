@@ -6,7 +6,7 @@
 - the matching domain modules.
 
 **Method:** same as review #1. Code review plus proof-of-concept tests in the pglite harness; the scratch file was deleted afterwards. **No regression** of the 17 fixes from review #1.
-**Status:** fix round in progress. The DB engineer owns the SQL fixes and the Functions engineer the function fixes. Every fix ships with a regression test (`supabase/tests/security_regressions2.test.ts`, plus the function tests).
+**Status: ALL FINDINGS FIXED.** Regression tests: `supabase/tests/security_regressions2.test.ts` (14) plus function tests (sanitizer, CSAM response parity, proxy hops). Open: a re-applied CSAM hold on a re-created account lasts until expiry even if the original review is dismissed (moderator must lift it manually).
 
 | ID | Sev | Finding | Proof | Owner | Fix |
 |---|---|---|---|---|---|
