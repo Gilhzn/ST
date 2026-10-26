@@ -1,0 +1,16 @@
+[
+  {
+    "name": "qr.token.wire-format",
+    "kind": "checkin.qrToken",
+    "input": {
+      "qrSecret": "golden-qr-secret",
+      "gameId": "00000000-0000-4000-8000-0000000a0001"
+    },
+    "now": "2026-03-01T18:00:10.000Z",
+    "expected": {
+      "token": "59079600.d1b2642a5017e9780937afb2d024c3cd",
+      "step": 59079600,
+      "expiresAt": "2026-03-01T18:00:30.000Z"
+    }
+  }
+]

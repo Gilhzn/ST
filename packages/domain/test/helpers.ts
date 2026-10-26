@@ -41,7 +41,7 @@ export function sanctionRow(overrides: Partial<Sanction> & Pick<Sanction, 'dedup
 export function assertSanctionInvariants(effects: readonly Effect[]): NewSanction[] {
   const issued = effects.flatMap((e) => (e.type === 'IssueSanction' ? [e.sanction] : []));
   for (const s of issued) {
-    if (s.decidedBy === 'system' && s.kind === 'permanent_ban') throw new Error('system issued permanent_ban');
+    if (s.decidedBy === 'system' && (s.kind as string) === 'permanent_ban') throw new Error('system issued permanent_ban');
     if (s.kind !== 'permanent_ban' && !s.expiresAt) throw new Error('missing expiresAt');
     if (s.statementKey !== `sanctions.reason.${s.reasonCode}`) throw new Error('bad statementKey');
     if (!s.dedupeKey) throw new Error('missing dedupeKey');

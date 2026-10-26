@@ -53,13 +53,6 @@ export function isInForce(s: Sanction, now: EpochMs): boolean {
   return s.expiresAt === null || toEpochMs(s.expiresAt) > now;
 }
 
-/** In-force yellow cards, oldest first (ties by id). */
-export function activeYellowCards(sanctions: readonly Sanction[], now: EpochMs): Sanction[] {
-  return sanctions
-    .filter((s) => s.kind === 'yellow_card' && isInForce(s, now))
-    .sort((a, b) => toEpochMs(a.startsAt) - toEpochMs(b.startsAt) || (a.id < b.id ? -1 : a.id > b.id ? 1 : 0));
-}
-
 /** True when the sanction can still be disputed at `now` (yellow cards, within `disputeUntil`, status active). */
 export function canDispute(s: Sanction, now: EpochMs): boolean {
   return s.status === 'active' && s.disputeUntil !== null && now <= toEpochMs(s.disputeUntil);

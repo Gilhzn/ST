@@ -424,6 +424,7 @@ export function applyTrustEvent(
       st.pendingLateCancels = st.pendingLateCancels.filter((p) => p.gameId !== event.gameId);
       if (!isLateCancel(event.startsAt, event.cancelledAt, config)) break;
       if (event.refilled) {
+        if (ctx.lastSettlement(event.gameId) === 'release') break; // already processed
         settle(ctx, event.gameId, 'release');
         ctx.emit([{ type: 'Audit', action: 'late_cancel.refilled', subjectUserId: st.userId, data: { gameId: event.gameId } }]);
         break;

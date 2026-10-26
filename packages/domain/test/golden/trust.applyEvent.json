@@ -1,0 +1,2448 @@
+[
+  {
+    "name": "late-cancel.90min-before.not-refilled.issues-yellow",
+    "kind": "trust.applyEvent",
+    "description": "TRUST-020(b): cancel 90 min before start, spot not refilled → disputable yellow card at finalisation",
+    "input": {
+      "state": {
+        "userId": "00000000-0000-4000-8000-000000000001"
+      },
+      "event": {
+        "type": "LateCancelFinalized",
+        "gameId": "00000000-0000-4000-8000-0000000a0001",
+        "userId": "00000000-0000-4000-8000-000000000001",
+        "startsAt": "2026-03-01T18:00:00.000Z",
+        "cancelledAt": "2026-03-01T16:30:00.000Z",
+        "refilled": false
+      }
+    },
+    "now": "2026-03-01T22:00:00.000Z",
+    "expected": {
+      "effects": [
+        {
+          "type": "IssueSanction",
+          "sanction": {
+            "kind": "yellow_card",
+            "userId": "00000000-0000-4000-8000-000000000001",
+            "reasonCode": "late_cancel",
+            "statementKey": "sanctions.reason.late_cancel",
+            "statementParams": {
+              "windowHours": 2,
+              "minutesBeforeStart": 90,
+              "disputeHours": 48,
+              "appealPath": "dispute"
+            },
+            "startsAt": "2026-03-01T22:00:00.000Z",
+            "expiresAt": "2026-03-31T22:00:00.000Z",
+            "disputeUntil": "2026-03-03T22:00:00.000Z",
+            "gameId": "00000000-0000-4000-8000-0000000a0001",
+            "causedBy": [],
+            "dedupeKey": "late_cancel:00000000-0000-4000-8000-0000000a0001:00000000-0000-4000-8000-000000000001",
+            "decidedBy": "system"
+          }
+        },
+        {
+          "type": "Notify",
+          "userId": "00000000-0000-4000-8000-000000000001",
+          "kind": "sanction_issued",
+          "params": {
+            "sanctionKind": "yellow_card",
+            "reasonCode": "late_cancel",
+            "statementKey": "sanctions.reason.late_cancel",
+            "expiresAt": "2026-03-31T22:00:00.000Z",
+            "disputeUntil": "2026-03-03T22:00:00.000Z",
+            "appealPath": "dispute"
+          },
+          "gameId": "00000000-0000-4000-8000-0000000a0001",
+          "sanctionDedupeKey": "late_cancel:00000000-0000-4000-8000-0000000a0001:00000000-0000-4000-8000-000000000001"
+        }
+      ]
+    },
+    "tags": [
+      "prd-v5:TRUST-020"
+    ]
+  },
+  {
+    "name": "late-cancel.exactly-2h-before.no-card",
+    "kind": "trust.applyEvent",
+    "input": {
+      "state": {
+        "userId": "00000000-0000-4000-8000-000000000001"
+      },
+      "event": {
+        "type": "LateCancelFinalized",
+        "gameId": "00000000-0000-4000-8000-0000000a0001",
+        "userId": "00000000-0000-4000-8000-000000000001",
+        "startsAt": "2026-03-01T18:00:00.000Z",
+        "cancelledAt": "2026-03-01T16:00:00.000Z",
+        "refilled": false
+      }
+    },
+    "now": "2026-03-01T22:00:00.000Z",
+    "expected": {
+      "effects": []
+    },
+    "tags": [
+      "boundary"
+    ]
+  },
+  {
+    "name": "late-cancel.2h-minus-1ms.issues-yellow",
+    "kind": "trust.applyEvent",
+    "input": {
+      "state": {
+        "userId": "00000000-0000-4000-8000-000000000001"
+      },
+      "event": {
+        "type": "LateCancelFinalized",
+        "gameId": "00000000-0000-4000-8000-0000000a0001",
+        "userId": "00000000-0000-4000-8000-000000000001",
+        "startsAt": "2026-03-01T18:00:00.000Z",
+        "cancelledAt": "2026-03-01T16:00:00.001Z",
+        "refilled": false
+      }
+    },
+    "now": "2026-03-01T22:00:00.000Z",
+    "expected": {
+      "effects": [
+        {
+          "type": "IssueSanction",
+          "sanction": {
+            "kind": "yellow_card",
+            "userId": "00000000-0000-4000-8000-000000000001",
+            "reasonCode": "late_cancel",
+            "statementKey": "sanctions.reason.late_cancel",
+            "statementParams": {
+              "windowHours": 2,
+              "minutesBeforeStart": 120,
+              "disputeHours": 48,
+              "appealPath": "dispute"
+            },
+            "startsAt": "2026-03-01T22:00:00.000Z",
+            "expiresAt": "2026-03-31T22:00:00.000Z",
+            "disputeUntil": "2026-03-03T22:00:00.000Z",
+            "gameId": "00000000-0000-4000-8000-0000000a0001",
+            "causedBy": [],
+            "dedupeKey": "late_cancel:00000000-0000-4000-8000-0000000a0001:00000000-0000-4000-8000-000000000001",
+            "decidedBy": "system"
+          }
+        },
+        {
+          "type": "Notify",
+          "userId": "00000000-0000-4000-8000-000000000001",
+          "kind": "sanction_issued",
+          "params": {
+            "sanctionKind": "yellow_card",
+            "reasonCode": "late_cancel",
+            "statementKey": "sanctions.reason.late_cancel",
+            "expiresAt": "2026-03-31T22:00:00.000Z",
+            "disputeUntil": "2026-03-03T22:00:00.000Z",
+            "appealPath": "dispute"
+          },
+          "gameId": "00000000-0000-4000-8000-0000000a0001",
+          "sanctionDedupeKey": "late_cancel:00000000-0000-4000-8000-0000000a0001:00000000-0000-4000-8000-000000000001"
+        }
+      ]
+    },
+    "tags": [
+      "boundary"
+    ]
+  },
+  {
+    "name": "late-cancel.after-start.issues-yellow",
+    "kind": "trust.applyEvent",
+    "input": {
+      "state": {
+        "userId": "00000000-0000-4000-8000-000000000001"
+      },
+      "event": {
+        "type": "LateCancelFinalized",
+        "gameId": "00000000-0000-4000-8000-0000000a0001",
+        "userId": "00000000-0000-4000-8000-000000000001",
+        "startsAt": "2026-03-01T18:00:00.000Z",
+        "cancelledAt": "2026-03-01T18:10:00.000Z",
+        "refilled": false
+      }
+    },
+    "now": "2026-03-01T22:00:00.000Z",
+    "expected": {
+      "effects": [
+        {
+          "type": "IssueSanction",
+          "sanction": {
+            "kind": "yellow_card",
+            "userId": "00000000-0000-4000-8000-000000000001",
+            "reasonCode": "late_cancel",
+            "statementKey": "sanctions.reason.late_cancel",
+            "statementParams": {
+              "windowHours": 2,
+              "minutesBeforeStart": -10,
+              "disputeHours": 48,
+              "appealPath": "dispute"
+            },
+            "startsAt": "2026-03-01T22:00:00.000Z",
+            "expiresAt": "2026-03-31T22:00:00.000Z",
+            "disputeUntil": "2026-03-03T22:00:00.000Z",
+            "gameId": "00000000-0000-4000-8000-0000000a0001",
+            "causedBy": [],
+            "dedupeKey": "late_cancel:00000000-0000-4000-8000-0000000a0001:00000000-0000-4000-8000-000000000001",
+            "decidedBy": "system"
+          }
+        },
+        {
+          "type": "Notify",
+          "userId": "00000000-0000-4000-8000-000000000001",
+          "kind": "sanction_issued",
+          "params": {
+            "sanctionKind": "yellow_card",
+            "reasonCode": "late_cancel",
+            "statementKey": "sanctions.reason.late_cancel",
+            "expiresAt": "2026-03-31T22:00:00.000Z",
+            "disputeUntil": "2026-03-03T22:00:00.000Z",
+            "appealPath": "dispute"
+          },
+          "gameId": "00000000-0000-4000-8000-0000000a0001",
+          "sanctionDedupeKey": "late_cancel:00000000-0000-4000-8000-0000000a0001:00000000-0000-4000-8000-000000000001"
+        }
+      ]
+    },
+    "tags": [
+      "boundary"
+    ]
+  },
+  {
+    "name": "late-cancel.refilled-and-replacement-checked-in.no-card",
+    "kind": "trust.applyEvent",
+    "description": "TRUST-021: the spot was refilled from the waitlist before the start → no card, deposit released",
+    "input": {
+      "state": {
+        "userId": "00000000-0000-4000-8000-000000000001"
+      },
+      "event": {
+        "type": "LateCancelFinalized",
+        "gameId": "00000000-0000-4000-8000-0000000a0001",
+        "userId": "00000000-0000-4000-8000-000000000001",
+        "startsAt": "2026-03-01T18:00:00.000Z",
+        "cancelledAt": "2026-03-01T16:30:00.000Z",
+        "refilled": true
+      }
+    },
+    "now": "2026-03-01T22:00:00.000Z",
+    "expected": {
+      "effects": [
+        {
+          "type": "SettleDeposit",
+          "gameId": "00000000-0000-4000-8000-0000000a0001",
+          "userId": "00000000-0000-4000-8000-000000000001",
+          "outcome": "release"
+        },
+        {
+          "type": "Audit",
+          "action": "late_cancel.refilled",
+          "subjectUserId": "00000000-0000-4000-8000-000000000001",
+          "data": {
+            "gameId": "00000000-0000-4000-8000-0000000a0001"
+          }
+        }
+      ]
+    },
+    "tags": [
+      "prd-v5:TRUST-021"
+    ]
+  },
+  {
+    "name": "late-cancel.config-6h-window.3h-before.issues-yellow",
+    "kind": "trust.applyEvent",
+    "input": {
+      "state": {
+        "userId": "00000000-0000-4000-8000-000000000001"
+      },
+      "event": {
+        "type": "LateCancelFinalized",
+        "gameId": "00000000-0000-4000-8000-0000000a0001",
+        "userId": "00000000-0000-4000-8000-000000000001",
+        "startsAt": "2026-03-01T18:00:00.000Z",
+        "cancelledAt": "2026-03-01T15:00:00.000Z",
+        "refilled": false
+      }
+    },
+    "config": {
+      "lateCancelWindowHours": 6
+    },
+    "now": "2026-03-01T22:00:00.000Z",
+    "expected": {
+      "effects": [
+        {
+          "type": "IssueSanction",
+          "sanction": {
+            "kind": "yellow_card",
+            "userId": "00000000-0000-4000-8000-000000000001",
+            "reasonCode": "late_cancel",
+            "statementKey": "sanctions.reason.late_cancel",
+            "statementParams": {
+              "windowHours": 6,
+              "minutesBeforeStart": 180,
+              "disputeHours": 48,
+              "appealPath": "dispute"
+            },
+            "startsAt": "2026-03-01T22:00:00.000Z",
+            "expiresAt": "2026-03-31T22:00:00.000Z",
+            "disputeUntil": "2026-03-03T22:00:00.000Z",
+            "gameId": "00000000-0000-4000-8000-0000000a0001",
+            "causedBy": [],
+            "dedupeKey": "late_cancel:00000000-0000-4000-8000-0000000a0001:00000000-0000-4000-8000-000000000001",
+            "decidedBy": "system"
+          }
+        },
+        {
+          "type": "Notify",
+          "userId": "00000000-0000-4000-8000-000000000001",
+          "kind": "sanction_issued",
+          "params": {
+            "sanctionKind": "yellow_card",
+            "reasonCode": "late_cancel",
+            "statementKey": "sanctions.reason.late_cancel",
+            "expiresAt": "2026-03-31T22:00:00.000Z",
+            "disputeUntil": "2026-03-03T22:00:00.000Z",
+            "appealPath": "dispute"
+          },
+          "gameId": "00000000-0000-4000-8000-0000000a0001",
+          "sanctionDedupeKey": "late_cancel:00000000-0000-4000-8000-0000000a0001:00000000-0000-4000-8000-000000000001"
+        }
+      ]
+    },
+    "tags": [
+      "config"
+    ]
+  },
+  {
+    "name": "late-cancel.already-issued.idempotent",
+    "kind": "trust.applyEvent",
+    "input": {
+      "state": {
+        "userId": "00000000-0000-4000-8000-000000000001",
+        "sanctions": [
+          {
+            "id": "7dbb1301-9b92-808b-9d20-5c3747e50b62",
+            "userId": "00000000-0000-4000-8000-000000000001",
+            "kind": "yellow_card",
+            "reasonCode": "late_cancel",
+            "statementKey": "sanctions.reason.late_cancel",
+            "statementParams": {
+              "disputeHours": 48,
+              "appealPath": "dispute"
+            },
+            "startsAt": "2026-03-01T22:00:00.000Z",
+            "expiresAt": "2026-03-31T22:00:00.000Z",
+            "disputeUntil": "2026-03-03T22:00:00.000Z",
+            "status": "active",
+            "gameId": "00000000-0000-4000-8000-0000000a0001",
+            "causedBy": [],
+            "dedupeKey": "late_cancel:00000000-0000-4000-8000-0000000a0001:00000000-0000-4000-8000-000000000001",
+            "decidedBy": "system",
+            "createdAt": "2026-03-01T22:00:00.000Z"
+          }
+        ]
+      },
+      "event": {
+        "type": "LateCancelFinalized",
+        "gameId": "00000000-0000-4000-8000-0000000a0001",
+        "userId": "00000000-0000-4000-8000-000000000001",
+        "startsAt": "2026-03-01T18:00:00.000Z",
+        "cancelledAt": "2026-03-01T16:30:00.000Z",
+        "refilled": false
+      }
+    },
+    "now": "2026-03-01T22:00:00.000Z",
+    "expected": {
+      "effects": []
+    },
+    "tags": [
+      "idempotency"
+    ]
+  },
+  {
+    "name": "participation-cancelled.timely.releases-deposit",
+    "kind": "trust.applyEvent",
+    "input": {
+      "state": {
+        "userId": "00000000-0000-4000-8000-000000000001"
+      },
+      "event": {
+        "type": "ParticipationCancelled",
+        "gameId": "00000000-0000-4000-8000-0000000a0001",
+        "userId": "00000000-0000-4000-8000-000000000001",
+        "startsAt": "2026-03-01T18:00:00.000Z",
+        "cancelledAt": "2026-03-01T16:00:00.000Z"
+      }
+    },
+    "now": "2026-03-01T16:00:00.000Z",
+    "expected": {
+      "effects": [
+        {
+          "type": "SettleDeposit",
+          "gameId": "00000000-0000-4000-8000-0000000a0001",
+          "userId": "00000000-0000-4000-8000-000000000001",
+          "outcome": "release"
+        }
+      ]
+    },
+    "tags": [
+      "boundary"
+    ]
+  },
+  {
+    "name": "participation-cancelled.late.decided-at-finalisation",
+    "kind": "trust.applyEvent",
+    "description": "TRUST-021: no card at cancel time; LateCancelFinalized decides",
+    "input": {
+      "state": {
+        "userId": "00000000-0000-4000-8000-000000000001"
+      },
+      "event": {
+        "type": "ParticipationCancelled",
+        "gameId": "00000000-0000-4000-8000-0000000a0001",
+        "userId": "00000000-0000-4000-8000-000000000001",
+        "startsAt": "2026-03-01T18:00:00.000Z",
+        "cancelledAt": "2026-03-01T17:00:00.000Z"
+      }
+    },
+    "now": "2026-03-01T17:00:00.000Z",
+    "expected": {
+      "effects": []
+    }
+  },
+  {
+    "name": "no-show.issues-yellow-with-48h-dispute-window",
+    "kind": "trust.applyEvent",
+    "input": {
+      "state": {
+        "userId": "00000000-0000-4000-8000-000000000001"
+      },
+      "event": {
+        "type": "AttendanceFinalized",
+        "gameId": "00000000-0000-4000-8000-0000000a0001",
+        "userId": "00000000-0000-4000-8000-000000000001",
+        "attendance": "no_show_unverified",
+        "endsAt": "2026-03-01T20:00:00.000Z"
+      }
+    },
+    "now": "2026-03-01T22:00:00.000Z",
+    "expected": {
+      "effects": [
+        {
+          "type": "IssueSanction",
+          "sanction": {
+            "kind": "yellow_card",
+            "userId": "00000000-0000-4000-8000-000000000001",
+            "reasonCode": "no_show",
+            "statementKey": "sanctions.reason.no_show",
+            "statementParams": {
+              "disputeHours": 48,
+              "appealPath": "dispute"
+            },
+            "startsAt": "2026-03-01T22:00:00.000Z",
+            "expiresAt": "2026-03-31T22:00:00.000Z",
+            "disputeUntil": "2026-03-03T22:00:00.000Z",
+            "gameId": "00000000-0000-4000-8000-0000000a0001",
+            "causedBy": [],
+            "dedupeKey": "no_show:00000000-0000-4000-8000-0000000a0001:00000000-0000-4000-8000-000000000001",
+            "decidedBy": "system"
+          }
+        },
+        {
+          "type": "Notify",
+          "userId": "00000000-0000-4000-8000-000000000001",
+          "kind": "sanction_issued",
+          "params": {
+            "sanctionKind": "yellow_card",
+            "reasonCode": "no_show",
+            "statementKey": "sanctions.reason.no_show",
+            "expiresAt": "2026-03-31T22:00:00.000Z",
+            "disputeUntil": "2026-03-03T22:00:00.000Z",
+            "appealPath": "dispute"
+          },
+          "gameId": "00000000-0000-4000-8000-0000000a0001",
+          "sanctionDedupeKey": "no_show:00000000-0000-4000-8000-0000000a0001:00000000-0000-4000-8000-000000000001"
+        }
+      ]
+    },
+    "tags": [
+      "prd-v5:TRUST-020"
+    ]
+  },
+  {
+    "name": "attendance.verified.releases-deposit",
+    "kind": "trust.applyEvent",
+    "input": {
+      "state": {
+        "userId": "00000000-0000-4000-8000-000000000001"
+      },
+      "event": {
+        "type": "AttendanceFinalized",
+        "gameId": "00000000-0000-4000-8000-0000000a0001",
+        "userId": "00000000-0000-4000-8000-000000000001",
+        "attendance": "verified",
+        "endsAt": "2026-03-01T20:00:00.000Z"
+      }
+    },
+    "now": "2026-03-01T22:00:00.000Z",
+    "expected": {
+      "effects": [
+        {
+          "type": "SettleDeposit",
+          "gameId": "00000000-0000-4000-8000-0000000a0001",
+          "userId": "00000000-0000-4000-8000-000000000001",
+          "outcome": "release"
+        }
+      ]
+    }
+  },
+  {
+    "name": "deposit.no-capture-inside-dispute-window",
+    "kind": "trust.applyEvent",
+    "input": {
+      "state": {
+        "userId": "00000000-0000-4000-8000-000000000001",
+        "sanctions": [
+          {
+            "id": "6247cd5d-3c19-83bb-8007-8a596073a8ac",
+            "userId": "00000000-0000-4000-8000-000000000001",
+            "kind": "yellow_card",
+            "reasonCode": "no_show",
+            "statementKey": "sanctions.reason.no_show",
+            "statementParams": {
+              "disputeHours": 48,
+              "appealPath": "dispute"
+            },
+            "startsAt": "2026-03-01T18:00:00.000Z",
+            "expiresAt": "2026-03-31T18:00:00.000Z",
+            "disputeUntil": "2026-03-03T18:00:00.000Z",
+            "status": "active",
+            "gameId": "00000000-0000-4000-8000-0000000a0001",
+            "causedBy": [],
+            "dedupeKey": "no_show:00000000-0000-4000-8000-0000000a0001:00000000-0000-4000-8000-000000000001",
+            "decidedBy": "system",
+            "createdAt": "2026-03-01T18:00:00.000Z"
+          }
+        ]
+      },
+      "event": {
+        "type": "Tick",
+        "at": "2026-03-03T18:00:00.000Z"
+      }
+    },
+    "now": "2026-03-03T18:00:00.000Z",
+    "expected": {
+      "effects": []
+    },
+    "tags": [
+      "boundary",
+      "prd-v5:TRUST-061"
+    ]
+  },
+  {
+    "name": "deposit.capture-after-dispute-window",
+    "kind": "trust.applyEvent",
+    "input": {
+      "state": {
+        "userId": "00000000-0000-4000-8000-000000000001",
+        "sanctions": [
+          {
+            "id": "6247cd5d-3c19-83bb-8007-8a596073a8ac",
+            "userId": "00000000-0000-4000-8000-000000000001",
+            "kind": "yellow_card",
+            "reasonCode": "no_show",
+            "statementKey": "sanctions.reason.no_show",
+            "statementParams": {
+              "disputeHours": 48,
+              "appealPath": "dispute"
+            },
+            "startsAt": "2026-03-01T18:00:00.000Z",
+            "expiresAt": "2026-03-31T18:00:00.000Z",
+            "disputeUntil": "2026-03-03T18:00:00.000Z",
+            "status": "active",
+            "gameId": "00000000-0000-4000-8000-0000000a0001",
+            "causedBy": [],
+            "dedupeKey": "no_show:00000000-0000-4000-8000-0000000a0001:00000000-0000-4000-8000-000000000001",
+            "decidedBy": "system",
+            "createdAt": "2026-03-01T18:00:00.000Z"
+          }
+        ]
+      },
+      "event": {
+        "type": "Tick",
+        "at": "2026-03-03T18:00:00.001Z"
+      }
+    },
+    "now": "2026-03-03T18:00:00.001Z",
+    "expected": {
+      "effects": [
+        {
+          "type": "SettleDeposit",
+          "gameId": "00000000-0000-4000-8000-0000000a0001",
+          "userId": "00000000-0000-4000-8000-000000000001",
+          "outcome": "forfeit"
+        }
+      ]
+    },
+    "tags": [
+      "boundary",
+      "prd-v5:TRUST-061"
+    ]
+  },
+  {
+    "name": "deposit.no-capture-while-disputed",
+    "kind": "trust.applyEvent",
+    "input": {
+      "state": {
+        "userId": "00000000-0000-4000-8000-000000000001",
+        "sanctions": [
+          {
+            "id": "6247cd5d-3c19-83bb-8007-8a596073a8ac",
+            "userId": "00000000-0000-4000-8000-000000000001",
+            "kind": "yellow_card",
+            "reasonCode": "no_show",
+            "statementKey": "sanctions.reason.no_show",
+            "statementParams": {
+              "disputeHours": 48,
+              "appealPath": "dispute"
+            },
+            "startsAt": "2026-03-01T18:00:00.000Z",
+            "expiresAt": "2026-03-31T18:00:00.000Z",
+            "disputeUntil": "2026-03-03T18:00:00.000Z",
+            "status": "disputed",
+            "gameId": "00000000-0000-4000-8000-0000000a0001",
+            "causedBy": [],
+            "dedupeKey": "no_show:00000000-0000-4000-8000-0000000a0001:00000000-0000-4000-8000-000000000001",
+            "decidedBy": "system",
+            "createdAt": "2026-03-01T18:00:00.000Z"
+          }
+        ]
+      },
+      "event": {
+        "type": "Tick",
+        "at": "2026-03-04T18:00:00.000Z"
+      }
+    },
+    "now": "2026-03-04T18:00:00.000Z",
+    "expected": {
+      "effects": []
+    },
+    "tags": [
+      "prd-v5:TRUST-061"
+    ]
+  },
+  {
+    "name": "deposit.late-cancel-card.capture-after-window",
+    "kind": "trust.applyEvent",
+    "input": {
+      "state": {
+        "userId": "00000000-0000-4000-8000-000000000001",
+        "sanctions": [
+          {
+            "id": "7dbb1301-9b92-808b-9d20-5c3747e50b62",
+            "userId": "00000000-0000-4000-8000-000000000001",
+            "kind": "yellow_card",
+            "reasonCode": "late_cancel",
+            "statementKey": "sanctions.reason.late_cancel",
+            "statementParams": {
+              "disputeHours": 48,
+              "appealPath": "dispute"
+            },
+            "startsAt": "2026-03-01T18:00:00.000Z",
+            "expiresAt": "2026-03-31T18:00:00.000Z",
+            "disputeUntil": "2026-03-03T18:00:00.000Z",
+            "status": "active",
+            "gameId": "00000000-0000-4000-8000-0000000a0001",
+            "causedBy": [],
+            "dedupeKey": "late_cancel:00000000-0000-4000-8000-0000000a0001:00000000-0000-4000-8000-000000000001",
+            "decidedBy": "system",
+            "createdAt": "2026-03-01T18:00:00.000Z"
+          }
+        ]
+      },
+      "event": {
+        "type": "Tick",
+        "at": "2026-03-03T19:00:00.000Z"
+      }
+    },
+    "now": "2026-03-03T19:00:00.000Z",
+    "expected": {
+      "effects": [
+        {
+          "type": "SettleDeposit",
+          "gameId": "00000000-0000-4000-8000-0000000a0001",
+          "userId": "00000000-0000-4000-8000-000000000001",
+          "outcome": "forfeit"
+        }
+      ]
+    }
+  },
+  {
+    "name": "expire.tick.marks-expired",
+    "kind": "trust.applyEvent",
+    "input": {
+      "state": {
+        "userId": "00000000-0000-4000-8000-000000000001",
+        "sanctions": [
+          {
+            "id": "6247cd5d-3c19-83bb-8007-8a596073a8ac",
+            "userId": "00000000-0000-4000-8000-000000000001",
+            "kind": "yellow_card",
+            "reasonCode": "no_show",
+            "statementKey": "sanctions.reason.no_show",
+            "statementParams": {
+              "disputeHours": 48,
+              "appealPath": "dispute"
+            },
+            "startsAt": "2026-01-30T18:00:00.000Z",
+            "expiresAt": "2026-03-01T18:00:00.000Z",
+            "disputeUntil": "2026-02-01T18:00:00.000Z",
+            "status": "active",
+            "gameId": "00000000-0000-4000-8000-0000000a0001",
+            "causedBy": [],
+            "dedupeKey": "no_show:00000000-0000-4000-8000-0000000a0001:00000000-0000-4000-8000-000000000001",
+            "decidedBy": "system",
+            "createdAt": "2026-01-30T18:00:00.000Z"
+          }
+        ],
+        "depositSettlements": [
+          {
+            "gameId": "00000000-0000-4000-8000-0000000a0001",
+            "outcome": "forfeit"
+          }
+        ]
+      },
+      "event": {
+        "type": "Tick",
+        "at": "2026-03-01T18:00:00.000Z"
+      }
+    },
+    "now": "2026-03-01T18:00:00.000Z",
+    "expected": {
+      "effects": [
+        {
+          "type": "SetSanctionStatus",
+          "sanctionId": "6247cd5d-3c19-83bb-8007-8a596073a8ac",
+          "status": "expired"
+        }
+      ]
+    },
+    "tags": [
+      "boundary"
+    ]
+  },
+  {
+    "name": "escalation.2-cards.join-ban-7d",
+    "kind": "trust.applyEvent",
+    "input": {
+      "state": {
+        "userId": "00000000-0000-4000-8000-000000000001",
+        "sanctions": [
+          {
+            "id": "6247cd5d-3c19-83bb-8007-8a596073a8ac",
+            "userId": "00000000-0000-4000-8000-000000000001",
+            "kind": "yellow_card",
+            "reasonCode": "no_show",
+            "statementKey": "sanctions.reason.no_show",
+            "statementParams": {
+              "disputeHours": 48,
+              "appealPath": "dispute"
+            },
+            "startsAt": "2026-02-19T18:00:00.000Z",
+            "expiresAt": "2026-03-21T18:00:00.000Z",
+            "disputeUntil": "2026-02-21T18:00:00.000Z",
+            "status": "active",
+            "gameId": "00000000-0000-4000-8000-0000000a0001",
+            "causedBy": [],
+            "dedupeKey": "no_show:00000000-0000-4000-8000-0000000a0001:00000000-0000-4000-8000-000000000001",
+            "decidedBy": "system",
+            "createdAt": "2026-02-19T18:00:00.000Z"
+          },
+          {
+            "id": "3c19d0d8-58b1-836f-a930-856cf9930f26",
+            "userId": "00000000-0000-4000-8000-000000000001",
+            "kind": "yellow_card",
+            "reasonCode": "no_show",
+            "statementKey": "sanctions.reason.no_show",
+            "statementParams": {
+              "disputeHours": 48,
+              "appealPath": "dispute"
+            },
+            "startsAt": "2026-02-26T18:00:00.000Z",
+            "expiresAt": "2026-03-28T18:00:00.000Z",
+            "disputeUntil": "2026-02-28T18:00:00.000Z",
+            "status": "active",
+            "gameId": "00000000-0000-4000-8000-0000000a0002",
+            "causedBy": [],
+            "dedupeKey": "no_show:00000000-0000-4000-8000-0000000a0002:00000000-0000-4000-8000-000000000001",
+            "decidedBy": "system",
+            "createdAt": "2026-02-26T18:00:00.000Z"
+          }
+        ],
+        "depositSettlements": [
+          {
+            "gameId": "00000000-0000-4000-8000-0000000a0001",
+            "outcome": "forfeit"
+          },
+          {
+            "gameId": "00000000-0000-4000-8000-0000000a0002",
+            "outcome": "forfeit"
+          }
+        ]
+      },
+      "event": {
+        "type": "Tick",
+        "at": "2026-03-01T18:00:00.000Z"
+      }
+    },
+    "now": "2026-03-01T18:00:00.000Z",
+    "expected": {
+      "effects": [
+        {
+          "type": "IssueSanction",
+          "sanction": {
+            "kind": "join_ban",
+            "userId": "00000000-0000-4000-8000-000000000001",
+            "reasonCode": "escalation_two_cards",
+            "statementKey": "sanctions.reason.escalation_two_cards",
+            "statementParams": {
+              "cards": 2,
+              "days": 7,
+              "appealPath": "appeal"
+            },
+            "startsAt": "2026-03-01T18:00:00.000Z",
+            "expiresAt": "2026-03-08T18:00:00.000Z",
+            "disputeUntil": null,
+            "gameId": "00000000-0000-4000-8000-0000000a0002",
+            "causedBy": [
+              "6247cd5d-3c19-83bb-8007-8a596073a8ac",
+              "3c19d0d8-58b1-836f-a930-856cf9930f26"
+            ],
+            "dedupeKey": "escalation_two_cards:00000000-0000-4000-8000-000000000001:3c19d0d8-58b1-836f-a930-856cf9930f26",
+            "decidedBy": "system"
+          }
+        },
+        {
+          "type": "BanJoins",
+          "userId": "00000000-0000-4000-8000-000000000001",
+          "until": "2026-03-08T18:00:00.000Z"
+        },
+        {
+          "type": "Notify",
+          "userId": "00000000-0000-4000-8000-000000000001",
+          "kind": "sanction_issued",
+          "params": {
+            "sanctionKind": "join_ban",
+            "reasonCode": "escalation_two_cards",
+            "statementKey": "sanctions.reason.escalation_two_cards",
+            "expiresAt": "2026-03-08T18:00:00.000Z",
+            "disputeUntil": "",
+            "appealPath": "appeal"
+          },
+          "gameId": "00000000-0000-4000-8000-0000000a0002",
+          "sanctionDedupeKey": "escalation_two_cards:00000000-0000-4000-8000-000000000001:3c19d0d8-58b1-836f-a930-856cf9930f26"
+        }
+      ]
+    },
+    "tags": [
+      "prd-v5:TRUST-025"
+    ]
+  },
+  {
+    "name": "escalation.2-cards.second-still-disputable.none",
+    "kind": "trust.applyEvent",
+    "description": "TRUST-022: a card inside its 48h dispute window does not count yet",
+    "input": {
+      "state": {
+        "userId": "00000000-0000-4000-8000-000000000001",
+        "sanctions": [
+          {
+            "id": "6247cd5d-3c19-83bb-8007-8a596073a8ac",
+            "userId": "00000000-0000-4000-8000-000000000001",
+            "kind": "yellow_card",
+            "reasonCode": "no_show",
+            "statementKey": "sanctions.reason.no_show",
+            "statementParams": {
+              "disputeHours": 48,
+              "appealPath": "dispute"
+            },
+            "startsAt": "2026-02-19T18:00:00.000Z",
+            "expiresAt": "2026-03-21T18:00:00.000Z",
+            "disputeUntil": "2026-02-21T18:00:00.000Z",
+            "status": "active",
+            "gameId": "00000000-0000-4000-8000-0000000a0001",
+            "causedBy": [],
+            "dedupeKey": "no_show:00000000-0000-4000-8000-0000000a0001:00000000-0000-4000-8000-000000000001",
+            "decidedBy": "system",
+            "createdAt": "2026-02-19T18:00:00.000Z"
+          },
+          {
+            "id": "3c19d0d8-58b1-836f-a930-856cf9930f26",
+            "userId": "00000000-0000-4000-8000-000000000001",
+            "kind": "yellow_card",
+            "reasonCode": "no_show",
+            "statementKey": "sanctions.reason.no_show",
+            "statementParams": {
+              "disputeHours": 48,
+              "appealPath": "dispute"
+            },
+            "startsAt": "2026-02-28T06:00:00.000Z",
+            "expiresAt": "2026-03-30T06:00:00.000Z",
+            "disputeUntil": "2026-03-02T06:00:00.000Z",
+            "status": "active",
+            "gameId": "00000000-0000-4000-8000-0000000a0002",
+            "causedBy": [],
+            "dedupeKey": "no_show:00000000-0000-4000-8000-0000000a0002:00000000-0000-4000-8000-000000000001",
+            "decidedBy": "system",
+            "createdAt": "2026-02-28T06:00:00.000Z"
+          }
+        ],
+        "depositSettlements": [
+          {
+            "gameId": "00000000-0000-4000-8000-0000000a0001",
+            "outcome": "forfeit"
+          },
+          {
+            "gameId": "00000000-0000-4000-8000-0000000a0002",
+            "outcome": "forfeit"
+          }
+        ]
+      },
+      "event": {
+        "type": "Tick",
+        "at": "2026-03-01T18:00:00.000Z"
+      }
+    },
+    "now": "2026-03-01T18:00:00.000Z",
+    "expected": {
+      "effects": []
+    },
+    "tags": [
+      "boundary"
+    ]
+  },
+  {
+    "name": "escalation.2-cards.second-disputed.none",
+    "kind": "trust.applyEvent",
+    "input": {
+      "state": {
+        "userId": "00000000-0000-4000-8000-000000000001",
+        "sanctions": [
+          {
+            "id": "6247cd5d-3c19-83bb-8007-8a596073a8ac",
+            "userId": "00000000-0000-4000-8000-000000000001",
+            "kind": "yellow_card",
+            "reasonCode": "no_show",
+            "statementKey": "sanctions.reason.no_show",
+            "statementParams": {
+              "disputeHours": 48,
+              "appealPath": "dispute"
+            },
+            "startsAt": "2026-02-19T18:00:00.000Z",
+            "expiresAt": "2026-03-21T18:00:00.000Z",
+            "disputeUntil": "2026-02-21T18:00:00.000Z",
+            "status": "active",
+            "gameId": "00000000-0000-4000-8000-0000000a0001",
+            "causedBy": [],
+            "dedupeKey": "no_show:00000000-0000-4000-8000-0000000a0001:00000000-0000-4000-8000-000000000001",
+            "decidedBy": "system",
+            "createdAt": "2026-02-19T18:00:00.000Z"
+          },
+          {
+            "id": "3c19d0d8-58b1-836f-a930-856cf9930f26",
+            "userId": "00000000-0000-4000-8000-000000000001",
+            "kind": "yellow_card",
+            "reasonCode": "no_show",
+            "statementKey": "sanctions.reason.no_show",
+            "statementParams": {
+              "disputeHours": 48,
+              "appealPath": "dispute"
+            },
+            "startsAt": "2026-02-26T18:00:00.000Z",
+            "expiresAt": "2026-03-28T18:00:00.000Z",
+            "disputeUntil": "2026-02-28T18:00:00.000Z",
+            "status": "disputed",
+            "gameId": "00000000-0000-4000-8000-0000000a0002",
+            "causedBy": [],
+            "dedupeKey": "no_show:00000000-0000-4000-8000-0000000a0002:00000000-0000-4000-8000-000000000001",
+            "decidedBy": "system",
+            "createdAt": "2026-02-26T18:00:00.000Z"
+          }
+        ],
+        "depositSettlements": [
+          {
+            "gameId": "00000000-0000-4000-8000-0000000a0001",
+            "outcome": "forfeit"
+          },
+          {
+            "gameId": "00000000-0000-4000-8000-0000000a0002",
+            "outcome": "forfeit"
+          }
+        ]
+      },
+      "event": {
+        "type": "Tick",
+        "at": "2026-03-01T18:00:00.000Z"
+      }
+    },
+    "now": "2026-03-01T18:00:00.000Z",
+    "expected": {
+      "effects": []
+    }
+  },
+  {
+    "name": "escalation.2-cards.second-upheld-inside-window.join-ban-7d",
+    "kind": "trust.applyEvent",
+    "input": {
+      "state": {
+        "userId": "00000000-0000-4000-8000-000000000001",
+        "sanctions": [
+          {
+            "id": "6247cd5d-3c19-83bb-8007-8a596073a8ac",
+            "userId": "00000000-0000-4000-8000-000000000001",
+            "kind": "yellow_card",
+            "reasonCode": "no_show",
+            "statementKey": "sanctions.reason.no_show",
+            "statementParams": {
+              "disputeHours": 48,
+              "appealPath": "dispute"
+            },
+            "startsAt": "2026-02-19T18:00:00.000Z",
+            "expiresAt": "2026-03-21T18:00:00.000Z",
+            "disputeUntil": "2026-02-21T18:00:00.000Z",
+            "status": "active",
+            "gameId": "00000000-0000-4000-8000-0000000a0001",
+            "causedBy": [],
+            "dedupeKey": "no_show:00000000-0000-4000-8000-0000000a0001:00000000-0000-4000-8000-000000000001",
+            "decidedBy": "system",
+            "createdAt": "2026-02-19T18:00:00.000Z"
+          },
+          {
+            "id": "3c19d0d8-58b1-836f-a930-856cf9930f26",
+            "userId": "00000000-0000-4000-8000-000000000001",
+            "kind": "yellow_card",
+            "reasonCode": "no_show",
+            "statementKey": "sanctions.reason.no_show",
+            "statementParams": {
+              "disputeHours": 48,
+              "appealPath": "dispute"
+            },
+            "startsAt": "2026-02-28T18:00:00.000Z",
+            "expiresAt": "2026-03-30T18:00:00.000Z",
+            "disputeUntil": "2026-03-02T18:00:00.000Z",
+            "status": "upheld",
+            "gameId": "00000000-0000-4000-8000-0000000a0002",
+            "causedBy": [],
+            "dedupeKey": "no_show:00000000-0000-4000-8000-0000000a0002:00000000-0000-4000-8000-000000000001",
+            "decidedBy": "system",
+            "createdAt": "2026-02-28T18:00:00.000Z"
+          }
+        ],
+        "depositSettlements": [
+          {
+            "gameId": "00000000-0000-4000-8000-0000000a0001",
+            "outcome": "forfeit"
+          },
+          {
+            "gameId": "00000000-0000-4000-8000-0000000a0002",
+            "outcome": "forfeit"
+          }
+        ]
+      },
+      "event": {
+        "type": "Tick",
+        "at": "2026-03-01T18:00:00.000Z"
+      }
+    },
+    "now": "2026-03-01T18:00:00.000Z",
+    "expected": {
+      "effects": [
+        {
+          "type": "IssueSanction",
+          "sanction": {
+            "kind": "join_ban",
+            "userId": "00000000-0000-4000-8000-000000000001",
+            "reasonCode": "escalation_two_cards",
+            "statementKey": "sanctions.reason.escalation_two_cards",
+            "statementParams": {
+              "cards": 2,
+              "days": 7,
+              "appealPath": "appeal"
+            },
+            "startsAt": "2026-03-01T18:00:00.000Z",
+            "expiresAt": "2026-03-08T18:00:00.000Z",
+            "disputeUntil": null,
+            "gameId": "00000000-0000-4000-8000-0000000a0002",
+            "causedBy": [
+              "6247cd5d-3c19-83bb-8007-8a596073a8ac",
+              "3c19d0d8-58b1-836f-a930-856cf9930f26"
+            ],
+            "dedupeKey": "escalation_two_cards:00000000-0000-4000-8000-000000000001:3c19d0d8-58b1-836f-a930-856cf9930f26",
+            "decidedBy": "system"
+          }
+        },
+        {
+          "type": "BanJoins",
+          "userId": "00000000-0000-4000-8000-000000000001",
+          "until": "2026-03-08T18:00:00.000Z"
+        },
+        {
+          "type": "Notify",
+          "userId": "00000000-0000-4000-8000-000000000001",
+          "kind": "sanction_issued",
+          "params": {
+            "sanctionKind": "join_ban",
+            "reasonCode": "escalation_two_cards",
+            "statementKey": "sanctions.reason.escalation_two_cards",
+            "expiresAt": "2026-03-08T18:00:00.000Z",
+            "disputeUntil": "",
+            "appealPath": "appeal"
+          },
+          "gameId": "00000000-0000-4000-8000-0000000a0002",
+          "sanctionDedupeKey": "escalation_two_cards:00000000-0000-4000-8000-000000000001:3c19d0d8-58b1-836f-a930-856cf9930f26"
+        }
+      ]
+    }
+  },
+  {
+    "name": "escalation.1-card.none",
+    "kind": "trust.applyEvent",
+    "input": {
+      "state": {
+        "userId": "00000000-0000-4000-8000-000000000001",
+        "sanctions": [
+          {
+            "id": "6247cd5d-3c19-83bb-8007-8a596073a8ac",
+            "userId": "00000000-0000-4000-8000-000000000001",
+            "kind": "yellow_card",
+            "reasonCode": "no_show",
+            "statementKey": "sanctions.reason.no_show",
+            "statementParams": {
+              "disputeHours": 48,
+              "appealPath": "dispute"
+            },
+            "startsAt": "2026-02-19T18:00:00.000Z",
+            "expiresAt": "2026-03-21T18:00:00.000Z",
+            "disputeUntil": "2026-02-21T18:00:00.000Z",
+            "status": "active",
+            "gameId": "00000000-0000-4000-8000-0000000a0001",
+            "causedBy": [],
+            "dedupeKey": "no_show:00000000-0000-4000-8000-0000000a0001:00000000-0000-4000-8000-000000000001",
+            "decidedBy": "system",
+            "createdAt": "2026-02-19T18:00:00.000Z"
+          }
+        ],
+        "depositSettlements": [
+          {
+            "gameId": "00000000-0000-4000-8000-0000000a0001",
+            "outcome": "forfeit"
+          }
+        ]
+      },
+      "event": {
+        "type": "Tick",
+        "at": "2026-03-01T18:00:00.000Z"
+      }
+    },
+    "now": "2026-03-01T18:00:00.000Z",
+    "expected": {
+      "effects": []
+    }
+  },
+  {
+    "name": "escalation.2-cards.first-expired.none",
+    "kind": "trust.applyEvent",
+    "input": {
+      "state": {
+        "userId": "00000000-0000-4000-8000-000000000001",
+        "sanctions": [
+          {
+            "id": "6247cd5d-3c19-83bb-8007-8a596073a8ac",
+            "userId": "00000000-0000-4000-8000-000000000001",
+            "kind": "yellow_card",
+            "reasonCode": "no_show",
+            "statementKey": "sanctions.reason.no_show",
+            "statementParams": {
+              "disputeHours": 48,
+              "appealPath": "dispute"
+            },
+            "startsAt": "2026-01-30T18:00:00.000Z",
+            "expiresAt": "2026-03-01T18:00:00.000Z",
+            "disputeUntil": "2026-02-01T18:00:00.000Z",
+            "status": "active",
+            "gameId": "00000000-0000-4000-8000-0000000a0001",
+            "causedBy": [],
+            "dedupeKey": "no_show:00000000-0000-4000-8000-0000000a0001:00000000-0000-4000-8000-000000000001",
+            "decidedBy": "system",
+            "createdAt": "2026-01-30T18:00:00.000Z"
+          },
+          {
+            "id": "3c19d0d8-58b1-836f-a930-856cf9930f26",
+            "userId": "00000000-0000-4000-8000-000000000001",
+            "kind": "yellow_card",
+            "reasonCode": "no_show",
+            "statementKey": "sanctions.reason.no_show",
+            "statementParams": {
+              "disputeHours": 48,
+              "appealPath": "dispute"
+            },
+            "startsAt": "2026-02-26T18:00:00.000Z",
+            "expiresAt": "2026-03-28T18:00:00.000Z",
+            "disputeUntil": "2026-02-28T18:00:00.000Z",
+            "status": "active",
+            "gameId": "00000000-0000-4000-8000-0000000a0002",
+            "causedBy": [],
+            "dedupeKey": "no_show:00000000-0000-4000-8000-0000000a0002:00000000-0000-4000-8000-000000000001",
+            "decidedBy": "system",
+            "createdAt": "2026-02-26T18:00:00.000Z"
+          }
+        ],
+        "depositSettlements": [
+          {
+            "gameId": "00000000-0000-4000-8000-0000000a0001",
+            "outcome": "forfeit"
+          },
+          {
+            "gameId": "00000000-0000-4000-8000-0000000a0002",
+            "outcome": "forfeit"
+          }
+        ]
+      },
+      "event": {
+        "type": "Tick",
+        "at": "2026-03-01T18:00:00.000Z"
+      }
+    },
+    "now": "2026-03-01T18:00:00.000Z",
+    "expected": {
+      "effects": [
+        {
+          "type": "SetSanctionStatus",
+          "sanctionId": "6247cd5d-3c19-83bb-8007-8a596073a8ac",
+          "status": "expired"
+        }
+      ]
+    },
+    "tags": [
+      "boundary"
+    ]
+  },
+  {
+    "name": "escalation.3-cards.join-ban-30d",
+    "kind": "trust.applyEvent",
+    "input": {
+      "state": {
+        "userId": "00000000-0000-4000-8000-000000000001",
+        "sanctions": [
+          {
+            "id": "6247cd5d-3c19-83bb-8007-8a596073a8ac",
+            "userId": "00000000-0000-4000-8000-000000000001",
+            "kind": "yellow_card",
+            "reasonCode": "no_show",
+            "statementKey": "sanctions.reason.no_show",
+            "statementParams": {
+              "disputeHours": 48,
+              "appealPath": "dispute"
+            },
+            "startsAt": "2026-02-17T18:00:00.000Z",
+            "expiresAt": "2026-03-19T18:00:00.000Z",
+            "disputeUntil": "2026-02-19T18:00:00.000Z",
+            "status": "active",
+            "gameId": "00000000-0000-4000-8000-0000000a0001",
+            "causedBy": [],
+            "dedupeKey": "no_show:00000000-0000-4000-8000-0000000a0001:00000000-0000-4000-8000-000000000001",
+            "decidedBy": "system",
+            "createdAt": "2026-02-17T18:00:00.000Z"
+          },
+          {
+            "id": "3c19d0d8-58b1-836f-a930-856cf9930f26",
+            "userId": "00000000-0000-4000-8000-000000000001",
+            "kind": "yellow_card",
+            "reasonCode": "no_show",
+            "statementKey": "sanctions.reason.no_show",
+            "statementParams": {
+              "disputeHours": 48,
+              "appealPath": "dispute"
+            },
+            "startsAt": "2026-02-19T18:00:00.000Z",
+            "expiresAt": "2026-03-21T18:00:00.000Z",
+            "disputeUntil": "2026-02-21T18:00:00.000Z",
+            "status": "active",
+            "gameId": "00000000-0000-4000-8000-0000000a0002",
+            "causedBy": [],
+            "dedupeKey": "no_show:00000000-0000-4000-8000-0000000a0002:00000000-0000-4000-8000-000000000001",
+            "decidedBy": "system",
+            "createdAt": "2026-02-19T18:00:00.000Z"
+          },
+          {
+            "id": "3283a214-9623-8937-a3f0-c13efa384093",
+            "userId": "00000000-0000-4000-8000-000000000001",
+            "kind": "yellow_card",
+            "reasonCode": "no_show",
+            "statementKey": "sanctions.reason.no_show",
+            "statementParams": {
+              "disputeHours": 48,
+              "appealPath": "dispute"
+            },
+            "startsAt": "2026-02-26T18:00:00.000Z",
+            "expiresAt": "2026-03-28T18:00:00.000Z",
+            "disputeUntil": "2026-02-28T18:00:00.000Z",
+            "status": "active",
+            "gameId": "00000000-0000-4000-8000-0000000a0003",
+            "causedBy": [],
+            "dedupeKey": "no_show:00000000-0000-4000-8000-0000000a0003:00000000-0000-4000-8000-000000000001",
+            "decidedBy": "system",
+            "createdAt": "2026-02-26T18:00:00.000Z"
+          }
+        ],
+        "depositSettlements": [
+          {
+            "gameId": "00000000-0000-4000-8000-0000000a0001",
+            "outcome": "forfeit"
+          },
+          {
+            "gameId": "00000000-0000-4000-8000-0000000a0002",
+            "outcome": "forfeit"
+          },
+          {
+            "gameId": "00000000-0000-4000-8000-0000000a0003",
+            "outcome": "forfeit"
+          }
+        ]
+      },
+      "event": {
+        "type": "Tick",
+        "at": "2026-03-01T18:00:00.000Z"
+      }
+    },
+    "now": "2026-03-01T18:00:00.000Z",
+    "expected": {
+      "effects": [
+        {
+          "type": "IssueSanction",
+          "sanction": {
+            "kind": "join_ban",
+            "userId": "00000000-0000-4000-8000-000000000001",
+            "reasonCode": "escalation_three_cards",
+            "statementKey": "sanctions.reason.escalation_three_cards",
+            "statementParams": {
+              "cards": 3,
+              "days": 30,
+              "appealPath": "appeal"
+            },
+            "startsAt": "2026-03-01T18:00:00.000Z",
+            "expiresAt": "2026-03-31T18:00:00.000Z",
+            "disputeUntil": null,
+            "gameId": "00000000-0000-4000-8000-0000000a0003",
+            "causedBy": [
+              "6247cd5d-3c19-83bb-8007-8a596073a8ac",
+              "3c19d0d8-58b1-836f-a930-856cf9930f26",
+              "3283a214-9623-8937-a3f0-c13efa384093"
+            ],
+            "dedupeKey": "escalation_three_cards:00000000-0000-4000-8000-000000000001:3283a214-9623-8937-a3f0-c13efa384093",
+            "decidedBy": "system"
+          }
+        },
+        {
+          "type": "BanJoins",
+          "userId": "00000000-0000-4000-8000-000000000001",
+          "until": "2026-03-31T18:00:00.000Z"
+        },
+        {
+          "type": "Notify",
+          "userId": "00000000-0000-4000-8000-000000000001",
+          "kind": "sanction_issued",
+          "params": {
+            "sanctionKind": "join_ban",
+            "reasonCode": "escalation_three_cards",
+            "statementKey": "sanctions.reason.escalation_three_cards",
+            "expiresAt": "2026-03-31T18:00:00.000Z",
+            "disputeUntil": "",
+            "appealPath": "appeal"
+          },
+          "gameId": "00000000-0000-4000-8000-0000000a0003",
+          "sanctionDedupeKey": "escalation_three_cards:00000000-0000-4000-8000-000000000001:3283a214-9623-8937-a3f0-c13efa384093"
+        }
+      ]
+    },
+    "tags": [
+      "prd-v5:TRUST-025"
+    ]
+  },
+  {
+    "name": "escalation.4-cards.join-ban-30d-and-review-never-permanent",
+    "kind": "trust.applyEvent",
+    "description": "AC-TRUST-025b: 30-day ban + high-priority review; no permanent ban without a moderator",
+    "input": {
+      "state": {
+        "userId": "00000000-0000-4000-8000-000000000001",
+        "sanctions": [
+          {
+            "id": "6247cd5d-3c19-83bb-8007-8a596073a8ac",
+            "userId": "00000000-0000-4000-8000-000000000001",
+            "kind": "yellow_card",
+            "reasonCode": "no_show",
+            "statementKey": "sanctions.reason.no_show",
+            "statementParams": {
+              "disputeHours": 48,
+              "appealPath": "dispute"
+            },
+            "startsAt": "2026-02-15T18:00:00.000Z",
+            "expiresAt": "2026-03-17T18:00:00.000Z",
+            "disputeUntil": "2026-02-17T18:00:00.000Z",
+            "status": "active",
+            "gameId": "00000000-0000-4000-8000-0000000a0001",
+            "causedBy": [],
+            "dedupeKey": "no_show:00000000-0000-4000-8000-0000000a0001:00000000-0000-4000-8000-000000000001",
+            "decidedBy": "system",
+            "createdAt": "2026-02-15T18:00:00.000Z"
+          },
+          {
+            "id": "3c19d0d8-58b1-836f-a930-856cf9930f26",
+            "userId": "00000000-0000-4000-8000-000000000001",
+            "kind": "yellow_card",
+            "reasonCode": "no_show",
+            "statementKey": "sanctions.reason.no_show",
+            "statementParams": {
+              "disputeHours": 48,
+              "appealPath": "dispute"
+            },
+            "startsAt": "2026-02-17T18:00:00.000Z",
+            "expiresAt": "2026-03-19T18:00:00.000Z",
+            "disputeUntil": "2026-02-19T18:00:00.000Z",
+            "status": "active",
+            "gameId": "00000000-0000-4000-8000-0000000a0002",
+            "causedBy": [],
+            "dedupeKey": "no_show:00000000-0000-4000-8000-0000000a0002:00000000-0000-4000-8000-000000000001",
+            "decidedBy": "system",
+            "createdAt": "2026-02-17T18:00:00.000Z"
+          },
+          {
+            "id": "3283a214-9623-8937-a3f0-c13efa384093",
+            "userId": "00000000-0000-4000-8000-000000000001",
+            "kind": "yellow_card",
+            "reasonCode": "no_show",
+            "statementKey": "sanctions.reason.no_show",
+            "statementParams": {
+              "disputeHours": 48,
+              "appealPath": "dispute"
+            },
+            "startsAt": "2026-02-19T18:00:00.000Z",
+            "expiresAt": "2026-03-21T18:00:00.000Z",
+            "disputeUntil": "2026-02-21T18:00:00.000Z",
+            "status": "active",
+            "gameId": "00000000-0000-4000-8000-0000000a0003",
+            "causedBy": [],
+            "dedupeKey": "no_show:00000000-0000-4000-8000-0000000a0003:00000000-0000-4000-8000-000000000001",
+            "decidedBy": "system",
+            "createdAt": "2026-02-19T18:00:00.000Z"
+          },
+          {
+            "id": "b05404fa-c8a1-8be9-b44e-0a85636b8f0a",
+            "userId": "00000000-0000-4000-8000-000000000001",
+            "kind": "yellow_card",
+            "reasonCode": "no_show",
+            "statementKey": "sanctions.reason.no_show",
+            "statementParams": {
+              "disputeHours": 48,
+              "appealPath": "dispute"
+            },
+            "startsAt": "2026-02-26T18:00:00.000Z",
+            "expiresAt": "2026-03-28T18:00:00.000Z",
+            "disputeUntil": "2026-02-28T18:00:00.000Z",
+            "status": "active",
+            "gameId": "00000000-0000-4000-8000-0000000a0004",
+            "causedBy": [],
+            "dedupeKey": "no_show:00000000-0000-4000-8000-0000000a0004:00000000-0000-4000-8000-000000000001",
+            "decidedBy": "system",
+            "createdAt": "2026-02-26T18:00:00.000Z"
+          }
+        ],
+        "depositSettlements": [
+          {
+            "gameId": "00000000-0000-4000-8000-0000000a0001",
+            "outcome": "forfeit"
+          },
+          {
+            "gameId": "00000000-0000-4000-8000-0000000a0002",
+            "outcome": "forfeit"
+          },
+          {
+            "gameId": "00000000-0000-4000-8000-0000000a0003",
+            "outcome": "forfeit"
+          },
+          {
+            "gameId": "00000000-0000-4000-8000-0000000a0004",
+            "outcome": "forfeit"
+          }
+        ]
+      },
+      "event": {
+        "type": "Tick",
+        "at": "2026-03-01T18:00:00.000Z"
+      }
+    },
+    "now": "2026-03-01T18:00:00.000Z",
+    "expected": {
+      "effects": [
+        {
+          "type": "IssueSanction",
+          "sanction": {
+            "kind": "join_ban",
+            "userId": "00000000-0000-4000-8000-000000000001",
+            "reasonCode": "escalation_three_cards",
+            "statementKey": "sanctions.reason.escalation_three_cards",
+            "statementParams": {
+              "cards": 4,
+              "days": 30,
+              "appealPath": "appeal"
+            },
+            "startsAt": "2026-03-01T18:00:00.000Z",
+            "expiresAt": "2026-03-31T18:00:00.000Z",
+            "disputeUntil": null,
+            "gameId": "00000000-0000-4000-8000-0000000a0004",
+            "causedBy": [
+              "6247cd5d-3c19-83bb-8007-8a596073a8ac",
+              "3c19d0d8-58b1-836f-a930-856cf9930f26",
+              "3283a214-9623-8937-a3f0-c13efa384093",
+              "b05404fa-c8a1-8be9-b44e-0a85636b8f0a"
+            ],
+            "dedupeKey": "escalation_three_cards:00000000-0000-4000-8000-000000000001:b05404fa-c8a1-8be9-b44e-0a85636b8f0a",
+            "decidedBy": "system"
+          }
+        },
+        {
+          "type": "BanJoins",
+          "userId": "00000000-0000-4000-8000-000000000001",
+          "until": "2026-03-31T18:00:00.000Z"
+        },
+        {
+          "type": "Notify",
+          "userId": "00000000-0000-4000-8000-000000000001",
+          "kind": "sanction_issued",
+          "params": {
+            "sanctionKind": "join_ban",
+            "reasonCode": "escalation_three_cards",
+            "statementKey": "sanctions.reason.escalation_three_cards",
+            "expiresAt": "2026-03-31T18:00:00.000Z",
+            "disputeUntil": "",
+            "appealPath": "appeal"
+          },
+          "gameId": "00000000-0000-4000-8000-0000000a0004",
+          "sanctionDedupeKey": "escalation_three_cards:00000000-0000-4000-8000-000000000001:b05404fa-c8a1-8be9-b44e-0a85636b8f0a"
+        },
+        {
+          "type": "EnqueueReview",
+          "item": {
+            "kind": "permanent_ban_candidate",
+            "priority": "high",
+            "subjectUserId": "00000000-0000-4000-8000-000000000001",
+            "venueId": null,
+            "gameId": "00000000-0000-4000-8000-0000000a0004",
+            "sanctionId": "b05404fa-c8a1-8be9-b44e-0a85636b8f0a",
+            "appealId": null,
+            "reportIds": [],
+            "evidence": {
+              "activeCards": 4,
+              "triggerReason": "no_show"
+            },
+            "dueBy": "2026-03-02T18:00:00.000Z",
+            "dedupeKey": "permanent_ban_candidate:00000000-0000-4000-8000-000000000001:b05404fa-c8a1-8be9-b44e-0a85636b8f0a"
+          }
+        }
+      ]
+    },
+    "tags": [
+      "prd-v5:TRUST-025"
+    ]
+  },
+  {
+    "name": "escalation.cards-already-escalated.no-retrigger",
+    "kind": "trust.applyEvent",
+    "input": {
+      "state": {
+        "userId": "00000000-0000-4000-8000-000000000001",
+        "sanctions": [
+          {
+            "id": "6247cd5d-3c19-83bb-8007-8a596073a8ac",
+            "userId": "00000000-0000-4000-8000-000000000001",
+            "kind": "yellow_card",
+            "reasonCode": "no_show",
+            "statementKey": "sanctions.reason.no_show",
+            "statementParams": {
+              "disputeHours": 48,
+              "appealPath": "dispute"
+            },
+            "startsAt": "2026-02-17T18:00:00.000Z",
+            "expiresAt": "2026-03-19T18:00:00.000Z",
+            "disputeUntil": "2026-02-19T18:00:00.000Z",
+            "status": "active",
+            "gameId": "00000000-0000-4000-8000-0000000a0001",
+            "causedBy": [],
+            "dedupeKey": "no_show:00000000-0000-4000-8000-0000000a0001:00000000-0000-4000-8000-000000000001",
+            "decidedBy": "system",
+            "createdAt": "2026-02-17T18:00:00.000Z"
+          },
+          {
+            "id": "3c19d0d8-58b1-836f-a930-856cf9930f26",
+            "userId": "00000000-0000-4000-8000-000000000001",
+            "kind": "yellow_card",
+            "reasonCode": "no_show",
+            "statementKey": "sanctions.reason.no_show",
+            "statementParams": {
+              "disputeHours": 48,
+              "appealPath": "dispute"
+            },
+            "startsAt": "2026-02-19T18:00:00.000Z",
+            "expiresAt": "2026-03-21T18:00:00.000Z",
+            "disputeUntil": "2026-02-21T18:00:00.000Z",
+            "status": "active",
+            "gameId": "00000000-0000-4000-8000-0000000a0002",
+            "causedBy": [],
+            "dedupeKey": "no_show:00000000-0000-4000-8000-0000000a0002:00000000-0000-4000-8000-000000000001",
+            "decidedBy": "system",
+            "createdAt": "2026-02-19T18:00:00.000Z"
+          },
+          {
+            "id": "b8cbaebc-31ee-8ffb-92d1-2d42d1671ec4",
+            "userId": "00000000-0000-4000-8000-000000000001",
+            "kind": "join_ban",
+            "reasonCode": "escalation_two_cards",
+            "statementKey": "sanctions.reason.escalation_two_cards",
+            "statementParams": {
+              "cards": 2,
+              "days": 7,
+              "appealPath": "appeal"
+            },
+            "startsAt": "2026-02-21T18:00:00.000Z",
+            "expiresAt": "2026-02-28T18:00:00.000Z",
+            "disputeUntil": null,
+            "status": "expired",
+            "gameId": "00000000-0000-4000-8000-0000000a0002",
+            "causedBy": [
+              "6247cd5d-3c19-83bb-8007-8a596073a8ac",
+              "3c19d0d8-58b1-836f-a930-856cf9930f26"
+            ],
+            "dedupeKey": "escalation_two_cards:00000000-0000-4000-8000-000000000001:3c19d0d8-58b1-836f-a930-856cf9930f26",
+            "decidedBy": "system",
+            "createdAt": "2026-02-21T18:00:00.000Z"
+          }
+        ],
+        "depositSettlements": [
+          {
+            "gameId": "00000000-0000-4000-8000-0000000a0001",
+            "outcome": "forfeit"
+          },
+          {
+            "gameId": "00000000-0000-4000-8000-0000000a0002",
+            "outcome": "forfeit"
+          }
+        ]
+      },
+      "event": {
+        "type": "Tick",
+        "at": "2026-03-01T18:00:00.000Z"
+      }
+    },
+    "now": "2026-03-01T18:00:00.000Z",
+    "expected": {
+      "effects": []
+    },
+    "tags": [
+      "idempotency"
+    ]
+  },
+  {
+    "name": "appeal-filed.inside-dispute-window.disputes-card",
+    "kind": "trust.applyEvent",
+    "input": {
+      "state": {
+        "userId": "00000000-0000-4000-8000-000000000001",
+        "sanctions": [
+          {
+            "id": "6247cd5d-3c19-83bb-8007-8a596073a8ac",
+            "userId": "00000000-0000-4000-8000-000000000001",
+            "kind": "yellow_card",
+            "reasonCode": "no_show",
+            "statementKey": "sanctions.reason.no_show",
+            "statementParams": {
+              "disputeHours": 48,
+              "appealPath": "dispute"
+            },
+            "startsAt": "2026-02-28T18:00:00.000Z",
+            "expiresAt": "2026-03-30T18:00:00.000Z",
+            "disputeUntil": "2026-03-02T18:00:00.000Z",
+            "status": "active",
+            "gameId": "00000000-0000-4000-8000-0000000a0001",
+            "causedBy": [],
+            "dedupeKey": "no_show:00000000-0000-4000-8000-0000000a0001:00000000-0000-4000-8000-000000000001",
+            "decidedBy": "system",
+            "createdAt": "2026-02-28T18:00:00.000Z"
+          }
+        ]
+      },
+      "event": {
+        "type": "AppealFiled",
+        "appeal": {
+          "id": "00000000-0000-4000-8000-0000000000a1",
+          "sanctionId": "6247cd5d-3c19-83bb-8007-8a596073a8ac",
+          "userId": "00000000-0000-4000-8000-000000000001",
+          "text": "family emergency",
+          "isDispute": true,
+          "status": "open",
+          "decidedBy": null,
+          "decisionNote": null,
+          "decidedAt": null,
+          "createdAt": "2026-03-01T18:00:00.000Z"
+        }
+      }
+    },
+    "now": "2026-03-01T18:00:00.000Z",
+    "expected": {
+      "effects": [
+        {
+          "type": "SetSanctionStatus",
+          "sanctionId": "6247cd5d-3c19-83bb-8007-8a596073a8ac",
+          "status": "disputed"
+        },
+        {
+          "type": "EnqueueReview",
+          "item": {
+            "kind": "sanction_dispute",
+            "priority": "normal",
+            "subjectUserId": "00000000-0000-4000-8000-000000000001",
+            "venueId": null,
+            "gameId": "00000000-0000-4000-8000-0000000a0001",
+            "sanctionId": "6247cd5d-3c19-83bb-8007-8a596073a8ac",
+            "appealId": "00000000-0000-4000-8000-0000000000a1",
+            "reportIds": [],
+            "evidence": {
+              "sanctionKind": "yellow_card",
+              "reasonCode": "no_show"
+            },
+            "dueBy": "2026-03-03T18:00:00.000Z",
+            "dedupeKey": "sanction_dispute:00000000-0000-4000-8000-0000000000a1"
+          }
+        }
+      ]
+    },
+    "tags": [
+      "prd-v5:TRUST-022"
+    ]
+  },
+  {
+    "name": "appeal-filed.after-dispute-window.appeal-only",
+    "kind": "trust.applyEvent",
+    "input": {
+      "state": {
+        "userId": "00000000-0000-4000-8000-000000000001",
+        "sanctions": [
+          {
+            "id": "6247cd5d-3c19-83bb-8007-8a596073a8ac",
+            "userId": "00000000-0000-4000-8000-000000000001",
+            "kind": "yellow_card",
+            "reasonCode": "no_show",
+            "statementKey": "sanctions.reason.no_show",
+            "statementParams": {
+              "disputeHours": 48,
+              "appealPath": "dispute"
+            },
+            "startsAt": "2026-02-26T18:00:00.000Z",
+            "expiresAt": "2026-03-28T18:00:00.000Z",
+            "disputeUntil": "2026-02-28T18:00:00.000Z",
+            "status": "active",
+            "gameId": "00000000-0000-4000-8000-0000000a0001",
+            "causedBy": [],
+            "dedupeKey": "no_show:00000000-0000-4000-8000-0000000a0001:00000000-0000-4000-8000-000000000001",
+            "decidedBy": "system",
+            "createdAt": "2026-02-26T18:00:00.000Z"
+          }
+        ]
+      },
+      "event": {
+        "type": "AppealFiled",
+        "appeal": {
+          "id": "00000000-0000-4000-8000-0000000000a1",
+          "sanctionId": "6247cd5d-3c19-83bb-8007-8a596073a8ac",
+          "userId": "00000000-0000-4000-8000-000000000001",
+          "text": "family emergency",
+          "isDispute": true,
+          "status": "open",
+          "decidedBy": null,
+          "decisionNote": null,
+          "decidedAt": null,
+          "createdAt": "2026-03-01T18:00:00.000Z"
+        }
+      }
+    },
+    "now": "2026-03-01T18:00:00.000Z",
+    "expected": {
+      "effects": [
+        {
+          "type": "EnqueueReview",
+          "item": {
+            "kind": "appeal",
+            "priority": "low",
+            "subjectUserId": "00000000-0000-4000-8000-000000000001",
+            "venueId": null,
+            "gameId": "00000000-0000-4000-8000-0000000a0001",
+            "sanctionId": "6247cd5d-3c19-83bb-8007-8a596073a8ac",
+            "appealId": "00000000-0000-4000-8000-0000000000a1",
+            "reportIds": [],
+            "evidence": {
+              "sanctionKind": "yellow_card",
+              "reasonCode": "no_show"
+            },
+            "dueBy": "2026-03-04T18:00:00.000Z",
+            "dedupeKey": "appeal:00000000-0000-4000-8000-0000000000a1"
+          }
+        }
+      ]
+    },
+    "tags": [
+      "boundary"
+    ]
+  },
+  {
+    "name": "dispute.undecided-7d.auto-voided",
+    "kind": "trust.applyEvent",
+    "description": "TRUST-023: fairness by default — undecided dispute voids the card after 7 days",
+    "input": {
+      "state": {
+        "userId": "00000000-0000-4000-8000-000000000001",
+        "sanctions": [
+          {
+            "id": "6247cd5d-3c19-83bb-8007-8a596073a8ac",
+            "userId": "00000000-0000-4000-8000-000000000001",
+            "kind": "yellow_card",
+            "reasonCode": "no_show",
+            "statementKey": "sanctions.reason.no_show",
+            "statementParams": {
+              "disputeHours": 48,
+              "appealPath": "dispute"
+            },
+            "startsAt": "2026-02-28T18:00:00.000Z",
+            "expiresAt": "2026-03-30T18:00:00.000Z",
+            "disputeUntil": "2026-03-02T18:00:00.000Z",
+            "status": "disputed",
+            "gameId": "00000000-0000-4000-8000-0000000a0001",
+            "causedBy": [],
+            "dedupeKey": "no_show:00000000-0000-4000-8000-0000000a0001:00000000-0000-4000-8000-000000000001",
+            "decidedBy": "system",
+            "createdAt": "2026-02-28T18:00:00.000Z"
+          }
+        ],
+        "appeals": [
+          {
+            "id": "00000000-0000-4000-8000-0000000000a1",
+            "sanctionId": "6247cd5d-3c19-83bb-8007-8a596073a8ac",
+            "userId": "00000000-0000-4000-8000-000000000001",
+            "text": "family emergency",
+            "isDispute": true,
+            "status": "open",
+            "decidedBy": null,
+            "decisionNote": null,
+            "decidedAt": null,
+            "createdAt": "2026-03-01T18:00:00.000Z"
+          }
+        ]
+      },
+      "event": {
+        "type": "Tick",
+        "at": "2026-03-08T18:00:00.000Z"
+      }
+    },
+    "now": "2026-03-08T18:00:00.000Z",
+    "expected": {
+      "effects": [
+        {
+          "type": "SetSanctionStatus",
+          "sanctionId": "6247cd5d-3c19-83bb-8007-8a596073a8ac",
+          "status": "overturned"
+        },
+        {
+          "type": "SetAttendance",
+          "gameId": "00000000-0000-4000-8000-0000000a0001",
+          "userId": "00000000-0000-4000-8000-000000000001",
+          "attendance": "excused"
+        },
+        {
+          "type": "SettleDeposit",
+          "gameId": "00000000-0000-4000-8000-0000000a0001",
+          "userId": "00000000-0000-4000-8000-000000000001",
+          "outcome": "release"
+        },
+        {
+          "type": "Notify",
+          "userId": "00000000-0000-4000-8000-000000000001",
+          "kind": "appeal_decided",
+          "params": {
+            "decision": "auto_void",
+            "sanctionKind": "yellow_card",
+            "reasonCode": "no_show",
+            "statementKey": "sanctions.reason.no_show"
+          },
+          "gameId": "00000000-0000-4000-8000-0000000a0001",
+          "sanctionDedupeKey": "no_show:00000000-0000-4000-8000-0000000a0001:00000000-0000-4000-8000-000000000001"
+        },
+        {
+          "type": "Audit",
+          "action": "sanction.auto_voided",
+          "subjectUserId": "00000000-0000-4000-8000-000000000001",
+          "data": {
+            "sanctionId": "6247cd5d-3c19-83bb-8007-8a596073a8ac",
+            "appealId": "00000000-0000-4000-8000-0000000000a1",
+            "days": 7
+          }
+        }
+      ]
+    },
+    "tags": [
+      "boundary",
+      "prd-v5:TRUST-023"
+    ]
+  },
+  {
+    "name": "dispute.undecided-7d-minus-1ms.not-voided",
+    "kind": "trust.applyEvent",
+    "input": {
+      "state": {
+        "userId": "00000000-0000-4000-8000-000000000001",
+        "sanctions": [
+          {
+            "id": "6247cd5d-3c19-83bb-8007-8a596073a8ac",
+            "userId": "00000000-0000-4000-8000-000000000001",
+            "kind": "yellow_card",
+            "reasonCode": "no_show",
+            "statementKey": "sanctions.reason.no_show",
+            "statementParams": {
+              "disputeHours": 48,
+              "appealPath": "dispute"
+            },
+            "startsAt": "2026-02-28T18:00:00.000Z",
+            "expiresAt": "2026-03-30T18:00:00.000Z",
+            "disputeUntil": "2026-03-02T18:00:00.000Z",
+            "status": "disputed",
+            "gameId": "00000000-0000-4000-8000-0000000a0001",
+            "causedBy": [],
+            "dedupeKey": "no_show:00000000-0000-4000-8000-0000000a0001:00000000-0000-4000-8000-000000000001",
+            "decidedBy": "system",
+            "createdAt": "2026-02-28T18:00:00.000Z"
+          }
+        ],
+        "appeals": [
+          {
+            "id": "00000000-0000-4000-8000-0000000000a1",
+            "sanctionId": "6247cd5d-3c19-83bb-8007-8a596073a8ac",
+            "userId": "00000000-0000-4000-8000-000000000001",
+            "text": "family emergency",
+            "isDispute": true,
+            "status": "open",
+            "decidedBy": null,
+            "decisionNote": null,
+            "decidedAt": null,
+            "createdAt": "2026-03-01T18:00:00.000Z"
+          }
+        ],
+        "depositSettlements": [
+          {
+            "gameId": "00000000-0000-4000-8000-0000000a0001",
+            "outcome": "forfeit"
+          }
+        ]
+      },
+      "event": {
+        "type": "Tick",
+        "at": "2026-03-08T17:59:59.999Z"
+      }
+    },
+    "now": "2026-03-08T17:59:59.999Z",
+    "expected": {
+      "effects": []
+    },
+    "tags": [
+      "boundary"
+    ]
+  },
+  {
+    "name": "dispute.fourth-in-90d.no-auto-void",
+    "kind": "trust.applyEvent",
+    "input": {
+      "state": {
+        "userId": "00000000-0000-4000-8000-000000000001",
+        "sanctions": [
+          {
+            "id": "6247cd5d-3c19-83bb-8007-8a596073a8ac",
+            "userId": "00000000-0000-4000-8000-000000000001",
+            "kind": "yellow_card",
+            "reasonCode": "no_show",
+            "statementKey": "sanctions.reason.no_show",
+            "statementParams": {
+              "disputeHours": 48,
+              "appealPath": "dispute"
+            },
+            "startsAt": "2026-02-28T18:00:00.000Z",
+            "expiresAt": "2026-03-30T18:00:00.000Z",
+            "disputeUntil": "2026-03-02T18:00:00.000Z",
+            "status": "disputed",
+            "gameId": "00000000-0000-4000-8000-0000000a0001",
+            "causedBy": [],
+            "dedupeKey": "no_show:00000000-0000-4000-8000-0000000a0001:00000000-0000-4000-8000-000000000001",
+            "decidedBy": "system",
+            "createdAt": "2026-02-28T18:00:00.000Z"
+          }
+        ],
+        "appeals": [
+          {
+            "id": "00000000-0000-4000-8000-0000000000b1",
+            "sanctionId": "00000000-0000-4000-8000-0000000000c1",
+            "userId": "00000000-0000-4000-8000-000000000001",
+            "text": "family emergency",
+            "isDispute": true,
+            "status": "upheld",
+            "decidedBy": null,
+            "decisionNote": null,
+            "decidedAt": null,
+            "createdAt": "2026-02-19T18:00:00.000Z"
+          },
+          {
+            "id": "00000000-0000-4000-8000-0000000000b2",
+            "sanctionId": "00000000-0000-4000-8000-0000000000c2",
+            "userId": "00000000-0000-4000-8000-000000000001",
+            "text": "family emergency",
+            "isDispute": true,
+            "status": "upheld",
+            "decidedBy": null,
+            "decisionNote": null,
+            "decidedAt": null,
+            "createdAt": "2026-02-09T18:00:00.000Z"
+          },
+          {
+            "id": "00000000-0000-4000-8000-0000000000b3",
+            "sanctionId": "00000000-0000-4000-8000-0000000000c3",
+            "userId": "00000000-0000-4000-8000-000000000001",
+            "text": "family emergency",
+            "isDispute": true,
+            "status": "upheld",
+            "decidedBy": null,
+            "decisionNote": null,
+            "decidedAt": null,
+            "createdAt": "2026-01-30T18:00:00.000Z"
+          },
+          {
+            "id": "00000000-0000-4000-8000-0000000000a1",
+            "sanctionId": "6247cd5d-3c19-83bb-8007-8a596073a8ac",
+            "userId": "00000000-0000-4000-8000-000000000001",
+            "text": "family emergency",
+            "isDispute": true,
+            "status": "open",
+            "decidedBy": null,
+            "decisionNote": null,
+            "decidedAt": null,
+            "createdAt": "2026-03-01T18:00:00.000Z"
+          }
+        ]
+      },
+      "event": {
+        "type": "Tick",
+        "at": "2026-03-09T18:00:00.000Z"
+      }
+    },
+    "now": "2026-03-09T18:00:00.000Z",
+    "expected": {
+      "effects": []
+    },
+    "tags": [
+      "prd-v5:TRUST-023"
+    ]
+  },
+  {
+    "name": "chat-blocks.third-in-7d.yellow-and-24h-mute",
+    "kind": "trust.applyEvent",
+    "input": {
+      "state": {
+        "userId": "00000000-0000-4000-8000-000000000001",
+        "chatBlocks": [
+          {
+            "gameId": "00000000-0000-4000-8000-0000000a0001",
+            "at": "2026-02-25T14:00:00.000Z"
+          },
+          {
+            "gameId": "00000000-0000-4000-8000-0000000a0001",
+            "at": "2026-02-27T16:00:00.000Z"
+          }
+        ]
+      },
+      "event": {
+        "type": "ChatMessageBlocked",
+        "gameId": "00000000-0000-4000-8000-0000000a0001",
+        "userId": "00000000-0000-4000-8000-000000000001",
+        "at": "2026-03-01T18:00:00.000Z",
+        "categories": [
+          "harassment"
+        ]
+      }
+    },
+    "now": "2026-03-01T18:00:00.000Z",
+    "expected": {
+      "effects": [
+        {
+          "type": "IssueSanction",
+          "sanction": {
+            "kind": "yellow_card",
+            "userId": "00000000-0000-4000-8000-000000000001",
+            "reasonCode": "chat_blocks",
+            "statementKey": "sanctions.reason.chat_blocks",
+            "statementParams": {
+              "blocks": 3,
+              "windowDays": 7,
+              "appealPath": "dispute"
+            },
+            "startsAt": "2026-03-01T18:00:00.000Z",
+            "expiresAt": "2026-03-31T18:00:00.000Z",
+            "disputeUntil": "2026-03-03T18:00:00.000Z",
+            "gameId": "00000000-0000-4000-8000-0000000a0001",
+            "causedBy": [],
+            "dedupeKey": "chat_blocks:00000000-0000-4000-8000-000000000001:00000000-0000-4000-8000-0000000a0001:2026-03-01T18:00:00.000Z",
+            "decidedBy": "system"
+          }
+        },
+        {
+          "type": "Notify",
+          "userId": "00000000-0000-4000-8000-000000000001",
+          "kind": "sanction_issued",
+          "params": {
+            "sanctionKind": "yellow_card",
+            "reasonCode": "chat_blocks",
+            "statementKey": "sanctions.reason.chat_blocks",
+            "expiresAt": "2026-03-31T18:00:00.000Z",
+            "disputeUntil": "2026-03-03T18:00:00.000Z",
+            "appealPath": "dispute"
+          },
+          "gameId": "00000000-0000-4000-8000-0000000a0001",
+          "sanctionDedupeKey": "chat_blocks:00000000-0000-4000-8000-000000000001:00000000-0000-4000-8000-0000000a0001:2026-03-01T18:00:00.000Z"
+        },
+        {
+          "type": "IssueSanction",
+          "sanction": {
+            "kind": "chat_mute",
+            "userId": "00000000-0000-4000-8000-000000000001",
+            "reasonCode": "chat_blocks",
+            "statementKey": "sanctions.reason.chat_blocks",
+            "statementParams": {
+              "hours": 24,
+              "blocks": 3,
+              "appealPath": "appeal"
+            },
+            "startsAt": "2026-03-01T18:00:00.000Z",
+            "expiresAt": "2026-03-02T18:00:00.000Z",
+            "disputeUntil": null,
+            "gameId": "00000000-0000-4000-8000-0000000a0001",
+            "causedBy": [
+              "9b1f7896-a370-8b6e-9707-c71801df6844"
+            ],
+            "dedupeKey": "chat_mute:00000000-0000-4000-8000-000000000001:00000000-0000-4000-8000-0000000a0001:2026-03-01T18:00:00.000Z",
+            "decidedBy": "system"
+          }
+        },
+        {
+          "type": "MuteChat",
+          "userId": "00000000-0000-4000-8000-000000000001",
+          "until": "2026-03-02T18:00:00.000Z"
+        },
+        {
+          "type": "Notify",
+          "userId": "00000000-0000-4000-8000-000000000001",
+          "kind": "chat_muted",
+          "params": {
+            "sanctionKind": "chat_mute",
+            "reasonCode": "chat_blocks",
+            "statementKey": "sanctions.reason.chat_blocks",
+            "expiresAt": "2026-03-02T18:00:00.000Z",
+            "disputeUntil": "",
+            "appealPath": "appeal"
+          },
+          "gameId": "00000000-0000-4000-8000-0000000a0001",
+          "sanctionDedupeKey": "chat_mute:00000000-0000-4000-8000-000000000001:00000000-0000-4000-8000-0000000a0001:2026-03-01T18:00:00.000Z"
+        }
+      ]
+    },
+    "tags": [
+      "prd-v5:CHAT-021"
+    ]
+  },
+  {
+    "name": "chat-blocks.first-outside-7d.none",
+    "kind": "trust.applyEvent",
+    "input": {
+      "state": {
+        "userId": "00000000-0000-4000-8000-000000000001",
+        "chatBlocks": [
+          {
+            "gameId": "00000000-0000-4000-8000-0000000a0001",
+            "at": "2026-02-22T18:00:00.000Z"
+          },
+          {
+            "gameId": "00000000-0000-4000-8000-0000000a0001",
+            "at": "2026-02-27T16:00:00.000Z"
+          }
+        ]
+      },
+      "event": {
+        "type": "ChatMessageBlocked",
+        "gameId": "00000000-0000-4000-8000-0000000a0001",
+        "userId": "00000000-0000-4000-8000-000000000001",
+        "at": "2026-03-01T18:00:00.000Z",
+        "categories": [
+          "harassment"
+        ]
+      }
+    },
+    "now": "2026-03-01T18:00:00.000Z",
+    "expected": {
+      "effects": []
+    },
+    "tags": [
+      "boundary"
+    ]
+  },
+  {
+    "name": "moderator.overturn.cascades-to-escalation-ban",
+    "kind": "trust.applyEvent",
+    "input": {
+      "state": {
+        "userId": "00000000-0000-4000-8000-000000000001",
+        "sanctions": [
+          {
+            "id": "6247cd5d-3c19-83bb-8007-8a596073a8ac",
+            "userId": "00000000-0000-4000-8000-000000000001",
+            "kind": "yellow_card",
+            "reasonCode": "no_show",
+            "statementKey": "sanctions.reason.no_show",
+            "statementParams": {
+              "disputeHours": 48,
+              "appealPath": "dispute"
+            },
+            "startsAt": "2026-02-26T18:00:00.000Z",
+            "expiresAt": "2026-03-28T18:00:00.000Z",
+            "disputeUntil": "2026-02-28T18:00:00.000Z",
+            "status": "disputed",
+            "gameId": "00000000-0000-4000-8000-0000000a0001",
+            "causedBy": [],
+            "dedupeKey": "no_show:00000000-0000-4000-8000-0000000a0001:00000000-0000-4000-8000-000000000001",
+            "decidedBy": "system",
+            "createdAt": "2026-02-26T18:00:00.000Z"
+          },
+          {
+            "id": "df96f08e-bddb-8cf5-b130-3994ede29b34",
+            "userId": "00000000-0000-4000-8000-000000000001",
+            "kind": "join_ban",
+            "reasonCode": "escalation_two_cards",
+            "statementKey": "sanctions.reason.escalation_two_cards",
+            "statementParams": {
+              "cards": 2,
+              "days": 7,
+              "appealPath": "appeal"
+            },
+            "startsAt": "2026-02-28T18:00:00.000Z",
+            "expiresAt": "2026-03-07T18:00:00.000Z",
+            "disputeUntil": null,
+            "status": "active",
+            "gameId": "00000000-0000-4000-8000-0000000a0001",
+            "causedBy": [
+              "3c19d0d8-58b1-836f-a930-856cf9930f26",
+              "6247cd5d-3c19-83bb-8007-8a596073a8ac"
+            ],
+            "dedupeKey": "escalation_two_cards:00000000-0000-4000-8000-000000000001:6247cd5d-3c19-83bb-8007-8a596073a8ac",
+            "decidedBy": "system",
+            "createdAt": "2026-02-28T18:00:00.000Z"
+          }
+        ],
+        "reviewItems": [
+          {
+            "id": "b83c946d-f8e8-8bd1-b276-8e3574c52214",
+            "kind": "sanction_dispute",
+            "status": "open",
+            "priority": "normal",
+            "subjectUserId": "00000000-0000-4000-8000-000000000001",
+            "venueId": null,
+            "gameId": "00000000-0000-4000-8000-0000000a0001",
+            "sanctionId": "6247cd5d-3c19-83bb-8007-8a596073a8ac",
+            "appealId": "00000000-0000-4000-8000-0000000000a1",
+            "reportIds": [],
+            "evidence": {},
+            "dueBy": "2026-03-02T18:00:00.000Z",
+            "dedupeKey": "sanction_dispute:00000000-0000-4000-8000-0000000000a1",
+            "resolution": null,
+            "resolvedBy": null,
+            "resolvedAt": null,
+            "createdAt": "2026-02-28T18:00:00.000Z"
+          }
+        ]
+      },
+      "event": {
+        "type": "ModeratorDecided",
+        "itemId": "b83c946d-f8e8-8bd1-b276-8e3574c52214",
+        "decision": "overturn",
+        "moderatorId": "00000000-0000-4000-8000-000000000900",
+        "at": "2026-03-01T18:00:00.000Z",
+        "note": null
+      }
+    },
+    "now": "2026-03-01T18:00:00.000Z",
+    "expected": {
+      "effects": [
+        {
+          "type": "SetSanctionStatus",
+          "sanctionId": "6247cd5d-3c19-83bb-8007-8a596073a8ac",
+          "status": "overturned"
+        },
+        {
+          "type": "SetSanctionStatus",
+          "sanctionId": "df96f08e-bddb-8cf5-b130-3994ede29b34",
+          "status": "overturned"
+        },
+        {
+          "type": "LiftRestrictions",
+          "userId": "00000000-0000-4000-8000-000000000001",
+          "kinds": [
+            "join_ban"
+          ]
+        },
+        {
+          "type": "SetAttendance",
+          "gameId": "00000000-0000-4000-8000-0000000a0001",
+          "userId": "00000000-0000-4000-8000-000000000001",
+          "attendance": "excused"
+        },
+        {
+          "type": "SettleDeposit",
+          "gameId": "00000000-0000-4000-8000-0000000a0001",
+          "userId": "00000000-0000-4000-8000-000000000001",
+          "outcome": "release"
+        },
+        {
+          "type": "Notify",
+          "userId": "00000000-0000-4000-8000-000000000001",
+          "kind": "appeal_decided",
+          "params": {
+            "decision": "overturn",
+            "sanctionKind": "yellow_card",
+            "reasonCode": "no_show",
+            "statementKey": "sanctions.reason.no_show"
+          },
+          "gameId": "00000000-0000-4000-8000-0000000a0001",
+          "sanctionDedupeKey": "no_show:00000000-0000-4000-8000-0000000a0001:00000000-0000-4000-8000-000000000001"
+        },
+        {
+          "type": "Audit",
+          "action": "moderator.decision",
+          "subjectUserId": "00000000-0000-4000-8000-000000000001",
+          "data": {
+            "itemId": "b83c946d-f8e8-8bd1-b276-8e3574c52214",
+            "kind": "sanction_dispute",
+            "decision": "overturn",
+            "moderatorId": "00000000-0000-4000-8000-000000000900",
+            "note": null
+          }
+        }
+      ]
+    },
+    "tags": [
+      "cascade"
+    ]
+  },
+  {
+    "name": "moderator.permanent-ban.only-by-human",
+    "kind": "trust.applyEvent",
+    "input": {
+      "state": {
+        "userId": "00000000-0000-4000-8000-000000000001",
+        "reviewItems": [
+          {
+            "id": "cbd55b34-4fec-80d7-9445-d864f8f27d1d",
+            "kind": "permanent_ban_candidate",
+            "status": "open",
+            "priority": "high",
+            "subjectUserId": "00000000-0000-4000-8000-000000000001",
+            "venueId": null,
+            "gameId": "00000000-0000-4000-8000-0000000a0001",
+            "sanctionId": "b05404fa-c8a1-8be9-b44e-0a85636b8f0a",
+            "appealId": null,
+            "reportIds": [],
+            "evidence": {},
+            "dueBy": "2026-03-02T18:00:00.000Z",
+            "dedupeKey": "permanent_ban_candidate:00000000-0000-4000-8000-000000000001:b05404fa-c8a1-8be9-b44e-0a85636b8f0a",
+            "resolution": null,
+            "resolvedBy": null,
+            "resolvedAt": null,
+            "createdAt": "2026-02-28T18:00:00.000Z"
+          }
+        ]
+      },
+      "event": {
+        "type": "ModeratorDecided",
+        "itemId": "cbd55b34-4fec-80d7-9445-d864f8f27d1d",
+        "decision": "permanent_ban",
+        "moderatorId": "00000000-0000-4000-8000-000000000900",
+        "at": "2026-03-01T18:00:00.000Z",
+        "note": null
+      }
+    },
+    "now": "2026-03-01T18:00:00.000Z",
+    "expected": {
+      "effects": [
+        {
+          "type": "IssueSanction",
+          "sanction": {
+            "kind": "permanent_ban",
+            "userId": "00000000-0000-4000-8000-000000000001",
+            "reasonCode": "moderator_decision",
+            "statementKey": "sanctions.reason.moderator_decision",
+            "statementParams": {
+              "appealPath": "appeal"
+            },
+            "startsAt": "2026-03-01T18:00:00.000Z",
+            "expiresAt": null,
+            "disputeUntil": null,
+            "gameId": null,
+            "causedBy": [
+              "b05404fa-c8a1-8be9-b44e-0a85636b8f0a"
+            ],
+            "dedupeKey": "permanent_ban:cbd55b34-4fec-80d7-9445-d864f8f27d1d",
+            "decidedBy": "moderator"
+          }
+        },
+        {
+          "type": "Notify",
+          "userId": "00000000-0000-4000-8000-000000000001",
+          "kind": "sanction_issued",
+          "params": {
+            "sanctionKind": "permanent_ban",
+            "reasonCode": "moderator_decision",
+            "statementKey": "sanctions.reason.moderator_decision",
+            "expiresAt": "",
+            "disputeUntil": "",
+            "appealPath": "appeal"
+          },
+          "gameId": null,
+          "sanctionDedupeKey": "permanent_ban:cbd55b34-4fec-80d7-9445-d864f8f27d1d"
+        },
+        {
+          "type": "Audit",
+          "action": "moderator.decision",
+          "subjectUserId": "00000000-0000-4000-8000-000000000001",
+          "data": {
+            "itemId": "cbd55b34-4fec-80d7-9445-d864f8f27d1d",
+            "kind": "permanent_ban_candidate",
+            "decision": "permanent_ban",
+            "moderatorId": "00000000-0000-4000-8000-000000000900",
+            "note": null
+          }
+        }
+      ]
+    }
+  }
+]

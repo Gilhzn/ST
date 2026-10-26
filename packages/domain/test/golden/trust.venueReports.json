@@ -1,0 +1,252 @@
+[
+  {
+    "name": "venue.3-distinct-reporters.auto-hide",
+    "kind": "trust.venueReports",
+    "input": {
+      "venue": {
+        "venueId": "00000000-0000-4000-8000-00000000beef",
+        "status": "active",
+        "createdBy": "00000000-0000-4000-8000-0000000000ff",
+        "lastReviewedAt": null,
+        "reports": [
+          {
+            "id": "00000000-0000-4000-8000-000000000201",
+            "venueId": "00000000-0000-4000-8000-00000000beef",
+            "reporterId": "00000000-0000-4000-8000-000000000002",
+            "reason": "no_venue_here",
+            "note": null,
+            "createdAt": "2026-03-01T09:00:00.000Z"
+          },
+          {
+            "id": "00000000-0000-4000-8000-000000000202",
+            "venueId": "00000000-0000-4000-8000-00000000beef",
+            "reporterId": "00000000-0000-4000-8000-000000000003",
+            "reason": "closed",
+            "note": null,
+            "createdAt": "2026-03-01T10:00:00.000Z"
+          },
+          {
+            "id": "00000000-0000-4000-8000-000000000203",
+            "venueId": "00000000-0000-4000-8000-00000000beef",
+            "reporterId": "00000000-0000-4000-8000-000000000004",
+            "reason": "no_venue_here",
+            "note": null,
+            "createdAt": "2026-03-01T11:00:00.000Z"
+          }
+        ]
+      }
+    },
+    "now": "2026-03-01T18:00:00.000Z",
+    "expected": {
+      "hide": true,
+      "effects": [
+        {
+          "type": "SetVenueStatus",
+          "venueId": "00000000-0000-4000-8000-00000000beef",
+          "status": "hidden_pending_review"
+        },
+        {
+          "type": "EnqueueReview",
+          "item": {
+            "kind": "venue_reports",
+            "priority": "normal",
+            "subjectUserId": "00000000-0000-4000-8000-0000000000ff",
+            "venueId": "00000000-0000-4000-8000-00000000beef",
+            "gameId": null,
+            "sanctionId": null,
+            "appealId": null,
+            "reportIds": [],
+            "evidence": {
+              "reporters": 3,
+              "no_venue_here": 2,
+              "closed": 1
+            },
+            "dueBy": "2026-03-03T18:00:00.000Z",
+            "dedupeKey": "venue_reports:00000000-0000-4000-8000-00000000beef:00000000-0000-4000-8000-000000000201"
+          }
+        },
+        {
+          "type": "Notify",
+          "userId": "00000000-0000-4000-8000-0000000000ff",
+          "kind": "venue_hidden",
+          "params": {
+            "venueId": "00000000-0000-4000-8000-00000000beef",
+            "reporters": 3
+          },
+          "gameId": null,
+          "sanctionDedupeKey": null
+        }
+      ]
+    },
+    "tags": [
+      "boundary"
+    ]
+  },
+  {
+    "name": "venue.2-reporters.stays-active",
+    "kind": "trust.venueReports",
+    "input": {
+      "venue": {
+        "venueId": "00000000-0000-4000-8000-00000000beef",
+        "status": "active",
+        "createdBy": "00000000-0000-4000-8000-0000000000ff",
+        "lastReviewedAt": null,
+        "reports": [
+          {
+            "id": "00000000-0000-4000-8000-000000000201",
+            "venueId": "00000000-0000-4000-8000-00000000beef",
+            "reporterId": "00000000-0000-4000-8000-000000000002",
+            "reason": "no_venue_here",
+            "note": null,
+            "createdAt": "2026-03-01T09:00:00.000Z"
+          },
+          {
+            "id": "00000000-0000-4000-8000-000000000202",
+            "venueId": "00000000-0000-4000-8000-00000000beef",
+            "reporterId": "00000000-0000-4000-8000-000000000003",
+            "reason": "no_venue_here",
+            "note": null,
+            "createdAt": "2026-03-01T10:00:00.000Z"
+          }
+        ]
+      }
+    },
+    "now": "2026-03-01T18:00:00.000Z",
+    "expected": {
+      "hide": false,
+      "effects": []
+    },
+    "tags": [
+      "boundary"
+    ]
+  },
+  {
+    "name": "venue.same-reporter-twice.not-distinct",
+    "kind": "trust.venueReports",
+    "input": {
+      "venue": {
+        "venueId": "00000000-0000-4000-8000-00000000beef",
+        "status": "active",
+        "createdBy": "00000000-0000-4000-8000-0000000000ff",
+        "lastReviewedAt": null,
+        "reports": [
+          {
+            "id": "00000000-0000-4000-8000-000000000201",
+            "venueId": "00000000-0000-4000-8000-00000000beef",
+            "reporterId": "00000000-0000-4000-8000-000000000002",
+            "reason": "no_venue_here",
+            "note": null,
+            "createdAt": "2026-03-01T09:00:00.000Z"
+          },
+          {
+            "id": "00000000-0000-4000-8000-000000000202",
+            "venueId": "00000000-0000-4000-8000-00000000beef",
+            "reporterId": "00000000-0000-4000-8000-000000000003",
+            "reason": "no_venue_here",
+            "note": null,
+            "createdAt": "2026-03-01T10:00:00.000Z"
+          },
+          {
+            "id": "00000000-0000-4000-8000-000000000203",
+            "venueId": "00000000-0000-4000-8000-00000000beef",
+            "reporterId": "00000000-0000-4000-8000-000000000003",
+            "reason": "no_venue_here",
+            "note": null,
+            "createdAt": "2026-03-01T11:00:00.000Z"
+          }
+        ]
+      }
+    },
+    "now": "2026-03-01T18:00:00.000Z",
+    "expected": {
+      "hide": false,
+      "effects": []
+    }
+  },
+  {
+    "name": "venue.creator-report-excluded",
+    "kind": "trust.venueReports",
+    "input": {
+      "venue": {
+        "venueId": "00000000-0000-4000-8000-00000000beef",
+        "status": "active",
+        "createdBy": "00000000-0000-4000-8000-0000000000ff",
+        "lastReviewedAt": null,
+        "reports": [
+          {
+            "id": "00000000-0000-4000-8000-000000000201",
+            "venueId": "00000000-0000-4000-8000-00000000beef",
+            "reporterId": "00000000-0000-4000-8000-000000000002",
+            "reason": "no_venue_here",
+            "note": null,
+            "createdAt": "2026-03-01T09:00:00.000Z"
+          },
+          {
+            "id": "00000000-0000-4000-8000-000000000202",
+            "venueId": "00000000-0000-4000-8000-00000000beef",
+            "reporterId": "00000000-0000-4000-8000-000000000003",
+            "reason": "no_venue_here",
+            "note": null,
+            "createdAt": "2026-03-01T10:00:00.000Z"
+          },
+          {
+            "id": "00000000-0000-4000-8000-000000000203",
+            "venueId": "00000000-0000-4000-8000-00000000beef",
+            "reporterId": "00000000-0000-4000-8000-0000000000ff",
+            "reason": "no_venue_here",
+            "note": null,
+            "createdAt": "2026-03-01T11:00:00.000Z"
+          }
+        ]
+      }
+    },
+    "now": "2026-03-01T18:00:00.000Z",
+    "expected": {
+      "hide": false,
+      "effects": []
+    }
+  },
+  {
+    "name": "venue.reports-before-last-review-consumed",
+    "kind": "trust.venueReports",
+    "input": {
+      "venue": {
+        "venueId": "00000000-0000-4000-8000-00000000beef",
+        "status": "active",
+        "createdBy": "00000000-0000-4000-8000-0000000000ff",
+        "lastReviewedAt": "2026-03-01T10:30:00.000Z",
+        "reports": [
+          {
+            "id": "00000000-0000-4000-8000-000000000201",
+            "venueId": "00000000-0000-4000-8000-00000000beef",
+            "reporterId": "00000000-0000-4000-8000-000000000002",
+            "reason": "no_venue_here",
+            "note": null,
+            "createdAt": "2026-03-01T09:00:00.000Z"
+          },
+          {
+            "id": "00000000-0000-4000-8000-000000000202",
+            "venueId": "00000000-0000-4000-8000-00000000beef",
+            "reporterId": "00000000-0000-4000-8000-000000000003",
+            "reason": "no_venue_here",
+            "note": null,
+            "createdAt": "2026-03-01T10:00:00.000Z"
+          },
+          {
+            "id": "00000000-0000-4000-8000-000000000203",
+            "venueId": "00000000-0000-4000-8000-00000000beef",
+            "reporterId": "00000000-0000-4000-8000-000000000004",
+            "reason": "no_venue_here",
+            "note": null,
+            "createdAt": "2026-03-01T11:00:00.000Z"
+          }
+        ]
+      }
+    },
+    "now": "2026-03-01T18:00:00.000Z",
+    "expected": {
+      "hide": false,
+      "effects": []
+    }
+  }
+]

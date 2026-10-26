@@ -1,0 +1,1180 @@
+[
+  {
+    "name": "reports.3-qualified-independent.restrict-72h",
+    "kind": "trust.evaluateReports",
+    "description": "AC-TRUST-043",
+    "input": {
+      "reports": [
+        {
+          "id": "00000000-0000-4000-8000-000000000101",
+          "reporterId": "00000000-0000-4000-8000-000000000002",
+          "targetUserId": "00000000-0000-4000-8000-000000000001",
+          "category": "harassment",
+          "gameId": "00000000-0000-4000-8000-0000000a0001",
+          "messageId": null,
+          "note": null,
+          "createdAt": "2026-02-28T22:00:00.000Z"
+        },
+        {
+          "id": "00000000-0000-4000-8000-000000000102",
+          "reporterId": "00000000-0000-4000-8000-000000000003",
+          "targetUserId": "00000000-0000-4000-8000-000000000001",
+          "category": "harassment",
+          "gameId": "00000000-0000-4000-8000-0000000a0001",
+          "messageId": null,
+          "note": null,
+          "createdAt": "2026-03-01T08:00:00.000Z"
+        },
+        {
+          "id": "00000000-0000-4000-8000-000000000103",
+          "reporterId": "00000000-0000-4000-8000-000000000004",
+          "targetUserId": "00000000-0000-4000-8000-000000000001",
+          "category": "harassment",
+          "gameId": "00000000-0000-4000-8000-0000000a0001",
+          "messageId": null,
+          "note": null,
+          "createdAt": "2026-03-01T17:00:00.000Z"
+        }
+      ],
+      "reporterProfiles": [
+        {
+          "id": "00000000-0000-4000-8000-000000000002",
+          "createdAt": "2026-01-30T18:00:00.000Z",
+          "reliabilityStatus": "green",
+          "reportsLast7d": 1
+        },
+        {
+          "id": "00000000-0000-4000-8000-000000000003",
+          "createdAt": "2025-12-31T18:00:00.000Z",
+          "reliabilityStatus": "green",
+          "reportsLast7d": 1
+        },
+        {
+          "id": "00000000-0000-4000-8000-000000000004",
+          "createdAt": "2025-12-01T18:00:00.000Z",
+          "reliabilityStatus": "green",
+          "reportsLast7d": 1
+        }
+      ],
+      "context": {
+        "attendance": [
+          {
+            "gameId": "00000000-0000-4000-8000-0000000a0001",
+            "userId": "00000000-0000-4000-8000-000000000001",
+            "status": "approved",
+            "attendance": "verified",
+            "team": null
+          },
+          {
+            "gameId": "00000000-0000-4000-8000-0000000a0001",
+            "userId": "00000000-0000-4000-8000-000000000002",
+            "status": "approved",
+            "attendance": "verified",
+            "team": null
+          },
+          {
+            "gameId": "00000000-0000-4000-8000-0000000a0001",
+            "userId": "00000000-0000-4000-8000-000000000003",
+            "status": "approved",
+            "attendance": "verified",
+            "team": null
+          },
+          {
+            "gameId": "00000000-0000-4000-8000-0000000a0001",
+            "userId": "00000000-0000-4000-8000-000000000004",
+            "status": "approved",
+            "attendance": "verified",
+            "team": null
+          }
+        ]
+      }
+    },
+    "now": "2026-03-01T18:00:00.000Z",
+    "expected": {
+      "outcome": "restrict",
+      "qualifyingReporterIds": [
+        "00000000-0000-4000-8000-000000000002",
+        "00000000-0000-4000-8000-000000000003",
+        "00000000-0000-4000-8000-000000000004"
+      ],
+      "effects": [
+        {
+          "type": "IssueSanction",
+          "sanction": {
+            "kind": "visibility_restriction",
+            "userId": "00000000-0000-4000-8000-000000000001",
+            "reasonCode": "toxicity_reports",
+            "statementKey": "sanctions.reason.toxicity_reports",
+            "statementParams": {
+              "reporters": 3,
+              "windowDays": 14,
+              "hours": 72,
+              "appealPath": "appeal"
+            },
+            "startsAt": "2026-03-01T18:00:00.000Z",
+            "expiresAt": "2026-03-04T18:00:00.000Z",
+            "disputeUntil": null,
+            "gameId": null,
+            "causedBy": [],
+            "dedupeKey": "toxicity_reports:00000000-0000-4000-8000-000000000001:00000000-0000-4000-8000-000000000101",
+            "decidedBy": "system"
+          }
+        },
+        {
+          "type": "RestrictVisibility",
+          "userId": "00000000-0000-4000-8000-000000000001",
+          "until": "2026-03-04T18:00:00.000Z"
+        },
+        {
+          "type": "Notify",
+          "userId": "00000000-0000-4000-8000-000000000001",
+          "kind": "visibility_restricted",
+          "params": {
+            "sanctionKind": "visibility_restriction",
+            "reasonCode": "toxicity_reports",
+            "statementKey": "sanctions.reason.toxicity_reports",
+            "expiresAt": "2026-03-04T18:00:00.000Z",
+            "disputeUntil": "",
+            "appealPath": "appeal"
+          },
+          "gameId": null,
+          "sanctionDedupeKey": "toxicity_reports:00000000-0000-4000-8000-000000000001:00000000-0000-4000-8000-000000000101"
+        },
+        {
+          "type": "EnqueueReview",
+          "item": {
+            "kind": "toxicity_reports",
+            "priority": "normal",
+            "subjectUserId": "00000000-0000-4000-8000-000000000001",
+            "venueId": null,
+            "gameId": null,
+            "sanctionId": "d0fa6298-abba-8e08-a77d-f1d2ed41927d",
+            "appealId": null,
+            "reportIds": [
+              "00000000-0000-4000-8000-000000000101",
+              "00000000-0000-4000-8000-000000000102",
+              "00000000-0000-4000-8000-000000000103"
+            ],
+            "evidence": {
+              "reporters": 3,
+              "independentReporters": 3,
+              "windowDays": 14,
+              "excludedReporters": 0,
+              "collusionSuspected": false,
+              "reviewReasons": ""
+            },
+            "dueBy": "2026-03-03T18:00:00.000Z",
+            "dedupeKey": "toxicity_reports:00000000-0000-4000-8000-000000000001:00000000-0000-4000-8000-000000000101"
+          }
+        }
+      ]
+    },
+    "tags": [
+      "prd-v5:TRUST-043"
+    ]
+  },
+  {
+    "name": "reports.two-reporters-created-within-48h.review-only",
+    "kind": "trust.evaluateReports",
+    "description": "AC-TRUST-042: collusion suspected → queue only, no restriction, no notice",
+    "input": {
+      "reports": [
+        {
+          "id": "00000000-0000-4000-8000-000000000101",
+          "reporterId": "00000000-0000-4000-8000-000000000002",
+          "targetUserId": "00000000-0000-4000-8000-000000000001",
+          "category": "harassment",
+          "gameId": "00000000-0000-4000-8000-0000000a0001",
+          "messageId": null,
+          "note": null,
+          "createdAt": "2026-02-28T22:00:00.000Z"
+        },
+        {
+          "id": "00000000-0000-4000-8000-000000000102",
+          "reporterId": "00000000-0000-4000-8000-000000000003",
+          "targetUserId": "00000000-0000-4000-8000-000000000001",
+          "category": "harassment",
+          "gameId": "00000000-0000-4000-8000-0000000a0001",
+          "messageId": null,
+          "note": null,
+          "createdAt": "2026-03-01T08:00:00.000Z"
+        },
+        {
+          "id": "00000000-0000-4000-8000-000000000103",
+          "reporterId": "00000000-0000-4000-8000-000000000004",
+          "targetUserId": "00000000-0000-4000-8000-000000000001",
+          "category": "harassment",
+          "gameId": "00000000-0000-4000-8000-0000000a0001",
+          "messageId": null,
+          "note": null,
+          "createdAt": "2026-03-01T17:00:00.000Z"
+        }
+      ],
+      "reporterProfiles": [
+        {
+          "id": "00000000-0000-4000-8000-000000000002",
+          "createdAt": "2026-01-30T18:00:00.000Z",
+          "reliabilityStatus": "green",
+          "reportsLast7d": 1
+        },
+        {
+          "id": "00000000-0000-4000-8000-000000000003",
+          "createdAt": "2026-01-28T20:24:00.000Z",
+          "reliabilityStatus": "green",
+          "reportsLast7d": 1
+        },
+        {
+          "id": "00000000-0000-4000-8000-000000000004",
+          "createdAt": "2025-12-01T18:00:00.000Z",
+          "reliabilityStatus": "green",
+          "reportsLast7d": 1
+        }
+      ],
+      "context": {
+        "attendance": [
+          {
+            "gameId": "00000000-0000-4000-8000-0000000a0001",
+            "userId": "00000000-0000-4000-8000-000000000001",
+            "status": "approved",
+            "attendance": "verified",
+            "team": null
+          },
+          {
+            "gameId": "00000000-0000-4000-8000-0000000a0001",
+            "userId": "00000000-0000-4000-8000-000000000002",
+            "status": "approved",
+            "attendance": "verified",
+            "team": null
+          },
+          {
+            "gameId": "00000000-0000-4000-8000-0000000a0001",
+            "userId": "00000000-0000-4000-8000-000000000003",
+            "status": "approved",
+            "attendance": "verified",
+            "team": null
+          },
+          {
+            "gameId": "00000000-0000-4000-8000-0000000a0001",
+            "userId": "00000000-0000-4000-8000-000000000004",
+            "status": "approved",
+            "attendance": "verified",
+            "team": null
+          }
+        ]
+      }
+    },
+    "now": "2026-03-01T18:00:00.000Z",
+    "expected": {
+      "outcome": "review_only",
+      "qualifyingReporterIds": [
+        "00000000-0000-4000-8000-000000000002",
+        "00000000-0000-4000-8000-000000000003",
+        "00000000-0000-4000-8000-000000000004"
+      ],
+      "effects": [
+        {
+          "type": "EnqueueReview",
+          "item": {
+            "kind": "collusion_suspected",
+            "priority": "normal",
+            "subjectUserId": "00000000-0000-4000-8000-000000000001",
+            "venueId": null,
+            "gameId": null,
+            "sanctionId": null,
+            "appealId": null,
+            "reportIds": [
+              "00000000-0000-4000-8000-000000000101",
+              "00000000-0000-4000-8000-000000000102",
+              "00000000-0000-4000-8000-000000000103"
+            ],
+            "evidence": {
+              "reporters": 3,
+              "independentReporters": 2,
+              "windowDays": 14,
+              "excludedReporters": 0,
+              "collusionSuspected": true,
+              "reviewReasons": "creation_window"
+            },
+            "dueBy": "2026-03-03T18:00:00.000Z",
+            "dedupeKey": "collusion_suspected:00000000-0000-4000-8000-000000000001:00000000-0000-4000-8000-000000000101"
+          }
+        }
+      ]
+    },
+    "tags": [
+      "prd-v5:TRUST-042",
+      "boundary"
+    ]
+  },
+  {
+    "name": "reports.reporters-created-just-over-48h-apart.restrict",
+    "kind": "trust.evaluateReports",
+    "input": {
+      "reports": [
+        {
+          "id": "00000000-0000-4000-8000-000000000101",
+          "reporterId": "00000000-0000-4000-8000-000000000002",
+          "targetUserId": "00000000-0000-4000-8000-000000000001",
+          "category": "harassment",
+          "gameId": "00000000-0000-4000-8000-0000000a0001",
+          "messageId": null,
+          "note": null,
+          "createdAt": "2026-02-28T22:00:00.000Z"
+        },
+        {
+          "id": "00000000-0000-4000-8000-000000000102",
+          "reporterId": "00000000-0000-4000-8000-000000000003",
+          "targetUserId": "00000000-0000-4000-8000-000000000001",
+          "category": "harassment",
+          "gameId": "00000000-0000-4000-8000-0000000a0001",
+          "messageId": null,
+          "note": null,
+          "createdAt": "2026-03-01T08:00:00.000Z"
+        },
+        {
+          "id": "00000000-0000-4000-8000-000000000103",
+          "reporterId": "00000000-0000-4000-8000-000000000004",
+          "targetUserId": "00000000-0000-4000-8000-000000000001",
+          "category": "harassment",
+          "gameId": "00000000-0000-4000-8000-0000000a0001",
+          "messageId": null,
+          "note": null,
+          "createdAt": "2026-03-01T17:00:00.000Z"
+        }
+      ],
+      "reporterProfiles": [
+        {
+          "id": "00000000-0000-4000-8000-000000000002",
+          "createdAt": "2026-01-30T18:00:00.000Z",
+          "reliabilityStatus": "green",
+          "reportsLast7d": 1
+        },
+        {
+          "id": "00000000-0000-4000-8000-000000000003",
+          "createdAt": "2026-01-28T17:58:33.600Z",
+          "reliabilityStatus": "green",
+          "reportsLast7d": 1
+        },
+        {
+          "id": "00000000-0000-4000-8000-000000000004",
+          "createdAt": "2025-12-01T18:00:00.000Z",
+          "reliabilityStatus": "green",
+          "reportsLast7d": 1
+        }
+      ],
+      "context": {
+        "attendance": [
+          {
+            "gameId": "00000000-0000-4000-8000-0000000a0001",
+            "userId": "00000000-0000-4000-8000-000000000001",
+            "status": "approved",
+            "attendance": "verified",
+            "team": null
+          },
+          {
+            "gameId": "00000000-0000-4000-8000-0000000a0001",
+            "userId": "00000000-0000-4000-8000-000000000002",
+            "status": "approved",
+            "attendance": "verified",
+            "team": null
+          },
+          {
+            "gameId": "00000000-0000-4000-8000-0000000a0001",
+            "userId": "00000000-0000-4000-8000-000000000003",
+            "status": "approved",
+            "attendance": "verified",
+            "team": null
+          },
+          {
+            "gameId": "00000000-0000-4000-8000-0000000a0001",
+            "userId": "00000000-0000-4000-8000-000000000004",
+            "status": "approved",
+            "attendance": "verified",
+            "team": null
+          }
+        ]
+      }
+    },
+    "now": "2026-03-01T18:00:00.000Z",
+    "expected": {
+      "outcome": "restrict",
+      "qualifyingReporterIds": [
+        "00000000-0000-4000-8000-000000000002",
+        "00000000-0000-4000-8000-000000000003",
+        "00000000-0000-4000-8000-000000000004"
+      ],
+      "effects": [
+        {
+          "type": "IssueSanction",
+          "sanction": {
+            "kind": "visibility_restriction",
+            "userId": "00000000-0000-4000-8000-000000000001",
+            "reasonCode": "toxicity_reports",
+            "statementKey": "sanctions.reason.toxicity_reports",
+            "statementParams": {
+              "reporters": 3,
+              "windowDays": 14,
+              "hours": 72,
+              "appealPath": "appeal"
+            },
+            "startsAt": "2026-03-01T18:00:00.000Z",
+            "expiresAt": "2026-03-04T18:00:00.000Z",
+            "disputeUntil": null,
+            "gameId": null,
+            "causedBy": [],
+            "dedupeKey": "toxicity_reports:00000000-0000-4000-8000-000000000001:00000000-0000-4000-8000-000000000101",
+            "decidedBy": "system"
+          }
+        },
+        {
+          "type": "RestrictVisibility",
+          "userId": "00000000-0000-4000-8000-000000000001",
+          "until": "2026-03-04T18:00:00.000Z"
+        },
+        {
+          "type": "Notify",
+          "userId": "00000000-0000-4000-8000-000000000001",
+          "kind": "visibility_restricted",
+          "params": {
+            "sanctionKind": "visibility_restriction",
+            "reasonCode": "toxicity_reports",
+            "statementKey": "sanctions.reason.toxicity_reports",
+            "expiresAt": "2026-03-04T18:00:00.000Z",
+            "disputeUntil": "",
+            "appealPath": "appeal"
+          },
+          "gameId": null,
+          "sanctionDedupeKey": "toxicity_reports:00000000-0000-4000-8000-000000000001:00000000-0000-4000-8000-000000000101"
+        },
+        {
+          "type": "EnqueueReview",
+          "item": {
+            "kind": "toxicity_reports",
+            "priority": "normal",
+            "subjectUserId": "00000000-0000-4000-8000-000000000001",
+            "venueId": null,
+            "gameId": null,
+            "sanctionId": "d0fa6298-abba-8e08-a77d-f1d2ed41927d",
+            "appealId": null,
+            "reportIds": [
+              "00000000-0000-4000-8000-000000000101",
+              "00000000-0000-4000-8000-000000000102",
+              "00000000-0000-4000-8000-000000000103"
+            ],
+            "evidence": {
+              "reporters": 3,
+              "independentReporters": 3,
+              "windowDays": 14,
+              "excludedReporters": 0,
+              "collusionSuspected": false,
+              "reviewReasons": ""
+            },
+            "dueBy": "2026-03-03T18:00:00.000Z",
+            "dedupeKey": "toxicity_reports:00000000-0000-4000-8000-000000000001:00000000-0000-4000-8000-000000000101"
+          }
+        }
+      ]
+    },
+    "tags": [
+      "boundary"
+    ]
+  },
+  {
+    "name": "reports.rival-team-brigading.review-only",
+    "kind": "trust.evaluateReports",
+    "input": {
+      "reports": [
+        {
+          "id": "00000000-0000-4000-8000-000000000101",
+          "reporterId": "00000000-0000-4000-8000-000000000002",
+          "targetUserId": "00000000-0000-4000-8000-000000000001",
+          "category": "harassment",
+          "gameId": "00000000-0000-4000-8000-0000000a0001",
+          "messageId": null,
+          "note": null,
+          "createdAt": "2026-02-28T22:00:00.000Z"
+        },
+        {
+          "id": "00000000-0000-4000-8000-000000000102",
+          "reporterId": "00000000-0000-4000-8000-000000000003",
+          "targetUserId": "00000000-0000-4000-8000-000000000001",
+          "category": "harassment",
+          "gameId": "00000000-0000-4000-8000-0000000a0001",
+          "messageId": null,
+          "note": null,
+          "createdAt": "2026-03-01T08:00:00.000Z"
+        },
+        {
+          "id": "00000000-0000-4000-8000-000000000103",
+          "reporterId": "00000000-0000-4000-8000-000000000004",
+          "targetUserId": "00000000-0000-4000-8000-000000000001",
+          "category": "harassment",
+          "gameId": "00000000-0000-4000-8000-0000000a0001",
+          "messageId": null,
+          "note": null,
+          "createdAt": "2026-03-01T17:00:00.000Z"
+        }
+      ],
+      "reporterProfiles": [
+        {
+          "id": "00000000-0000-4000-8000-000000000002",
+          "createdAt": "2026-01-30T18:00:00.000Z",
+          "reliabilityStatus": "green",
+          "reportsLast7d": 1
+        },
+        {
+          "id": "00000000-0000-4000-8000-000000000003",
+          "createdAt": "2025-12-31T18:00:00.000Z",
+          "reliabilityStatus": "green",
+          "reportsLast7d": 1
+        },
+        {
+          "id": "00000000-0000-4000-8000-000000000004",
+          "createdAt": "2025-12-01T18:00:00.000Z",
+          "reliabilityStatus": "green",
+          "reportsLast7d": 1
+        }
+      ],
+      "context": {
+        "attendance": [
+          {
+            "gameId": "00000000-0000-4000-8000-0000000a0001",
+            "userId": "00000000-0000-4000-8000-000000000001",
+            "status": "approved",
+            "attendance": "verified",
+            "team": 0
+          },
+          {
+            "gameId": "00000000-0000-4000-8000-0000000a0001",
+            "userId": "00000000-0000-4000-8000-000000000002",
+            "status": "approved",
+            "attendance": "verified",
+            "team": 1
+          },
+          {
+            "gameId": "00000000-0000-4000-8000-0000000a0001",
+            "userId": "00000000-0000-4000-8000-000000000003",
+            "status": "approved",
+            "attendance": "verified",
+            "team": 1
+          },
+          {
+            "gameId": "00000000-0000-4000-8000-0000000a0001",
+            "userId": "00000000-0000-4000-8000-000000000004",
+            "status": "approved",
+            "attendance": "verified",
+            "team": 1
+          }
+        ]
+      }
+    },
+    "now": "2026-03-01T18:00:00.000Z",
+    "expected": {
+      "outcome": "review_only",
+      "qualifyingReporterIds": [
+        "00000000-0000-4000-8000-000000000002",
+        "00000000-0000-4000-8000-000000000003",
+        "00000000-0000-4000-8000-000000000004"
+      ],
+      "effects": [
+        {
+          "type": "EnqueueReview",
+          "item": {
+            "kind": "collusion_suspected",
+            "priority": "normal",
+            "subjectUserId": "00000000-0000-4000-8000-000000000001",
+            "venueId": null,
+            "gameId": null,
+            "sanctionId": null,
+            "appealId": null,
+            "reportIds": [
+              "00000000-0000-4000-8000-000000000101",
+              "00000000-0000-4000-8000-000000000102",
+              "00000000-0000-4000-8000-000000000103"
+            ],
+            "evidence": {
+              "reporters": 3,
+              "independentReporters": 3,
+              "windowDays": 14,
+              "excludedReporters": 0,
+              "collusionSuspected": true,
+              "reviewReasons": "rival_team"
+            },
+            "dueBy": "2026-03-03T18:00:00.000Z",
+            "dedupeKey": "collusion_suspected:00000000-0000-4000-8000-000000000001:00000000-0000-4000-8000-000000000101"
+          }
+        }
+      ]
+    },
+    "tags": [
+      "prd-v5:TRUST-042"
+    ]
+  },
+  {
+    "name": "reports.reporter-not-checked-in-at-game.does-not-count",
+    "kind": "trust.evaluateReports",
+    "description": "PRD v5 TRUST-041: reporters count only if checked in at the same game as the subject",
+    "input": {
+      "reports": [
+        {
+          "id": "00000000-0000-4000-8000-000000000101",
+          "reporterId": "00000000-0000-4000-8000-000000000002",
+          "targetUserId": "00000000-0000-4000-8000-000000000001",
+          "category": "harassment",
+          "gameId": "00000000-0000-4000-8000-0000000a0001",
+          "messageId": null,
+          "note": null,
+          "createdAt": "2026-02-28T22:00:00.000Z"
+        },
+        {
+          "id": "00000000-0000-4000-8000-000000000102",
+          "reporterId": "00000000-0000-4000-8000-000000000003",
+          "targetUserId": "00000000-0000-4000-8000-000000000001",
+          "category": "harassment",
+          "gameId": "00000000-0000-4000-8000-0000000a0001",
+          "messageId": null,
+          "note": null,
+          "createdAt": "2026-03-01T08:00:00.000Z"
+        },
+        {
+          "id": "00000000-0000-4000-8000-000000000103",
+          "reporterId": "00000000-0000-4000-8000-000000000004",
+          "targetUserId": "00000000-0000-4000-8000-000000000001",
+          "category": "harassment",
+          "gameId": "00000000-0000-4000-8000-0000000a0001",
+          "messageId": null,
+          "note": null,
+          "createdAt": "2026-03-01T17:00:00.000Z"
+        }
+      ],
+      "reporterProfiles": [
+        {
+          "id": "00000000-0000-4000-8000-000000000002",
+          "createdAt": "2026-01-30T18:00:00.000Z",
+          "reliabilityStatus": "green",
+          "reportsLast7d": 1
+        },
+        {
+          "id": "00000000-0000-4000-8000-000000000003",
+          "createdAt": "2025-12-31T18:00:00.000Z",
+          "reliabilityStatus": "green",
+          "reportsLast7d": 1
+        },
+        {
+          "id": "00000000-0000-4000-8000-000000000004",
+          "createdAt": "2025-12-01T18:00:00.000Z",
+          "reliabilityStatus": "green",
+          "reportsLast7d": 1
+        }
+      ],
+      "context": {
+        "attendance": [
+          {
+            "gameId": "00000000-0000-4000-8000-0000000a0001",
+            "userId": "00000000-0000-4000-8000-000000000001",
+            "status": "approved",
+            "attendance": "verified",
+            "team": null
+          },
+          {
+            "gameId": "00000000-0000-4000-8000-0000000a0001",
+            "userId": "00000000-0000-4000-8000-000000000002",
+            "status": "approved",
+            "attendance": "verified",
+            "team": null
+          },
+          {
+            "gameId": "00000000-0000-4000-8000-0000000a0001",
+            "userId": "00000000-0000-4000-8000-000000000003",
+            "status": "approved",
+            "attendance": "verified",
+            "team": null
+          },
+          {
+            "gameId": "00000000-0000-4000-8000-0000000a0001",
+            "userId": "00000000-0000-4000-8000-000000000004",
+            "status": "approved",
+            "attendance": "no_show_unverified",
+            "team": null
+          }
+        ]
+      }
+    },
+    "now": "2026-03-01T18:00:00.000Z",
+    "expected": {
+      "outcome": "none",
+      "qualifyingReporterIds": [
+        "00000000-0000-4000-8000-000000000002",
+        "00000000-0000-4000-8000-000000000003"
+      ],
+      "effects": []
+    },
+    "tags": [
+      "prd-v5:TRUST-041"
+    ]
+  },
+  {
+    "name": "reports.account-6d-old-at-report-time.does-not-count",
+    "kind": "trust.evaluateReports",
+    "input": {
+      "reports": [
+        {
+          "id": "00000000-0000-4000-8000-000000000101",
+          "reporterId": "00000000-0000-4000-8000-000000000002",
+          "targetUserId": "00000000-0000-4000-8000-000000000001",
+          "category": "harassment",
+          "gameId": "00000000-0000-4000-8000-0000000a0001",
+          "messageId": null,
+          "note": null,
+          "createdAt": "2026-02-28T22:00:00.000Z"
+        },
+        {
+          "id": "00000000-0000-4000-8000-000000000102",
+          "reporterId": "00000000-0000-4000-8000-000000000003",
+          "targetUserId": "00000000-0000-4000-8000-000000000001",
+          "category": "harassment",
+          "gameId": "00000000-0000-4000-8000-0000000a0001",
+          "messageId": null,
+          "note": null,
+          "createdAt": "2026-03-01T08:00:00.000Z"
+        },
+        {
+          "id": "00000000-0000-4000-8000-000000000103",
+          "reporterId": "00000000-0000-4000-8000-000000000004",
+          "targetUserId": "00000000-0000-4000-8000-000000000001",
+          "category": "harassment",
+          "gameId": "00000000-0000-4000-8000-0000000a0001",
+          "messageId": null,
+          "note": null,
+          "createdAt": "2026-03-01T17:00:00.000Z"
+        }
+      ],
+      "reporterProfiles": [
+        {
+          "id": "00000000-0000-4000-8000-000000000002",
+          "createdAt": "2026-01-30T18:00:00.000Z",
+          "reliabilityStatus": "green",
+          "reportsLast7d": 1
+        },
+        {
+          "id": "00000000-0000-4000-8000-000000000003",
+          "createdAt": "2025-12-31T18:00:00.000Z",
+          "reliabilityStatus": "green",
+          "reportsLast7d": 1
+        },
+        {
+          "id": "00000000-0000-4000-8000-000000000004",
+          "createdAt": "2026-02-22T18:14:24.000Z",
+          "reliabilityStatus": "green",
+          "reportsLast7d": 1
+        }
+      ],
+      "context": {
+        "attendance": [
+          {
+            "gameId": "00000000-0000-4000-8000-0000000a0001",
+            "userId": "00000000-0000-4000-8000-000000000001",
+            "status": "approved",
+            "attendance": "verified",
+            "team": null
+          },
+          {
+            "gameId": "00000000-0000-4000-8000-0000000a0001",
+            "userId": "00000000-0000-4000-8000-000000000002",
+            "status": "approved",
+            "attendance": "verified",
+            "team": null
+          },
+          {
+            "gameId": "00000000-0000-4000-8000-0000000a0001",
+            "userId": "00000000-0000-4000-8000-000000000003",
+            "status": "approved",
+            "attendance": "verified",
+            "team": null
+          },
+          {
+            "gameId": "00000000-0000-4000-8000-0000000a0001",
+            "userId": "00000000-0000-4000-8000-000000000004",
+            "status": "approved",
+            "attendance": "verified",
+            "team": null
+          }
+        ]
+      }
+    },
+    "now": "2026-03-01T18:00:00.000Z",
+    "expected": {
+      "outcome": "none",
+      "qualifyingReporterIds": [
+        "00000000-0000-4000-8000-000000000002",
+        "00000000-0000-4000-8000-000000000003"
+      ],
+      "effects": []
+    },
+    "tags": [
+      "boundary"
+    ]
+  },
+  {
+    "name": "reports.red-and-spamming-reporters.do-not-count",
+    "kind": "trust.evaluateReports",
+    "input": {
+      "reports": [
+        {
+          "id": "00000000-0000-4000-8000-000000000101",
+          "reporterId": "00000000-0000-4000-8000-000000000002",
+          "targetUserId": "00000000-0000-4000-8000-000000000001",
+          "category": "harassment",
+          "gameId": "00000000-0000-4000-8000-0000000a0001",
+          "messageId": null,
+          "note": null,
+          "createdAt": "2026-02-28T22:00:00.000Z"
+        },
+        {
+          "id": "00000000-0000-4000-8000-000000000102",
+          "reporterId": "00000000-0000-4000-8000-000000000003",
+          "targetUserId": "00000000-0000-4000-8000-000000000001",
+          "category": "harassment",
+          "gameId": "00000000-0000-4000-8000-0000000a0001",
+          "messageId": null,
+          "note": null,
+          "createdAt": "2026-03-01T08:00:00.000Z"
+        },
+        {
+          "id": "00000000-0000-4000-8000-000000000103",
+          "reporterId": "00000000-0000-4000-8000-000000000004",
+          "targetUserId": "00000000-0000-4000-8000-000000000001",
+          "category": "harassment",
+          "gameId": "00000000-0000-4000-8000-0000000a0001",
+          "messageId": null,
+          "note": null,
+          "createdAt": "2026-03-01T17:00:00.000Z"
+        }
+      ],
+      "reporterProfiles": [
+        {
+          "id": "00000000-0000-4000-8000-000000000002",
+          "createdAt": "2026-01-30T18:00:00.000Z",
+          "reliabilityStatus": "red",
+          "reportsLast7d": 1
+        },
+        {
+          "id": "00000000-0000-4000-8000-000000000003",
+          "createdAt": "2025-12-31T18:00:00.000Z",
+          "reliabilityStatus": "green",
+          "reportsLast7d": 11
+        },
+        {
+          "id": "00000000-0000-4000-8000-000000000004",
+          "createdAt": "2025-12-01T18:00:00.000Z",
+          "reliabilityStatus": "green",
+          "reportsLast7d": 1
+        }
+      ],
+      "context": {
+        "attendance": [
+          {
+            "gameId": "00000000-0000-4000-8000-0000000a0001",
+            "userId": "00000000-0000-4000-8000-000000000001",
+            "status": "approved",
+            "attendance": "verified",
+            "team": null
+          },
+          {
+            "gameId": "00000000-0000-4000-8000-0000000a0001",
+            "userId": "00000000-0000-4000-8000-000000000002",
+            "status": "approved",
+            "attendance": "verified",
+            "team": null
+          },
+          {
+            "gameId": "00000000-0000-4000-8000-0000000a0001",
+            "userId": "00000000-0000-4000-8000-000000000003",
+            "status": "approved",
+            "attendance": "verified",
+            "team": null
+          },
+          {
+            "gameId": "00000000-0000-4000-8000-0000000a0001",
+            "userId": "00000000-0000-4000-8000-000000000004",
+            "status": "approved",
+            "attendance": "verified",
+            "team": null
+          }
+        ]
+      }
+    },
+    "now": "2026-03-01T18:00:00.000Z",
+    "expected": {
+      "outcome": "none",
+      "qualifyingReporterIds": [
+        "00000000-0000-4000-8000-000000000004"
+      ],
+      "effects": []
+    }
+  },
+  {
+    "name": "reports.oldest-outside-14d.none",
+    "kind": "trust.evaluateReports",
+    "input": {
+      "reports": [
+        {
+          "id": "00000000-0000-4000-8000-000000000101",
+          "reporterId": "00000000-0000-4000-8000-000000000002",
+          "targetUserId": "00000000-0000-4000-8000-000000000001",
+          "category": "harassment",
+          "gameId": "00000000-0000-4000-8000-0000000a0001",
+          "messageId": null,
+          "note": null,
+          "createdAt": "2026-02-15T18:00:00.000Z"
+        },
+        {
+          "id": "00000000-0000-4000-8000-000000000102",
+          "reporterId": "00000000-0000-4000-8000-000000000003",
+          "targetUserId": "00000000-0000-4000-8000-000000000001",
+          "category": "harassment",
+          "gameId": "00000000-0000-4000-8000-0000000a0001",
+          "messageId": null,
+          "note": null,
+          "createdAt": "2026-03-01T08:00:00.000Z"
+        },
+        {
+          "id": "00000000-0000-4000-8000-000000000103",
+          "reporterId": "00000000-0000-4000-8000-000000000004",
+          "targetUserId": "00000000-0000-4000-8000-000000000001",
+          "category": "harassment",
+          "gameId": "00000000-0000-4000-8000-0000000a0001",
+          "messageId": null,
+          "note": null,
+          "createdAt": "2026-03-01T17:00:00.000Z"
+        }
+      ],
+      "reporterProfiles": [
+        {
+          "id": "00000000-0000-4000-8000-000000000002",
+          "createdAt": "2026-01-30T18:00:00.000Z",
+          "reliabilityStatus": "green",
+          "reportsLast7d": 1
+        },
+        {
+          "id": "00000000-0000-4000-8000-000000000003",
+          "createdAt": "2025-12-31T18:00:00.000Z",
+          "reliabilityStatus": "green",
+          "reportsLast7d": 1
+        },
+        {
+          "id": "00000000-0000-4000-8000-000000000004",
+          "createdAt": "2025-12-01T18:00:00.000Z",
+          "reliabilityStatus": "green",
+          "reportsLast7d": 1
+        }
+      ],
+      "context": {
+        "attendance": [
+          {
+            "gameId": "00000000-0000-4000-8000-0000000a0001",
+            "userId": "00000000-0000-4000-8000-000000000001",
+            "status": "approved",
+            "attendance": "verified",
+            "team": null
+          },
+          {
+            "gameId": "00000000-0000-4000-8000-0000000a0001",
+            "userId": "00000000-0000-4000-8000-000000000002",
+            "status": "approved",
+            "attendance": "verified",
+            "team": null
+          },
+          {
+            "gameId": "00000000-0000-4000-8000-0000000a0001",
+            "userId": "00000000-0000-4000-8000-000000000003",
+            "status": "approved",
+            "attendance": "verified",
+            "team": null
+          },
+          {
+            "gameId": "00000000-0000-4000-8000-0000000a0001",
+            "userId": "00000000-0000-4000-8000-000000000004",
+            "status": "approved",
+            "attendance": "verified",
+            "team": null
+          }
+        ]
+      }
+    },
+    "now": "2026-03-01T18:00:00.000Z",
+    "expected": {
+      "outcome": "none",
+      "qualifyingReporterIds": [
+        "00000000-0000-4000-8000-000000000003",
+        "00000000-0000-4000-8000-000000000004"
+      ],
+      "effects": []
+    },
+    "tags": [
+      "boundary"
+    ]
+  },
+  {
+    "name": "reports.within-14d-of-overturn.review-only",
+    "kind": "trust.evaluateReports",
+    "description": "PRD v5 TRUST-048: after an overturned restriction, new report-based restrictions are review-only for 14 days",
+    "input": {
+      "reports": [
+        {
+          "id": "00000000-0000-4000-8000-000000000101",
+          "reporterId": "00000000-0000-4000-8000-000000000002",
+          "targetUserId": "00000000-0000-4000-8000-000000000001",
+          "category": "harassment",
+          "gameId": "00000000-0000-4000-8000-0000000a0001",
+          "messageId": null,
+          "note": null,
+          "createdAt": "2026-02-28T22:00:00.000Z"
+        },
+        {
+          "id": "00000000-0000-4000-8000-000000000102",
+          "reporterId": "00000000-0000-4000-8000-000000000003",
+          "targetUserId": "00000000-0000-4000-8000-000000000001",
+          "category": "harassment",
+          "gameId": "00000000-0000-4000-8000-0000000a0001",
+          "messageId": null,
+          "note": null,
+          "createdAt": "2026-03-01T08:00:00.000Z"
+        },
+        {
+          "id": "00000000-0000-4000-8000-000000000103",
+          "reporterId": "00000000-0000-4000-8000-000000000004",
+          "targetUserId": "00000000-0000-4000-8000-000000000001",
+          "category": "harassment",
+          "gameId": "00000000-0000-4000-8000-0000000a0001",
+          "messageId": null,
+          "note": null,
+          "createdAt": "2026-03-01T17:00:00.000Z"
+        }
+      ],
+      "reporterProfiles": [
+        {
+          "id": "00000000-0000-4000-8000-000000000002",
+          "createdAt": "2026-01-30T18:00:00.000Z",
+          "reliabilityStatus": "green",
+          "reportsLast7d": 1
+        },
+        {
+          "id": "00000000-0000-4000-8000-000000000003",
+          "createdAt": "2025-12-31T18:00:00.000Z",
+          "reliabilityStatus": "green",
+          "reportsLast7d": 1
+        },
+        {
+          "id": "00000000-0000-4000-8000-000000000004",
+          "createdAt": "2025-12-01T18:00:00.000Z",
+          "reliabilityStatus": "green",
+          "reportsLast7d": 1
+        }
+      ],
+      "context": {
+        "attendance": [
+          {
+            "gameId": "00000000-0000-4000-8000-0000000a0001",
+            "userId": "00000000-0000-4000-8000-000000000001",
+            "status": "approved",
+            "attendance": "verified",
+            "team": null
+          },
+          {
+            "gameId": "00000000-0000-4000-8000-0000000a0001",
+            "userId": "00000000-0000-4000-8000-000000000002",
+            "status": "approved",
+            "attendance": "verified",
+            "team": null
+          },
+          {
+            "gameId": "00000000-0000-4000-8000-0000000a0001",
+            "userId": "00000000-0000-4000-8000-000000000003",
+            "status": "approved",
+            "attendance": "verified",
+            "team": null
+          },
+          {
+            "gameId": "00000000-0000-4000-8000-0000000a0001",
+            "userId": "00000000-0000-4000-8000-000000000004",
+            "status": "approved",
+            "attendance": "verified",
+            "team": null
+          }
+        ],
+        "sanctions": [
+          {
+            "id": "56090fe3-97f6-8678-8842-3610dc53f2a5",
+            "userId": "00000000-0000-4000-8000-000000000001",
+            "kind": "visibility_restriction",
+            "reasonCode": "toxicity_reports",
+            "statementKey": "sanctions.reason.toxicity_reports",
+            "statementParams": {
+              "reporters": 3,
+              "windowDays": 14,
+              "hours": 72,
+              "appealPath": "appeal"
+            },
+            "startsAt": "2026-02-24T18:00:00.000Z",
+            "expiresAt": "2026-02-27T18:00:00.000Z",
+            "disputeUntil": null,
+            "status": "overturned",
+            "gameId": null,
+            "causedBy": [],
+            "dedupeKey": "toxicity_reports:00000000-0000-4000-8000-000000000001:00000000-0000-4000-8000-0000000001ff",
+            "decidedBy": "system",
+            "createdAt": "2026-02-24T18:00:00.000Z"
+          }
+        ],
+        "overturns": [
+          {
+            "sanctionId": "56090fe3-97f6-8678-8842-3610dc53f2a5",
+            "at": "2026-02-25T18:00:00.000Z"
+          }
+        ]
+      }
+    },
+    "now": "2026-03-01T18:00:00.000Z",
+    "expected": {
+      "outcome": "review_only",
+      "qualifyingReporterIds": [
+        "00000000-0000-4000-8000-000000000002",
+        "00000000-0000-4000-8000-000000000003",
+        "00000000-0000-4000-8000-000000000004"
+      ],
+      "effects": [
+        {
+          "type": "EnqueueReview",
+          "item": {
+            "kind": "toxicity_reports",
+            "priority": "normal",
+            "subjectUserId": "00000000-0000-4000-8000-000000000001",
+            "venueId": null,
+            "gameId": null,
+            "sanctionId": null,
+            "appealId": null,
+            "reportIds": [
+              "00000000-0000-4000-8000-000000000101",
+              "00000000-0000-4000-8000-000000000102",
+              "00000000-0000-4000-8000-000000000103"
+            ],
+            "evidence": {
+              "reporters": 3,
+              "independentReporters": 3,
+              "windowDays": 14,
+              "excludedReporters": 0,
+              "collusionSuspected": false,
+              "reviewReasons": "overturn_protection"
+            },
+            "dueBy": "2026-03-03T18:00:00.000Z",
+            "dedupeKey": "protected_reports:00000000-0000-4000-8000-000000000001:00000000-0000-4000-8000-000000000101"
+          }
+        }
+      ]
+    },
+    "tags": [
+      "prd-v5:TRUST-048"
+    ]
+  }
+]

@@ -1,0 +1,487 @@
+[
+  {
+    "name": "no-shows.game-happened.unverified-become-no-show",
+    "kind": "trust.processNoShows",
+    "input": {
+      "game": {
+        "id": "00000000-0000-4000-8000-0000000a0001",
+        "hostId": "00000000-0000-4000-8000-0000000000ff",
+        "startsAt": "2026-03-01T18:00:00.000Z",
+        "endsAt": "2026-03-01T19:30:00.000Z",
+        "status": "scheduled"
+      },
+      "participants": [
+        {
+          "userId": "00000000-0000-4000-8000-0000000000ff",
+          "status": "approved",
+          "attendance": "unknown",
+          "lateCancel": false,
+          "cancelledAt": null
+        },
+        {
+          "userId": "00000000-0000-4000-8000-000000000002",
+          "status": "approved",
+          "attendance": "verified",
+          "lateCancel": false,
+          "cancelledAt": null
+        },
+        {
+          "userId": "00000000-0000-4000-8000-000000000003",
+          "status": "approved",
+          "attendance": "verified",
+          "lateCancel": false,
+          "cancelledAt": null
+        },
+        {
+          "userId": "00000000-0000-4000-8000-000000000001",
+          "status": "approved",
+          "attendance": "unknown",
+          "lateCancel": false,
+          "cancelledAt": null
+        }
+      ]
+    },
+    "now": "2026-03-01T21:30:00.000Z",
+    "expected": {
+      "finalized": true,
+      "gameHappened": true,
+      "effects": [
+        {
+          "type": "SetAttendance",
+          "gameId": "00000000-0000-4000-8000-0000000a0001",
+          "userId": "00000000-0000-4000-8000-000000000001",
+          "attendance": "no_show_unverified"
+        }
+      ],
+      "events": [
+        {
+          "type": "AttendanceFinalized",
+          "gameId": "00000000-0000-4000-8000-0000000a0001",
+          "userId": "00000000-0000-4000-8000-000000000001",
+          "attendance": "no_show_unverified",
+          "endsAt": "2026-03-01T19:30:00.000Z"
+        },
+        {
+          "type": "AttendanceFinalized",
+          "gameId": "00000000-0000-4000-8000-0000000a0001",
+          "userId": "00000000-0000-4000-8000-000000000002",
+          "attendance": "verified",
+          "endsAt": "2026-03-01T19:30:00.000Z"
+        },
+        {
+          "type": "AttendanceFinalized",
+          "gameId": "00000000-0000-4000-8000-0000000a0001",
+          "userId": "00000000-0000-4000-8000-000000000003",
+          "attendance": "verified",
+          "endsAt": "2026-03-01T19:30:00.000Z"
+        }
+      ]
+    },
+    "tags": [
+      "prd-v5:TRUST-010"
+    ]
+  },
+  {
+    "name": "no-shows.before-finalisation.nothing",
+    "kind": "trust.processNoShows",
+    "input": {
+      "game": {
+        "id": "00000000-0000-4000-8000-0000000a0001",
+        "hostId": "00000000-0000-4000-8000-0000000000ff",
+        "startsAt": "2026-03-01T18:00:00.000Z",
+        "endsAt": "2026-03-01T19:30:00.000Z",
+        "status": "scheduled"
+      },
+      "participants": [
+        {
+          "userId": "00000000-0000-4000-8000-000000000002",
+          "status": "approved",
+          "attendance": "verified",
+          "lateCancel": false,
+          "cancelledAt": null
+        },
+        {
+          "userId": "00000000-0000-4000-8000-000000000003",
+          "status": "approved",
+          "attendance": "verified",
+          "lateCancel": false,
+          "cancelledAt": null
+        },
+        {
+          "userId": "00000000-0000-4000-8000-000000000001",
+          "status": "approved",
+          "attendance": "unknown",
+          "lateCancel": false,
+          "cancelledAt": null
+        }
+      ]
+    },
+    "now": "2026-03-01T21:29:59.999Z",
+    "expected": {
+      "finalized": false,
+      "gameHappened": null,
+      "effects": [],
+      "events": []
+    },
+    "tags": [
+      "boundary"
+    ]
+  },
+  {
+    "name": "no-shows.game-not-happened.no-cards",
+    "kind": "trust.processNoShows",
+    "description": "AC-TRUST-011: one verified player of 10 → nobody gets a card, deposits released, host reviewed",
+    "input": {
+      "game": {
+        "id": "00000000-0000-4000-8000-0000000a0001",
+        "hostId": "00000000-0000-4000-8000-0000000000ff",
+        "startsAt": "2026-03-01T18:00:00.000Z",
+        "endsAt": "2026-03-01T19:30:00.000Z",
+        "status": "scheduled"
+      },
+      "participants": [
+        {
+          "userId": "00000000-0000-4000-8000-000000000002",
+          "status": "approved",
+          "attendance": "verified",
+          "lateCancel": false,
+          "cancelledAt": null
+        },
+        {
+          "userId": "00000000-0000-4000-8000-000000000001",
+          "status": "approved",
+          "attendance": "unknown",
+          "lateCancel": false,
+          "cancelledAt": null
+        }
+      ],
+      "minPlayers": 10
+    },
+    "now": "2026-03-01T21:30:00.000Z",
+    "expected": {
+      "finalized": true,
+      "gameHappened": false,
+      "effects": [
+        {
+          "type": "SetAttendance",
+          "gameId": "00000000-0000-4000-8000-0000000a0001",
+          "userId": "00000000-0000-4000-8000-000000000001",
+          "attendance": "excused"
+        },
+        {
+          "type": "SettleDeposit",
+          "gameId": "00000000-0000-4000-8000-0000000a0001",
+          "userId": "00000000-0000-4000-8000-000000000001",
+          "outcome": "release"
+        },
+        {
+          "type": "SettleDeposit",
+          "gameId": "00000000-0000-4000-8000-0000000a0001",
+          "userId": "00000000-0000-4000-8000-000000000002",
+          "outcome": "release"
+        },
+        {
+          "type": "EnqueueReview",
+          "item": {
+            "kind": "host_reliability",
+            "priority": "normal",
+            "subjectUserId": "00000000-0000-4000-8000-0000000000ff",
+            "venueId": null,
+            "gameId": "00000000-0000-4000-8000-0000000a0001",
+            "sanctionId": null,
+            "appealId": null,
+            "reportIds": [],
+            "evidence": {
+              "reason": "game_not_happened",
+              "verifiedCount": 1,
+              "threshold": 5
+            },
+            "dueBy": "2026-03-03T21:30:00.000Z",
+            "dedupeKey": "game_not_happened:00000000-0000-4000-8000-0000000a0001"
+          }
+        }
+      ],
+      "events": []
+    },
+    "tags": [
+      "prd-v5:TRUST-011"
+    ]
+  },
+  {
+    "name": "no-shows.late-cancel.refilled-before-start-and-checked-in",
+    "kind": "trust.processNoShows",
+    "input": {
+      "game": {
+        "id": "00000000-0000-4000-8000-0000000a0001",
+        "hostId": "00000000-0000-4000-8000-0000000000ff",
+        "startsAt": "2026-03-01T18:00:00.000Z",
+        "endsAt": "2026-03-01T19:30:00.000Z",
+        "status": "scheduled"
+      },
+      "participants": [
+        {
+          "userId": "00000000-0000-4000-8000-000000000002",
+          "status": "approved",
+          "attendance": "verified",
+          "lateCancel": false,
+          "cancelledAt": null
+        },
+        {
+          "userId": "00000000-0000-4000-8000-000000000003",
+          "status": "approved",
+          "attendance": "verified",
+          "lateCancel": false,
+          "cancelledAt": null
+        },
+        {
+          "userId": "00000000-0000-4000-8000-000000000001",
+          "status": "cancelled",
+          "attendance": "unknown",
+          "lateCancel": true,
+          "cancelledAt": "2026-03-01T16:30:00.000Z"
+        },
+        {
+          "userId": "00000000-0000-4000-8000-000000000004",
+          "status": "approved",
+          "attendance": "verified",
+          "lateCancel": false,
+          "cancelledAt": null
+        }
+      ],
+      "refills": [
+        {
+          "cancelledUserId": "00000000-0000-4000-8000-000000000001",
+          "replacementUserId": "00000000-0000-4000-8000-000000000004",
+          "promotedAt": "2026-03-01T17:00:00.000Z"
+        }
+      ]
+    },
+    "now": "2026-03-01T21:30:00.000Z",
+    "expected": {
+      "finalized": true,
+      "gameHappened": true,
+      "effects": [],
+      "events": [
+        {
+          "type": "AttendanceFinalized",
+          "gameId": "00000000-0000-4000-8000-0000000a0001",
+          "userId": "00000000-0000-4000-8000-000000000002",
+          "attendance": "verified",
+          "endsAt": "2026-03-01T19:30:00.000Z"
+        },
+        {
+          "type": "AttendanceFinalized",
+          "gameId": "00000000-0000-4000-8000-0000000a0001",
+          "userId": "00000000-0000-4000-8000-000000000003",
+          "attendance": "verified",
+          "endsAt": "2026-03-01T19:30:00.000Z"
+        },
+        {
+          "type": "AttendanceFinalized",
+          "gameId": "00000000-0000-4000-8000-0000000a0001",
+          "userId": "00000000-0000-4000-8000-000000000004",
+          "attendance": "verified",
+          "endsAt": "2026-03-01T19:30:00.000Z"
+        },
+        {
+          "type": "LateCancelFinalized",
+          "gameId": "00000000-0000-4000-8000-0000000a0001",
+          "userId": "00000000-0000-4000-8000-000000000001",
+          "startsAt": "2026-03-01T18:00:00.000Z",
+          "cancelledAt": "2026-03-01T16:30:00.000Z",
+          "refilled": true
+        }
+      ]
+    },
+    "tags": [
+      "prd-v5:TRUST-021"
+    ]
+  },
+  {
+    "name": "no-shows.late-cancel.refilled-but-replacement-no-show",
+    "kind": "trust.processNoShows",
+    "input": {
+      "game": {
+        "id": "00000000-0000-4000-8000-0000000a0001",
+        "hostId": "00000000-0000-4000-8000-0000000000ff",
+        "startsAt": "2026-03-01T18:00:00.000Z",
+        "endsAt": "2026-03-01T19:30:00.000Z",
+        "status": "scheduled"
+      },
+      "participants": [
+        {
+          "userId": "00000000-0000-4000-8000-000000000002",
+          "status": "approved",
+          "attendance": "verified",
+          "lateCancel": false,
+          "cancelledAt": null
+        },
+        {
+          "userId": "00000000-0000-4000-8000-000000000003",
+          "status": "approved",
+          "attendance": "verified",
+          "lateCancel": false,
+          "cancelledAt": null
+        },
+        {
+          "userId": "00000000-0000-4000-8000-000000000001",
+          "status": "cancelled",
+          "attendance": "unknown",
+          "lateCancel": true,
+          "cancelledAt": "2026-03-01T16:30:00.000Z"
+        },
+        {
+          "userId": "00000000-0000-4000-8000-000000000004",
+          "status": "approved",
+          "attendance": "unknown",
+          "lateCancel": false,
+          "cancelledAt": null
+        }
+      ],
+      "refills": [
+        {
+          "cancelledUserId": "00000000-0000-4000-8000-000000000001",
+          "replacementUserId": "00000000-0000-4000-8000-000000000004",
+          "promotedAt": "2026-03-01T17:00:00.000Z"
+        }
+      ]
+    },
+    "now": "2026-03-01T21:30:00.000Z",
+    "expected": {
+      "finalized": true,
+      "gameHappened": true,
+      "effects": [
+        {
+          "type": "SetAttendance",
+          "gameId": "00000000-0000-4000-8000-0000000a0001",
+          "userId": "00000000-0000-4000-8000-000000000004",
+          "attendance": "no_show_unverified"
+        }
+      ],
+      "events": [
+        {
+          "type": "AttendanceFinalized",
+          "gameId": "00000000-0000-4000-8000-0000000a0001",
+          "userId": "00000000-0000-4000-8000-000000000002",
+          "attendance": "verified",
+          "endsAt": "2026-03-01T19:30:00.000Z"
+        },
+        {
+          "type": "AttendanceFinalized",
+          "gameId": "00000000-0000-4000-8000-0000000a0001",
+          "userId": "00000000-0000-4000-8000-000000000003",
+          "attendance": "verified",
+          "endsAt": "2026-03-01T19:30:00.000Z"
+        },
+        {
+          "type": "AttendanceFinalized",
+          "gameId": "00000000-0000-4000-8000-0000000a0001",
+          "userId": "00000000-0000-4000-8000-000000000004",
+          "attendance": "no_show_unverified",
+          "endsAt": "2026-03-01T19:30:00.000Z"
+        },
+        {
+          "type": "LateCancelFinalized",
+          "gameId": "00000000-0000-4000-8000-0000000a0001",
+          "userId": "00000000-0000-4000-8000-000000000001",
+          "startsAt": "2026-03-01T18:00:00.000Z",
+          "cancelledAt": "2026-03-01T16:30:00.000Z",
+          "refilled": false
+        }
+      ]
+    },
+    "tags": [
+      "prd-v5:TRUST-021"
+    ]
+  },
+  {
+    "name": "no-shows.late-cancel.refilled-only-after-start",
+    "kind": "trust.processNoShows",
+    "input": {
+      "game": {
+        "id": "00000000-0000-4000-8000-0000000a0001",
+        "hostId": "00000000-0000-4000-8000-0000000000ff",
+        "startsAt": "2026-03-01T18:00:00.000Z",
+        "endsAt": "2026-03-01T19:30:00.000Z",
+        "status": "scheduled"
+      },
+      "participants": [
+        {
+          "userId": "00000000-0000-4000-8000-000000000002",
+          "status": "approved",
+          "attendance": "verified",
+          "lateCancel": false,
+          "cancelledAt": null
+        },
+        {
+          "userId": "00000000-0000-4000-8000-000000000003",
+          "status": "approved",
+          "attendance": "verified",
+          "lateCancel": false,
+          "cancelledAt": null
+        },
+        {
+          "userId": "00000000-0000-4000-8000-000000000001",
+          "status": "cancelled",
+          "attendance": "unknown",
+          "lateCancel": true,
+          "cancelledAt": "2026-03-01T16:30:00.000Z"
+        },
+        {
+          "userId": "00000000-0000-4000-8000-000000000004",
+          "status": "approved",
+          "attendance": "verified",
+          "lateCancel": false,
+          "cancelledAt": null
+        }
+      ],
+      "refills": [
+        {
+          "cancelledUserId": "00000000-0000-4000-8000-000000000001",
+          "replacementUserId": "00000000-0000-4000-8000-000000000004",
+          "promotedAt": "2026-03-01T18:01:00.000Z"
+        }
+      ]
+    },
+    "now": "2026-03-01T21:30:00.000Z",
+    "expected": {
+      "finalized": true,
+      "gameHappened": true,
+      "effects": [],
+      "events": [
+        {
+          "type": "AttendanceFinalized",
+          "gameId": "00000000-0000-4000-8000-0000000a0001",
+          "userId": "00000000-0000-4000-8000-000000000002",
+          "attendance": "verified",
+          "endsAt": "2026-03-01T19:30:00.000Z"
+        },
+        {
+          "type": "AttendanceFinalized",
+          "gameId": "00000000-0000-4000-8000-0000000a0001",
+          "userId": "00000000-0000-4000-8000-000000000003",
+          "attendance": "verified",
+          "endsAt": "2026-03-01T19:30:00.000Z"
+        },
+        {
+          "type": "AttendanceFinalized",
+          "gameId": "00000000-0000-4000-8000-0000000a0001",
+          "userId": "00000000-0000-4000-8000-000000000004",
+          "attendance": "verified",
+          "endsAt": "2026-03-01T19:30:00.000Z"
+        },
+        {
+          "type": "LateCancelFinalized",
+          "gameId": "00000000-0000-4000-8000-0000000a0001",
+          "userId": "00000000-0000-4000-8000-000000000001",
+          "startsAt": "2026-03-01T18:00:00.000Z",
+          "cancelledAt": "2026-03-01T16:30:00.000Z",
+          "refilled": false
+        }
+      ]
+    },
+    "tags": [
+      "prd-v5:TRUST-021"
+    ]
+  }
+]

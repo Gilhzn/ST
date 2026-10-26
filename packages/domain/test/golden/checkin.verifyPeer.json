@@ -1,0 +1,238 @@
+[
+  {
+    "name": "peer.two-gps-qr-confirmers.verified",
+    "kind": "checkin.verifyPeer",
+    "input": {
+      "targetUserId": "00000000-0000-4000-8000-000000000001",
+      "participants": [
+        {
+          "userId": "00000000-0000-4000-8000-000000000001",
+          "status": "approved",
+          "attendance": "unknown",
+          "checkInMethod": null
+        },
+        {
+          "userId": "00000000-0000-4000-8000-000000000002",
+          "status": "approved",
+          "attendance": "verified",
+          "checkInMethod": "gps"
+        },
+        {
+          "userId": "00000000-0000-4000-8000-000000000003",
+          "status": "approved",
+          "attendance": "verified",
+          "checkInMethod": "qr"
+        },
+        {
+          "userId": "00000000-0000-4000-8000-000000000004",
+          "status": "approved",
+          "attendance": "verified",
+          "checkInMethod": "peer"
+        }
+      ],
+      "confirmations": [
+        {
+          "confirmerId": "00000000-0000-4000-8000-000000000002",
+          "targetId": "00000000-0000-4000-8000-000000000001"
+        },
+        {
+          "confirmerId": "00000000-0000-4000-8000-000000000003",
+          "targetId": "00000000-0000-4000-8000-000000000001"
+        }
+      ],
+      "blocks": []
+    },
+    "now": "2026-03-01T18:00:00.000Z",
+    "expected": {
+      "confirmations": 2,
+      "verdict": {
+        "outcome": "verified",
+        "method": "peer",
+        "distanceM": null,
+        "signals": []
+      }
+    }
+  },
+  {
+    "name": "peer.one-confirmer.insufficient",
+    "kind": "checkin.verifyPeer",
+    "input": {
+      "targetUserId": "00000000-0000-4000-8000-000000000001",
+      "participants": [
+        {
+          "userId": "00000000-0000-4000-8000-000000000001",
+          "status": "approved",
+          "attendance": "unknown",
+          "checkInMethod": null
+        },
+        {
+          "userId": "00000000-0000-4000-8000-000000000002",
+          "status": "approved",
+          "attendance": "verified",
+          "checkInMethod": "gps"
+        },
+        {
+          "userId": "00000000-0000-4000-8000-000000000003",
+          "status": "approved",
+          "attendance": "verified",
+          "checkInMethod": "qr"
+        },
+        {
+          "userId": "00000000-0000-4000-8000-000000000004",
+          "status": "approved",
+          "attendance": "verified",
+          "checkInMethod": "peer"
+        }
+      ],
+      "confirmations": [
+        {
+          "confirmerId": "00000000-0000-4000-8000-000000000002",
+          "targetId": "00000000-0000-4000-8000-000000000001"
+        }
+      ],
+      "blocks": []
+    },
+    "now": "2026-03-01T18:00:00.000Z",
+    "expected": {
+      "confirmations": 1,
+      "verdict": {
+        "outcome": "rejected",
+        "method": "peer",
+        "reason": "insufficient_peers",
+        "fallbacks": [
+          "qr",
+          "host"
+        ],
+        "signals": []
+      }
+    },
+    "tags": [
+      "boundary"
+    ]
+  },
+  {
+    "name": "peer.reciprocal-only",
+    "kind": "checkin.verifyPeer",
+    "input": {
+      "targetUserId": "00000000-0000-4000-8000-000000000001",
+      "participants": [
+        {
+          "userId": "00000000-0000-4000-8000-000000000001",
+          "status": "approved",
+          "attendance": "unknown",
+          "checkInMethod": null
+        },
+        {
+          "userId": "00000000-0000-4000-8000-000000000002",
+          "status": "approved",
+          "attendance": "verified",
+          "checkInMethod": "gps"
+        },
+        {
+          "userId": "00000000-0000-4000-8000-000000000003",
+          "status": "approved",
+          "attendance": "verified",
+          "checkInMethod": "qr"
+        },
+        {
+          "userId": "00000000-0000-4000-8000-000000000004",
+          "status": "approved",
+          "attendance": "verified",
+          "checkInMethod": "peer"
+        }
+      ],
+      "confirmations": [
+        {
+          "confirmerId": "00000000-0000-4000-8000-000000000002",
+          "targetId": "00000000-0000-4000-8000-000000000001"
+        },
+        {
+          "confirmerId": "00000000-0000-4000-8000-000000000004",
+          "targetId": "00000000-0000-4000-8000-000000000001"
+        },
+        {
+          "confirmerId": "00000000-0000-4000-8000-000000000001",
+          "targetId": "00000000-0000-4000-8000-000000000004"
+        }
+      ],
+      "blocks": []
+    },
+    "now": "2026-03-01T18:00:00.000Z",
+    "expected": {
+      "confirmations": 1,
+      "verdict": {
+        "outcome": "rejected",
+        "method": "peer",
+        "reason": "reciprocal_only",
+        "fallbacks": [
+          "qr",
+          "host"
+        ],
+        "signals": []
+      }
+    }
+  },
+  {
+    "name": "peer.blocked-pair-excluded",
+    "kind": "checkin.verifyPeer",
+    "input": {
+      "targetUserId": "00000000-0000-4000-8000-000000000001",
+      "participants": [
+        {
+          "userId": "00000000-0000-4000-8000-000000000001",
+          "status": "approved",
+          "attendance": "unknown",
+          "checkInMethod": null
+        },
+        {
+          "userId": "00000000-0000-4000-8000-000000000002",
+          "status": "approved",
+          "attendance": "verified",
+          "checkInMethod": "gps"
+        },
+        {
+          "userId": "00000000-0000-4000-8000-000000000003",
+          "status": "approved",
+          "attendance": "verified",
+          "checkInMethod": "qr"
+        },
+        {
+          "userId": "00000000-0000-4000-8000-000000000004",
+          "status": "approved",
+          "attendance": "verified",
+          "checkInMethod": "peer"
+        }
+      ],
+      "confirmations": [
+        {
+          "confirmerId": "00000000-0000-4000-8000-000000000002",
+          "targetId": "00000000-0000-4000-8000-000000000001"
+        },
+        {
+          "confirmerId": "00000000-0000-4000-8000-000000000003",
+          "targetId": "00000000-0000-4000-8000-000000000001"
+        }
+      ],
+      "blocks": [
+        {
+          "blockerId": "00000000-0000-4000-8000-000000000001",
+          "blockedId": "00000000-0000-4000-8000-000000000003"
+        }
+      ]
+    },
+    "now": "2026-03-01T18:00:00.000Z",
+    "expected": {
+      "confirmations": 1,
+      "verdict": {
+        "outcome": "rejected",
+        "method": "peer",
+        "reason": "blocked_pair",
+        "fallbacks": [
+          "qr",
+          "host"
+        ],
+        "signals": []
+      }
+    }
+  }
+]

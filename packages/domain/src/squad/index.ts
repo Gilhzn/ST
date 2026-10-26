@@ -209,7 +209,7 @@ class Model {
     let hard = 0;
     const add = (t: number, r: number, delta: number) => {
       if (r < 0) return;
-      const d = this.def(t, r, -delta) - this.def(t, r, 0);
+      const d = this.def(t, r, delta) - this.def(t, r, 0);
       total += d;
       if (this.scarce[r]) hard += d;
     };

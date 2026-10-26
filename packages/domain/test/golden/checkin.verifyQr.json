@@ -1,0 +1,128 @@
+[
+  {
+    "name": "qr.step-drift-minus-1",
+    "kind": "checkin.verifyQr",
+    "input": {
+      "token": "59079599.eac410bc69671ab879b24921c6997fc2",
+      "qrSecret": "golden-qr-secret",
+      "gameId": "00000000-0000-4000-8000-0000000a0001"
+    },
+    "now": "2026-03-01T18:00:10.000Z",
+    "expected": {
+      "outcome": "verified",
+      "method": "qr",
+      "distanceM": null,
+      "signals": []
+    },
+    "tags": [
+      "boundary"
+    ]
+  },
+  {
+    "name": "qr.step-drift-plus-0",
+    "kind": "checkin.verifyQr",
+    "input": {
+      "token": "59079600.d1b2642a5017e9780937afb2d024c3cd",
+      "qrSecret": "golden-qr-secret",
+      "gameId": "00000000-0000-4000-8000-0000000a0001"
+    },
+    "now": "2026-03-01T18:00:10.000Z",
+    "expected": {
+      "outcome": "verified",
+      "method": "qr",
+      "distanceM": null,
+      "signals": []
+    },
+    "tags": [
+      "boundary"
+    ]
+  },
+  {
+    "name": "qr.step-drift-plus-1",
+    "kind": "checkin.verifyQr",
+    "input": {
+      "token": "59079601.5d0fc372d78506c6ec4ec1d8a5e0a323",
+      "qrSecret": "golden-qr-secret",
+      "gameId": "00000000-0000-4000-8000-0000000a0001"
+    },
+    "now": "2026-03-01T18:00:10.000Z",
+    "expected": {
+      "outcome": "verified",
+      "method": "qr",
+      "distanceM": null,
+      "signals": []
+    },
+    "tags": [
+      "boundary"
+    ]
+  },
+  {
+    "name": "qr.step-drift-minus-2",
+    "kind": "checkin.verifyQr",
+    "input": {
+      "token": "59079598.76ba785525dde33280a967e2e8959715",
+      "qrSecret": "golden-qr-secret",
+      "gameId": "00000000-0000-4000-8000-0000000a0001"
+    },
+    "now": "2026-03-01T18:00:10.000Z",
+    "expected": {
+      "outcome": "rejected",
+      "method": "qr",
+      "reason": "expired_qr",
+      "fallbacks": [
+        "qr",
+        "peer",
+        "host"
+      ],
+      "signals": []
+    },
+    "tags": [
+      "boundary"
+    ]
+  },
+  {
+    "name": "qr.step-drift-plus-2",
+    "kind": "checkin.verifyQr",
+    "input": {
+      "token": "59079602.71f785c1c240eec24d9581106c809771",
+      "qrSecret": "golden-qr-secret",
+      "gameId": "00000000-0000-4000-8000-0000000a0001"
+    },
+    "now": "2026-03-01T18:00:10.000Z",
+    "expected": {
+      "outcome": "rejected",
+      "method": "qr",
+      "reason": "expired_qr",
+      "fallbacks": [
+        "qr",
+        "peer",
+        "host"
+      ],
+      "signals": []
+    },
+    "tags": [
+      "boundary"
+    ]
+  },
+  {
+    "name": "qr.wrong-secret.invalid",
+    "kind": "checkin.verifyQr",
+    "input": {
+      "token": "59079600.d1b2642a5017e9780937afb2d024c3cd",
+      "qrSecret": "rotated",
+      "gameId": "00000000-0000-4000-8000-0000000a0001"
+    },
+    "now": "2026-03-01T18:00:10.000Z",
+    "expected": {
+      "outcome": "rejected",
+      "method": "qr",
+      "reason": "invalid_qr",
+      "fallbacks": [
+        "qr",
+        "peer",
+        "host"
+      ],
+      "signals": []
+    }
+  }
+]

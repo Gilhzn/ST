@@ -1,0 +1,178 @@
+[
+  {
+    "name": "window.check-in.opens-at-start-minus-30m",
+    "kind": "games.windows",
+    "input": {
+      "game": {
+        "startsAt": "2026-03-01T18:00:00.000Z",
+        "endsAt": "2026-03-01T19:30:00.000Z"
+      }
+    },
+    "now": "2026-03-01T17:30:00.000Z",
+    "expected": {
+      "checkInOpensAt": "2026-03-01T17:30:00.000Z",
+      "resultWindowClosesAt": "2026-03-01T21:30:00.000Z",
+      "chatExpiresAt": "2026-03-01T22:30:00.000Z",
+      "checkInOpen": true,
+      "canSubmitResult": false,
+      "chatOpen": true
+    },
+    "tags": [
+      "boundary"
+    ]
+  },
+  {
+    "name": "window.check-in.closed-1ms-before",
+    "kind": "games.windows",
+    "input": {
+      "game": {
+        "startsAt": "2026-03-01T18:00:00.000Z",
+        "endsAt": "2026-03-01T19:30:00.000Z"
+      }
+    },
+    "now": "2026-03-01T17:29:59.999Z",
+    "expected": {
+      "checkInOpensAt": "2026-03-01T17:30:00.000Z",
+      "resultWindowClosesAt": "2026-03-01T21:30:00.000Z",
+      "chatExpiresAt": "2026-03-01T22:30:00.000Z",
+      "checkInOpen": false,
+      "canSubmitResult": false,
+      "chatOpen": true
+    },
+    "tags": [
+      "boundary"
+    ]
+  },
+  {
+    "name": "window.result.opens-at-end",
+    "kind": "games.windows",
+    "input": {
+      "game": {
+        "startsAt": "2026-03-01T18:00:00.000Z",
+        "endsAt": "2026-03-01T19:30:00.000Z"
+      }
+    },
+    "now": "2026-03-01T19:30:00.000Z",
+    "expected": {
+      "checkInOpensAt": "2026-03-01T17:30:00.000Z",
+      "resultWindowClosesAt": "2026-03-01T21:30:00.000Z",
+      "chatExpiresAt": "2026-03-01T22:30:00.000Z",
+      "checkInOpen": true,
+      "canSubmitResult": true,
+      "chatOpen": true
+    },
+    "tags": [
+      "boundary"
+    ]
+  },
+  {
+    "name": "window.result.before-end-rejected",
+    "kind": "games.windows",
+    "input": {
+      "game": {
+        "startsAt": "2026-03-01T18:00:00.000Z",
+        "endsAt": "2026-03-01T19:30:00.000Z"
+      }
+    },
+    "now": "2026-03-01T19:29:59.999Z",
+    "expected": {
+      "checkInOpensAt": "2026-03-01T17:30:00.000Z",
+      "resultWindowClosesAt": "2026-03-01T21:30:00.000Z",
+      "chatExpiresAt": "2026-03-01T22:30:00.000Z",
+      "checkInOpen": true,
+      "canSubmitResult": false,
+      "chatOpen": true
+    },
+    "tags": [
+      "boundary"
+    ]
+  },
+  {
+    "name": "window.result.end-plus-2h-accepted",
+    "kind": "games.windows",
+    "input": {
+      "game": {
+        "startsAt": "2026-03-01T18:00:00.000Z",
+        "endsAt": "2026-03-01T19:30:00.000Z"
+      }
+    },
+    "now": "2026-03-01T21:30:00.000Z",
+    "expected": {
+      "checkInOpensAt": "2026-03-01T17:30:00.000Z",
+      "resultWindowClosesAt": "2026-03-01T21:30:00.000Z",
+      "chatExpiresAt": "2026-03-01T22:30:00.000Z",
+      "checkInOpen": false,
+      "canSubmitResult": true,
+      "chatOpen": true
+    },
+    "tags": [
+      "boundary"
+    ]
+  },
+  {
+    "name": "window.result.end-plus-2h-plus-1ms-rejected",
+    "kind": "games.windows",
+    "input": {
+      "game": {
+        "startsAt": "2026-03-01T18:00:00.000Z",
+        "endsAt": "2026-03-01T19:30:00.000Z"
+      }
+    },
+    "now": "2026-03-01T21:30:00.001Z",
+    "expected": {
+      "checkInOpensAt": "2026-03-01T17:30:00.000Z",
+      "resultWindowClosesAt": "2026-03-01T21:30:00.000Z",
+      "chatExpiresAt": "2026-03-01T22:30:00.000Z",
+      "checkInOpen": false,
+      "canSubmitResult": false,
+      "chatOpen": true
+    },
+    "tags": [
+      "boundary"
+    ]
+  },
+  {
+    "name": "window.chat-ttl.open-until-end-plus-3h",
+    "kind": "games.windows",
+    "input": {
+      "game": {
+        "startsAt": "2026-03-01T18:00:00.000Z",
+        "endsAt": "2026-03-01T19:30:00.000Z"
+      }
+    },
+    "now": "2026-03-01T22:29:59.999Z",
+    "expected": {
+      "checkInOpensAt": "2026-03-01T17:30:00.000Z",
+      "resultWindowClosesAt": "2026-03-01T21:30:00.000Z",
+      "chatExpiresAt": "2026-03-01T22:30:00.000Z",
+      "checkInOpen": false,
+      "canSubmitResult": false,
+      "chatOpen": true
+    },
+    "tags": [
+      "boundary"
+    ]
+  },
+  {
+    "name": "window.chat-ttl.expired-at-end-plus-3h",
+    "kind": "games.windows",
+    "input": {
+      "game": {
+        "startsAt": "2026-03-01T18:00:00.000Z",
+        "endsAt": "2026-03-01T19:30:00.000Z"
+      }
+    },
+    "now": "2026-03-01T22:30:00.000Z",
+    "expected": {
+      "checkInOpensAt": "2026-03-01T17:30:00.000Z",
+      "resultWindowClosesAt": "2026-03-01T21:30:00.000Z",
+      "chatExpiresAt": "2026-03-01T22:30:00.000Z",
+      "checkInOpen": false,
+      "canSubmitResult": false,
+      "chatOpen": false
+    },
+    "tags": [
+      "boundary"
+    ]
+  }
+]

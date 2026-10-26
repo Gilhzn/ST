@@ -1,0 +1,313 @@
+[
+  {
+    "name": "reliability.2-games.new",
+    "kind": "trust.reliability",
+    "input": {
+      "participations": [
+        {
+          "gameId": "00000000-0000-4000-8000-0000000a0001",
+          "status": "approved",
+          "attendance": "verified",
+          "lateCancel": false,
+          "cancelledAt": null,
+          "endsAt": "2026-02-28T18:00:00.000Z"
+        },
+        {
+          "gameId": "00000000-0000-4000-8000-0000000a0002",
+          "status": "approved",
+          "attendance": "verified",
+          "lateCancel": false,
+          "cancelledAt": null,
+          "endsAt": "2026-02-27T18:00:00.000Z"
+        }
+      ],
+      "sanctions": []
+    },
+    "now": "2026-03-01T18:00:00.000Z",
+    "expected": {
+      "score": null,
+      "status": "new",
+      "verifiedCount": 2,
+      "commitmentCount": 2,
+      "lateCancelCount": 0,
+      "noShowCount": 0,
+      "computedAt": "2026-03-01T18:00:00.000Z"
+    },
+    "tags": [
+      "boundary"
+    ]
+  },
+  {
+    "name": "reliability.10-verified.green",
+    "kind": "trust.reliability",
+    "input": {
+      "participations": [
+        {
+          "gameId": "00000000-0000-4000-8000-0000000a0001",
+          "status": "approved",
+          "attendance": "verified",
+          "lateCancel": false,
+          "cancelledAt": null,
+          "endsAt": "2026-02-28T18:00:00.000Z"
+        },
+        {
+          "gameId": "00000000-0000-4000-8000-0000000a0002",
+          "status": "approved",
+          "attendance": "verified",
+          "lateCancel": false,
+          "cancelledAt": null,
+          "endsAt": "2026-02-27T18:00:00.000Z"
+        },
+        {
+          "gameId": "00000000-0000-4000-8000-0000000a0003",
+          "status": "approved",
+          "attendance": "verified",
+          "lateCancel": false,
+          "cancelledAt": null,
+          "endsAt": "2026-02-26T18:00:00.000Z"
+        },
+        {
+          "gameId": "00000000-0000-4000-8000-0000000a0004",
+          "status": "approved",
+          "attendance": "verified",
+          "lateCancel": false,
+          "cancelledAt": null,
+          "endsAt": "2026-02-25T18:00:00.000Z"
+        },
+        {
+          "gameId": "00000000-0000-4000-8000-0000000a0005",
+          "status": "approved",
+          "attendance": "verified",
+          "lateCancel": false,
+          "cancelledAt": null,
+          "endsAt": "2026-02-24T18:00:00.000Z"
+        },
+        {
+          "gameId": "00000000-0000-4000-8000-0000000a0006",
+          "status": "approved",
+          "attendance": "verified",
+          "lateCancel": false,
+          "cancelledAt": null,
+          "endsAt": "2026-02-23T18:00:00.000Z"
+        },
+        {
+          "gameId": "00000000-0000-4000-8000-0000000a0007",
+          "status": "approved",
+          "attendance": "verified",
+          "lateCancel": false,
+          "cancelledAt": null,
+          "endsAt": "2026-02-22T18:00:00.000Z"
+        },
+        {
+          "gameId": "00000000-0000-4000-8000-0000000a0008",
+          "status": "approved",
+          "attendance": "verified",
+          "lateCancel": false,
+          "cancelledAt": null,
+          "endsAt": "2026-02-21T18:00:00.000Z"
+        },
+        {
+          "gameId": "00000000-0000-4000-8000-0000000a0009",
+          "status": "approved",
+          "attendance": "verified",
+          "lateCancel": false,
+          "cancelledAt": null,
+          "endsAt": "2026-02-20T18:00:00.000Z"
+        },
+        {
+          "gameId": "00000000-0000-4000-8000-0000000a000a",
+          "status": "approved",
+          "attendance": "verified",
+          "lateCancel": false,
+          "cancelledAt": null,
+          "endsAt": "2026-02-19T18:00:00.000Z"
+        }
+      ],
+      "sanctions": []
+    },
+    "now": "2026-03-01T18:00:00.000Z",
+    "expected": {
+      "score": 1,
+      "status": "green",
+      "verifiedCount": 10,
+      "commitmentCount": 10,
+      "lateCancelCount": 0,
+      "noShowCount": 0,
+      "computedAt": "2026-03-01T18:00:00.000Z"
+    }
+  },
+  {
+    "name": "reliability.mixed-with-late-cancel.yellow",
+    "kind": "trust.reliability",
+    "description": "(2+3)/(2+1+0.5+3) = 0.7692",
+    "input": {
+      "participations": [
+        {
+          "gameId": "00000000-0000-4000-8000-0000000a0001",
+          "status": "approved",
+          "attendance": "verified",
+          "lateCancel": false,
+          "cancelledAt": null,
+          "endsAt": "2026-02-28T18:00:00.000Z"
+        },
+        {
+          "gameId": "00000000-0000-4000-8000-0000000a0002",
+          "status": "approved",
+          "attendance": "verified",
+          "lateCancel": false,
+          "cancelledAt": null,
+          "endsAt": "2026-02-27T18:00:00.000Z"
+        },
+        {
+          "gameId": "00000000-0000-4000-8000-0000000a0003",
+          "status": "approved",
+          "attendance": "no_show_unverified",
+          "lateCancel": false,
+          "cancelledAt": null,
+          "endsAt": "2026-02-26T18:00:00.000Z"
+        },
+        {
+          "gameId": "00000000-0000-4000-8000-0000000a0004",
+          "status": "cancelled",
+          "attendance": "unknown",
+          "lateCancel": true,
+          "cancelledAt": "2026-02-25T18:00:00.000Z",
+          "endsAt": "2026-02-25T18:00:00.000Z"
+        }
+      ],
+      "sanctions": []
+    },
+    "now": "2026-03-01T18:00:00.000Z",
+    "expected": {
+      "score": 0.7692,
+      "status": "yellow",
+      "verifiedCount": 2,
+      "commitmentCount": 4,
+      "lateCancelCount": 1,
+      "noShowCount": 1,
+      "computedAt": "2026-03-01T18:00:00.000Z"
+    }
+  },
+  {
+    "name": "reliability.mostly-no-shows.red",
+    "kind": "trust.reliability",
+    "description": "(1+3)/(1+6+3) = 0.4",
+    "input": {
+      "participations": [
+        {
+          "gameId": "00000000-0000-4000-8000-0000000a0001",
+          "status": "approved",
+          "attendance": "verified",
+          "lateCancel": false,
+          "cancelledAt": null,
+          "endsAt": "2026-02-28T18:00:00.000Z"
+        },
+        {
+          "gameId": "00000000-0000-4000-8000-0000000a0002",
+          "status": "approved",
+          "attendance": "no_show_unverified",
+          "lateCancel": false,
+          "cancelledAt": null,
+          "endsAt": "2026-02-27T18:00:00.000Z"
+        },
+        {
+          "gameId": "00000000-0000-4000-8000-0000000a0003",
+          "status": "approved",
+          "attendance": "no_show_unverified",
+          "lateCancel": false,
+          "cancelledAt": null,
+          "endsAt": "2026-02-26T18:00:00.000Z"
+        },
+        {
+          "gameId": "00000000-0000-4000-8000-0000000a0004",
+          "status": "approved",
+          "attendance": "no_show_unverified",
+          "lateCancel": false,
+          "cancelledAt": null,
+          "endsAt": "2026-02-25T18:00:00.000Z"
+        },
+        {
+          "gameId": "00000000-0000-4000-8000-0000000a0005",
+          "status": "approved",
+          "attendance": "no_show_unverified",
+          "lateCancel": false,
+          "cancelledAt": null,
+          "endsAt": "2026-02-24T18:00:00.000Z"
+        },
+        {
+          "gameId": "00000000-0000-4000-8000-0000000a0006",
+          "status": "approved",
+          "attendance": "no_show_unverified",
+          "lateCancel": false,
+          "cancelledAt": null,
+          "endsAt": "2026-02-23T18:00:00.000Z"
+        },
+        {
+          "gameId": "00000000-0000-4000-8000-0000000a0007",
+          "status": "approved",
+          "attendance": "no_show_unverified",
+          "lateCancel": false,
+          "cancelledAt": null,
+          "endsAt": "2026-02-22T18:00:00.000Z"
+        }
+      ],
+      "sanctions": []
+    },
+    "now": "2026-03-01T18:00:00.000Z",
+    "expected": {
+      "score": 0.4,
+      "status": "red",
+      "verifiedCount": 1,
+      "commitmentCount": 7,
+      "lateCancelCount": 0,
+      "noShowCount": 6,
+      "computedAt": "2026-03-01T18:00:00.000Z"
+    }
+  },
+  {
+    "name": "reliability.outside-90d.ignored",
+    "kind": "trust.reliability",
+    "input": {
+      "participations": [
+        {
+          "gameId": "00000000-0000-4000-8000-0000000a0001",
+          "status": "approved",
+          "attendance": "verified",
+          "lateCancel": false,
+          "cancelledAt": null,
+          "endsAt": "2026-02-28T18:00:00.000Z"
+        },
+        {
+          "gameId": "00000000-0000-4000-8000-0000000a0002",
+          "status": "approved",
+          "attendance": "verified",
+          "lateCancel": false,
+          "cancelledAt": null,
+          "endsAt": "2026-02-27T18:00:00.000Z"
+        },
+        {
+          "gameId": "00000000-0000-4000-8000-0000000a005a",
+          "status": "approved",
+          "attendance": "no_show_unverified",
+          "lateCancel": false,
+          "cancelledAt": null,
+          "endsAt": "2025-12-01T18:00:00.000Z"
+        }
+      ],
+      "sanctions": []
+    },
+    "now": "2026-03-01T18:00:00.000Z",
+    "expected": {
+      "score": null,
+      "status": "new",
+      "verifiedCount": 2,
+      "commitmentCount": 2,
+      "lateCancelCount": 0,
+      "noShowCount": 0,
+      "computedAt": "2026-03-01T18:00:00.000Z"
+    },
+    "tags": [
+      "boundary"
+    ]
+  }
+]
