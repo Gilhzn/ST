@@ -84,7 +84,7 @@ export function SessionProvider({ children }: { children: ReactNode }) {
 
   const value = useMemo<SessionValue>(() => {
     const status: SessionStatus =
-      user === undefined ? 'loading' : user === null ? 'signedOut' : user.hasProfile && profile ? 'ready' : user.hasProfile ? 'loading' : 'needsProfile';
+      user === undefined ? 'loading' : user === null ? 'signedOut' : user.hasProfile ? 'ready' : 'needsProfile';
     return { status, user: user ?? null, profile, refresh, signOut };
   }, [user, profile, refresh, signOut]);
 

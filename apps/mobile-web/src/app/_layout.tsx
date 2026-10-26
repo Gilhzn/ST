@@ -16,6 +16,8 @@ import { ToastProvider } from '@/components/Toast';
 import { createDataPort, resolveDataMode } from '@/data';
 import { DataProvider } from '@/data/DataProvider';
 import { I18nProvider, useT } from '@/i18n';
+// Side effect: registers the background geofence task at startup (native; no-op on web).
+import '@/platform/geofence';
 import { addNotificationTapListener, configureNotificationHandler } from '@/platform/push';
 import { SessionProvider, takePostAuthRedirect, useSession } from '@/state/session';
 import { AppThemeProvider } from '@/state/theme';

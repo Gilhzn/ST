@@ -3,7 +3,7 @@ import { isStError } from '@st/domain';
 import { Button, isolate, Row, spacing, Stack, Text, TextField } from '@st/ui';
 import { router, useLocalSearchParams } from 'expo-router';
 import { useEffect, useRef, useState } from 'react';
-import { AccessibilityInfo } from 'react-native';
+import { AccessibilityInfo, Platform } from 'react-native';
 
 import { Screen } from '@/components/Screen';
 import { InlineError } from '@/components/States';
@@ -85,7 +85,7 @@ export default function OtpScreen() {
           inputDirection="ltr"
           keyboardType="number-pad"
           textContentType="oneTimeCode"
-          autoComplete="sms-otp"
+          autoComplete={Platform.OS === 'web' ? 'one-time-code' : 'sms-otp'}
           maxLength={6}
           autoFocus
           error={fieldError}

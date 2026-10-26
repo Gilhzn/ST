@@ -18,7 +18,7 @@ import { SelectField } from '@/components/SelectField';
 import { InlineError, Skeleton } from '@/components/States';
 import { useToast } from '@/components/Toast';
 import { useData } from '@/data/DataProvider';
-import { DEFAULT_CENTER } from '@/data/mock/seed';
+import { DEFAULT_MAP_CENTER } from '@/features/map/cities';
 import { useAction, useAsync } from '@/hooks/useAsync';
 import { useT } from '@/i18n';
 import { currencyForCountry } from '@/lib/currency';
@@ -106,7 +106,7 @@ export default function CreateGameScreen() {
   const [step, setStep] = useState(0);
   const [showErrors, setShowErrors] = useState(false);
   const [discard, setDiscard] = useState(false);
-  const [center, setCenter] = useState<LatLng>(DEFAULT_CENTER);
+  const [center, setCenter] = useState<LatLng>(DEFAULT_MAP_CENTER);
   const [published, setPublished] = useState<GameDetail | null>(null);
   const restored = useRef(false);
   const miles = useMemo(() => usesMiles(deviceRegion()), []);

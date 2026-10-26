@@ -27,8 +27,7 @@ import { ErrorView, Skeleton } from '@/components/States';
 import { useToast } from '@/components/Toast';
 import { VenueCard } from '@/components/VenueCard';
 import { useData } from '@/data/DataProvider';
-import { DEFAULT_CENTER } from '@/data/mock/seed';
-import { SEED_CITIES } from '@/features/map/cities';
+import { DEFAULT_MAP_CENTER, SEED_CITIES } from '@/features/map/cities';
 import { RadiusSelector, SportFilterBar } from '@/features/map/Filters';
 import { LocationDisclosure } from '@/features/map/LocationDisclosure';
 import { VenueDetails } from '@/features/map/VenueDetails';
@@ -65,7 +64,7 @@ export default function MapScreen() {
   const now = useNow(30_000);
   const miles = useMemo(() => usesMiles(deviceRegion()), []);
 
-  const [center, setCenter] = useState<LatLng>(DEFAULT_CENTER);
+  const [center, setCenter] = useState<LatLng>(DEFAULT_MAP_CENTER);
   const [userLocation, setUserLocation] = useState<LatLng | null>(null);
   const [radiusKm, setRadiusKm] = useState<RadiusKm>(DEFAULT_RADIUS_KM);
   const [zoom, setZoom] = useState(() => zoomForRadius(DEFAULT_RADIUS_KM));

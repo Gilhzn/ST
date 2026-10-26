@@ -15,3 +15,6 @@ export const SEED_CITIES: readonly { id: string; name: string; center: LatLng }[
   { id: 'bom', name: 'Mumbai', center: { lat: 19.076, lng: 72.8777 } },
   { id: 'par', name: 'Paris', center: { lat: 48.8566, lng: 2.3522 } },
 ];
+
+/** Map centre before a location fix: Dizengoff Square, Tel Aviv (seed city; also the e2e geolocation). */
+export const DEFAULT_MAP_CENTER: LatLng = { lat: 32.0779, lng: 34.7745 };

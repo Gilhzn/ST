@@ -11,21 +11,22 @@
  *   RPC  nearby_venues(p_lat, p_lng, p_radius_km, p_sports)          → venue rows + lat, lng, distance_m
  *   RPC  nearby_games(p_lat, p_lng, p_radius_km, p_sports, p_from, p_to, p_include_full) → game_views rows + distance_m
  *   RPC  create_profile(p_display_name, p_locale, p_birth_year, p_birth_month, p_gender, p_country_code, p_avatar_url, p_bio)
- *   RPC  set_my_sports(p_sports jsonb)
- *   RPC  create_venue(p_name, p_lat, p_lng, p_address, p_sports)    → venue_views row
+ *   (user_sports: owner insert/delete under RLS)
+ *   RPC  create_venue(p_name, p_lat, p_lng, p_sports, p_address)    → venue_views row
  *   RPC  rate_venue(p_venue_id, p_sport, p_overall, p_attributes)
  *   RPC  report_venue(p_venue_id, p_reason, p_note)
  *   RPC  create_game(p_sport, p_title, p_notes, p_visibility, p_venue_id, p_lat, p_lng, p_hide_exact_location,
  *                    p_capacity, p_starts_at, p_ends_at, p_deposit_minor, p_currency, p_deposit_forfeit_to,
- *                    p_women_only, p_team_count)                      → game id
- *   RPC  cancel_game(p_game_id) · resolve_invite(p_token) → game id
+ *                    p_women_only, p_team_count)                      → game_views row
+ *   RPC  cancel_game(p_game_id) · resolve_invite(p_token)               → game_views row | null
  *   RPC  request_join(p_game_id, p_position, p_invite_token)          → participant row
  *   RPC  decide_join(p_game_id, p_user_id, p_decision) · remove_participant(p_game_id, p_user_id)
  *   RPC  cancel_participation(p_game_id)                              → { participant, sanction }
  *   RPC  save_teams(p_game_id, p_assignments jsonb) · submit_result(p_game_id, p_team_scores) · rate_host(p_game_id, p_stars)
  *   RPC  peer_confirm(p_game_id, p_target_user_id)                    → { confirmations, verdict }
  *   RPC  get_qr_token(p_game_id) · rotate_qr(p_game_id)               → { token, step, expires_at }
- *   RPC  report_user(p_target_user_id, p_category, p_game_id, p_message_id, p_note) · block_user(p_user_id)
+ *   RPC  report_user(p_target_user_id, p_category, p_game_id, p_message_id, p_note) · block_user / unblock_user(p_user_id)
+ *   RPC  register_push_token(p_token, p_platform)
  *   RPC  file_appeal(p_sanction_id, p_text)
  *   EF   checkin-verify {gameId, request} → CheckInVerdict (uses submit_checkin internally)
  *   EF   create-deposit {gameId} → DepositSetup · send-message · translate-message · delete-account
@@ -355,10 +356,12 @@ export class SupabaseAdapter implements DataPort {
   }
 
   async setMySports(sports: readonly UserSportInput[]): Promise<UserSport[]> {
-    await this.uid();
-    const payload = sports.map((s) => ({ sport: s.sport, self_skill: s.selfSkill, attributes: s.attributes, positions: s.positions }));
-    const rows = await this.rpc<Row[]>('set_my_sports', { p_sports: payload });
-    return (rows ?? []).map(mapUserSport);
+    const me = await this.uid();
+    const payload = sports.map((s) => ({ user_id: me, sport: s.sport, self_skill: s.selfSkill, attributes: s.attributes, positions: s.positions }));
+    await this.q(this.sb.from('user_sports').delete().eq('user_id', me));
+    if (!payload.length) return [];
+    const rows = await this.q<Row[]>(this.sb.from('user_sports').insert(payload).select('*'));
+    return rows.map(mapUserSport);
   }
 
   async deleteAccount(): Promise<void> {
@@ -442,8 +445,10 @@ export class SupabaseAdapter implements DataPort {
 
   async resolveInvite(inviteToken: string): Promise<GameDetail | null> {
     await this.uid();
-    const gameId = await this.rpc<string | null>('resolve_invite', { p_token: inviteToken });
-    return gameId ? this.gameById(gameId) : null;
+    const row = await this.rpc<Row | null>('resolve_invite', { p_token: inviteToken });
+    if (!row || row.id == null) return null;
+    const [detail] = await this.details([mapGameSummary(row)]);
+    return detail ?? null;
   }
 
   async listMyGames(): Promise<GameDetail[]> {
@@ -465,7 +470,7 @@ export class SupabaseAdapter implements DataPort {
 
   async createGame(input: GameCreateInput): Promise<GameDetail> {
     await this.uid();
-    const id = await this.rpc<string>('create_game', {
+    const row = await this.rpc<Row>('create_game', {
       p_sport: input.sport,
       p_title: input.title,
       p_notes: input.notes ?? null,
@@ -483,7 +488,7 @@ export class SupabaseAdapter implements DataPort {
       p_women_only: input.womenOnly,
       p_team_count: input.teamCount,
     });
-    const game = await this.gameById(id);
+    const [game] = await this.details([mapGameSummary(row)]);
     if (!game) throw new StError('unknown', 'created game not visible');
     return game;
   }
@@ -609,8 +614,8 @@ export class SupabaseAdapter implements DataPort {
   }
 
   async unblockUser(userId: UserId): Promise<void> {
-    const me = await this.uid();
-    await this.q(this.sb.from('blocks').delete().eq('blocker_id', me).eq('blocked_id', userId));
+    await this.uid();
+    await this.rpc('unblock_user', { p_user_id: userId });
   }
 
   async listBlocked(): Promise<Block[]> {
@@ -711,10 +716,8 @@ export class SupabaseAdapter implements DataPort {
   // ---------------------------------------------------------------------------
 
   async registerPushToken(token: string, platform: PushPlatform): Promise<void> {
-    const me = await this.uid();
-    await this.q(
-      this.sb.from('push_tokens').upsert({ user_id: me, token, platform, last_seen_at: new Date().toISOString() }, { onConflict: 'token' }),
-    );
+    await this.uid();
+    await this.rpc('register_push_token', { p_token: token, p_platform: platform });
   }
 
   async unregisterPushToken(token: string): Promise<void> {

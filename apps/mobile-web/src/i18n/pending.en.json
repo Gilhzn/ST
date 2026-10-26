@@ -109,5 +109,11 @@
     "invite": {
       "signedOutBody": "Sign in or create an account to see this game and join it."
     }
+  },
+  "checkin": {
+    "geofence": {
+      "title": "Sport Talent",
+      "body": "You’re near the game — tap to check in."
+    }
   }
 }

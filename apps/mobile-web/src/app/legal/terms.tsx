@@ -1,8 +1,5 @@
-import { PlaceholderScreen } from '@/components/PlaceholderScreen';
-import { useT } from '@/i18n';
+import { LegalPage } from '@/components/LegalPage';
 
-/** Legal page (always reachable, also signed out). Content next wave (legal namespace). */
-export default function LegalScreen() {
-  const { t } = useT();
-  return <PlaceholderScreen title={t('legal:terms.title')} testID="screen.legal.terms" />;
+export default function TermsScreen() {
+  return <LegalPage page="terms" testID="screen.legal.terms" sections={['account', 'conduct', 'games', 'deposits', 'sanctions', 'changes']} />;
 }
