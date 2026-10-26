@@ -41,7 +41,12 @@ export function Card({
   };
 
   if (!onPress) {
-    return <View style={[base, style]}>{children}</View>;
+    const { testID, nativeID, role, "aria-label": ariaLabel } = rest;
+    return (
+      <View style={[base, style]} testID={testID ?? undefined} nativeID={nativeID} role={role} aria-label={ariaLabel}>
+        {children}
+      </View>
+    );
   }
 
   return (

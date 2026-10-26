@@ -1,9 +1,7 @@
 /**
- * Blocked players with Unblock (TrustApi.listBlocked / unblockUser). The port
- * returns ids only, and a blocked user's public profile is hidden by design, so
- * rows are labelled by position and block date.
+ * Blocked players with Unblock. Names come from `listBlockedNamed` (adapter
+ * extension); entries without a known name are labelled by position.
  */
-import type { Block } from '@st/domain';
 import { Button, Row, Stack, Text } from '@st/ui';
 import { useState } from 'react';
 
@@ -11,6 +9,7 @@ import { ConfirmDialog } from '@/components/ConfirmDialog';
 import { Icon } from '@/components/Icon';
 import { ErrorView, InlineError, Skeleton } from '@/components/States';
 import { useToast } from '@/components/Toast';
+import { listBlockedNamed, type BlockedEntry } from '@/data/blocked';
 import { useData } from '@/data/DataProvider';
 import { useAction, useAsync } from '@/hooks/useAsync';
 import { useT } from '@/i18n';
@@ -20,8 +19,8 @@ export function BlockedList() {
   const { t, locale } = useT();
   const port = useData();
   const toast = useToast();
-  const blocked = useAsync(() => port.listBlocked(), [port]);
-  const [target, setTarget] = useState<{ block: Block; index: number } | null>(null);
+  const blocked = useAsync(() => listBlockedNamed(port), [port]);
+  const [target, setTarget] = useState<{ block: BlockedEntry; index: number } | null>(null);
   const unblock = useAction(async (userId: string) => {
     await port.unblockUser(userId);
     await blocked.reload();
@@ -41,7 +40,7 @@ export function BlockedList() {
         </Text>
       ) : (
         (blocked.data ?? []).map((b, i) => {
-          const name = t('settings:privacy.blocked.unnamed', { number: i + 1 });
+          const name = b.displayName ?? t('settings:privacy.blocked.unnamed', { number: i + 1 });
           const since = t('settings:privacy.blocked.since', { date: formatDate(b.createdAt, locale, { day: 'numeric', month: 'short', year: 'numeric' }) });
           return (
             <Row key={b.blockedId} gap="md" testID={`settings.blocked.${b.blockedId}`} style={{ minHeight: 56 }}>
@@ -69,7 +68,7 @@ export function BlockedList() {
       <ConfirmDialog
         testID="settings.blocked.confirm"
         visible={!!target}
-        title={target ? t('settings:privacy.blocked.unblockConfirm', { name: t('settings:privacy.blocked.unnamed', { number: target.index + 1 }) }) : ''}
+        title={target ? t('settings:privacy.blocked.unblockConfirm', { name: target.block.displayName ?? t('settings:privacy.blocked.unnamed', { number: target.index + 1 }) }) : ''}
         confirmLabel={t('common:actions.unblock')}
         cancelLabel={t('common:actions.cancel')}
         busy={unblock.busy}
