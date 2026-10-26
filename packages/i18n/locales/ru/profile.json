@@ -13,7 +13,8 @@
     "none": "Пока нет",
     "verifiedAttendance": "Подтверждённое присутствие",
     "noShows": "Неявки",
-    "lateCancels": "Поздние отмены"
+    "lateCancels": "Поздние отмены",
+    "streak": "Чек-инов подряд"
   },
   "positions": {
     "title": "Позиции",

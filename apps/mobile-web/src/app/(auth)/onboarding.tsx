@@ -1,4 +1,8 @@
-/** Short profile after the age gate (design §13.2): name, gender (optional), sports with positions and self skill. */
+/**
+ * Short profile after the age gate (design v2 §15.1): name, gender (optional), sports as large
+ * glyph tiles, then per sport a card with position chips and a five-star level. One primary
+ * "Finish setup" in the sticky footer (success haptic).
+ */
 import {
   SPORT_IDS,
   SPORT_POSITIONS,
@@ -9,14 +13,14 @@ import {
   type Stars,
   type UserSportInput,
 } from '@st/domain';
-import { BidiText, Button, Card, Row, Stack, Text, TextField } from '@st/ui';
+import { Button, Card, Haptics, Icon, radius, spacing, SportGlyphBadge, Text, TextField, useTheme } from '@st/ui';
 import { router } from 'expo-router';
 import { useEffect, useState } from 'react';
-import { View } from 'react-native';
+import { Pressable, View } from 'react-native';
 
 import { ChoiceChip } from '@/components/ChoiceChip';
-import { SportIcon } from '@/components/Icon';
 import { Screen } from '@/components/Screen';
+import { SportTile } from '@/components/SportTile';
 import { InlineError } from '@/components/States';
 import { useData } from '@/data/DataProvider';
 import { useAction } from '@/hooks/useAsync';
@@ -105,40 +109,45 @@ export default function OnboardingScreen() {
     void finish.run();
   };
 
-  return (
-    <Screen testID="screen.auth.onboarding" title={t('auth:profileSetup.title')} backFallback="/age-gate">
-      <Stack gap="xl">
-        <Stack gap="xs">
-          <TextField
-            testID="auth.onboarding.name"
-            label={t('auth:profileSetup.displayNameLabel')}
-            helperText={t('auth:profileSetup.displayNameHint')}
-            value={name}
-            maxLength={40}
-            onChangeText={(v) => {
-              setName(v);
-              if (nameError) setNameError(false);
-            }}
-            autoComplete="name"
-            textContentType="nickname"
-            error={nameError ? t('common:validation.required') : undefined}
-            required
-          />
-          {name.trim() ? (
-            <Text variant="caption" color="textSecondary">
-              <BidiText variant="caption" color="textSecondary">
-                {name.trim()}
-              </BidiText>
-            </Text>
-          ) : null}
-        </Stack>
+  const chosen = SPORT_IDS.filter((s) => sports[s]);
 
-        <Stack gap="sm">
-          <Text variant="label">{t('auth:profileSetup.genderLabel')}</Text>
-          <Text variant="caption" color="textTertiary">
-            {t('auth:profileSetup.genderHint')}
+  return (
+    <Screen
+      testID="screen.auth.onboarding"
+      large
+      title={t('auth:profileSetup.title')}
+      subtitle={t('auth:profileSetup.subtitle')}
+      backFallback="/age-gate"
+      contentStyle={{ gap: spacing.xxl }}
+      footer={
+        <View style={{ gap: spacing.sm }}>
+          <InlineError error={finish.error} />
+          <Button testID="auth.onboarding.submit" label={t('auth:profileSetup.finish')} iconEnd="ArrowRight" loading={finish.busy} onPress={submit} fullWidth size="lg" haptic="publishGame" />
+        </View>
+      }
+    >
+      <View style={{ gap: spacing.lg }}>
+        <TextField
+          testID="auth.onboarding.name"
+          label={t('auth:profileSetup.displayNameLabel')}
+          helperText={t('auth:profileSetup.displayNameHint')}
+          value={name}
+          maxLength={40}
+          icon="User"
+          onChangeText={(v) => {
+            setName(v);
+            if (nameError) setNameError(false);
+          }}
+          autoComplete="name"
+          textContentType="nickname"
+          error={nameError ? t('common:validation.required') : undefined}
+          required
+        />
+        <View style={{ gap: spacing.sm }}>
+          <Text variant="label" color="textSecondary">
+            {t('auth:profileSetup.genderLabel')}
           </Text>
-          <Row gap="sm" wrap accessibilityRole="radiogroup">
+          <View role="radiogroup" aria-label={t('auth:profileSetup.genderLabel')} style={{ flexDirection: 'row', flexWrap: 'wrap', gap: spacing.sm }}>
             {GENDERS.map((g) => (
               <ChoiceChip
                 key={g}
@@ -149,43 +158,55 @@ export default function OnboardingScreen() {
                 onToggle={() => setGender(g)}
               />
             ))}
-          </Row>
-        </Stack>
+          </View>
+          <Text variant="footnote" color="textTertiary">
+            {t('auth:profileSetup.genderHint')}
+          </Text>
+        </View>
+      </View>
 
-        <Stack gap="sm">
-          <Text variant="title3">{t('auth:profileSetup.sportsTitle')}</Text>
-          <Text variant="caption" color="textTertiary">
+      <View style={{ gap: spacing.md }}>
+        <View style={{ gap: spacing.xs }}>
+          <Text variant="title2" role="heading" aria-level={2}>
+            {t('auth:profileSetup.sportsTitle')}
+          </Text>
+          <Text variant="callout" color="textSecondary">
             {t('auth:profileSetup.sportsHint')}
           </Text>
-          <Row gap="sm" wrap>
-            {SPORT_IDS.map((s) => (
-              <ChoiceChip
-                key={s}
-                testID={`auth.onboarding.sport.${s}`}
-                sport={s}
-                label={t(`common:sports.${s}`)}
-                selected={!!sports[s]}
-                onToggle={(on) => toggleSport(s, on)}
-              />
-            ))}
-          </Row>
-        </Stack>
+        </View>
+        <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: spacing.md }}>
+          {SPORT_IDS.map((s) => (
+            <SportTile
+              key={s}
+              testID={`auth.onboarding.sport.${s}`}
+              sport={s}
+              label={t(`common:sports.${s}`)}
+              selected={!!sports[s]}
+              onPress={() => toggleSport(s, !sports[s])}
+            />
+          ))}
+        </View>
+      </View>
 
-        {SPORT_IDS.filter((s) => sports[s]).map((s) => {
-          const d = sports[s] as SportDraft;
-          const positions = SPORT_POSITIONS[s] as readonly PositionId[];
-          return (
-            <View key={s} testID={`auth.onboarding.sportCard.${s}`}>
-            <Card outlined>
-              <Stack gap="md">
-                <Row gap="sm">
-                  <SportIcon sport={s} />
-                  <Text variant="title3">{t(`common:sports.${s}`)}</Text>
-                </Row>
+      {chosen.map((s) => {
+        const d = sports[s] as SportDraft;
+        const positions = SPORT_POSITIONS[s] as readonly PositionId[];
+        return (
+          <View key={s} testID={`auth.onboarding.sportCard.${s}`}>
+            <Card padding="xl">
+              <View style={{ gap: spacing.xl }}>
+                <View style={{ flexDirection: 'row', alignItems: 'center', gap: spacing.md }}>
+                  <SportGlyphBadge sport={s} size={40} variant="solid" squircle />
+                  <Text variant="title3" style={{ flex: 1 }}>
+                    {t(`common:sports.${s}`)}
+                  </Text>
+                </View>
                 {positions.length ? (
-                  <Stack gap="xs">
-                    <Text variant="label">{t('auth:profileSetup.positionsLabel')}</Text>
-                    <Row gap="sm" wrap>
+                  <View style={{ gap: spacing.sm }}>
+                    <Text variant="label" color="textSecondary">
+                      {t('auth:profileSetup.positionsLabel')}
+                    </Text>
+                    <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: spacing.sm }}>
                       {positions.map((p) => (
                         <ChoiceChip
                           key={p}
@@ -195,33 +216,84 @@ export default function OnboardingScreen() {
                           onToggle={(on) => togglePosition(s, p, on)}
                         />
                       ))}
-                    </Row>
-                  </Stack>
+                    </View>
+                  </View>
                 ) : null}
-                <Stack gap="xs">
-                  <Text variant="label">{t('auth:profileSetup.skillLabel')}</Text>
-                  <Row gap="sm" wrap accessibilityRole="radiogroup">
-                    {SKILLS.map((n) => (
-                      <ChoiceChip
-                        key={n}
-                        testID={`auth.onboarding.skill.${s}.${n}`}
-                        label={t(`auth:profileSetup.skill.${n}`)}
-                        selectionRole="radio"
-                        selected={d.skill === n}
-                        onToggle={() => setSkill(s, n)}
-                      />
-                    ))}
-                  </Row>
-                </Stack>
-              </Stack>
+                <SkillStars
+                  sport={s}
+                  value={d.skill}
+                  onChange={(n) => setSkill(s, n)}
+                  label={t('auth:profileSetup.skillLabel')}
+                  levelLabel={(n) => t(`auth:profileSetup.skill.${n}`)}
+                />
+              </View>
             </Card>
-            </View>
+          </View>
+        );
+      })}
+    </Screen>
+  );
+}
+
+/**
+ * Self-rated level as five large stars (radio semantics, 44dp targets, selection haptic) with
+ * the level name beside them ("Intermediate"). Stars never mirror; order follows the reading
+ * direction so "more" is always toward the end edge.
+ */
+function SkillStars({
+  sport,
+  value,
+  onChange,
+  label,
+  levelLabel,
+}: {
+  sport: SportId;
+  value: Stars;
+  onChange: (n: Stars) => void;
+  label: string;
+  levelLabel: (n: Stars) => string;
+}) {
+  const { colors } = useTheme();
+  return (
+    <View style={{ gap: spacing.sm }}>
+      <View style={{ flexDirection: 'row', alignItems: 'baseline', justifyContent: 'space-between', gap: spacing.sm }}>
+        <Text variant="label" color="textSecondary">
+          {label}
+        </Text>
+        <Text variant="label" weight="semibold" color="text" aria-live="polite">
+          {levelLabel(value)}
+        </Text>
+      </View>
+      <View role="radiogroup" aria-label={label} style={{ flexDirection: 'row', gap: spacing.xs }}>
+        {SKILLS.map((n) => {
+          const on = n <= value;
+          return (
+            <Pressable
+              key={n}
+              testID={`auth.onboarding.skill.${sport}.${n}`}
+              role="radio"
+              aria-checked={value === n}
+              aria-label={levelLabel(n)}
+              onPress={() => {
+                Haptics.trigger('chipToggle');
+                onChange(n);
+              }}
+              style={({ pressed }) => ({
+                flex: 1,
+                height: 48,
+                maxWidth: 64,
+                borderRadius: radius.md,
+                alignItems: 'center',
+                justifyContent: 'center',
+                backgroundColor: on ? colors.warningSubtle : colors.surfaceSunken,
+                opacity: pressed ? 0.8 : 1,
+              })}
+            >
+              <Icon name="Star" size={24} weight={on ? 'fill' : 'regular'} color={on ? 'warning' : 'textTertiary'} />
+            </Pressable>
           );
         })}
-
-        <InlineError error={finish.error} />
-        <Button testID="auth.onboarding.submit" label={t('auth:profileSetup.finish')} loading={finish.busy} onPress={submit} fullWidth size="lg" />
-      </Stack>
-    </Screen>
+      </View>
+    </View>
   );
 }

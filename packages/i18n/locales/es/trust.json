@@ -73,7 +73,8 @@
       "askPerson": "Puedes pedir que una persona revise cualquier decisión.",
       "affectsTitle": "Qué afecta",
       "stillAllowedTitle": "Qué puedes seguir haciendo",
-      "ruleLine": "Norma: {rule}"
+      "ruleLine": "Norma: {rule}",
+      "decidedByTitle": "Quién lo decidió"
     },
     "rule": {
       "late_cancel": "Norma de cancelación tardía",
@@ -115,7 +116,8 @@
       "cta": "Impugnar esta tarjeta",
       "window": "Puedes impugnar esta tarjeta hasta el {date}.",
       "windowClosed": "El plazo de impugnación ha terminado, pero aún puedes apelar.",
-      "windowLeft": "Puedes impugnar esta tarjeta hasta el {date} (quedan {duration})."
+      "windowLeft": "Puedes impugnar esta tarjeta hasta el {date} (quedan {duration}).",
+      "ringCaption": "restantes"
     },
     "appeal": {
       "cta": "Apelar esta decisión",

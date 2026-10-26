@@ -301,7 +301,11 @@
     "locked": "Die Teams sind gesperrt. Die Spieler:innen wurden benachrichtigt.",
     "coverageTeam": "{team}: {roles}",
     "notLocked": "Die Organisation hat die Teams noch nicht festgelegt.",
-    "reshuffled": "Teams neu gemischt."
+    "reshuffled": "Teams neu gemischt.",
+    "avg": "Ø {rating}",
+    "balanceLabel": "Balance",
+    "tapToMove": "Tippe auf eine Person, um sie ins nächste Team zu verschieben.",
+    "ratingA11y": "Wertung {rating}"
   },
   "result": {
     "title": "Ergebnis eintragen",
@@ -314,7 +318,9 @@
     "submit": "Ergebnis speichern",
     "saved": "Ergebnis gespeichert. Die Spieler:innen können es {hours, plural, one {# Stunde} other {# Stunden}} lang anfechten.",
     "closed": "Die Frist für das Ergebnis ist um {time} abgelaufen.",
-    "notYet": "Das Ergebnis kannst du eintragen, wenn das Spiel um {time} endet."
+    "notYet": "Das Ergebnis kannst du eintragen, wenn das Spiel um {time} endet.",
+    "finalScore": "Endstand",
+    "closesAt": "Schließt um {time}"
   },
   "my": {
     "refresh": "Aktualisieren",

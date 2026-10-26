@@ -13,7 +13,8 @@
     "none": "Noch keine",
     "verifiedAttendance": "Bestätigte Anwesenheit",
     "noShows": "Nicht erschienen",
-    "lateCancels": "Späte Absagen"
+    "lateCancels": "Späte Absagen",
+    "streak": "Check-in-Serie"
   },
   "positions": {
     "title": "Positionen",

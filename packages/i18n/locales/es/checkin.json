@@ -9,11 +9,20 @@
     "accuracy": "Precisión: {accuracy}",
     "retry": "Intentar de nuevo",
     "intro": "Quédate donde estás. Tomamos tres lecturas de ubicación con unos segundos de diferencia.",
-    "start": "Comprobar mi ubicación"
+    "start": "Comprobar mi ubicación",
+    "accuracyLabel": "Precisión",
+    "distanceLabel": "Desde el marcador",
+    "samplesLabel": "Lecturas",
+    "quality": {
+      "good": "Señal fuerte",
+      "fair": "Señal media",
+      "poor": "Señal débil"
+    }
   },
   "success": {
     "title": "Check-in hecho",
-    "method": "{method, select, gps {Confirmado por GPS} qr {Confirmado con código QR} peer {Confirmado por compañeros} host {Confirmado por el organizador} other {Confirmado}}"
+    "method": "{method, select, gps {Confirmado por GPS} qr {Confirmado con código QR} peer {Confirmado por compañeros} host {Confirmado por el organizador} other {Confirmado}}",
+    "subtitle": "Que disfrutes del partido."
   },
   "unconfirmed": {
     "title": "Todavía no podemos confirmar que estés en el lugar",
@@ -95,11 +104,30 @@
     "present": "Presente",
     "notHere": "No está",
     "newCode": "Código nuevo",
-    "qrA11y": "Código QR de check-in para que lo escaneen los jugadores"
+    "qrA11y": "Código QR de check-in para que lo escaneen los jugadores",
+    "countdown": "Nuevo código en {time}",
+    "screenOn": "Mantén esta pantalla encendida y sube el brillo para que puedan escanearla.",
+    "copy": "Copiar código",
+    "copied": "Código copiado",
+    "playersTitle": "Jugadores"
   },
   "geofence": {
     "title": "Sport Talent",
     "body": "Estás cerca del partido. Toca para hacer el check-in."
   },
-  "fallbacks": "{count, plural, one {Prueba la otra forma de abajo.} many {Prueba una de las otras formas de abajo.} other {Prueba una de las otras formas de abajo.}}"
+  "fallbacks": "{count, plural, one {Prueba la otra forma de abajo.} many {Prueba una de las otras formas de abajo.} other {Prueba una de las otras formas de abajo.}}",
+  "methods": {
+    "title": "Elige cómo hacer el check-in",
+    "gps": "Ubicación",
+    "qr": "Escanear QR",
+    "code": "Introducir código",
+    "peer": "Compañeros",
+    "suggested": "Prueba esto"
+  },
+  "steps": {
+    "choose": "Elegir",
+    "verify": "Confirmar",
+    "done": "Listo",
+    "progress": "Paso {current} de {total}: {label}"
+  }
 }

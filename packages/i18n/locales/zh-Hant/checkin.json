@@ -9,11 +9,20 @@
     "accuracy": "精確度：{accuracy}",
     "retry": "再試一次",
     "intro": "請留在原地。我們會間隔幾秒讀取三次位置。",
-    "start": "檢查我的位置"
+    "start": "檢查我的位置",
+    "accuracyLabel": "精確度",
+    "distanceLabel": "距離標記",
+    "samplesLabel": "讀數",
+    "quality": {
+      "good": "訊號強",
+      "fair": "訊號普通",
+      "poor": "訊號弱"
+    }
   },
   "success": {
     "title": "報到成功",
-    "method": "{method, select, gps {已透過 GPS 確認} qr {已透過 QR 碼確認} peer {已由隊友確認} host {已由主辦人確認} other {已確認}}"
+    "method": "{method, select, gps {已透過 GPS 確認} qr {已透過 QR 碼確認} peer {已由隊友確認} host {已由主辦人確認} other {已確認}}",
+    "subtitle": "祝比賽愉快。"
   },
   "unconfirmed": {
     "title": "暫時無法確認你已到達場地",
@@ -95,11 +104,30 @@
     "present": "已到場",
     "notHere": "未到場",
     "newCode": "新代碼",
-    "qrA11y": "供球友掃描的報到 QR 碼"
+    "qrA11y": "供球友掃描的報到 QR 碼",
+    "countdown": "{time} 後更新報到碼",
+    "screenOn": "請保持螢幕開啟並調高亮度，方便隊員掃描。",
+    "copy": "複製報到碼",
+    "copied": "已複製報到碼",
+    "playersTitle": "隊員"
   },
   "geofence": {
     "title": "Sport Talent",
     "body": "你已在比賽附近，點選即可報到。"
   },
-  "fallbacks": "{count, plural, other {請試試下方的其他方式。}}"
+  "fallbacks": "{count, plural, other {請試試下方的其他方式。}}",
+  "methods": {
+    "title": "選擇報到方式",
+    "gps": "定位",
+    "qr": "掃描 QR 碼",
+    "code": "輸入報到碼",
+    "peer": "隊友",
+    "suggested": "試試這個"
+  },
+  "steps": {
+    "choose": "選擇",
+    "verify": "確認",
+    "done": "完成",
+    "progress": "第 {current} 步，共 {total} 步：{label}"
+  }
 }

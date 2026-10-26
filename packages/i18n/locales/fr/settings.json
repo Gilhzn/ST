@@ -7,7 +7,8 @@
     "notifications": "Notifications",
     "privacy": "Confidentialité et sécurité",
     "legal": "Informations légales",
-    "about": "À propos"
+    "about": "À propos",
+    "preferences": "Préférences"
   },
   "account": {
     "phone": "Numéro de téléphone",
@@ -26,7 +27,8 @@
       "restartNow": "Redémarrer maintenant",
       "later": "Plus tard",
       "pending": "La nouvelle langue sera utilisée après le redémarrage."
-    }
+    },
+    "allLanguages": "Toutes les langues"
   },
   "theme": {
     "title": "Thème",
@@ -47,7 +49,8 @@
     "osOff": "Les notifications sont désactivées dans les réglages de ton appareil.",
     "osOffAction": "Ouvrir les réglages de l’appareil",
     "deviceNote": "Ces choix sont enregistrés sur cet appareil.",
-    "unavailable": "Les notifications push ne sont pas disponibles ici. Tu verras quand même les nouveautés dans tes messages."
+    "unavailable": "Les notifications push ne sont pas disponibles ici. Tu verras quand même les nouveautés dans tes messages.",
+    "groupTitle": "Me prévenir pour"
   },
   "privacy": {
     "title": "Confidentialité et sécurité",
@@ -102,7 +105,8 @@
     "timingTitle": "Quand cela se passe",
     "timing": "Ton profil disparaît de l’appli immédiatement. Le reste de tes données personnelles est effacé sous 24 heures.",
     "reregister": "Tu pourras t’inscrire de nouveau plus tard avec le même numéro. Si un bannissement ou un avertissement est encore en cours, le temps restant s’applique de nouveau.",
-    "keep": "Garder mon compte"
+    "keep": "Garder mon compte",
+    "step": "Étape {current} sur {total}"
   },
   "about": {
     "version": "Version {version}",

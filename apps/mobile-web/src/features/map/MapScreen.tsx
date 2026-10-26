@@ -357,7 +357,7 @@ export default function MapScreen() {
   const listToggle = (
     <ViewToggle
       testID="map.list.toggle"
-      icon={view === 'map' ? 'list' : 'map'}
+      icon={view === 'map' ? 'ListBullets' : 'MapTrifold'}
       label={view === 'map' ? t('map:sheet.showList') : t('map:sheet.showMap')}
       onPress={() => setView((v) => (v === 'map' ? 'list' : 'map'))}
     />
@@ -485,7 +485,7 @@ export default function MapScreen() {
             {searchArea}
           </View>
           <View pointerEvents="box-none" style={{ position: 'absolute', end: spacing.lg, bottom: spacing.lg, gap: spacing.md, alignItems: 'flex-end' }}>
-            <RoundButton testID="map.locate" icon="navigation" label={t('map:locate.label')} busy={locating} active={!!userLocation} onPress={() => void locate()} />
+            <RoundButton testID="map.locate" icon="NavigationArrow" label={t('map:locate.label')} busy={locating} active={!!userLocation} onPress={() => void locate()} />
             <CreateFab label={t('map:createGame.fab')} extended onPress={() => router.push('/game/create')} />
           </View>
           {disclosure}
@@ -565,7 +565,7 @@ export default function MapScreen() {
           pointerEvents="box-none"
           style={{ position: 'absolute', end: spacing.lg, bottom: peek + spacing.lg, gap: spacing.md, alignItems: 'flex-end', zIndex: zIndex.fab }}
         >
-          <RoundButton testID="map.locate" icon="navigation" label={t('map:locate.label')} busy={locating} active={!!userLocation} onPress={() => void locate()} />
+          <RoundButton testID="map.locate" icon="NavigationArrow" label={t('map:locate.label')} busy={locating} active={!!userLocation} onPress={() => void locate()} />
           <CreateFab label={t('map:createGame.fab')} extended={false} onPress={() => router.push('/game/create')} />
         </View>
       ) : (

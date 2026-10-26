@@ -7,7 +7,8 @@
     "notifications": "Notificaciones",
     "privacy": "Privacidad y seguridad",
     "legal": "Información legal",
-    "about": "Acerca de"
+    "about": "Acerca de",
+    "preferences": "Preferencias"
   },
   "account": {
     "phone": "Número de teléfono",
@@ -26,7 +27,8 @@
       "restartNow": "Reiniciar ahora",
       "later": "Más tarde",
       "pending": "El nuevo idioma se usará cuando reinicies."
-    }
+    },
+    "allLanguages": "Todos los idiomas"
   },
   "theme": {
     "title": "Tema",
@@ -47,7 +49,8 @@
     "osOff": "Las notificaciones están desactivadas en los ajustes de tu dispositivo.",
     "osOffAction": "Abrir ajustes del dispositivo",
     "deviceNote": "Estas opciones se guardan en este dispositivo.",
-    "unavailable": "Las notificaciones push no están disponibles aquí. Seguirás viendo las novedades en tu bandeja."
+    "unavailable": "Las notificaciones push no están disponibles aquí. Seguirás viendo las novedades en tu bandeja.",
+    "groupTitle": "Avisarme de"
   },
   "privacy": {
     "title": "Privacidad y seguridad",
@@ -102,7 +105,8 @@
     "timingTitle": "Cuándo ocurre",
     "timing": "Tu perfil desaparece de la app de inmediato. El resto de tus datos personales se borra en un plazo de 24 horas.",
     "reregister": "Podrás volver a registrarte más adelante con el mismo número. Si sigue vigente un bloqueo o una advertencia, el tiempo restante se vuelve a aplicar.",
-    "keep": "Mantener mi cuenta"
+    "keep": "Mantener mi cuenta",
+    "step": "Paso {current} de {total}"
   },
   "about": {
     "version": "Versión {version}",

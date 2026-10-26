@@ -90,6 +90,15 @@
     "tabChats": "Chat",
     "tabNotifications": "Notifiche",
     "empty": "Ancora nessun messaggio. Partecipa a una partita per iniziare a chattare.",
-    "pinned": "Fissato finché non lo leggi"
+    "pinned": "Fissato finché non lo leggi",
+    "markAllRead": "Segna tutto come letto",
+    "markRead": "Segna come letto",
+    "needsAttention": "Richiede la tua attenzione",
+    "earlier": "Precedenti",
+    "caughtUp": "Sei in pari. Ti avviseremo quando succede qualcosa."
+  },
+  "day": {
+    "today": "Oggi",
+    "yesterday": "Ieri"
   }
 }

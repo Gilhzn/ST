@@ -4,12 +4,12 @@
  *   signed out → (auth)/phone, otp · needs profile → (auth)/age-gate, onboarding · ready → app.
  * Legal pages, invite links and the not-found screen are always reachable.
  */
-import { useTheme } from '@st/ui';
+import { BrandMark, useAppFonts, useTheme } from '@st/ui';
 import { router, Stack, usePathname } from 'expo-router';
 import * as SplashScreen from 'expo-splash-screen';
 import { StatusBar } from 'expo-status-bar';
 import { useEffect, useRef } from 'react';
-import { ActivityIndicator, View } from 'react-native';
+import { View } from 'react-native';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 
 import { ToastProvider } from '@/components/Toast';
@@ -41,8 +41,10 @@ export default function RootLayout() {
 
 function ThemedRoot() {
   const { locale } = useT();
+  // Rubik (Latin, Cyrillic, Hebrew) + the locale's script fallback (Arabic, Devanagari); web and native.
+  const brandFonts = useAppFonts(locale);
   return (
-    <AppThemeProvider locale={locale}>
+    <AppThemeProvider locale={locale} brandFonts={brandFonts}>
       <DataProvider create={() => createDataPort(DATA_MODE)} mode={DATA_MODE}>
         <SessionProvider>
           <ToastProvider>
@@ -56,6 +58,7 @@ function ThemedRoot() {
 
 function RootNavigator() {
   const { status } = useSession();
+  const { t } = useT();
   const theme = useTheme();
   const pathname = usePathname();
   const previous = useRef(status);
@@ -85,7 +88,9 @@ function RootNavigator() {
   if (status === 'loading') {
     return (
       <View testID="app.loading" style={{ flex: 1, alignItems: 'center', justifyContent: 'center', backgroundColor: theme.colors.background }}>
-        <ActivityIndicator color={theme.colors.primary} />
+        <View aria-busy role="progressbar" aria-label={t('common:status.loading')}>
+          <BrandMark size={56} />
+        </View>
       </View>
     );
   }

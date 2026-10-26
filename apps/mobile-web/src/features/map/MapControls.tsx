@@ -2,12 +2,9 @@
  * Floating map controls: glass search bar (with the list/map toggle), "Search this area",
  * round icon buttons (recenter) and the volt Create FAB. Every control keeps its e2e test id.
  */
-import { fontWeights, Text, useTheme, type FontWeightKey } from '@st/ui';
+import { Fab, fontWeights, Icon, IconButton, Text, useTheme, type FontWeightKey, type IconName } from '@st/ui';
 import { useEffect, useRef, type ReactNode } from 'react';
 import { Animated, Pressable, TextInput, View, type TextStyle } from 'react-native';
-
-import type { GlyphName } from '@/platform/map/glyphs';
-import { GlyphIcon } from '@/platform/map/markers';
 
 import { Glass } from './Glass';
 
@@ -40,7 +37,7 @@ export function SearchBar({
   return (
     <Glass radius={26}>
       <View style={{ flexDirection: 'row', alignItems: 'center', height: 52, paddingStart: 16, paddingEnd: 6, gap: 10 }}>
-        <GlyphIcon name="search" size={20} color={theme.colors.text} />
+        <Icon name="MagnifyingGlass" size={20} weight="bold" color="text" style={{ flexShrink: 0 }} />
         <TextInput
           testID="map.search.input"
           accessibilityLabel={label}
@@ -71,7 +68,7 @@ export function SearchBar({
 }
 
 /** Pill inside the search bar that flips between map and list. */
-export function ViewToggle({ testID, icon, label, onPress }: { testID: string; icon: GlyphName; label: string; onPress: () => void }) {
+export function ViewToggle({ testID, icon, label, onPress }: { testID: string; icon: IconName; label: string; onPress: () => void }) {
   const theme = useTheme();
   const weight = useWeight();
   return (
@@ -92,7 +89,7 @@ export function ViewToggle({ testID, icon, label, onPress }: { testID: string; i
         transform: pressed && !theme.reducedMotion ? [{ scale: 0.97 }] : undefined,
       })}
     >
-      <GlyphIcon name={icon} size={18} color={theme.colors.onPrimary} />
+      <Icon name={icon} size={18} weight="bold" color="onPrimary" />
       <Text variant="label" style={[{ color: theme.colors.onPrimary }, weight('semibold')]}>
         {label}
       </Text>
@@ -137,7 +134,7 @@ export function SearchAreaButton({ visible, label, onPress }: { visible: boolean
           boxShadow: '0px 6px 18px rgba(11,10,28,0.28)',
         })}
       >
-        <GlyphIcon name="refresh" size={16} color={theme.colors.textInverse} />
+        <Icon name="ArrowClockwise" size={16} weight="bold" color="textInverse" />
         <Text variant="label" style={[{ color: theme.colors.textInverse }, weight('semibold')]}>
           {label}
         </Text>
@@ -155,67 +152,29 @@ export function RoundButton({
   active,
 }: {
   testID: string;
-  icon: GlyphName;
+  icon: IconName;
   label: string;
   onPress: () => void;
   busy?: boolean;
   active?: boolean;
 }) {
-  const theme = useTheme();
   return (
-    <Pressable
+    <IconButton
       testID={testID}
-      accessibilityRole="button"
-      accessibilityLabel={label}
+      icon={icon}
+      label={label}
+      variant="glass"
+      size="lg"
+      weight={active ? 'fill' : 'regular'}
+      color={active ? 'primary' : 'text'}
       accessibilityState={{ busy: !!busy }}
+      style={busy ? { opacity: 0.7 } : undefined}
       onPress={onPress}
-      style={({ pressed }) => ({
-        width: 48,
-        height: 48,
-        borderRadius: 24,
-        alignItems: 'center',
-        justifyContent: 'center',
-        backgroundColor: pressed ? theme.colors.surfaceSunken : theme.colors.surface,
-        opacity: busy ? 0.7 : 1,
-        transform: pressed && !theme.reducedMotion ? [{ scale: 0.95 }] : undefined,
-        boxShadow: theme.scheme === 'dark' ? '0px 6px 16px rgba(0,0,0,0.5)' : '0px 6px 16px rgba(18,17,41,0.16)',
-      })}
-    >
-      <GlyphIcon name={icon} size={22} color={active ? theme.colors.primary : theme.colors.text} />
-    </Pressable>
+    />
   );
 }
 
+/** Volt Create FAB (`@st/ui` Fab). */
 export function CreateFab({ label, onPress, extended }: { label: string; onPress: () => void; extended: boolean }) {
-  const theme = useTheme();
-  const weight = useWeight();
-  return (
-    <Pressable
-      testID="map.fab.create"
-      accessibilityRole="button"
-      accessibilityLabel={label}
-      onPress={onPress}
-      style={({ pressed }) => ({
-        height: 56,
-        minWidth: 56,
-        borderRadius: 28,
-        flexDirection: 'row',
-        gap: 8,
-        paddingStart: extended ? 18 : 0,
-        paddingEnd: extended ? 22 : 0,
-        alignItems: 'center',
-        justifyContent: 'center',
-        backgroundColor: pressed ? theme.colors.accentPressed : theme.colors.accent,
-        transform: pressed && !theme.reducedMotion ? [{ scale: 0.96 }] : undefined,
-        boxShadow: '0px 10px 24px rgba(120,160,0,0.35), 0px 2px 6px rgba(11,10,28,0.2)',
-      })}
-    >
-      <GlyphIcon name="plus" size={24} color={theme.colors.onAccent} />
-      {extended ? (
-        <Text variant="bodyStrong" style={[{ color: theme.colors.onAccent }, weight('bold')]}>
-          {label}
-        </Text>
-      ) : null}
-    </Pressable>
-  );
+  return <Fab testID="map.fab.create" label={label} extended={extended} onPress={onPress} />;
 }

@@ -13,7 +13,8 @@
     "none": "まだありません",
     "verifiedAttendance": "確認済みの出席",
     "noShows": "無断欠席",
-    "lateCancels": "直前キャンセル"
+    "lateCancels": "直前キャンセル",
+    "streak": "連続チェックイン"
   },
   "positions": {
     "title": "ポジション",

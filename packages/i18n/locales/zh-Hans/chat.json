@@ -90,6 +90,15 @@
     "tabChats": "聊天",
     "tabNotifications": "通知",
     "empty": "还没有消息。加入一场比赛，开始聊天吧。",
-    "pinned": "已置顶，阅读后取消"
+    "pinned": "已置顶，阅读后取消",
+    "markAllRead": "全部标为已读",
+    "markRead": "标为已读",
+    "needsAttention": "需要你留意",
+    "earlier": "更早",
+    "caughtUp": "暂无新通知。有新动态时我们会通知你。"
+  },
+  "day": {
+    "today": "今天",
+    "yesterday": "昨天"
   }
 }

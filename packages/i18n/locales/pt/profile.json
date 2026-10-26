@@ -13,7 +13,8 @@
     "none": "Nenhum ainda",
     "verifiedAttendance": "Presença verificada",
     "noShows": "Ausências",
-    "lateCancels": "Cancelamentos tardios"
+    "lateCancels": "Cancelamentos tardios",
+    "streak": "Sequência de check-ins"
   },
   "positions": {
     "title": "Posições",

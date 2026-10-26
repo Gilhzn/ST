@@ -301,7 +301,11 @@
     "locked": "チームを確定しました。プレイヤーに通知しました。",
     "coverageTeam": "{team}：{roles}",
     "notLocked": "主催者はまだチームを決めていません。",
-    "reshuffled": "チームをシャッフルしました。"
+    "reshuffled": "チームをシャッフルしました。",
+    "avg": "平均 {rating}",
+    "balanceLabel": "バランス",
+    "tapToMove": "選手をタップすると次のチームに移動します。",
+    "ratingA11y": "レーティング {rating}"
   },
   "result": {
     "title": "結果を入力",
@@ -314,7 +318,9 @@
     "submit": "結果を保存",
     "saved": "結果を保存しました。プレイヤーは{hours, plural, other {#時間}}以内に異議を申し立てられます。",
     "closed": "結果の入力期間は{time}に終了しました。",
-    "notYet": "試合が{time}に終了すると、結果を入力できます。"
+    "notYet": "試合が{time}に終了すると、結果を入力できます。",
+    "finalScore": "最終スコア",
+    "closesAt": "{time}に締め切り"
   },
   "my": {
     "refresh": "更新",

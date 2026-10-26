@@ -1,7 +1,6 @@
 /**
- * `@st/ui` Card that keeps its `testID` when it is not pressable (the package's
- * static branch renders a bare View without the rest props). Remove once the
- * package forwards it.
+ * `@st/ui` Card that keeps its `testID` when it is not pressable (the package's static branch
+ * renders a bare View without the rest props). v2 cards: radius 20, elevation 1 (dark: border).
  */
 import { Card as UiCard, type CardProps } from '@st/ui';
 import { View } from 'react-native';

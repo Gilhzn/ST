@@ -301,7 +301,11 @@
     "locked": "Os times estão travados. Os jogadores foram avisados.",
     "coverageTeam": "{team}: {roles}",
     "notLocked": "O organizador ainda não definiu os times.",
-    "reshuffled": "Times sorteados de novo."
+    "reshuffled": "Times sorteados de novo.",
+    "avg": "Média {rating}",
+    "balanceLabel": "Equilíbrio",
+    "tapToMove": "Toque em um jogador para movê-lo para o próximo time.",
+    "ratingA11y": "Nível {rating}"
   },
   "result": {
     "title": "Registrar resultado",
@@ -314,7 +318,9 @@
     "submit": "Salvar resultado",
     "saved": "Resultado salvo. Os jogadores podem contestá-lo por {hours, plural, one {# hora} many {# de horas} other {# horas}}.",
     "closed": "O prazo para registrar o resultado terminou às {time}.",
-    "notYet": "Você poderá registrar o resultado quando o jogo terminar, às {time}."
+    "notYet": "Você poderá registrar o resultado quando o jogo terminar, às {time}.",
+    "finalScore": "Placar final",
+    "closesAt": "Fecha às {time}"
   },
   "my": {
     "refresh": "Atualizar",

@@ -73,7 +73,8 @@
       "askPerson": "You can ask for a person to review any decision.",
       "affectsTitle": "What this affects",
       "stillAllowedTitle": "What you can still do",
-      "ruleLine": "Rule: {rule}"
+      "ruleLine": "Rule: {rule}",
+      "decidedByTitle": "Who decided"
     },
     "rule": {
       "late_cancel": "Late cancel rule",
@@ -115,7 +116,8 @@
       "cta": "Dispute this card",
       "window": "You can dispute this card until {date}.",
       "windowClosed": "The dispute window has closed, but you can still appeal.",
-      "windowLeft": "You can dispute this card until {date} ({duration} left)."
+      "windowLeft": "You can dispute this card until {date} ({duration} left).",
+      "ringCaption": "left"
     },
     "appeal": {
       "cta": "Appeal this decision",

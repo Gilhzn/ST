@@ -13,7 +13,8 @@
     "none": "لا يوجد بعد",
     "verifiedAttendance": "حضور مؤكَّد",
     "noShows": "مرات عدم الحضور",
-    "lateCancels": "الإلغاءات المتأخرة"
+    "lateCancels": "الإلغاءات المتأخرة",
+    "streak": "سلسلة الحضور"
   },
   "positions": {
     "title": "المراكز",

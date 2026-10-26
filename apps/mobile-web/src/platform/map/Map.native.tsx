@@ -20,7 +20,7 @@ import { Animated, Easing, Pressable, Text, View } from 'react-native';
 
 import { buildClusterIndex, type ClusterItem } from './cluster';
 import { cameraDurationMs, type MapPoint, type MapViewProps } from './Map.types';
-import { ClusterMarker, clusterSize, GlyphIcon, MapPinMarker, PIN_H, PIN_TIP_Y, PIN_W, SELECTED_SCALE, UserDot, VenueMarker } from './markers';
+import { ClusterMarker, clusterSize, GlyphIcon, MapPinMarker, pinGeometry, UserDot, VenueMarker } from './markers';
 import { circlePolygon, distanceKm, usesOfflineStyle } from './style';
 import { useBasemap } from './useBasemap';
 
@@ -165,7 +165,7 @@ function renderItem(
           onPress={() => zoomTo(item.at, item.expansionZoom)}
           hitSlop={Math.max(0, (48 - clusterSize(item.count)) / 2)}
         >
-          <ClusterMarker count={item.count} sports={item.sports} />
+          <ClusterMarker count={item.count} sports={item.sportCounts} accessibilityLabel={clusterLabel(item.count, item.sports)} />
         </Pressable>
       </Marker>
     );
@@ -175,11 +175,12 @@ function renderItem(
 
 function PointMarker({ point, selected, onPress }: { point: MapPoint; selected: boolean; onPress?: (p: MapPoint) => void }) {
   const theme = useTheme();
-  const scale = useRef(new Animated.Value(selected ? SELECTED_SCALE : 1)).current;
+  // Selection "pop": the v2 selected marker is larger; spring it in from slightly smaller.
+  const pop = useRef(new Animated.Value(1)).current;
   useEffect(() => {
-    const to = selected ? SELECTED_SCALE : 1;
-    if (theme.reducedMotion) scale.setValue(to);
-    else Animated.spring(scale, { toValue: to, damping: 14, stiffness: 260, mass: 0.8, useNativeDriver: true }).start();
+    if (!selected || theme.reducedMotion) return;
+    pop.setValue(0.8);
+    Animated.spring(pop, { toValue: 1, damping: 12, stiffness: 260, mass: 0.8, useNativeDriver: true }).start();
   }, [selected, theme.reducedMotion]);
 
   if (point.kind === 'venue') {
@@ -191,30 +192,22 @@ function PointMarker({ point, selected, onPress }: { point: MapPoint; selected: 
       </Marker>
     );
   }
-  const live = point.state === 'live';
-  // Scale about the tip: translate the pivot to the tip, scale, translate back.
-  const pivot = PIN_H / 2 - PIN_TIP_Y;
-  const box = PIN_H * SELECTED_SCALE;
+  const state = selected ? 'selected' : point.state === 'selected' ? 'default' : point.state;
+  const g = pinGeometry(state);
+  // Scale about the tip: move the pivot from the box centre to the tip, scale, move back.
+  const pivot = g.tipY - g.h / 2;
   return (
-    <Marker id={point.id} lngLat={[point.location.lng, point.location.lat]} anchor="bottom" offset={[0, PIN_H - PIN_TIP_Y]}>
+    <Marker id={point.id} lngLat={[point.location.lng, point.location.lat]} anchor="bottom" offset={[0, g.h - g.tipY]}>
       <Pressable
         testID={`map.pin.${point.id}`}
         accessibilityRole="button"
         accessibilityLabel={point.label}
         accessibilityState={{ selected }}
         onPress={() => onPress?.(point)}
-        style={{ width: PIN_W * SELECTED_SCALE, height: box, alignItems: 'center', justifyContent: 'flex-end' }}
       >
-        <View style={{ width: PIN_W, height: PIN_H }}>
-          {live ? (
-            <View style={{ position: 'absolute', left: PIN_W / 2 - 20, top: 17 - 20 }}>
-              <Pulse size={40} color={theme.colors.accent} />
-            </View>
-          ) : null}
-          <Animated.View style={{ transform: [{ translateY: -pivot }, { scale }, { translateY: pivot }] }}>
-            <MapPinMarker sport={point.sport} state={selected ? 'selected' : point.state === 'selected' ? 'default' : point.state} />
-          </Animated.View>
-        </View>
+        <Animated.View style={{ transform: [{ translateY: pivot }, { scale: pop }, { translateY: -pivot }] }} importantForAccessibility="no-hide-descendants">
+          <MapPinMarker sport={point.sport} state={state} accessibilityLabel={point.label} />
+        </Animated.View>
       </Pressable>
     </Marker>
   );

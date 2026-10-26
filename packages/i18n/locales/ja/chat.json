@@ -90,6 +90,15 @@
     "tabChats": "チャット",
     "tabNotifications": "通知",
     "empty": "メッセージはまだありません。試合に参加して、チャットを始めましょう。",
-    "pinned": "読むまで固定されます"
+    "pinned": "読むまで固定されます",
+    "markAllRead": "すべて既読にする",
+    "markRead": "既読にする",
+    "needsAttention": "確認が必要です",
+    "earlier": "それ以前",
+    "caughtUp": "新しい通知はありません。何かあればお知らせします。"
+  },
+  "day": {
+    "today": "今日",
+    "yesterday": "昨日"
   }
 }

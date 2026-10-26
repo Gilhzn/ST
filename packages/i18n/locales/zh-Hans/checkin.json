@@ -9,11 +9,20 @@
     "accuracy": "精度：{accuracy}",
     "retry": "再试一次",
     "intro": "请待在原地。我们会间隔几秒读取三次位置。",
-    "start": "检查我的位置"
+    "start": "检查我的位置",
+    "accuracyLabel": "精度",
+    "distanceLabel": "距离标记",
+    "samplesLabel": "读数",
+    "quality": {
+      "good": "信号强",
+      "fair": "信号一般",
+      "poor": "信号弱"
+    }
   },
   "success": {
     "title": "签到成功",
-    "method": "{method, select, gps {已通过 GPS 确认} qr {已通过二维码确认} peer {已由队友确认} host {已由组织者确认} other {已确认}}"
+    "method": "{method, select, gps {已通过 GPS 确认} qr {已通过二维码确认} peer {已由队友确认} host {已由组织者确认} other {已确认}}",
+    "subtitle": "祝比赛愉快。"
   },
   "unconfirmed": {
     "title": "暂时无法确认你已到达场地",
@@ -95,11 +104,30 @@
     "present": "已到场",
     "notHere": "未到场",
     "newCode": "新验证码",
-    "qrA11y": "供玩家扫描的签到二维码"
+    "qrA11y": "供玩家扫描的签到二维码",
+    "countdown": "{time} 后更新签到码",
+    "screenOn": "请保持屏幕常亮并调高亮度，方便队员扫码。",
+    "copy": "复制签到码",
+    "copied": "已复制签到码",
+    "playersTitle": "队员"
   },
   "geofence": {
     "title": "Sport Talent",
     "body": "你已在比赛附近，点按即可签到。"
   },
-  "fallbacks": "{count, plural, other {请试试下面的其他方式。}}"
+  "fallbacks": "{count, plural, other {请试试下面的其他方式。}}",
+  "methods": {
+    "title": "选择签到方式",
+    "gps": "定位",
+    "qr": "扫描二维码",
+    "code": "输入签到码",
+    "peer": "队友",
+    "suggested": "试试这个"
+  },
+  "steps": {
+    "choose": "选择",
+    "verify": "确认",
+    "done": "完成",
+    "progress": "第 {current} 步，共 {total} 步：{label}"
+  }
 }

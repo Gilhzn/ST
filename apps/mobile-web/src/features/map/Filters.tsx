@@ -7,12 +7,11 @@
  *   only the selected segment shows the unit. Miles locales show converted values.
  */
 import { MAX_SPORT_FILTERS, RADII_KM, SPORT_IDS, type RadiusKm, type SportId } from '@st/domain';
-import { sportColors, Text, useTheme } from '@st/ui';
+import { Icon, sportColors, Text, useTheme } from '@st/ui';
 import { Pressable, ScrollView, View } from 'react-native';
 
 import { useT } from '@/i18n';
 import { formatKm, formatNumber } from '@/lib/format';
-import type { GlyphName } from '@/platform/map/glyphs';
 import { GlyphIcon } from '@/platform/map/markers';
 
 import { tick, warn } from './haptics';
@@ -20,7 +19,7 @@ import { useWeight } from './MapControls';
 
 const CHIP_H = 38;
 
-type SportTone = { color: string; on: string; text?: string; textDark?: string; tint?: string; tintDark?: string };
+type SportTone = (typeof sportColors)[SportId] & { text?: string; textDark?: string; tint?: string; tintDark?: string };
 
 export function SportFilterBar({
   selected,
@@ -113,12 +112,12 @@ export function SportFilterBar({
                   backgroundColor: on ? 'rgba(255,255,255,0.22)' : dark ? (tone.tintDark ?? 'rgba(255,255,255,0.06)') : (tone.tint ?? theme.colors.surfaceSunken),
                 }}
               >
-                <GlyphIcon name={(on ? s : `${s}Bold`) as GlyphName} size={16} color={iconColor} />
+                <Icon name={tone.phosphor} size={16} weight={on ? 'fill' : 'bold'} color={iconColor} />
               </View>
               <Text variant="label" style={[{ color: on ? tone.on : theme.colors.text }, weight('semibold')]} numberOfLines={1}>
                 {label}
               </Text>
-              {on ? <GlyphIcon name="check" size={14} color={tone.on} /> : null}
+              {on ? <Icon name="Check" size={14} weight="bold" color={tone.on} /> : null}
             </Pressable>
           </Pressable>
         );

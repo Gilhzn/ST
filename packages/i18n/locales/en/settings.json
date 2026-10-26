@@ -7,7 +7,8 @@
     "notifications": "Notifications",
     "privacy": "Privacy and safety",
     "legal": "Legal",
-    "about": "About"
+    "about": "About",
+    "preferences": "Preferences"
   },
   "account": {
     "phone": "Phone number",
@@ -26,7 +27,8 @@
       "restartNow": "Restart now",
       "later": "Later",
       "pending": "The new language will be used after you restart."
-    }
+    },
+    "allLanguages": "All languages"
   },
   "theme": {
     "title": "Theme",
@@ -47,7 +49,8 @@
     "osOff": "Notifications are off in your device settings.",
     "osOffAction": "Open device settings",
     "deviceNote": "These choices are saved on this device.",
-    "unavailable": "Push notifications aren’t available here. You’ll still see updates in your Inbox."
+    "unavailable": "Push notifications aren’t available here. You’ll still see updates in your Inbox.",
+    "groupTitle": "Notify me about"
   },
   "privacy": {
     "title": "Privacy and safety",
@@ -102,7 +105,8 @@
     "timingTitle": "When it happens",
     "timing": "Your profile disappears from the app straight away. The rest of your personal data is erased within 24 hours.",
     "reregister": "You can sign up again later with the same number. If a ban or warning is still running, the rest of it applies again.",
-    "keep": "Keep my account"
+    "keep": "Keep my account",
+    "step": "Step {current} of {total}"
   },
   "about": {
     "version": "Version {version}",

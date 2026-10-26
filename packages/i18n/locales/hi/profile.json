@@ -13,7 +13,8 @@
     "none": "अभी कोई नहीं",
     "verifiedAttendance": "सत्यापित उपस्थिति",
     "noShows": "न पहुँचना",
-    "lateCancels": "देर से रद्द"
+    "lateCancels": "देर से रद्द",
+    "streak": "लगातार चेक-इन"
   },
   "positions": {
     "title": "पोज़ीशन",

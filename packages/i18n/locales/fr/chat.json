@@ -90,6 +90,15 @@
     "tabChats": "Discussions",
     "tabNotifications": "Notifications",
     "empty": "Pas encore de messages. Rejoins une partie pour commencer à discuter.",
-    "pinned": "Épinglé jusqu’à lecture"
+    "pinned": "Épinglé jusqu’à lecture",
+    "markAllRead": "Tout marquer comme lu",
+    "markRead": "Marquer comme lu",
+    "needsAttention": "À lire en priorité",
+    "earlier": "Plus tôt",
+    "caughtUp": "Vous êtes à jour. Nous vous préviendrons dès qu’il se passe quelque chose."
+  },
+  "day": {
+    "today": "Aujourd’hui",
+    "yesterday": "Hier"
   }
 }

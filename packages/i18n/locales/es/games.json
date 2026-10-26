@@ -301,7 +301,11 @@
     "locked": "Los equipos están bloqueados. Se ha avisado a los jugadores.",
     "coverageTeam": "{team}: {roles}",
     "notLocked": "El organizador aún no ha definido los equipos.",
-    "reshuffled": "Equipos mezclados."
+    "reshuffled": "Equipos mezclados.",
+    "avg": "Media {rating}",
+    "balanceLabel": "Equilibrio",
+    "tapToMove": "Toca a un jugador para moverlo al siguiente equipo.",
+    "ratingA11y": "Nivel {rating}"
   },
   "result": {
     "title": "Introducir resultado",
@@ -314,7 +318,9 @@
     "submit": "Guardar resultado",
     "saved": "Resultado guardado. Los jugadores pueden impugnarlo durante {hours, plural, one {# hora} many {# de horas} other {# horas}}.",
     "closed": "El plazo para el resultado terminó a las {time}.",
-    "notYet": "Podrás introducir el resultado cuando el partido termine a las {time}."
+    "notYet": "Podrás introducir el resultado cuando el partido termine a las {time}.",
+    "finalScore": "Resultado final",
+    "closesAt": "Cierra a las {time}"
   },
   "my": {
     "refresh": "Actualizar",

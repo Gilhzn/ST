@@ -13,7 +13,8 @@
     "none": "Aucun pour l’instant",
     "verifiedAttendance": "Présences vérifiées",
     "noShows": "Absences",
-    "lateCancels": "Annulations tardives"
+    "lateCancels": "Annulations tardives",
+    "streak": "Série de check-ins"
   },
   "positions": {
     "title": "Postes",

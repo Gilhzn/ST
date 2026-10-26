@@ -7,7 +7,8 @@
     "notifications": "通知",
     "privacy": "隱私與安全",
     "legal": "法律資訊",
-    "about": "關於"
+    "about": "關於",
+    "preferences": "偏好"
   },
   "account": {
     "phone": "手機號碼",
@@ -26,7 +27,8 @@
       "restartNow": "立即重新啟動",
       "later": "稍後",
       "pending": "重新啟動後將使用新語言。"
-    }
+    },
+    "allLanguages": "所有語言"
   },
   "theme": {
     "title": "主題",
@@ -47,7 +49,8 @@
     "osOff": "通知已在裝置設定中關閉。",
     "osOffAction": "開啟裝置設定",
     "deviceNote": "這些選擇儲存在這部裝置上。",
-    "unavailable": "此處不支援推播通知，你仍可在收件匣中查看動態。"
+    "unavailable": "此處不支援推播通知，你仍可在收件匣中查看動態。",
+    "groupTitle": "通知我以下內容"
   },
   "privacy": {
     "title": "隱私與安全",
@@ -102,7 +105,8 @@
     "timingTitle": "何時生效",
     "timing": "你的個人檔案會立即從 App 中消失。其餘個人資料會在 24 小時內刪除。",
     "reregister": "你之後可以用同一個號碼重新註冊。如果停權或警告仍在生效，剩餘的時間會重新適用。",
-    "keep": "保留我的帳號"
+    "keep": "保留我的帳號",
+    "step": "第 {current} 步，共 {total} 步"
   },
   "about": {
     "version": "版本 {version}",

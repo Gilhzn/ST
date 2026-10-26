@@ -73,7 +73,8 @@
       "askPerson": "Você pode pedir que uma pessoa analise qualquer decisão.",
       "affectsTitle": "O que isso afeta",
       "stillAllowedTitle": "O que você ainda pode fazer",
-      "ruleLine": "Regra: {rule}"
+      "ruleLine": "Regra: {rule}",
+      "decidedByTitle": "Quem decidiu"
     },
     "rule": {
       "late_cancel": "Regra de cancelamento tardio",
@@ -115,7 +116,8 @@
       "cta": "Contestar este cartão",
       "window": "Você pode contestar este cartão até {date}.",
       "windowClosed": "O prazo de contestação terminou, mas você ainda pode recorrer.",
-      "windowLeft": "Você pode contestar este cartão até {date} (restam {duration})."
+      "windowLeft": "Você pode contestar este cartão até {date} (restam {duration}).",
+      "ringCaption": "restantes"
     },
     "appeal": {
       "cta": "Recorrer desta decisão",

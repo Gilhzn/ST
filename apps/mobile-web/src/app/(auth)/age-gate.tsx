@@ -1,8 +1,12 @@
-/** Age gate 18+ (design §13.2): neutral month/year pickers, respectful stop screen, 24 h soft lock. */
+/**
+ * Age gate 18+ (design v2 §15.1): a calm illustration, month/year side by side, a privacy note,
+ * one primary Continue; a respectful stop screen (no blame, clear next step) with a 24 h soft lock.
+ */
 import { MIN_AGE_YEARS } from '@st/domain';
-import { Button, EmptyState, Stack, Text } from '@st/ui';
+import { Button, EmptyState, Icon, Illustration, radius, spacing, Text, useTheme } from '@st/ui';
 import { router } from 'expo-router';
 import { useEffect, useMemo, useState } from 'react';
+import { View } from 'react-native';
 
 import { Screen } from '@/components/Screen';
 import { SelectField } from '@/components/SelectField';
@@ -22,6 +26,7 @@ function ageInMonths(year: number, month: number, now: Date): number {
 export default function AgeGateScreen() {
   const { t, locale } = useT();
   const session = useSession();
+  const { colors } = useTheme();
   const [month, setMonth] = useState<string | null>(null);
   const [year, setYear] = useState<string | null>(null);
   const [blocked, setBlocked] = useState<boolean | null>(null);
@@ -60,50 +65,68 @@ export default function AgeGateScreen() {
 
   if (blocked) {
     return (
-      <Screen back={false} testID="screen.auth.ageBlocked">
-        <Stack gap="lg" testID="auth.age.blocked" accessibilityLiveRegion="polite">
+      <Screen back={false} testID="screen.auth.ageBlocked" contentStyle={{ flexGrow: 1, justifyContent: 'center', paddingTop: spacing.xxxl }}>
+        <View testID="auth.age.blocked" aria-live="polite">
           <EmptyState
             tone="restricted"
+            illustration="ageGate"
             title={t('auth:ageGate.under18.title')}
             body={t('auth:ageGate.under18.body')}
             actionLabel={t('auth:ageGate.under18.close')}
+            actionIcon="SignOut"
             onAction={() => void session.signOut()}
           />
-        </Stack>
+        </View>
       </Screen>
     );
   }
 
   return (
-    <Screen back={false} testID="screen.auth.age">
-      <Stack gap="xl">
-        <Stack gap="xs">
-          <Text variant="title1">{t('auth:ageGate.title')}</Text>
-          <Text variant="body" color="textSecondary">
+    <Screen
+      back={false}
+      testID="screen.auth.age"
+      footer={<Button testID="auth.age.submit" label={t('auth:ageGate.continue')} iconEnd="ArrowRight" onPress={submit} disabled={!month || !year} fullWidth size="lg" />}
+      contentStyle={{ gap: spacing.xl, paddingTop: spacing.xl }}
+    >
+      <View style={{ alignItems: 'center', gap: spacing.lg }}>
+        <Illustration name="ageGate" size={136} />
+        <View style={{ gap: spacing.sm, alignItems: 'center' }}>
+          <Text variant="title1" align="center" role="heading" aria-level={1}>
+            {t('auth:ageGate.title')}
+          </Text>
+          <Text variant="callout" color="textSecondary" align="center" style={{ maxWidth: 360 }}>
             {t('auth:ageGate.body')}
           </Text>
-        </Stack>
-        <SelectField
-          testID="auth.age.month"
-          label={t('auth:ageGate.monthLabel')}
-          placeholder={t('auth:ageGate.monthPlaceholder')}
-          value={month}
-          options={months}
-          onChange={setMonth}
-        />
-        <SelectField
-          testID="auth.age.year"
-          label={t('auth:ageGate.yearLabel')}
-          placeholder={t('auth:ageGate.yearPlaceholder')}
-          value={year}
-          options={years}
-          onChange={setYear}
-        />
-        <Text variant="caption" color="textTertiary">
+        </View>
+      </View>
+      <View style={{ flexDirection: 'row', gap: spacing.md }}>
+        <View style={{ flex: 3 }}>
+          <SelectField
+            testID="auth.age.month"
+            label={t('auth:ageGate.monthLabel')}
+            placeholder={t('auth:ageGate.monthPlaceholder')}
+            value={month}
+            options={months}
+            onChange={setMonth}
+          />
+        </View>
+        <View style={{ flex: 2 }}>
+          <SelectField
+            testID="auth.age.year"
+            label={t('auth:ageGate.yearLabel')}
+            placeholder={t('auth:ageGate.yearPlaceholder')}
+            value={year}
+            options={years}
+            onChange={setYear}
+          />
+        </View>
+      </View>
+      <View style={{ flexDirection: 'row', gap: spacing.md, alignItems: 'flex-start', padding: spacing.lg, borderRadius: radius.lg, backgroundColor: colors.surfaceSunken }}>
+        <Icon name="ShieldCheck" size={20} weight="duotone" color="successText" />
+        <Text variant="footnote" color="textSecondary" style={{ flex: 1 }}>
           {t('auth:ageGate.privacyNote')}
         </Text>
-        <Button testID="auth.age.submit" label={t('auth:ageGate.continue')} onPress={submit} disabled={!month || !year} fullWidth size="lg" />
-      </Stack>
+      </View>
     </Screen>
   );
 }

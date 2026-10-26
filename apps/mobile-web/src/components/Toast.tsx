@@ -1,19 +1,26 @@
 /**
- * Transient, non-blocking messages (design: surfaceInverse, z toast 60).
- * Announced politely to screen readers; never the only place an error is shown.
+ * Transient, non-blocking messages (design v2 §14 Toast): an inverse card with a tone disc and
+ * bold icon, slid in at the top under the status bar, 4 s dwell, dismissible. Announced politely
+ * (errors assertively) and never the only place an error is shown.
  */
-import { Text, useTheme, zIndex, spacing, radius } from '@st/ui';
+import { Haptics, motion, spacing, Toast, useTheme, zIndex, type ToastTone } from '@st/ui';
 import { createContext, useCallback, useContext, useEffect, useRef, useState, type ReactNode } from 'react';
-import { AccessibilityInfo, View } from 'react-native';
+import { AccessibilityInfo, Animated, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
+
+import { useT } from '@/i18n';
+
+export type AppToastTone = ToastTone;
 
 interface ToastItem {
   id: number;
   message: string;
-  tone: 'neutral' | 'error';
+  tone: AppToastTone;
 }
 
-const ToastContext = createContext<(message: string, tone?: ToastItem['tone']) => void>(() => undefined);
+type ShowToast = (message: string, tone?: AppToastTone) => void;
+
+const ToastContext = createContext<ShowToast>(() => undefined);
 
 export function ToastProvider({ children }: { children: ReactNode }) {
   const [toast, setToast] = useState<ToastItem | null>(null);
@@ -21,14 +28,28 @@ export function ToastProvider({ children }: { children: ReactNode }) {
   const seq = useRef(0);
   const insets = useSafeAreaInsets();
   const theme = useTheme();
+  const { t } = useT();
+  const anim = useRef(new Animated.Value(0)).current;
 
-  const show = useCallback((message: string, tone: ToastItem['tone'] = 'neutral') => {
-    seq.current += 1;
-    setToast({ id: seq.current, message, tone });
-    AccessibilityInfo.announceForAccessibility?.(message);
+  const hide = useCallback(() => {
     if (timer.current) clearTimeout(timer.current);
-    timer.current = setTimeout(() => setToast(null), 3500);
-  }, []);
+    Animated.timing(anim, { toValue: 0, duration: motion.duration.fast, useNativeDriver: false }).start(() => setToast(null));
+  }, [anim]);
+
+  const show = useCallback<ShowToast>(
+    (message, tone = 'neutral') => {
+      seq.current += 1;
+      setToast({ id: seq.current, message, tone });
+      if (tone === 'error') Haptics.trigger('actionFailed');
+      AccessibilityInfo.announceForAccessibility?.(message);
+      anim.setValue(0);
+      if (theme.reducedMotion) anim.setValue(1);
+      else Animated.spring(anim, { toValue: 1, ...motion.springs.gentle, useNativeDriver: false }).start();
+      if (timer.current) clearTimeout(timer.current);
+      timer.current = setTimeout(hide, motion.duration.toast);
+    },
+    [anim, hide, theme.reducedMotion],
+  );
 
   useEffect(
     () => () => {
@@ -40,33 +61,21 @@ export function ToastProvider({ children }: { children: ReactNode }) {
   return (
     <ToastContext.Provider value={show}>
       {children}
-      <View
-        pointerEvents="none"
-        style={{ position: 'absolute', start: 0, end: 0, bottom: insets.bottom + 88, alignItems: 'center', zIndex: zIndex.toast }}
-      >
+      <View pointerEvents="box-none" style={{ position: 'absolute', start: 0, end: 0, top: insets.top + spacing.sm, alignItems: 'center', zIndex: zIndex.toast }}>
         {toast ? (
-          <View
+          <Animated.View
             key={toast.id}
-            testID="toast"
-            accessibilityLiveRegion="polite"
-            accessibilityRole={toast.tone === 'error' ? 'alert' : 'text'}
             style={{
+              width: '100%',
               maxWidth: 480,
-              marginStart: spacing.lg,
-              marginEnd: spacing.lg,
               paddingStart: spacing.lg,
               paddingEnd: spacing.lg,
-              paddingTop: spacing.md,
-              paddingBottom: spacing.md,
-              borderRadius: radius.md,
-              backgroundColor: theme.colors.surfaceInverse,
-              boxShadow: '0px 4px 12px rgba(0,0,0,0.25)',
+              opacity: anim,
+              transform: [{ translateY: anim.interpolate({ inputRange: [0, 1], outputRange: [-24, 0] }) }],
             }}
           >
-            <Text variant="callout" color="textInverse">
-              {toast.message}
-            </Text>
-          </View>
+            <Toast testID="toast" title={toast.message} tone={toast.tone} dismissLabel={t('common:actions.dismiss')} onDismiss={hide} />
+          </Animated.View>
         ) : null}
       </View>
     </ToastContext.Provider>

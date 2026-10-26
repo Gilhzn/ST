@@ -90,6 +90,15 @@
     "tabChats": "Chats",
     "tabNotifications": "Mitteilungen",
     "empty": "Noch keine Nachrichten. Tritt einem Spiel bei, um zu chatten.",
-    "pinned": "Angeheftet, bis du es liest"
+    "pinned": "Angeheftet, bis du es liest",
+    "markAllRead": "Alle als gelesen markieren",
+    "markRead": "Als gelesen markieren",
+    "needsAttention": "Braucht deine Aufmerksamkeit",
+    "earlier": "Früher",
+    "caughtUp": "Du bist auf dem neuesten Stand. Wir melden uns, wenn etwas passiert."
+  },
+  "day": {
+    "today": "Heute",
+    "yesterday": "Gestern"
   }
 }

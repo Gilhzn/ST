@@ -18,11 +18,12 @@ import type { LatLng } from '@st/domain';
 import { useTheme } from '@st/ui';
 import { Map as MapLibreMap, setWorkerUrl, type StyleSpecification } from 'maplibre-gl';
 import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState, type ComponentRef, type ReactNode } from 'react';
+import { createPortal } from 'react-dom';
 import { Pressable, Text, View, type LayoutChangeEvent } from 'react-native';
 
 import { buildClusterIndex, type ClusterItem } from './cluster';
 import { cameraDurationMs, type MapPadding, type MapPoint, type MapViewProps } from './Map.types';
-import { ClusterMarker, clusterSize, GlyphIcon, MapPinMarker, PIN_H, PIN_TIP_Y, PIN_W, SELECTED_SCALE, UserDot, VenueMarker, VENUE_SIZE } from './markers';
+import { ClusterMarker, clusterSize, GlyphIcon, MapPinMarker, pinGeometry, UserDot, VenueMarker, VENUE_SIZE } from './markers';
 import { distanceKm, LAND_COLOR, OFFLINE_CANVAS, usesOfflineStyle } from './style';
 import { useBasemap } from './useBasemap';
 
@@ -120,19 +121,19 @@ const CSS = `
 .st-hit{position:absolute;pointer-events:auto;cursor:pointer;outline:none;-webkit-tap-highlight-color:transparent;border-radius:24px}
 .st-hit:focus-visible{box-shadow:0 0 0 3px var(--st-focus)}
 .st-vis{position:absolute;transition:transform 220ms cubic-bezier(.3,0,0,1.15),filter 220ms ease}
-.st-pin .st-vis{transform-origin:${PIN_W / 2}px ${PIN_TIP_Y}px}
-.st-pin.is-sel .st-vis{transform:scale(${SELECTED_SCALE});filter:drop-shadow(0 6px 10px rgba(10,11,18,.32))}
+.st-pin .st-vis{transform-origin:50% var(--st-tip)}
+.st-pin.is-sel .st-vis{filter:drop-shadow(0 8px 12px rgba(11,10,28,.30));animation:st-pop 260ms cubic-bezier(.3,0,0,1.15)}
 .st-hit:hover .st-vis{transform:scale(1.08)}
-.st-pin.is-sel .st-hit:hover .st-vis{transform:scale(${SELECTED_SCALE})}
+.st-pin.is-sel .st-hit:hover .st-vis{transform:none}
+@keyframes st-pop{0%{transform:scale(.78)}100%{transform:scale(1)}}
 .st-cl .st-vis{transform-origin:50% 50%}
-.st-pulse{position:absolute;border-radius:50%;pointer-events:none;background:var(--st-pulse);animation:st-pulse 2s cubic-bezier(0,0,.2,1) infinite}
 .st-me-halo{position:absolute;border-radius:50%;pointer-events:none;background:var(--st-me);animation:st-pulse 2.4s cubic-bezier(0,0,.2,1) infinite}
 .st-ring{position:absolute;left:0;top:0;border-radius:50%;pointer-events:none;will-change:transform,width,height}
 .st-ring-label{position:absolute;left:0;top:0;pointer-events:none;will-change:transform;transition:opacity 160ms ease}
 @keyframes st-pulse{0%{transform:scale(.55);opacity:.7}80%,100%{transform:scale(1.9);opacity:0}}
-.st-rm .st-pulse,.st-rm .st-me-halo{animation:none;transform:scale(1.15);opacity:.35}
-.st-rm .st-vis{transition:none}
-@media (prefers-reduced-motion: reduce){.st-pulse,.st-me-halo{animation:none;transform:scale(1.15);opacity:.35}.st-vis{transition:none}}
+.st-rm .st-me-halo{animation:none;transform:scale(1.15);opacity:.35}
+.st-rm .st-vis{transition:none;animation:none}
+@media (prefers-reduced-motion: reduce){.st-me-halo{animation:none;transform:scale(1.15);opacity:.35}.st-vis{transition:none;animation:none}}
 `;
 
 let cssInjected = false;
@@ -342,7 +343,12 @@ export function Map({
       const c = map.getCenter();
       latest.current.onRegionChange?.({ center: { lat: c.lat, lng: c.lng }, zoom: map.getZoom() });
     });
-    map.on('click', () => latest.current.onPressMap?.());
+    map.on('click', (e: { originalEvent?: Event }) => {
+      // Marker taps bubble through the canvas container too; they are not map taps.
+      const target = e.originalEvent?.target as Element | null | undefined;
+      if (target?.closest?.('.st-hit')) return;
+      latest.current.onPressMap?.();
+    });
     map.on('error', () => undefined); // tile/network errors must not surface as app errors
     setEngine('gl');
     return () => {
@@ -444,12 +450,12 @@ export function Map({
             const n = Math.PI - (2 * Math.PI * y) / world;
             setStaticCam({ zoom: d.cam.zoom, center: { lat: (180 / Math.PI) * Math.atan(Math.sinh(n)), lng } });
           },
-          onPointerUp: () => {
+          onPointerUp: (e: { target: EventTarget | null }) => {
             const d = drag.current;
             drag.current = null;
             if (!d) return;
             if (d.moved) onRegionChange?.(latest.current.staticCam);
-            else onPressMap?.();
+            else if (!(e.target as Element | null)?.closest?.('.st-hit')) onPressMap?.();
           },
         }
       : null;
@@ -466,9 +472,70 @@ export function Map({
 
   const cssVars = {
     '--st-focus': theme.colors.focusRing,
-    '--st-pulse': theme.colors.accent,
     '--st-me': scheme === 'dark' ? 'rgba(79,157,255,0.35)' : 'rgba(26,115,232,0.25)',
   } as Record<string, string>;
+
+  // GL: overlays live inside MapLibre's canvas container, so a drag that starts on a marker
+  // still pans the map (like MapLibre's own Marker). Static: rendered inline.
+  const glHost = engine === 'gl' && glRef.current ? glRef.current.getCanvasContainer() : null;
+  const overlay = (
+    <div
+      className={`st-ov${theme.reducedMotion ? ' st-rm' : ''}`}
+      style={{ ...cssVars, pointerEvents: engine === 'static' ? 'auto' : 'none', touchAction: engine === 'static' ? 'none' : undefined }}
+      {...(staticHandlers ?? {})}
+    >
+      {offlineCanvas ? <div ref={latticeEl} className="st-ov" aria-hidden /> : null}
+      <div
+        ref={ringEl}
+        className="st-ring"
+        aria-hidden
+        style={{
+          display: 'none',
+          border: `2px solid ${theme.colors.primary}`,
+          background: scheme === 'dark' ? 'rgba(143,125,255,0.06)' : 'rgba(91,61,245,0.035)',
+          boxShadow: `0 0 0 200vmax ${offlineCanvas ? canvas.outside : scheme === 'dark' ? 'rgba(0,0,0,0.18)' : 'rgba(18,19,28,0.06)'}, inset 0 0 36px ${
+            scheme === 'dark' ? 'rgba(143,125,255,0.14)' : 'rgba(91,61,245,0.07)'
+          }`,
+        }}
+      />
+      {offlineCanvas ? (
+        <div
+          className="st-ov"
+          aria-hidden
+          style={{ background: `radial-gradient(ellipse 120% 90% at 50% 48%, transparent 52%, ${canvas.vignette} 100%)` }}
+        />
+      ) : null}
+      <div ref={meEl} className="st-mk" aria-hidden style={{ display: 'none', zIndex: 2 }}>
+        <div className="st-me-halo" style={{ left: -22, top: -22, width: 44, height: 44 }} />
+        <div style={{ position: 'absolute', left: -11, top: -11 }}>
+          <UserDot />
+        </div>
+      </div>
+      {selectedFirst.map((item) =>
+        item.type === 'cluster' ? (
+          <Marker
+            key={item.key}
+            nodeRef={register(item.key, item.at)}
+            className="st-cl"
+            testID={`map.cluster.${item.clusterId}`}
+            label={clusterLabel(item.count, item.sports)}
+            box={Math.max(48, clusterSize(item.count))}
+            anchor="center"
+            onPress={() => zoomTo(item.at, item.expansionZoom)}
+          >
+            <ClusterMarker count={item.count} sports={item.sportCounts} accessibilityLabel={clusterLabel(item.count, item.sports)} />
+          </Marker>
+        ) : (
+          <PointMarker key={item.key} point={item.point} selected={item.point.id === selectedId} nodeRef={register(item.key, item.at)} onPress={onPressPoint} />
+        ),
+      )}
+      {radiusLabel ? (
+        <div ref={ringLabelEl} className="st-ring-label" aria-hidden style={{ opacity: 0, zIndex: 5 }}>
+          <RingLabel text={radiusLabel} />
+        </div>
+      ) : null}
+    </div>
+  );
 
   return (
     <View
@@ -480,62 +547,7 @@ export function Map({
       {...({ dataSet: { engine } } as object)}
     >
       <View ref={containerRef} style={{ position: 'absolute', top: 0, bottom: 0, start: 0, end: 0 }} />
-      <div
-        className={`st-ov${theme.reducedMotion ? ' st-rm' : ''}`}
-        style={{ ...cssVars, pointerEvents: engine === 'static' ? 'auto' : 'none', touchAction: engine === 'static' ? 'none' : undefined }}
-        {...(staticHandlers ?? {})}
-      >
-        {offlineCanvas ? <div ref={latticeEl} className="st-ov" aria-hidden /> : null}
-        <div
-          ref={ringEl}
-          className="st-ring"
-          aria-hidden
-          style={{
-            display: 'none',
-            border: `2px solid ${theme.colors.primary}`,
-            background: scheme === 'dark' ? 'rgba(143,125,255,0.06)' : 'rgba(91,61,245,0.035)',
-            boxShadow: `0 0 0 200vmax ${offlineCanvas ? canvas.outside : scheme === 'dark' ? 'rgba(0,0,0,0.18)' : 'rgba(18,19,28,0.06)'}, inset 0 0 36px ${
-              scheme === 'dark' ? 'rgba(143,125,255,0.14)' : 'rgba(91,61,245,0.07)'
-            }`,
-          }}
-        />
-        {offlineCanvas ? (
-          <div
-            className="st-ov"
-            aria-hidden
-            style={{ background: `radial-gradient(ellipse 120% 90% at 50% 48%, transparent 52%, ${canvas.vignette} 100%)` }}
-          />
-        ) : null}
-        <div ref={meEl} className="st-mk" aria-hidden style={{ display: 'none', zIndex: 2 }}>
-          <div className="st-me-halo" style={{ left: -22, top: -22, width: 44, height: 44 }} />
-          <div style={{ position: 'absolute', left: -11, top: -11 }}>
-            <UserDot />
-          </div>
-        </div>
-        {selectedFirst.map((item) =>
-          item.type === 'cluster' ? (
-            <Marker
-              key={item.key}
-              nodeRef={register(item.key, item.at)}
-              className="st-cl"
-              testID={`map.cluster.${item.clusterId}`}
-              label={clusterLabel(item.count, item.sports)}
-              box={clusterSize(item.count) + 12}
-              anchor="center"
-              onPress={() => zoomTo(item.at, item.expansionZoom)}
-            >
-              <ClusterMarker count={item.count} sports={item.sports} />
-            </Marker>
-          ) : (
-            <PointMarker key={item.key} point={item.point} selected={item.point.id === selectedId} nodeRef={register(item.key, item.at)} onPress={onPressPoint} />
-          ),
-        )}
-        {radiusLabel ? (
-          <div ref={ringLabelEl} className="st-ring-label" aria-hidden style={{ opacity: 0, zIndex: 5 }}>
-            <RingLabel text={radiusLabel} />
-          </div>
-        ) : null}
-      </div>
+      {glHost ? createPortal(overlay, glHost) : overlay}
       {engine === 'static' ? (
         <StaticZoomControls
           top={padding.top + 64}
@@ -576,10 +588,10 @@ function Marker({
   label,
   box,
   anchor,
+  tipY = 0,
   selected,
   onPress,
   children,
-  extra,
 }: {
   nodeRef: (el: HTMLDivElement | null) => void;
   className: string;
@@ -587,24 +599,23 @@ function Marker({
   label: string;
   /** Visual box: a number (square) or [w, h]. */
   box: number | [number, number];
-  /** `tip`: bottom-centre anchor (teardrop); `center` otherwise. */
+  /** `tip`: bottom-centre anchor at `tipY` (teardrop); `center` otherwise. */
   anchor: 'tip' | 'center';
+  tipY?: number;
   selected?: boolean;
   onPress: () => void;
   children: ReactNode;
-  extra?: ReactNode;
 }) {
   const [w, h] = typeof box === 'number' ? [box, box] : box;
   const ax = w / 2;
-  const ay = anchor === 'tip' ? PIN_TIP_Y : h / 2;
+  const ay = anchor === 'tip' ? tipY : h / 2;
   // Hit area ≥ 48×48 around the visual (design §3).
   const hw = Math.max(48, w);
-  const hh = Math.max(48, anchor === 'tip' ? PIN_TIP_Y + 4 : h);
+  const hh = Math.max(48, anchor === 'tip' ? tipY + 4 : h);
   const hx = -hw / 2;
   const hy = anchor === 'tip' ? -hh + 4 : -hh / 2;
   return (
     <div ref={nodeRef} className={`st-mk ${className}${selected ? ' is-sel' : ''}`} style={{ zIndex: selected ? 4 : 3 }}>
-      {extra}
       <div
         role="button"
         tabIndex={0}
@@ -617,8 +628,6 @@ function Marker({
           e.stopPropagation();
           onPress();
         }}
-        onPointerDown={(e) => e.stopPropagation()}
-        onPointerUp={(e) => e.stopPropagation()}
         onKeyDown={(e: WebKey) => {
           if (e.key === 'Enter' || e.key === ' ') {
             e.preventDefault();
@@ -627,7 +636,8 @@ function Marker({
           }
         }}
       >
-        <div className="st-vis" style={{ left: -hx - ax, top: -hy - ay, width: w, height: h }}>
+        {/* Visual only: `inert` keeps the design-system marker's own role/label out of focus and AT. */}
+        <div className="st-vis" inert style={{ left: -hx - ax, top: -hy - ay, width: w, height: h, ['--st-tip' as string]: `${ay}px` }}>
           {children}
         </div>
       </div>
@@ -654,20 +664,21 @@ function PointMarker({
       </Marker>
     );
   }
-  const live = point.state === 'live';
+  const state = selected ? 'selected' : point.state === 'selected' ? 'default' : point.state;
+  const g = pinGeometry(state);
   return (
     <Marker
       nodeRef={nodeRef}
       className="st-pin"
       testID={`map.pin.${point.id}`}
       label={point.label}
-      box={[PIN_W, PIN_H]}
+      box={[g.box, g.h]}
       anchor="tip"
+      tipY={g.tipY}
       selected={selected}
       onPress={() => onPress?.(point)}
-      extra={live ? <div className="st-pulse" aria-hidden style={{ left: -20, top: -(PIN_TIP_Y - 17) - 20, width: 40, height: 40 }} /> : null}
     >
-      <MapPinMarker sport={point.sport} state={selected ? 'selected' : point.state === 'selected' ? 'default' : point.state} />
+      <MapPinMarker sport={point.sport} state={state} accessibilityLabel={point.label} />
     </Marker>
   );
 }

@@ -301,7 +301,11 @@
     "locked": "Les équipes sont verrouillées. Les joueurs ont été prévenus.",
     "coverageTeam": "{team} : {roles}",
     "notLocked": "L’organisateur n’a pas encore défini les équipes.",
-    "reshuffled": "Équipes mélangées."
+    "reshuffled": "Équipes mélangées.",
+    "avg": "Moy. {rating}",
+    "balanceLabel": "Équilibre",
+    "tapToMove": "Touchez un joueur pour le déplacer dans l’équipe suivante.",
+    "ratingA11y": "Niveau {rating}"
   },
   "result": {
     "title": "Saisir le résultat",
@@ -314,7 +318,9 @@
     "submit": "Enregistrer le résultat",
     "saved": "Résultat enregistré. Les joueurs peuvent le contester pendant {hours, plural, one {# heure} many {# d’heures} other {# heures}}.",
     "closed": "Le délai de saisie du résultat s’est terminé à {time}.",
-    "notYet": "Tu pourras saisir le résultat à la fin de la partie, à {time}."
+    "notYet": "Tu pourras saisir le résultat à la fin de la partie, à {time}.",
+    "finalScore": "Score final",
+    "closesAt": "Ferme à {time}"
   },
   "my": {
     "refresh": "Actualiser",

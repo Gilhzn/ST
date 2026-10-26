@@ -13,7 +13,8 @@
     "none": "尚無",
     "verifiedAttendance": "已核實到場",
     "noShows": "爽約",
-    "lateCancels": "臨時取消"
+    "lateCancels": "臨時取消",
+    "streak": "連續報到"
   },
   "positions": {
     "title": "位置",

@@ -9,13 +9,24 @@ import { VENUE_MIN_ZOOM, type MapPoint } from './Map.types';
 
 export type ClusterItem =
   | { type: 'point'; key: string; point: MapPoint; at: LatLng }
-  | { type: 'cluster'; key: string; clusterId: number; count: number; sports: SportId[]; at: LatLng; expansionZoom: number };
+  | {
+      type: 'cluster';
+      key: string;
+      clusterId: number;
+      count: number;
+      /** Up to three sports, most frequent first (labels, legend dots). */
+      sports: SportId[];
+      /** Games per sport inside the cluster (ring segments), most frequent first. */
+      sportCounts: { sport: SportId; count: number }[];
+      at: LatLng;
+      expansionZoom: number;
+    };
 
 interface PointProps {
   index: number;
 }
 interface ClusterProps {
-  sports: SportId[];
+  counts: Partial<Record<SportId, number>>;
 }
 
 export interface ClusterIndex {
@@ -28,9 +39,14 @@ export function buildClusterIndex(points: readonly MapPoint[]): ClusterIndex {
   const index = new Supercluster<PointProps, ClusterProps>({
     radius: 46,
     maxZoom: 16,
-    map: (props) => ({ sports: [games[props.index]?.sport].filter((s): s is SportId => !!s) }),
+    map: (props) => {
+      const s = games[props.index]?.sport;
+      return { counts: s ? { [s]: 1 } : {} };
+    },
     reduce: (acc, props) => {
-      for (const s of props.sports) if (!acc.sports.includes(s) && acc.sports.length < 3) acc.sports.push(s);
+      const next = { ...acc.counts };
+      for (const [s, n] of Object.entries(props.counts) as [SportId, number][]) next[s] = (next[s] ?? 0) + n;
+      acc.counts = next;
     },
   });
   index.load(
@@ -49,12 +65,16 @@ export function buildClusterIndex(points: readonly MapPoint[]): ClusterIndex {
         const [lng, lat] = f.geometry.coordinates as [number, number];
         const props = f.properties as Partial<SCClusterProperties> & Partial<ClusterProps> & Partial<PointProps>;
         if (props.cluster && typeof props.cluster_id === 'number') {
+          const sportCounts = (Object.entries(props.counts ?? {}) as [SportId, number][])
+            .map(([sport, count]) => ({ sport, count }))
+            .sort((a, b) => b.count - a.count);
           out.push({
             type: 'cluster',
             key: `c-${props.cluster_id}`,
             clusterId: props.cluster_id,
             count: props.point_count ?? 0,
-            sports: props.sports ?? [],
+            sports: sportCounts.slice(0, 3).map((x) => x.sport),
+            sportCounts,
             at: { lat, lng },
             expansionZoom: Math.min(18, index.getClusterExpansionZoom(props.cluster_id)),
           });

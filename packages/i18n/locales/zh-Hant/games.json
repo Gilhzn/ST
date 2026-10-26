@@ -301,7 +301,11 @@
     "locked": "分隊已鎖定，已通知球友。",
     "coverageTeam": "{team}：{roles}",
     "notLocked": "主辦人還沒有確定分隊。",
-    "reshuffled": "已重新分隊。"
+    "reshuffled": "已重新分隊。",
+    "avg": "平均 {rating}",
+    "balanceLabel": "均衡度",
+    "tapToMove": "點按隊員可將其移到下一隊。",
+    "ratingA11y": "評分 {rating}"
   },
   "result": {
     "title": "輸入比分",
@@ -314,7 +318,9 @@
     "submit": "儲存比分",
     "saved": "已儲存比分。球友可以在{hours, plural, other {# 小時}}內提出異議。",
     "closed": "輸入比分的時間已於 {time}截止。",
-    "notYet": "比賽於 {time}結束後，你就可以輸入比分。"
+    "notYet": "比賽於 {time}結束後，你就可以輸入比分。",
+    "finalScore": "最終比分",
+    "closesAt": "{time} 截止"
   },
   "my": {
     "refresh": "重新整理",

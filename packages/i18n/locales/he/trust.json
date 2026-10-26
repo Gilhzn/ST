@@ -73,7 +73,8 @@
       "askPerson": "אפשר לבקש שאדם יבדוק כל החלטה.",
       "affectsTitle": "מה זה משנה",
       "stillAllowedTitle": "מה עדיין אפשר לעשות",
-      "ruleLine": "כלל: {rule}"
+      "ruleLine": "כלל: {rule}",
+      "decidedByTitle": "מי החליט"
     },
     "rule": {
       "late_cancel": "כלל הביטול המאוחר",
@@ -115,7 +116,8 @@
       "cta": "התנגדות לכרטיס",
       "window": "אפשר להתנגד לכרטיס הזה עד {date}.",
       "windowClosed": "חלון ההתנגדות נסגר, אבל עדיין אפשר לערער.",
-      "windowLeft": "אפשר להתנגד לכרטיס הזה עד {date} (נותרו {duration})."
+      "windowLeft": "אפשר להתנגד לכרטיס הזה עד {date} (נותרו {duration}).",
+      "ringCaption": "נותרו"
     },
     "appeal": {
       "cta": "ערעור על ההחלטה",

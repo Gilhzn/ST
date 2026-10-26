@@ -7,7 +7,8 @@
     "notifications": "Mitteilungen",
     "privacy": "Datenschutz und Sicherheit",
     "legal": "Rechtliches",
-    "about": "Über die App"
+    "about": "Über die App",
+    "preferences": "Präferenzen"
   },
   "account": {
     "phone": "Telefonnummer",
@@ -26,7 +27,8 @@
       "restartNow": "Jetzt neu starten",
       "later": "Später",
       "pending": "Die neue Sprache wird nach dem Neustart verwendet."
-    }
+    },
+    "allLanguages": "Alle Sprachen"
   },
   "theme": {
     "title": "Darstellung",
@@ -47,7 +49,8 @@
     "osOff": "Mitteilungen sind in den Geräteeinstellungen ausgeschaltet.",
     "osOffAction": "Geräteeinstellungen öffnen",
     "deviceNote": "Diese Einstellungen werden auf diesem Gerät gespeichert.",
-    "unavailable": "Push-Mitteilungen sind hier nicht verfügbar. Neuigkeiten siehst du trotzdem in deinem Posteingang."
+    "unavailable": "Push-Mitteilungen sind hier nicht verfügbar. Neuigkeiten siehst du trotzdem in deinem Posteingang.",
+    "groupTitle": "Benachrichtige mich über"
   },
   "privacy": {
     "title": "Datenschutz und Sicherheit",
@@ -102,7 +105,8 @@
     "timingTitle": "Wann es passiert",
     "timing": "Dein Profil verschwindet sofort aus der App. Die übrigen personenbezogenen Daten werden innerhalb von 24 Stunden gelöscht.",
     "reregister": "Du kannst dich später mit derselben Nummer neu registrieren. Läuft noch eine Sperre oder Verwarnung, gilt die Restzeit wieder.",
-    "keep": "Konto behalten"
+    "keep": "Konto behalten",
+    "step": "Schritt {current} von {total}"
   },
   "about": {
     "version": "Version {version}",

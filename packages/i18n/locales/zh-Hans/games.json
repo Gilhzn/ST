@@ -301,7 +301,11 @@
     "locked": "分队已锁定，已通知玩家。",
     "coverageTeam": "{team}：{roles}",
     "notLocked": "组织者还没有确定分队。",
-    "reshuffled": "已重新分队。"
+    "reshuffled": "已重新分队。",
+    "avg": "平均 {rating}",
+    "balanceLabel": "均衡度",
+    "tapToMove": "点按队员可将其移到下一队。",
+    "ratingA11y": "评分 {rating}"
   },
   "result": {
     "title": "录入比分",
@@ -314,7 +318,9 @@
     "submit": "保存比分",
     "saved": "比分已保存。玩家可以在{hours, plural, other {# 小时}}内提出异议。",
     "closed": "录入比分的时间已于 {time}截止。",
-    "notYet": "比赛于 {time}结束后，你就可以录入比分。"
+    "notYet": "比赛于 {time}结束后，你就可以录入比分。",
+    "finalScore": "最终比分",
+    "closesAt": "{time} 截止"
   },
   "my": {
     "refresh": "刷新",

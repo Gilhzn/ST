@@ -301,7 +301,11 @@
     "locked": "Teams are locked. Players have been notified.",
     "coverageTeam": "{team}: {roles}",
     "notLocked": "The host hasn’t set the teams yet.",
-    "reshuffled": "Teams shuffled."
+    "reshuffled": "Teams shuffled.",
+    "avg": "Avg {rating}",
+    "balanceLabel": "Balance",
+    "tapToMove": "Tap a player to move them to the next team.",
+    "ratingA11y": "Rating {rating}"
   },
   "result": {
     "title": "Enter result",
@@ -314,7 +318,9 @@
     "submit": "Save result",
     "saved": "Result saved. Players can dispute it for {hours, plural, one {# hour} other {# hours}}.",
     "closed": "The result window closed at {time}.",
-    "notYet": "You can enter the result when the game ends at {time}."
+    "notYet": "You can enter the result when the game ends at {time}.",
+    "finalScore": "Final score",
+    "closesAt": "Closes at {time}"
   },
   "my": {
     "refresh": "Refresh",

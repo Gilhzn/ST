@@ -9,11 +9,20 @@
     "accuracy": "精度：{accuracy}",
     "retry": "もう一度試す",
     "intro": "その場にとどまってください。数秒おきに、位置を3回取得します。",
-    "start": "現在地を確認"
+    "start": "現在地を確認",
+    "accuracyLabel": "精度",
+    "distanceLabel": "ピンからの距離",
+    "samplesLabel": "測位回数",
+    "quality": {
+      "good": "電波良好",
+      "fair": "電波普通",
+      "poor": "電波が弱い"
+    }
   },
   "success": {
     "title": "チェックインしました",
-    "method": "{method, select, gps {GPSで確認しました} qr {QRコードで確認しました} peer {チームメイトが確認しました} host {主催者が確認しました} other {確認しました}}"
+    "method": "{method, select, gps {GPSで確認しました} qr {QRコードで確認しました} peer {チームメイトが確認しました} host {主催者が確認しました} other {確認しました}}",
+    "subtitle": "楽しい試合を。"
   },
   "unconfirmed": {
     "title": "まだ会場にいることを確認できません",
@@ -95,11 +104,30 @@
     "present": "出席",
     "notHere": "未到着",
     "newCode": "新しいコード",
-    "qrA11y": "プレイヤーが読み取るチェックイン用QRコード"
+    "qrA11y": "プレイヤーが読み取るチェックイン用QRコード",
+    "countdown": "{time}後に新しいコード",
+    "screenOn": "画面をつけたまま明るさを上げて、参加者が読み取れるようにしてください。",
+    "copy": "コードをコピー",
+    "copied": "コードをコピーしました",
+    "playersTitle": "参加者"
   },
   "geofence": {
     "title": "Sport Talent",
     "body": "試合の会場の近くです。タップしてチェックインしましょう。"
   },
-  "fallbacks": "{count, plural, other {下のほかの方法をお試しください。}}"
+  "fallbacks": "{count, plural, other {下のほかの方法をお試しください。}}",
+  "methods": {
+    "title": "チェックイン方法を選択",
+    "gps": "位置情報",
+    "qr": "QRを読み取る",
+    "code": "コードを入力",
+    "peer": "チームメイト",
+    "suggested": "こちらをお試しください"
+  },
+  "steps": {
+    "choose": "選択",
+    "verify": "確認",
+    "done": "完了",
+    "progress": "ステップ {current}/{total}：{label}"
+  }
 }

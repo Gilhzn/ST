@@ -9,11 +9,20 @@
     "accuracy": "Genauigkeit: {accuracy}",
     "retry": "Erneut versuchen",
     "intro": "Bleib, wo du bist. Wir nehmen drei Standortmessungen im Abstand von ein paar Sekunden vor.",
-    "start": "Meinen Standort prüfen"
+    "start": "Meinen Standort prüfen",
+    "accuracyLabel": "Genauigkeit",
+    "distanceLabel": "Abstand zur Markierung",
+    "samplesLabel": "Messungen",
+    "quality": {
+      "good": "Starkes Signal",
+      "fair": "Mittleres Signal",
+      "poor": "Schwaches Signal"
+    }
   },
   "success": {
     "title": "Du bist eingecheckt",
-    "method": "{method, select, gps {Per GPS bestätigt} qr {Per QR-Code bestätigt} peer {Von Mitspieler:innen bestätigt} host {Von der Organisation bestätigt} other {Bestätigt}}"
+    "method": "{method, select, gps {Per GPS bestätigt} qr {Per QR-Code bestätigt} peer {Von Mitspieler:innen bestätigt} host {Von der Organisation bestätigt} other {Bestätigt}}",
+    "subtitle": "Viel Spaß beim Spiel."
   },
   "unconfirmed": {
     "title": "Wir können noch nicht bestätigen, dass du vor Ort bist",
@@ -95,11 +104,30 @@
     "present": "Anwesend",
     "notHere": "Nicht da",
     "newCode": "Neuer Code",
-    "qrA11y": "Check-in-QR-Code zum Scannen für die Spieler:innen"
+    "qrA11y": "Check-in-QR-Code zum Scannen für die Spieler:innen",
+    "countdown": "Neuer Code in {time}",
+    "screenOn": "Lass diesen Bildschirm an und dreh die Helligkeit hoch, damit alle scannen können.",
+    "copy": "Code kopieren",
+    "copied": "Code kopiert",
+    "playersTitle": "Spieler"
   },
   "geofence": {
     "title": "Sport Talent",
     "body": "Du bist in der Nähe des Spiels. Tippe, um einzuchecken."
   },
-  "fallbacks": "{count, plural, one {Probiere den anderen Weg unten.} other {Probiere einen der anderen Wege unten.}}"
+  "fallbacks": "{count, plural, one {Probiere den anderen Weg unten.} other {Probiere einen der anderen Wege unten.}}",
+  "methods": {
+    "title": "Wähle, wie du eincheckst",
+    "gps": "Standort",
+    "qr": "QR scannen",
+    "code": "Code eingeben",
+    "peer": "Mitspieler",
+    "suggested": "Probier das"
+  },
+  "steps": {
+    "choose": "Auswählen",
+    "verify": "Bestätigen",
+    "done": "Fertig",
+    "progress": "Schritt {current} von {total}: {label}"
+  }
 }

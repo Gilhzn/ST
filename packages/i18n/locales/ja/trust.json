@@ -73,7 +73,8 @@
       "askPerson": "どの決定についても、担当者による確認を求められます。",
       "affectsTitle": "影響すること",
       "stillAllowedTitle": "引き続きできること",
-      "ruleLine": "ルール：{rule}"
+      "ruleLine": "ルール：{rule}",
+      "decidedByTitle": "判断した人"
     },
     "rule": {
       "late_cancel": "直前キャンセルのルール",
@@ -115,7 +116,8 @@
       "cta": "このカードに異議を申し立てる",
       "window": "{date}まで、このカードに異議を申し立てられます。",
       "windowClosed": "異議申し立ての期間は終了しましたが、引き続き不服申し立てができます。",
-      "windowLeft": "{date}まで、このカードに異議を申し立てられます（残り{duration}）。"
+      "windowLeft": "{date}まで、このカードに異議を申し立てられます（残り{duration}）。",
+      "ringCaption": "残り"
     },
     "appeal": {
       "cta": "この決定に不服を申し立てる",

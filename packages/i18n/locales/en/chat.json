@@ -90,6 +90,15 @@
     "tabChats": "Chats",
     "tabNotifications": "Notifications",
     "empty": "No messages yet. Join a game to start chatting.",
-    "pinned": "Pinned until you read it"
+    "pinned": "Pinned until you read it",
+    "markAllRead": "Mark all as read",
+    "markRead": "Mark as read",
+    "needsAttention": "Needs your attention",
+    "earlier": "Earlier",
+    "caughtUp": "You’re all caught up. We’ll let you know when something happens."
+  },
+  "day": {
+    "today": "Today",
+    "yesterday": "Yesterday"
   }
 }

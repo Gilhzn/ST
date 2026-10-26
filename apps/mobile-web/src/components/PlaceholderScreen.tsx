@@ -9,8 +9,8 @@ import { Screen } from './Screen';
 export function PlaceholderScreen({ title, testID, children, back = true }: { title: string; testID: string; children?: ReactNode; back?: boolean }) {
   const { t } = useT();
   return (
-    <Screen title={title} testID={testID} back={back}>
-      <EmptyState title={t('common:placeholder.title')} body={t('common:placeholder.body')} />
+    <Screen title={title} large testID={testID} back={back}>
+      <EmptyState illustration="success" title={t('common:placeholder.title')} body={t('common:placeholder.body')} />
       {children}
     </Screen>
   );

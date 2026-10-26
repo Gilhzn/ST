@@ -9,11 +9,20 @@
     "accuracy": "Accuracy: {accuracy}",
     "retry": "Try again",
     "intro": "Stay where you are. We take three location readings a few seconds apart.",
-    "start": "Check my location"
+    "start": "Check my location",
+    "accuracyLabel": "Accuracy",
+    "distanceLabel": "From the pin",
+    "samplesLabel": "Readings",
+    "quality": {
+      "good": "Strong signal",
+      "fair": "Fair signal",
+      "poor": "Weak signal"
+    }
   },
   "success": {
     "title": "You’re checked in",
-    "method": "{method, select, gps {Confirmed by GPS} qr {Confirmed by QR code} peer {Confirmed by teammates} host {Confirmed by the host} other {Confirmed}}"
+    "method": "{method, select, gps {Confirmed by GPS} qr {Confirmed by QR code} peer {Confirmed by teammates} host {Confirmed by the host} other {Confirmed}}",
+    "subtitle": "Have a great game."
   },
   "unconfirmed": {
     "title": "We can’t confirm you’re at the venue yet",
@@ -95,11 +104,30 @@
     "present": "Here",
     "notHere": "Not here",
     "newCode": "New code",
-    "qrA11y": "Check-in QR code for players to scan"
+    "qrA11y": "Check-in QR code for players to scan",
+    "countdown": "New code in {time}",
+    "screenOn": "Keep this screen on and turn up the brightness so players can scan it.",
+    "copy": "Copy code",
+    "copied": "Code copied",
+    "playersTitle": "Players"
   },
   "geofence": {
     "title": "Sport Talent",
     "body": "You’re near the game — tap to check in."
   },
-  "fallbacks": "{count, plural, one {Try the other way below.} other {Try one of the other ways below.}}"
+  "fallbacks": "{count, plural, one {Try the other way below.} other {Try one of the other ways below.}}",
+  "methods": {
+    "title": "Choose how to check in",
+    "gps": "Location",
+    "qr": "Scan QR",
+    "code": "Enter code",
+    "peer": "Teammates",
+    "suggested": "Try this"
+  },
+  "steps": {
+    "choose": "Choose",
+    "verify": "Confirm",
+    "done": "Done",
+    "progress": "Step {current} of {total}: {label}"
+  }
 }

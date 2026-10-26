@@ -7,7 +7,8 @@
     "notifications": "通知",
     "privacy": "隐私与安全",
     "legal": "法律信息",
-    "about": "关于"
+    "about": "关于",
+    "preferences": "偏好"
   },
   "account": {
     "phone": "手机号",
@@ -26,7 +27,8 @@
       "restartNow": "立即重启",
       "later": "稍后",
       "pending": "重启后将使用新语言。"
-    }
+    },
+    "allLanguages": "所有语言"
   },
   "theme": {
     "title": "主题",
@@ -47,7 +49,8 @@
     "osOff": "通知已在设备设置中关闭。",
     "osOffAction": "打开设备设置",
     "deviceNote": "这些选择保存在此设备上。",
-    "unavailable": "此处不支持推送通知，你仍可在收件箱中查看动态。"
+    "unavailable": "此处不支持推送通知，你仍可在收件箱中查看动态。",
+    "groupTitle": "通知我以下内容"
   },
   "privacy": {
     "title": "隐私与安全",
@@ -102,7 +105,8 @@
     "timingTitle": "何时生效",
     "timing": "你的个人资料会立即从应用中消失。其余个人数据会在 24 小时内删除。",
     "reregister": "你以后可以用同一个号码重新注册。如果封禁或警告仍在生效，剩余的时间会重新适用。",
-    "keep": "保留我的账号"
+    "keep": "保留我的账号",
+    "step": "第 {current} 步，共 {total} 步"
   },
   "about": {
     "version": "版本 {version}",

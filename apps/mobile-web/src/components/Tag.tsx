@@ -1,31 +1,16 @@
-import { radius, spacing, Text, useTheme } from '@st/ui';
+import { legacyIconMap, StatusPill, type IconName as PhosphorName, type PillTone } from '@st/ui';
 import { View } from 'react-native';
 
-import { Icon, type IconName } from './Icon';
+import type { IconName } from './Icon';
 
-/** Small labelled badge (Deposit, Women only, Private, Waitlist). Icon + text, never color alone. */
-export function Tag({ icon, label, tone = 'neutral', testID }: { icon?: IconName; label: string; tone?: 'neutral' | 'warning' | 'info'; testID?: string }) {
-  const { colors } = useTheme();
-  const bg = tone === 'warning' ? colors.warningSubtle : tone === 'info' ? colors.infoSubtle : colors.surfaceSunken;
-  const fg = tone === 'warning' ? 'warningText' : tone === 'info' ? 'infoText' : 'textSecondary';
-  return (
-    <View
-      testID={testID}
-      style={{
-        flexDirection: 'row',
-        alignItems: 'center',
-        gap: spacing.xxs,
-        paddingStart: spacing.sm,
-        paddingEnd: spacing.sm,
-        minHeight: 24,
-        borderRadius: radius.pill,
-        backgroundColor: bg,
-      }}
-    >
-      {icon ? <Icon name={icon} size={14} color={fg} /> : null}
-      <Text variant="caption" color={fg} numberOfLines={1}>
-        {label}
-      </Text>
-    </View>
-  );
+export type TagTone = PillTone;
+
+/**
+ * Small labelled status pill (Deposit, Women only, Private, Waitlist, Hosting…): `StatusPill`
+ * with a bold Phosphor icon + label, never color alone. Accepts legacy icon names.
+ */
+export function Tag({ icon, label, tone = 'neutral', size = 'sm', testID }: { icon?: IconName; label: string; tone?: TagTone; size?: 'sm' | 'md'; testID?: string }) {
+  const glyph = icon ? ((legacyIconMap as Record<string, PhosphorName>)[icon] ?? (icon as PhosphorName)) : undefined;
+  const pill = <StatusPill label={label} tone={tone} icon={glyph} size={size} />;
+  return testID ? <View testID={testID}>{pill}</View> : pill;
 }

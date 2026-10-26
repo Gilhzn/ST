@@ -2,10 +2,10 @@
  * Peek-detent carousel of hero game cards, synced with the map selection both ways:
  * tapping a pin scrolls to its card; swiping to a card selects its pin. Tapping a card
  * opens the game. Cards: sport gradient tile + glyph, title, time · distance, players
- * meter, Live/Soon pill. Test ids: `map.hero.<gameId>` (the list keeps `map.card.<id>`).
+ * meter, Live/Soon pill. Test id `map.card.<gameId>`, like the list rows (only one of the two is mounted).
  */
 import type { NearbyGame } from '@st/domain';
-import { BidiText, isolate, sportColors, Text, useTheme } from '@st/ui';
+import { BidiText, Icon, isolate, sportColors, Text, useTheme, type IconName } from '@st/ui';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useEffect, useRef } from 'react';
 import { FlatList, Pressable, View, type NativeScrollEvent, type NativeSyntheticEvent } from 'react-native';
@@ -13,15 +13,13 @@ import { FlatList, Pressable, View, type NativeScrollEvent, type NativeSynthetic
 import { gameTiming } from '@/components/GameCard';
 import { useT } from '@/i18n';
 import { formatDay, formatDistance, formatTime } from '@/lib/format';
-import type { GlyphName } from '@/platform/map/glyphs';
-import { GlyphIcon } from '@/platform/map/markers';
 
 import { useWeight } from './MapControls';
 
 export const HERO_HEIGHT = 112;
 const GAP = 12;
 
-type SportTone = { color: string; gradient?: readonly [string, string] };
+type SportTone = { color: string; gradient?: readonly [string, string]; phosphor: IconName };
 
 export function GameCarousel({
   games,
@@ -122,7 +120,7 @@ export function HeroCard({
   const dark = theme.scheme === 'dark';
   return (
     <Pressable
-      testID={`map.hero.${game.id}`}
+      testID={`map.card.${game.id}`}
       accessibilityRole="button"
       accessibilityLabel={[t(`common:sports.${game.sport}`), game.title, when, players, t('map:card.distanceAway', { distance }), live ? t('map:card.live') : null]
         .filter(Boolean)
@@ -154,7 +152,7 @@ export function HeroCard({
         {/* court-line motif */}
         <View style={{ position: 'absolute', width: 64, height: 64, borderRadius: 32, borderWidth: 1.5, borderColor: 'rgba(255,255,255,0.18)' }} />
         <View style={{ position: 'absolute', top: 0, bottom: 0, width: 1.5, backgroundColor: 'rgba(255,255,255,0.14)' }} />
-        <GlyphIcon name={game.sport as GlyphName} size={38} color="#FFFFFF" />
+        <Icon name={tone.phosphor} size={38} weight="fill" color="#FFFFFF" />
       </LinearGradient>
       <View style={{ flex: 1, justifyContent: 'space-between', paddingTop: 2 }}>
         <View style={{ gap: 2 }}>
@@ -179,7 +177,7 @@ export function HeroCard({
             {game.title}
           </BidiText>
           <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6 }}>
-            <GlyphIcon name="clock" size={13} color={theme.colors.textSecondary} />
+            <Icon name="Clock" size={14} color="textSecondary" />
             <Text variant="caption" color="textSecondary" numberOfLines={1} style={{ flexShrink: 1 }}>
               {when} · {distance}
             </Text>
@@ -235,7 +233,7 @@ export function MapEmptyCard({
       }}
     >
       <View style={{ width: 52, height: 52, borderRadius: 26, alignItems: 'center', justifyContent: 'center', backgroundColor: theme.colors.primarySubtle }}>
-        <GlyphIcon name="mapPinArea" size={26} color={theme.colors.primary} />
+        <Icon name="MapPin" size={26} weight="duotone" color="primary" />
       </View>
       <View style={{ flex: 1, gap: 4 }}>
         <Text variant="bodyStrong" accessibilityRole="header">

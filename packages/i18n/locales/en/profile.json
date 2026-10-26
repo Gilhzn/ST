@@ -13,7 +13,8 @@
     "none": "None yet",
     "verifiedAttendance": "Verified attendance",
     "noShows": "No-shows",
-    "lateCancels": "Late cancels"
+    "lateCancels": "Late cancels",
+    "streak": "Check-in streak"
   },
   "positions": {
     "title": "Positions",

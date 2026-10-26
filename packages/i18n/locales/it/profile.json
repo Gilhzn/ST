@@ -13,7 +13,8 @@
     "none": "Ancora nessuno",
     "verifiedAttendance": "Presenze verificate",
     "noShows": "Assenze",
-    "lateCancels": "Cancellazioni tardive"
+    "lateCancels": "Cancellazioni tardive",
+    "streak": "Serie di check-in"
   },
   "positions": {
     "title": "Ruoli",

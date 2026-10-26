@@ -73,7 +73,8 @@
       "askPerson": "你可以要求由人工复核任何决定。",
       "affectsTitle": "影响范围",
       "stillAllowedTitle": "你仍然可以做的事",
-      "ruleLine": "适用规则：{rule}"
+      "ruleLine": "适用规则：{rule}",
+      "decidedByTitle": "决定方"
     },
     "rule": {
       "late_cancel": "临时取消规则",
@@ -115,7 +116,8 @@
       "cta": "对这张黄牌提出异议",
       "window": "你可以在 {date}前对这张黄牌提出异议。",
       "windowClosed": "异议期已结束，但你仍然可以提出申诉。",
-      "windowLeft": "你可以在 {date}前对这张黄牌提出异议（还剩{duration}）。"
+      "windowLeft": "你可以在 {date}前对这张黄牌提出异议（还剩{duration}）。",
+      "ringCaption": "剩余"
     },
     "appeal": {
       "cta": "对此决定提出申诉",

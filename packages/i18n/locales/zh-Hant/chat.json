@@ -90,6 +90,15 @@
     "tabChats": "聊天",
     "tabNotifications": "通知",
     "empty": "目前還沒有訊息。加入一場比賽，開始聊天吧。",
-    "pinned": "已置頂，閱讀後取消"
+    "pinned": "已置頂，閱讀後取消",
+    "markAllRead": "全部標為已讀",
+    "markRead": "標為已讀",
+    "needsAttention": "需要你留意",
+    "earlier": "更早",
+    "caughtUp": "暫無新通知。有新動態時我們會通知你。"
+  },
+  "day": {
+    "today": "今天",
+    "yesterday": "昨天"
   }
 }

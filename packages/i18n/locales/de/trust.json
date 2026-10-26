@@ -73,7 +73,8 @@
       "askPerson": "Du kannst jede Entscheidung von einem Menschen prüfen lassen.",
       "affectsTitle": "Was das betrifft",
       "stillAllowedTitle": "Was du weiterhin tun kannst",
-      "ruleLine": "Regel: {rule}"
+      "ruleLine": "Regel: {rule}",
+      "decidedByTitle": "Wer entschieden hat"
     },
     "rule": {
       "late_cancel": "Regel zu späten Absagen",
@@ -115,7 +116,8 @@
       "cta": "Gelbe Karte anfechten",
       "window": "Du kannst diese Gelbe Karte bis {date} anfechten.",
       "windowClosed": "Die Frist zum Anfechten ist vorbei, aber du kannst weiterhin Einspruch einlegen.",
-      "windowLeft": "Du kannst diese Gelbe Karte bis {date} anfechten (noch {duration})."
+      "windowLeft": "Du kannst diese Gelbe Karte bis {date} anfechten (noch {duration}).",
+      "ringCaption": "übrig"
     },
     "appeal": {
       "cta": "Einspruch einlegen",

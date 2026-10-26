@@ -1,19 +1,18 @@
 /**
- * My games (design §12.1): Upcoming (hosting, joined, waitlisted, requested),
- * Hosting and Past, in a segmented control. Pull to refresh on native; web has a
- * Refresh button (browsers have no pull gesture).
+ * My games (design v2 §15.11): LargeHeader ("Games", "3 upcoming") with a Segmented control
+ * Upcoming | Hosting | Past (counts), then day-sectioned GameHeroCards. Pull to refresh on native
+ * (light haptic); web has a Refresh icon button (browsers have no pull gesture).
  */
-import { Button, Stack } from '@st/ui';
+import { Haptics, IconButton, Segmented, spacing } from '@st/ui';
+import { router } from 'expo-router';
 import { useState } from 'react';
-import { Platform, RefreshControl, ScrollView } from 'react-native';
+import { Platform, RefreshControl } from 'react-native';
 
-import { Icon } from '@/components/Icon';
 import { Screen } from '@/components/Screen';
 import { ErrorView, Skeleton } from '@/components/States';
 import { useData } from '@/data/DataProvider';
-import { GamesList } from '@/features/profile/GamesList';
+import { GamesFeed } from '@/features/games/GamesFeed';
 import { splitMyGames, type GamesSegment } from '@/features/profile/myGames';
-import { SegmentedControl } from '@/features/profile/SegmentedControl';
 import { useAsync } from '@/hooks/useAsync';
 import { useNow } from '@/hooks/useNow';
 import { useT } from '@/i18n';
@@ -26,55 +25,61 @@ export default function GamesScreen() {
   const games = useAsync(() => port.listMyGames(), [port]);
   const refreshing = games.loading && games.data !== undefined;
   const groups = splitMyGames(games.data ?? [], now);
+  const loaded = games.data !== undefined;
 
   return (
     <Screen
-      title={t('common:nav.games')}
-      back={false}
       testID="screen.games"
+      large
+      title={t('common:nav.games')}
+      subtitle={loaded ? t('games:my.subtitle', { count: groups.upcoming.length }) : undefined}
+      back={false}
       edges={['top']}
-      scroll={false}
-      contentStyle={{ flex: 1 }}
       headerEnd={
-        Platform.OS === 'web' ? (
-          <Button
-            testID="games.refresh"
-            variant="ghost"
-            label={t('games:my.refresh')}
-            loading={refreshing}
-            startIcon={<Icon name="refresh" size={20} color="primaryText" />}
-            onPress={() => void games.reload()}
-          />
-        ) : undefined
+        <>
+          {Platform.OS === 'web' ? (
+            <IconButton
+              testID="games.refresh"
+              icon="ArrowClockwise"
+              variant="tonal"
+              label={t('games:my.refresh')}
+              onPress={() => void games.reload()}
+            />
+          ) : null}
+          <IconButton testID="games.create" icon="Plus" variant="filled" label={t('map:createGame.fab')} onPress={() => router.push('/game/create')} />
+        </>
       }
+      headerChildren={
+        <Segmented
+          testID="games.segments"
+          label={t('games:my.segmentsA11y')}
+          value={segment}
+          onChange={setSegment}
+          options={[
+            { value: 'upcoming', label: t('games:my.segment.upcoming'), count: loaded ? groups.upcoming.length : undefined, testID: 'games.segment.upcoming' },
+            { value: 'hosting', label: t('games:my.segment.hosting'), count: loaded ? groups.hosting.length : undefined, testID: 'games.segment.hosting' },
+            { value: 'past', label: t('games:my.segment.past'), testID: 'games.segment.past' },
+          ]}
+        />
+      }
+      refreshControl={
+        <RefreshControl
+          refreshing={refreshing}
+          onRefresh={() => {
+            Haptics.trigger('pullToRefresh');
+            void games.reload();
+          }}
+        />
+      }
+      contentStyle={{ paddingTop: spacing.sm }}
     >
-      <SegmentedControl
-        testID="games.segments"
-        accessibilityLabel={t('games:my.segmentsA11y')}
-        value={segment}
-        onChange={setSegment}
-        segments={[
-          { value: 'upcoming', label: t('games:my.segment.upcoming'), testID: 'games.segment.upcoming' },
-          { value: 'hosting', label: t('games:my.segment.hosting'), testID: 'games.segment.hosting' },
-          { value: 'past', label: t('games:my.segment.past'), testID: 'games.segment.past' },
-        ]}
-      />
-      <ScrollView
-        style={{ flex: 1 }}
-        contentContainerStyle={{ paddingBottom: 32 }}
-        keyboardShouldPersistTaps="handled"
-        refreshControl={<RefreshControl refreshing={refreshing} onRefresh={() => void games.reload()} />}
-      >
-        {games.loading && games.data === undefined ? (
-          <Skeleton />
-        ) : games.error && games.data === undefined ? (
-          <ErrorView error={games.error} onRetry={() => void games.reload()} />
-        ) : (
-          <Stack gap="md">
-            <GamesList segment={segment} games={groups[segment]} now={now} />
-          </Stack>
-        )}
-      </ScrollView>
+      {games.loading && games.data === undefined ? (
+        <Skeleton kind="game" rows={2} />
+      ) : games.error && games.data === undefined ? (
+        <ErrorView error={games.error} onRetry={() => void games.reload()} />
+      ) : (
+        <GamesFeed segment={segment} games={groups[segment]} now={now} />
+      )}
     </Screen>
   );
 }

@@ -73,7 +73,8 @@
       "askPerson": "Tu peux demander qu’une personne examine n’importe quelle décision.",
       "affectsTitle": "Ce que cela change",
       "stillAllowedTitle": "Ce que tu peux toujours faire",
-      "ruleLine": "Règle : {rule}"
+      "ruleLine": "Règle : {rule}",
+      "decidedByTitle": "Qui a décidé"
     },
     "rule": {
       "late_cancel": "Règle sur les annulations tardives",
@@ -115,7 +116,8 @@
       "cta": "Contester ce carton",
       "window": "Tu peux contester ce carton jusqu’au {date}.",
       "windowClosed": "Le délai de contestation est terminé, mais tu peux toujours faire appel.",
-      "windowLeft": "Tu peux contester ce carton jusqu’au {date} ({duration} restant)."
+      "windowLeft": "Tu peux contester ce carton jusqu’au {date} ({duration} restant).",
+      "ringCaption": "restant"
     },
     "appeal": {
       "cta": "Faire appel de cette décision",

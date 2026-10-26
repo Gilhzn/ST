@@ -1,43 +1,55 @@
 import type { ParticipantView } from '@st/domain';
-import { Avatar, BidiText, Row, Stack, Text } from '@st/ui';
+import { BidiText, spacing, StatusPill, Text } from '@st/ui';
 import type { ReactNode } from 'react';
+import { View } from 'react-native';
 
 import { useT } from '@/i18n';
 
-import { ReliabilityDot } from './ReliabilityBadge';
+import { ReliabilityAvatar, ReliabilityDot } from './ReliabilityBadge';
 
-/** Participant list row: avatar, name (bidi-safe), reliability dot, position, trailing actions. */
-export function ParticipantRow({ p, trailing, isHost }: { p: ParticipantView; trailing?: ReactNode; isHost?: boolean }) {
+/**
+ * Participant row (design v2 §15.4): avatar inside a reliability arc, name (bidi-safe) + status
+ * dot, then host / position / checked-in pills; trailing slot for host actions. Sits inside a
+ * `ListGroup` card (its own start/end padding).
+ */
+export function ParticipantRow({ p, trailing, isHost, inset = true }: { p: ParticipantView; trailing?: ReactNode; isHost?: boolean; inset?: boolean }) {
   const { t } = useT();
+  const checkedIn = p.attendance === 'verified';
   return (
-    <Row gap="md" style={{ minHeight: 56 }} testID={`game.participants.${p.userId}`}>
-      <Avatar name={p.profile.displayName} uri={p.profile.avatarUrl} size="md" decorative />
-      <Stack gap="xxs" style={{ flex: 1 }}>
-        <Row gap="xs">
-          <BidiText variant="callout" numberOfLines={1} style={{ flexShrink: 1 }}>
+    <View
+      testID={`game.participants.${p.userId}`}
+      style={{
+        flexDirection: 'row',
+        alignItems: 'center',
+        gap: spacing.md,
+        minHeight: 64,
+        paddingTop: spacing.sm,
+        paddingBottom: spacing.sm,
+        paddingStart: inset ? spacing.lg : 0,
+        paddingEnd: inset ? spacing.md : 0,
+      }}
+    >
+      <ReliabilityAvatar name={p.profile.displayName} uri={p.profile.avatarUrl} status={p.profile.reliabilityStatus} score={p.profile.reliabilityScore} />
+      <View style={{ flex: 1, gap: spacing.xs }}>
+        <View style={{ flexDirection: 'row', alignItems: 'center', gap: spacing.xs + 2 }}>
+          <BidiText variant="body" weight="medium" numberOfLines={1} style={{ flexShrink: 1 }}>
             {p.profile.displayName}
           </BidiText>
           <ReliabilityDot status={p.profile.reliabilityStatus} score={p.profile.reliabilityScore} />
-        </Row>
-        <Row gap="sm">
-          {isHost ? (
-            <Text variant="caption" color="primaryText">
-              {t('games:details.host.badge')}
-            </Text>
-          ) : null}
-          {p.position ? (
-            <Text variant="caption" color="textSecondary">
-              {t(`common:positions.${p.position}`)}
-            </Text>
-          ) : null}
-          {p.attendance === 'verified' ? (
-            <Text variant="caption" color="successText">
-              {t('games:details.checkedIn')}
-            </Text>
-          ) : null}
-        </Row>
-      </Stack>
+        </View>
+        {isHost || p.position || checkedIn ? (
+          <View style={{ flexDirection: 'row', flexWrap: 'wrap', alignItems: 'center', gap: spacing.xs }}>
+            {isHost ? <StatusPill tone="brand" icon="Strategy" label={t('games:details.host.badge')} /> : null}
+            {checkedIn ? <StatusPill tone="success" icon="CheckCircle" label={t('games:details.checkedIn')} /> : null}
+            {p.position ? (
+              <Text variant="footnote" color="textSecondary" numberOfLines={1}>
+                {t(`common:positions.${p.position}`)}
+              </Text>
+            ) : null}
+          </View>
+        ) : null}
+      </View>
       {trailing}
-    </Row>
+    </View>
   );
 }

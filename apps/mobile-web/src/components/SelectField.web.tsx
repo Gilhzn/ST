@@ -1,24 +1,23 @@
 /**
- * Web select: a real <select> (native keyboard, screen-reader and autofill
- * behaviour) styled like TextField. No option is pre-selected unless `value` is set.
+ * Web select: the v2 filled field look, with a real, transparent <select> laid over it so the
+ * keyboard, screen-reader, autofill and test behaviour stay native. No option is pre-selected
+ * unless `value` is set.
  */
-import { borderWidth, radius, sizing, spacing, Text, useTheme } from '@st/ui';
-import { createElement, useId } from 'react';
-import { View } from 'react-native';
+import { useTheme } from '@st/ui';
+import { createElement, useId, useState } from 'react';
 
 import type { SelectFieldProps } from './SelectField.types';
+import { SelectShell } from './SelectShell';
 
 export type { SelectFieldProps, SelectOption } from './SelectField.types';
 
-export function SelectField({ label, placeholder, value, options, onChange, error, helperText, testID }: SelectFieldProps) {
+export function SelectField(props: SelectFieldProps) {
+  const { label, placeholder, value, options, onChange, error, testID } = props;
   const theme = useTheme();
-  const c = theme.colors;
   const id = useId();
+  const [focused, setFocused] = useState(false);
   return (
-    <View style={{ gap: spacing.xs }}>
-      <Text variant="label" nativeID={`${id}-label`}>
-        {label}
-      </Text>
+    <SelectShell {...props} focused={focused} labelId={`${id}-label`}>
       {createElement(
         'select',
         {
@@ -27,32 +26,22 @@ export function SelectField({ label, placeholder, value, options, onChange, erro
           'aria-invalid': Boolean(error),
           value: value ?? '',
           onChange: (e: { target: { value: string } }) => onChange(e.target.value),
+          onFocus: () => setFocused(true),
+          onBlur: () => setFocused(false),
           style: {
-            minHeight: sizing.touchTarget,
-            paddingInlineStart: spacing.md,
-            paddingInlineEnd: spacing.md,
-            borderRadius: radius.md,
-            borderStyle: 'solid',
-            borderWidth: error ? borderWidth.thick : borderWidth.regular,
-            borderColor: error ? c.danger : c.borderStrong,
-            backgroundColor: c.surface,
-            color: value ? c.text : c.textTertiary,
+            position: 'absolute',
+            inset: 0,
+            width: '100%',
+            height: '100%',
+            opacity: 0,
+            cursor: 'pointer',
             fontSize: 16,
-            fontFamily: 'inherit',
+            colorScheme: theme.scheme,
           },
         },
         createElement('option', { value: '', disabled: true }, placeholder),
         ...options.map((o) => createElement('option', { key: o.value, value: o.value }, o.label)),
       )}
-      {error ? (
-        <Text variant="caption" color="dangerText" accessibilityLiveRegion="polite">
-          {error}
-        </Text>
-      ) : helperText ? (
-        <Text variant="caption" color="textTertiary">
-          {helperText}
-        </Text>
-      ) : null}
-    </View>
+    </SelectShell>
   );
 }

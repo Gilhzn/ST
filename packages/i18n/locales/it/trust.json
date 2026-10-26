@@ -73,7 +73,8 @@
       "askPerson": "Puoi chiedere che una persona esamini qualsiasi decisione.",
       "affectsTitle": "Cosa comporta",
       "stillAllowedTitle": "Cosa puoi ancora fare",
-      "ruleLine": "Regola: {rule}"
+      "ruleLine": "Regola: {rule}",
+      "decidedByTitle": "Chi ha deciso"
     },
     "rule": {
       "late_cancel": "Regola sulle cancellazioni tardive",
@@ -115,7 +116,8 @@
       "cta": "Contesta questo cartellino",
       "window": "Puoi contestare questo cartellino fino al {date}.",
       "windowClosed": "Il termine per contestare è scaduto, ma puoi ancora presentare ricorso.",
-      "windowLeft": "Puoi contestare questo cartellino fino al {date} (restano {duration})."
+      "windowLeft": "Puoi contestare questo cartellino fino al {date} (restano {duration}).",
+      "ringCaption": "rimasti"
     },
     "appeal": {
       "cta": "Presenta ricorso contro la decisione",

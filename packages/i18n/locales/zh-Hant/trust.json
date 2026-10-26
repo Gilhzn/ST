@@ -73,7 +73,8 @@
       "askPerson": "你可以要求由真人複核任何決定。",
       "affectsTitle": "影響範圍",
       "stillAllowedTitle": "你仍然可以做的事",
-      "ruleLine": "適用規則：{rule}"
+      "ruleLine": "適用規則：{rule}",
+      "decidedByTitle": "決定方"
     },
     "rule": {
       "late_cancel": "臨時取消規則",
@@ -115,7 +116,8 @@
       "cta": "對這張黃牌提出異議",
       "window": "你可以在 {date}前對這張黃牌提出異議。",
       "windowClosed": "異議期已結束，但你仍然可以提出申訴。",
-      "windowLeft": "你可以在 {date}前對這張黃牌提出異議（還剩{duration}）。"
+      "windowLeft": "你可以在 {date}前對這張黃牌提出異議（還剩{duration}）。",
+      "ringCaption": "剩餘"
     },
     "appeal": {
       "cta": "對這項決定提出申訴",

@@ -13,7 +13,8 @@
     "none": "עדיין אין",
     "verifiedAttendance": "הגעות מאומתות",
     "noShows": "אי-הגעות",
-    "lateCancels": "ביטולים מאוחרים"
+    "lateCancels": "ביטולים מאוחרים",
+    "streak": "רצף צ׳ק-אין"
   },
   "positions": {
     "title": "עמדות",
