@@ -1,6 +1,6 @@
 // Deno entrypoint (excluded from tsc; see supabase/functions/README.md). Wiring only: logic lives in handler.ts.
 import Anthropic from 'npm:@anthropic-ai/sdk@1.3.0';
-import { buildContext, translators } from '../_shared/wiring.ts';
+import { buildContext, omniProvider, translators } from '../_shared/wiring.ts';
 import { handle, type TranslateDeps } from './handler.ts';
 
 const env = { get: (k: string) => Deno.env.get(k) };
@@ -12,6 +12,7 @@ const deps: TranslateDeps = {
   store: ctx.store,
   translators: translators(env, { anthropic }),
   timeoutMs: 4000,
+  outputModeration: { provider: omniProvider(env), timeoutMs: 1500 },
   rateLimiter: ctx.rateLimiter,
   clock: ctx.clock,
   log: ctx.log,

@@ -39,6 +39,18 @@ describe('Supabase store', () => {
     expect(calls.map((c) => c.op)).toEqual(['user.select', 'user.rpc']);
   });
 
+  it('M3: last accepted fix = latest verified GPS check-in elsewhere, at that pin (read as the user)', async () => {
+    const calls: Call[] = [];
+    const admin = fakeClient({ checkins: [[{ game_id: 'g0', distance_m: '12.50', created_at: '2026-11-10 15:00:00+00' }]] }, calls);
+    const user = fakeClient({ game_views: [[{ lat: 32.1, lng: 34.8 }]] }, calls, 'user');
+    const store = createStore({ admin, asUser: () => user });
+    await expect(store.loadLastAcceptedFix('jwt', 'u', 'g1', '2026-11-10T05:00:00.000Z', 50)).resolves.toEqual({ lat: 32.1, lng: 34.8, accuracyM: 62.5, timestamp: Date.parse('2026-11-10T15:00:00.000Z') });
+    expect(calls[0]?.filters).toEqual([['user_id', 'eq', 'u'], ['method', 'eq', 'gps'], ['outcome', 'eq', 'verified'], ['game_id', 'neq', 'g1'], ['created_at', 'gte', '2026-11-10T05:00:00.000Z']]);
+    expect(calls[1]?.op).toBe('user.select');
+    const empty = createStore({ admin: fakeClient({}, []), asUser: () => user });
+    await expect(empty.loadLastAcceptedFix('jwt', 'u', 'g1', 'x', 50)).resolves.toBeNull();
+  });
+
   it('records check-in verdicts through record_checkin_verdict', async () => {
     const calls: Call[] = [];
     const store = createStore({ admin: fakeClient({ 'rpc:record_checkin_verdict': [{ outcome: 'verified' }] as never }, calls), asUser: () => fakeClient({}, calls) });

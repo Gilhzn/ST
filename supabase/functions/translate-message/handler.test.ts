@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest';
-import type { Locale, TranslationProvider } from '@st/domain';
+import type { Locale, ModerationVerdict, TranslationProvider } from '@st/domain';
+import type { ModerationProvider } from '#shared/moderation';
 import type { Translator } from '#shared/translate';
 import { allowAll, body, fakeAuth, memoryLogger, mutableClock, post, uuid } from '../_test/helpers';
 import { handle, type TranslateDeps, type TranslateResponse, type TranslateStore, type VisibleMessage } from './handler';
@@ -20,9 +21,17 @@ const tr = (provider: TranslationProvider, result: string | Error, supports = tr
   return t satisfies Translator;
 };
 
-function setup(chain = [tr('google', 'We will crush them tonight'), tr('deepl', 'deepl'), tr('llm', 'llm')]) {
+const omni = (decision: ModerationVerdict['decision'] | 'hang'): ModerationProvider => ({
+  name: 'omni',
+  classify: (_i, signal) =>
+    decision === 'hang'
+      ? new Promise((_r, rej) => signal.addEventListener('abort', () => rej(new Error('abort'))))
+      : Promise.resolve({ decision, categories: decision === 'allow' ? [] : ['harassment'], source: 'omni', reasonKey: null }),
+});
+
+function setup(chain = [tr('google', 'We will crush them tonight'), tr('deepl', 'deepl'), tr('llm', 'llm')], moderation: ModerationProvider | null = omni('allow')) {
   const store = new Store();
-  const deps: TranslateDeps = { auth: fakeAuth({ tok: uuid(10) }), store, translators: chain, timeoutMs: 50, rateLimiter: allowAll, clock: mutableClock(0), log: memoryLogger(), cors: { allowedOrigins: [] } };
+  const deps: TranslateDeps = { auth: fakeAuth({ tok: uuid(10) }), store, translators: chain, timeoutMs: 50, outputModeration: { provider: moderation, timeoutMs: 20 }, rateLimiter: allowAll, clock: mutableClock(0), log: memoryLogger(), cors: { allowedOrigins: [] } };
   const call = (b: Record<string, unknown> = { messageId: MSG }) => handle(post('translate-message', b, { token: 'tok' }), deps);
   return { store, deps, call, chain };
 }
@@ -31,7 +40,7 @@ describe('translate-message', () => {
   it('translates into the profile locale, reads the message as the caller, and caches', async () => {
     const { call, store, chain } = setup();
     const a = await body<TranslateResponse>(await call());
-    expect(a).toEqual({ messageId: MSG, target: 'en', text: 'We will crush them tonight', provider: 'google', cached: false, sameLanguage: false });
+    expect(a).toEqual({ messageId: MSG, target: 'en', text: 'We will crush them tonight', provider: 'google', cached: false, sameLanguage: false, masked: false });
     expect(store.tokens).toEqual(['tok']);
     const b = await body<TranslateResponse>(await call());
     expect(b).toMatchObject({ cached: true, provider: 'google' });
@@ -64,6 +73,31 @@ describe('translate-message', () => {
     expect((await call()).status).toBe(404);
     store.message = null;
     expect((await call()).status).toBe(404);
+  });
+
+  it('L3: translated output blocked by omni-moderation is fully masked and never cached', async () => {
+    const { call, store } = setup([tr('google', 'you are a worthless idiot')], omni('block'));
+    expect(await body(await call())).toMatchObject({ text: '•••', masked: true, provider: 'google', cached: false });
+    expect(store.cache.size).toBe(0);
+  });
+
+  it('L3: blocklist terms in the translation are masked (target-locale list), not cached', async () => {
+    const { call, store } = setup([tr('google', 'That ref is a total Moron, honestly')], omni('allow'));
+    const r = await body<TranslateResponse>(await call());
+    expect(r).toMatchObject({ masked: true, text: 'That ref is a total •••, honestly' });
+    // Matched only after normalisation (leet) → cannot be located → whole text masked.
+    const leet = setup([tr('google', 'what an 1d10t')], omni('allow'));
+    expect(await body(await leet.call())).toMatchObject({ masked: true, text: '•••' });
+    expect(store.cache.size).toBe(0);
+  });
+
+  it('L3: unchecked output (moderation timeout) is shown but not cached; clean checked output is cached', async () => {
+    const { call, store } = setup(undefined, omni('hang'));
+    expect(await body(await call())).toMatchObject({ masked: false, text: 'We will crush them tonight' });
+    expect(store.cache.size).toBe(0);
+    const ok = setup(undefined, omni('nudge'));
+    expect(await body(await ok.call())).toMatchObject({ masked: false });
+    expect(ok.store.cache.size).toBe(1);
   });
 
   it('validates target locale', async () => {

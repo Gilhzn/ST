@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { offsetMeters, type CheckInVerdict } from '@st/domain';
+import { offsetMeters, type CheckInVerdict, type GpsSample } from '@st/domain';
 import { staticConfig } from '#shared/config';
 import { allowAll, body, fakeAuth, memoryLogger, mutableClock, post, uuid } from '../_test/helpers';
 import { handle, type CheckinDeps, type CheckinGame, type CheckinStore, type IntegrityVerifier } from './handler';
@@ -13,12 +13,18 @@ class Store implements CheckinStore {
   game: CheckinGame | null = { id: GAME, status: 'scheduled', startsAt: new Date(START).toISOString(), endsAt: new Date(START + 2 * 3_600_000).toISOString(), location: PIN };
   participant: { status: 'approved' | 'requested'; attendance: 'unknown' | 'verified' } | null = { status: 'approved', attendance: 'unknown' };
   recorded: CheckInVerdict[] = [];
+  lastFix: GpsSample | null = null;
+  lastFixQueries: { excludeGameId: string; since: string; baseRadiusM: number }[] = [];
+  loadLastAcceptedFix = async (_t: string, _u: string, excludeGameId: string, since: string, baseRadiusM: number) => {
+    this.lastFixQueries.push({ excludeGameId, since, baseRadiusM });
+    return this.lastFix;
+  };
   loadGame = async () => this.game;
   loadParticipant = async () => this.participant;
   recordVerdict = async (_g: string, _u: string, v: CheckInVerdict) => { this.recorded.push(v); return v; };
 }
 
-function setup(integrity: IntegrityVerifier = { verify: async () => 'unavailable' }) {
+function setup(integrity: IntegrityVerifier = { configured: false, verify: async () => 'unavailable' }) {
   const store = new Store();
   const log = memoryLogger();
   const deps: CheckinDeps = { auth: fakeAuth({ tok: uuid(10) }), store, integrity, config: staticConfig(), rateLimiter: allowAll, clock: mutableClock(NOW), log, cors: { allowedOrigins: [] } };
@@ -53,9 +59,35 @@ describe('checkin-verify', () => {
   });
 
   it('failed device integrity downgrades to fallbacks', async () => {
-    const { call } = setup({ verify: async () => 'fail' });
+    const { call } = setup({ configured: true, verify: async () => 'fail' });
     const v = await body<CheckInVerdict>(await call({ samples: [near(10, NOW - 20_000), near(12, NOW - 10_000)], integrity: { platform: 'android', token: 'play-integrity-token' } }));
     expect(v).toMatchObject({ outcome: 'rejected', reason: 'suspected_spoofing', fallbacks: ['qr', 'peer', 'host'] });
+  });
+
+  it('M3: attestation configured but token missing → suspected_spoofing with QR/peer/host, recorded', async () => {
+    const calls: string[] = [];
+    const { call, store } = setup({ configured: true, verify: async (_p, token) => { calls.push(token); return 'pass'; } });
+    const samples = [near(10, NOW - 20_000), near(12, NOW - 10_000)];
+    const missing = await body<CheckInVerdict>(await call({ samples }));
+    expect(missing).toEqual({ outcome: 'rejected', method: 'gps', reason: 'suspected_spoofing', fallbacks: ['qr', 'peer', 'host'], signals: [] });
+    expect(store.recorded).toEqual([missing]);
+    const malformed = await body<CheckInVerdict>(await call({ samples, integrity: { platform: 'symbian', token: 'x' } }));
+    expect(malformed).toMatchObject({ reason: 'suspected_spoofing' });
+    expect(calls).toEqual([]);
+    expect(await body(await call({ samples, integrity: { platform: 'ios', token: 'app-attest' } }))).toMatchObject({ outcome: 'verified' });
+    expect(calls).toEqual(['app-attest']);
+  });
+
+  it('M3: the last accepted fix feeds the impossible-speed check (teleport → fallbacks)', async () => {
+    const { call, store } = setup();
+    // Verified 10 minutes ago at a pin ~100 km away: ≥ 600 km/h even after accuracy slack.
+    store.lastFix = { ...offsetMeters(PIN, 100_000, 0), accuracyM: 60, timestamp: NOW - 10 * 60_000 };
+    const v = await body<CheckInVerdict>(await call({ samples: [near(10, NOW - 20_000), near(12, NOW - 10_000)] }));
+    expect(v).toMatchObject({ outcome: 'rejected', reason: 'suspected_spoofing', signals: ['impossible_speed'], fallbacks: ['qr', 'peer', 'host'] });
+    expect(store.lastFixQueries[0]).toEqual({ excludeGameId: GAME, since: new Date(NOW - 12 * 3_600_000).toISOString(), baseRadiusM: 50 });
+    // A plausible earlier fix (same city, hours ago) does not interfere.
+    store.lastFix = { ...offsetMeters(PIN, 3_000, 0), accuracyM: 60, timestamp: NOW - 3 * 3_600_000 };
+    expect(await body(await call({ samples: [near(10, NOW - 20_000), near(12, NOW - 10_000)] }))).toMatchObject({ outcome: 'verified' });
   });
 
   it('non-participants and hidden pins get not_participant (not recorded); missing game → 404', async () => {

@@ -11,6 +11,14 @@
  * never persisted or logged; only verdict, best distance and spoof signals.
  * Spoof signals and failed device-integrity checks only route to fallbacks,
  * never to a sanction.
+ *
+ * Anti-spoofing inputs:
+ * - `lastKnown`: the user's last accepted GPS check-in (another game, last
+ *   {@link LAST_FIX_LOOKBACK_MS}) feeds the impossible-speed check. Raw fixes are
+ *   not stored, so it is approximated by that game's pin with accuracy
+ *   `distanceM + gpsBaseRadiusM`.
+ * - When device attestation is configured, a GPS check-in without an
+ *   integrity token is not trusted: `suspected_spoofing` → QR / peer / host.
  */
 import {
   NON_GPS_FALLBACKS,
@@ -49,16 +57,38 @@ export interface CheckinStore {
   loadParticipant(gameId: GameId, userId: UserId): Promise<{ status: ParticipantStatus; attendance: AttendanceStatus } | null>;
   /** `record_checkin_verdict` (service role). Returns the stored verdict. */
   recordVerdict(gameId: GameId, userId: UserId, verdict: CheckInVerdict): Promise<CheckInVerdict>;
+  /**
+   * The user's most recent verified GPS check-in in another game since `since`,
+   * as a fix at that game's pin (`accuracyM` = recorded distance + base radius).
+   */
+  loadLastAcceptedFix(accessToken: string, userId: UserId, excludeGameId: GameId, since: IsoDateTime, baseRadiusM: number): Promise<GpsSample | null>;
 }
+
+/** How far back the last accepted fix is considered for the impossible-speed check. */
+export const LAST_FIX_LOOKBACK_MS = 12 * 3_600_000;
 
 export type IntegrityPlatform = 'ios' | 'android' | 'web';
 
 /** Device attestation (App Attest / Play Integrity) seam. MVP: not configured → `unavailable`. */
 export interface IntegrityVerifier {
+  /** When true, GPS check-ins without a token are routed to fallbacks. */
+  readonly configured: boolean;
   verify(platform: IntegrityPlatform, token: string, nonce: string): Promise<'pass' | 'fail' | 'unavailable'>;
 }
 
-export const integrityNotConfigured: IntegrityVerifier = { verify: () => Promise.resolve('unavailable') };
+export const integrityNotConfigured: IntegrityVerifier = { configured: false, verify: () => Promise.resolve('unavailable') };
+
+const SPOOF_FALLBACK: CheckInVerdict = { outcome: 'rejected', method: 'gps', reason: 'suspected_spoofing', fallbacks: NON_GPS_FALLBACKS, signals: [] };
+
+function parseIntegrity(raw: Record<string, unknown> | null): { platform: IntegrityPlatform; token: string } | null {
+  if (!raw) return null;
+  const platform = raw['platform'];
+  const token = raw['token'];
+  if ((platform === 'ios' || platform === 'android' || platform === 'web') && typeof token === 'string' && token.length > 0 && token.length <= 8192) {
+    return { platform, token };
+  }
+  return null;
+}
 
 export interface CheckinDeps {
   auth: AuthVerifier;
@@ -98,7 +128,7 @@ export async function handle(req: Request, deps: CheckinDeps): Promise<Response>
     const input = await readJson(req, 16 * 1024);
     const gameId = uuidField(input, 'gameId');
     const samples = arrayField(input, 'samples', MAX_SAMPLES).map(parseSample);
-    const integrity = input['integrity'] === undefined || input['integrity'] === null ? null : objectValue(input['integrity'], 'integrity');
+    const integrity = parseIntegrity(input['integrity'] === undefined || input['integrity'] === null ? null : objectValue(input['integrity'], 'integrity'));
 
     const limit = await deps.rateLimiter.hit(`checkin:${user.userId}:${gameId}`, 10, 10 * 60_000);
     if (!limit.allowed) throw new StError('rate_limited', 'too many check-in attempts', { retryAfterMs: limit.retryAfterMs });
@@ -116,15 +146,20 @@ export async function handle(req: Request, deps: CheckinDeps): Promise<Response>
       return json({ outcome: 'verified', method: 'gps', distanceM: null, signals: [] } satisfies CheckInVerdict, 200, cors);
     } else if (game.status !== 'scheduled') {
       verdict = rejected('outside_window', []);
+    } else if (deps.integrity.configured && !integrity) {
+      verdict = SPOOF_FALLBACK; // attestation required but missing or malformed
     } else {
-      verdict = verifyGps(samples, game.location, { startsAt: game.startsAt, endsAt: game.endsAt }, now, null, config);
+      const lastKnown = await deps.store.loadLastAcceptedFix(
+        user.accessToken,
+        user.userId,
+        gameId,
+        new Date(now - LAST_FIX_LOOKBACK_MS).toISOString(),
+        config.gpsBaseRadiusM,
+      );
+      verdict = verifyGps(samples, game.location, { startsAt: game.startsAt, endsAt: game.endsAt }, now, lastKnown, config);
       if (verdict.outcome === 'verified' && integrity) {
-        const platform = integrity['platform'];
-        const token = integrity['token'];
-        if ((platform === 'ios' || platform === 'android' || platform === 'web') && typeof token === 'string' && token.length > 0 && token.length <= 8192) {
-          const result = await deps.integrity.verify(platform, token, `${gameId}:${user.userId}`);
-          if (result === 'fail') verdict = { outcome: 'rejected', method: 'gps', reason: 'suspected_spoofing', fallbacks: NON_GPS_FALLBACKS, signals: [] };
-        }
+        const result = await deps.integrity.verify(integrity.platform, integrity.token, `${gameId}:${user.userId}`);
+        if (result === 'fail') verdict = SPOOF_FALLBACK;
       }
     }
 

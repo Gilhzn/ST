@@ -12,9 +12,9 @@ const ALICE = uuid(10);
 
 class MemoryChatStore implements SendMessageStore {
   ctx: ChatContext | null = {
-    game: { id: GAME, endsAt: '2026-11-10T20:00:00.000Z', status: 'scheduled' },
+    game: { id: GAME, startsAt: '2026-11-10T18:00:00.000Z', endsAt: '2026-11-10T20:00:00.000Z', status: 'scheduled' },
     isMember: true,
-    sender: { chatMutedUntil: null, permanentlyBanned: false, deleted: false, createdAt: '2026-01-01T00:00:00.000Z', locale: 'he' },
+    sender: { chatMutedUntil: null, visibilityRestrictedUntil: null, permanentlyBanned: false, deleted: false, createdAt: '2026-01-01T00:00:00.000Z', locale: 'he' },
   };
   messages: ChatMessage[] = [];
   retained: RetainedMessage[] = [];
@@ -96,6 +96,22 @@ describe('send-message', () => {
     expect(await body(await send({ body: 'hi' }))).toMatchObject({ code: 'game_not_open' });
     store.ctx = null;
     expect((await send({ body: 'hi' })).status).toBe(404);
+  });
+
+  it('M5: a visibility-restricted user cannot chat in games that have not started', async () => {
+    const { send, store, clock } = setup();
+    store.ctx = { ...store.ctx!, sender: { ...store.ctx!.sender, visibilityRestrictedUntil: '2026-11-12T00:00:00.000Z' } };
+    const res = await send({ body: 'hi all' });
+    expect(res.status).toBe(403);
+    expect(await body(res)).toEqual({ code: 'forbidden', details: { reason: 'visibility_restricted', until: '2026-11-12T00:00:00.000Z' } });
+    expect(store.messages).toHaveLength(0);
+    // Once the game is under way the restriction no longer applies to its chat.
+    clock.set(Date.parse('2026-11-10T18:30:00.000Z'));
+    expect((await send({ body: 'on my way' })).status).toBe(200);
+    // An expired restriction never applies.
+    clock.set(NOW);
+    store.ctx = { ...store.ctx, sender: { ...store.ctx.sender, visibilityRestrictedUntil: '2026-11-10T16:00:00.000Z' } };
+    expect((await send({ body: 'hello' })).status).toBe(200);
   });
 
   it('validates input', async () => {

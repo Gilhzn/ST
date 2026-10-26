@@ -196,14 +196,15 @@ export function createStore({ admin, asUser }: StoreClients): Store {
       const [game, participant, profile] = await Promise.all([
         loadGameRow(gameId),
         loadParticipantRow(gameId, userId),
-        first(await admin.select<Row>('profiles', { columns: 'chat_muted_until,permanently_banned,deleted_at,created_at,locale', filters: [['id', 'eq', userId]] })),
+        first(await admin.select<Row>('profiles', { columns: 'chat_muted_until,visibility_restricted_until,permanently_banned,deleted_at,created_at,locale', filters: [['id', 'eq', userId]] })),
       ]);
       if (!game || !profile) return null;
       return {
-        game: { id: str(game['id']), endsAt: iso(game['ends_at']), status: str(game['status']) as 'scheduled' },
+        game: { id: str(game['id']), startsAt: iso(game['starts_at']), endsAt: iso(game['ends_at']), status: str(game['status']) as 'scheduled' },
         isMember: participant?.['status'] === 'approved' || game['host_id'] === userId,
         sender: {
           chatMutedUntil: isoOrNull(profile['chat_muted_until']),
+          visibilityRestrictedUntil: isoOrNull(profile['visibility_restricted_until']),
           permanentlyBanned: profile['permanently_banned'] === true,
           deleted: profile['deleted_at'] !== null && profile['deleted_at'] !== undefined,
           createdAt: iso(profile['created_at']),
@@ -319,6 +320,24 @@ export function createStore({ admin, asUser }: StoreClients): Store {
     async loadParticipant(gameId, userId) {
       const r = await loadParticipantRow(gameId, userId);
       return r ? rowToParticipant(r) : null;
+    },
+    async loadLastAcceptedFix(accessToken, userId, excludeGameId, since, baseRadiusM) {
+      const last = first(
+        await admin.select('checkins', {
+          columns: 'game_id,distance_m,created_at',
+          filters: [['user_id', 'eq', userId], ['method', 'eq', 'gps'], ['outcome', 'eq', 'verified'], ['game_id', 'neq', excludeGameId], ['created_at', 'gte', since]],
+          order: { column: 'created_at', ascending: false },
+          limit: 1,
+        }),
+      );
+      if (!last) return null;
+      // The user was an approved participant there, so the pin is visible to them (RLS).
+      const pin = first(await asUser(accessToken).select('game_views', { columns: 'lat,lng', filters: [['id', 'eq', str(last['game_id'])]] }));
+      const lat = pin?.['lat'];
+      const lng = pin?.['lng'];
+      if (typeof lat !== 'number' || typeof lng !== 'number') return null;
+      const distance = Number(last['distance_m'] ?? 0);
+      return { lat, lng, accuracyM: (Number.isFinite(distance) ? distance : 0) + baseRadiusM, timestamp: Date.parse(iso(last['created_at'])) };
     },
     async recordVerdict(gameId, userId, verdict) {
       return (await admin.rpc<CheckInVerdict>('record_checkin_verdict', { p_game_id: gameId, p_user_id: userId, p_verdict: verdict })) ?? verdict;

@@ -76,6 +76,12 @@ export function moderationProviders(env: Env, sdks: Sdks): ModerationProvider[] 
   return providers;
 }
 
+/** omni-moderation alone (translation output checks), or `null` without a key. */
+export function omniProvider(env: Env): ModerationProvider | null {
+  const openai = env.get('OPENAI_API_KEY');
+  return openai ? createOmniModerator({ apiKey: openai }) : null;
+}
+
 /** Google → DeepL → Claude (CHAT-030). Unconfigured providers are skipped. */
 export function translators(env: Env, sdks: Sdks): Translator[] {
   const chain: Translator[] = [];

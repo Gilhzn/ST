@@ -5,6 +5,7 @@
  * → 200 SendMessageResult & { requiresConfirmation }
  *
  * 1. Caller is an approved participant (host included), not muted or banned,
+ *    not under a visibility restriction for a game that has not started yet,
  *    and the chat is open (until `ends_at`, CHAT-002).
  * 2. Body is sanitised (bidi controls stripped, NFC, ≤ 1000 chars) and rate
  *    limited (20/min, 5 identical → spam block; CHAT-022).
@@ -44,11 +45,13 @@ import { sanitizeMessage } from '#shared/text';
 import { booleanField, stringField, uuidField } from '#shared/validate';
 
 export interface ChatContext {
-  game: { id: GameId; endsAt: IsoDateTime; status: GameStatus };
+  game: { id: GameId; startsAt: IsoDateTime; endsAt: IsoDateTime; status: GameStatus };
   /** Host or approved participant. */
   isMember: boolean;
   sender: {
     chatMutedUntil: IsoDateTime | null;
+    /** TRUST-043: a restricted user cannot reach players of games that have not started. */
+    visibilityRestrictedUntil: IsoDateTime | null;
     permanentlyBanned: boolean;
     deleted: boolean;
     createdAt: IsoDateTime;
@@ -146,6 +149,10 @@ export async function handle(req: Request, deps: SendMessageDeps): Promise<Respo
       throw new StError('chat_muted', 'chat muted', { mutedUntil: ctx.sender.chatMutedUntil });
     }
     if (ctx.game.status === 'cancelled' || now >= Date.parse(ctx.game.endsAt)) throw new StError('game_not_open', 'chat is read-only');
+    const restricted = ctx.sender.visibilityRestrictedUntil;
+    if (restricted && Date.parse(restricted) > now && now < Date.parse(ctx.game.startsAt)) {
+      throw new StError('forbidden', 'visibility restricted', { reason: 'visibility_restricted', until: restricted });
+    }
 
     // Offline retries resend the same clientMsgId: return the stored message (CHAT-042).
     const existing = await deps.store.findByClientMsgId(user.userId, clientMsgId);

@@ -11,12 +11,17 @@
  *   (the app hides the button, NFR-012).
  * - Moderation runs on the original: pending messages are not translated yet,
  *   blocked ones are never stored, retracted ones are not served.
+ * - The translation itself is moderated too (a provider can turn harmless text
+ *   into an insult): target-locale blocklist + omni-moderation. Blocked output is
+ *   masked entirely, blocklist hits are masked term by term (`masked: true`);
+ *   masked or unchecked (provider timeout) output is never cached.
  */
-import { StError, type Locale, type MessageId, type TranslationProvider, type UserId } from '@st/domain';
+import { StError, combineModerationVerdicts, matchBlocklist, type Locale, type MessageId, type TranslationProvider, type UserId } from '@st/domain';
 import { requireUser, type AuthVerifier } from '#shared/auth';
 import { json, readJson, route, type CorsOptions } from '#shared/http';
 import type { Logger } from '#shared/log';
-import type { Clock, RateLimiter } from '#shared/runtime';
+import type { ModerationProvider } from '#shared/moderation';
+import { withTimeout, type Clock, type RateLimiter } from '#shared/runtime';
 import { isSameLanguage, translateWithFallback, type Translator } from '#shared/translate';
 import { localeField, uuidField } from '#shared/validate';
 
@@ -41,6 +46,8 @@ export interface TranslateDeps {
   store: TranslateStore;
   translators: readonly Translator[];
   timeoutMs: number;
+  /** Output moderation (omni-moderation); absent → blocklist only, and nothing is cached. */
+  outputModeration: { provider: ModerationProvider | null; timeoutMs: number };
   rateLimiter: RateLimiter;
   clock: Clock;
   log: Logger;
@@ -54,6 +61,43 @@ export interface TranslateResponse {
   provider: TranslationProvider | null;
   cached: boolean;
   sameLanguage: boolean;
+  /** True when (part of) the translation was masked by output moderation. */
+  masked: boolean;
+}
+
+/** Mask character run used for blocked translations and blocklist terms. */
+export const MASK = '•••';
+
+/** Replaces each matched term (case-insensitive, literal) with the mask. */
+function maskTerms(text: string, terms: readonly string[]): string {
+  let out = text;
+  for (const term of terms) {
+    if (!term) continue;
+    out = out.replace(new RegExp(term.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'giu'), MASK);
+  }
+  return out;
+}
+
+/** Moderates translated text. Exported for tests. */
+export async function moderateTranslation(
+  text: string,
+  target: Locale,
+  deps: Pick<TranslateDeps, 'outputModeration' | 'clock'>,
+): Promise<{ text: string; masked: boolean; cacheable: boolean }> {
+  const blocklist = matchBlocklist(text, target);
+  const { provider, timeoutMs } = deps.outputModeration;
+  const run = provider
+    ? await withTimeout((signal) => provider.classify({ text, locale: target, history: [] }, signal), timeoutMs, deps.clock)
+    : null;
+  const omni = run ? (run.ok ? run.value : run.reason) : null;
+  const verdict = combineModerationVerdicts({ blocklist, omni });
+  if (verdict.decision === 'block') return { text: MASK, masked: true, cacheable: false };
+  if (blocklist.matched) {
+    const maskedText = maskTerms(text, blocklist.terms);
+    // A term matched only after normalisation (leet, diacritics) cannot be located: mask everything.
+    return { text: maskedText === text ? MASK : maskedText, masked: true, cacheable: false };
+  }
+  return { text, masked: false, cacheable: verdict.decision !== 'pending' };
 }
 
 export async function handle(req: Request, deps: TranslateDeps): Promise<Response> {
@@ -71,8 +115,8 @@ export async function handle(req: Request, deps: TranslateDeps): Promise<Respons
     if (message.moderation === 'pending') throw new StError('conflict', 'message is still being checked', { reason: 'moderation_pending' });
 
     const target = requested ?? (await deps.store.getUserLocale(user.userId));
-    const reply = (text: string, provider: TranslationProvider | null, cached: boolean, sameLanguage: boolean) =>
-      json({ messageId, target, text, provider, cached, sameLanguage } satisfies TranslateResponse, 200, cors);
+    const reply = (text: string, provider: TranslationProvider | null, cached: boolean, sameLanguage: boolean, masked = false) =>
+      json({ messageId, target, text, provider, cached, sameLanguage, masked } satisfies TranslateResponse, 200, cors);
 
     if (isSameLanguage(message.lang, target)) return reply(message.body, null, false, true);
 
@@ -87,7 +131,10 @@ export async function handle(req: Request, deps: TranslateDeps): Promise<Respons
     if (result.failed.length > 0) deps.log.info('translate.fallback', { messageId, target, provider: result.provider, failed: result.failed });
     if (result.detectedSource && isSameLanguage(result.detectedSource, target)) return reply(message.body, null, false, true);
 
-    await deps.store.saveCached(messageId, target, result.text, result.provider);
-    return reply(result.text, result.provider, false, false);
+    const checked = await moderateTranslation(result.text, target, deps);
+    if (checked.masked) deps.log.info('translate.masked', { messageId, target, provider: result.provider });
+    // Only clean, fully checked output is cached (cache hits are served without re-moderation).
+    if (checked.cacheable) await deps.store.saveCached(messageId, target, result.text, result.provider);
+    return reply(checked.text, result.provider, false, false, checked.masked);
   });
 }
