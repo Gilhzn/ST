@@ -1,0 +1,21 @@
+{
+  "name": "@st/i18n",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "main": "src/index.ts",
+  "types": "src/index.ts",
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "scripts": {
+    "typecheck": "tsc -p tsconfig.json"
+  },
+  "dependencies": {
+    "@formatjs/icu-messageformat-parser": "^3.5.22",
+    "i18next": "^26.5.11",
+    "i18next-icu": "^2.6.1",
+    "intl-messageformat": "^12.1.4",
+    "react-i18next": "^17.1.9"
+  }
+}

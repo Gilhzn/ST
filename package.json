@@ -1,0 +1,37 @@
+{
+  "name": "sport-talent",
+  "private": true,
+  "version": "0.1.0",
+  "description": "Sport Talent — global location-based sports super-app (web, Android, iOS)",
+  "workspaces": [
+    "apps/*",
+    "packages/*",
+    "supabase"
+  ],
+  "engines": {
+    "node": ">=22"
+  },
+  "scripts": {
+    "typecheck": "turbo run typecheck",
+    "lint": "eslint .",
+    "test": "vitest run",
+    "test:coverage": "vitest run --coverage",
+    "sql:test": "npm run test --workspace=@st/supabase",
+    "i18n:check": "npm run check --workspace=@st/i18n",
+    "web:export": "npm run export:web --workspace=@st/mobile-web",
+    "e2e": "npm run e2e --workspace=@st/mobile-web",
+    "verify": "npm run typecheck && npm run lint && npm run test && npm run i18n:check && npm run web:export && npm run e2e"
+  },
+  "devDependencies": {
+    "@eslint/js": "^10.0.1",
+    "@types/node": "^26.6.5",
+    "@vitest/coverage-v8": "^5.0.5",
+    "eslint": "^10.13.0",
+    "fast-check": "^4.10.2",
+    "globals": "^17.13.0",
+    "turbo": "^2.11.10",
+    "typescript": "~6.0.3",
+    "typescript-eslint": "^8.72.0",
+    "vitest": "^5.0.5"
+  }
+}
