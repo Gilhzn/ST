@@ -10,5 +10,6 @@ export default defineProject({
     hookTimeout: 120_000,
     // PGlite boots a WASM Postgres per test file (~5-13s); cap parallel workers to keep memory sane.
     maxWorkers: 4,
+    sequence: { groupOrder: 1 },
   },
 });
