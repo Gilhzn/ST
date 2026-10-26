@@ -94,11 +94,16 @@ function padBbox([w, s, e, n]: [number, number, number, number]): [number, numbe
 }
 
 let workerConfigured = false;
-/** maplibre-gl v6 loads its worker by URL; the export serves it from /public. */
+/**
+ * maplibre-gl v6 loads its worker by URL; the export serves it from /public. Resolved against
+ * the app root: the site origin normally, or the Artifact demo's own directory (`__ST_BASE__`,
+ * set by scripts/artifact-boot.js) when the page is served from a sub-path.
+ */
 function configureWorker() {
   if (workerConfigured || typeof window === 'undefined') return;
   workerConfigured = true;
-  setWorkerUrl(new URL('/maplibre-gl-worker.mjs', window.location.href).href);
+  const appRoot = (window as { __ST_BASE__?: string }).__ST_BASE__ ?? `${window.location.origin}/`;
+  setWorkerUrl(new URL('maplibre-gl-worker.mjs', appRoot).href);
 }
 
 function webglAvailable(): boolean {

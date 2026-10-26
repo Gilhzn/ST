@@ -5,9 +5,10 @@
  *
  * - `index.html` keeps only head/body content (the Artifact host adds its own
  *   doctype/html/head/body skeleton), with a theme-aware body background so the
- *   viewer never shows through, and a boot shim that routes `/index.html` to `/`.
- * - Every other exported file is copied unchanged. Artifacts get their own
- *   origin, so the bundle's absolute `/_expo/...` and `/assets/...` URLs resolve.
+ *   viewer never shows through, and the boot shim from `artifact-boot.js`.
+ * - The viewer serves the page from an unknown sub-path, so every root-absolute URL
+ *   (`/_expo/...`, `/assets/...`, `/favicon.ico`) is made relative; the boot shim's
+ *   `<base href>` keeps them resolving after Expo Router changes the URL.
  *
  * The Artifact CSP blocks every external host (no tiles, glyphs or sprites), so the export
  * MUST use the offline map canvas (EXPO_PUBLIC_MAP_OFFLINE=1); otherwise the map would try to
@@ -48,8 +49,7 @@ const page = `<title>Sport Talent</title>
   html, body { background: var(--st-bg); }
 </style>
 <script>
-  // Expo Router reads location.pathname; the Artifact may load the page as /index.html.
-  try { if (/\\/index\\.html$/.test(location.pathname)) history.replaceState(null, '', '/'); } catch (e) {}
+${readFileSync(join(root, 'scripts', 'artifact-boot.js'), 'utf8').trim()}
 </script>
 ${head.trim()}
 ${body.trim()}
@@ -59,7 +59,13 @@ ${body.trim()}
 // is published as `st-static/` and every reference to it is rewritten.
 const RESERVED = '_expo';
 const RENAMED = 'st-static';
-const rewrite = (text) => text.split(`/${RESERVED}/`).join(`/${RENAMED}/`);
+const rewrite = (text) =>
+  text
+    .split(`/${RESERVED}/`).join(`/${RENAMED}/`)
+    .split(`"/${RENAMED}/`).join(`"${RENAMED}/`)
+    .split(`'/${RENAMED}/`).join(`'${RENAMED}/`)
+    .split('"/assets/__node_modules').join('"assets/__node_modules')
+    .split('href="/favicon.ico"').join('href="favicon.ico"');
 
 rmSync(out, { recursive: true, force: true });
 mkdirSync(out, { recursive: true });
@@ -68,8 +74,12 @@ cpSync(src, out, {
   filter: (p) => !(p === join(src, 'index.html') || p === join(src, RESERVED) || p.startsWith(join(src, RESERVED) + '/')),
 });
 cpSync(join(src, RESERVED), join(out, RENAMED), { recursive: true });
+// Expo's async-chunk loader resolves chunk paths against the site origin (not <base>), but passes
+// absolute http(s) URLs through untouched; prefix each chunk path with the runtime base instead.
+const absolutizeChunks = (text) => text.replace(/"(\d+)":"st-static\//g, '"$1":globalThis.__ST_BASE__+"st-static/');
 for (const file of walk(join(out, RENAMED))) {
-  if (/\.(js|css|mjs)$/.test(file)) writeFileSync(file, rewrite(readFileSync(file, 'utf8')));
+  if (/\.(js|mjs)$/.test(file)) writeFileSync(file, absolutizeChunks(rewrite(readFileSync(file, 'utf8'))));
+  else if (file.endsWith('.css')) writeFileSync(file, rewrite(readFileSync(file, 'utf8')));
 }
 writeFileSync(join(out, 'index.html'), rewrite(page));
 console.log(`build-artifact: wrote ${out}`);
