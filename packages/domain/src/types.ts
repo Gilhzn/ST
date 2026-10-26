@@ -1065,7 +1065,7 @@ export interface TrustConfig {
 
   // QR and peer fallbacks
   qrStepSeconds: number;
-  /** Accepted step drift past-only (current and previous step; future steps are rejected) of the current step. */
+  /** Accepted past-only step drift: the current step and this many previous steps; future steps are rejected. */
   qrAllowedDriftSteps: number;
   peerMinConfirmations: number;
 
