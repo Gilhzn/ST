@@ -14,7 +14,8 @@ afterAll(() => db?.close());
 function qrToken(secret: string, gameId: string, step: number): string {
   return `${step}.${createHmac("sha256", secret).update(`${gameId}|${step}`).digest("hex").slice(0, 32)}`;
 }
-const stepOf = (d: Date) => Math.floor(d.getTime() / 1000 / 30);
+const STEP_S = 20; // DEFAULT_TRUST_CONFIG.qrStepSeconds (security H2)
+const stepOf = (d: Date) => Math.floor(d.getTime() / 1000 / STEP_S);
 
 async function secretOf(gameId: string): Promise<string> {
   const [r] = await db.query<{ s: string }>(`select qr_secret as s from games where id = $1`, [gameId]);
@@ -34,7 +35,8 @@ describe("QR check-in", () => {
       `select public.get_qr_token($1) as t`, [g], { now }));
     expect(t.step).toBe(stepOf(now));
     expect(t.token).toBe(qrToken(await secretOf(g), g, stepOf(now)));
-    expect(new Date(t.expiresAt).getTime()).toBe((stepOf(now) + 1) * 30_000);
+    // Accepted until the end of the next step (past-only drift of 1): ≤ 40 s of validity.
+    expect(new Date(t.expiresAt).getTime()).toBe((stepOf(now) + 2) * STEP_S * 1000);
     await expectSt(asUser(db, p, `select public.get_qr_token($1)`, [g], { now }), "forbidden");
     for (const u of [host, p]) {
       await expect(asUser(db, u, `select qr_secret from games where id = $1`, [g])).rejects.toThrow(/permission denied/);
@@ -42,7 +44,7 @@ describe("QR check-in", () => {
     }
   });
 
-  it("accepts the current step ±1, reports expired beyond that and invalid for garbage or another game", async () => {
+  it("accepts the current and previous step only; future steps are invalid, older ones expired", async () => {
     const host = await makeUser(db);
     const p = await makeUser(db);
     const g = await makeGame(db, host);
@@ -54,13 +56,14 @@ describe("QR check-in", () => {
     const scan = (token: string, n = now) =>
       asUser<{ v: Verdict }>(db, p, `select public.submit_checkin($1, 'qr', $2) as v`, [g, token], { now: n }).then((r) => r[0]!.v);
 
-    expect(await scan(qrToken(secret, g, s + 2))).toMatchObject({ outcome: "rejected", reason: "expired_qr", fallbacks: ["qr", "peer", "host"] });
+    expect(await scan(qrToken(secret, g, s + 1))).toMatchObject({ outcome: "rejected", reason: "invalid_qr", fallbacks: ["qr", "peer", "host"] });
+    expect(await scan(qrToken(secret, g, s + 2))).toMatchObject({ outcome: "rejected", reason: "invalid_qr" });
     expect(await scan(qrToken(secret, g, s - 2))).toMatchObject({ outcome: "rejected", reason: "expired_qr" });
     expect(await scan(qrToken(secret, other, s))).toMatchObject({ outcome: "rejected", reason: "invalid_qr" });
     expect(await scan("not-a-token")).toMatchObject({ outcome: "rejected", reason: "invalid_qr" });
     expect(await scan(qrToken("not-the-secret", g, s))).toMatchObject({ outcome: "rejected", reason: "invalid_qr" });
     expect(await scan(qrToken(secret, g, s - 1))).toEqual({ outcome: "verified", method: "qr", distanceM: null, signals: [] });
-    expect(await scan(qrToken(secret, g, s + 1))).toMatchObject({ outcome: "rejected", reason: "already_checked_in" });
+    expect(await scan(qrToken(secret, g, s))).toMatchObject({ outcome: "rejected", reason: "already_checked_in" });
     const [pt] = await db.query<{ attendance: string; check_in_method: string }>(
       `select attendance, check_in_method from game_participants where game_id = $1 and user_id = $2`, [g, p]);
     expect(pt).toEqual({ attendance: "verified", check_in_method: "qr" });
@@ -68,7 +71,7 @@ describe("QR check-in", () => {
     expect(log.filter((l) => l.outcome === "verified")).toHaveLength(1);
   });
 
-  it("+1 step is accepted too; screenshot from 3 minutes ago is expired (AC-TRUST-007)", async () => {
+  it("the current step is accepted; a screenshot from 3 minutes ago is expired (AC-TRUST-007)", async () => {
     const host = await makeUser(db);
     const p = await makeUser(db);
     const g = await makeGame(db, host);
@@ -79,7 +82,7 @@ describe("QR check-in", () => {
     const { v: v1 } = first(await asUser<{ v: Verdict }>(db, p, `select public.submit_checkin($1, 'qr', $2) as v`, [g, old], { now }));
     expect(v1.reason).toBe("expired_qr");
     const { v: v2 } = first(await asUser<{ v: Verdict }>(db, p, `select public.submit_checkin($1, 'qr', $2) as v`,
-      [g, qrToken(secret, g, stepOf(now) + 1)], { now }));
+      [g, qrToken(secret, g, stepOf(now))], { now }));
     expect(v2.outcome).toBe("verified");
   });
 
@@ -154,13 +157,16 @@ describe("host and peer check-in", () => {
     const [t, a, b, c, unverified] = [await makeUser(db), await makeUser(db), await makeUser(db), await makeUser(db), await makeUser(db)];
     const g = await makeGame(db, host);
     await addParticipant(db, g, t);
-    for (const u of [a, b, c]) await addParticipant(db, g, u, "approved", { attendance: "verified" });
+    for (const u of [a, b, c]) await addParticipant(db, g, u, "approved", { attendance: "verified", method: "gps" });
     await addParticipant(db, g, unverified);
+    const qrOnly = await makeUser(db);
+    await addParticipant(db, g, qrOnly, "approved", { attendance: "verified", method: "qr" });
     await db.query(`insert into blocks values ($1, $2)`, [t, b]);
     const now = { now: at(10 * MIN) };
     const confirm = (u: string) =>
       asUser<{ r: { confirmations: number; verdict: Verdict } }>(db, u, `select public.peer_confirm($1, $2) as r`, [g, t], now).then((x) => x[0]!.r);
     await expectSt(confirm(unverified), "forbidden");
+    await expectSt(confirm(qrOnly), "forbidden"); // security H2: QR-verified attendees are not anchors
     await expectSt(asUser(db, a, `select public.peer_confirm($1, $2)`, [g, a], now), "validation");
     expect(await confirm(a)).toMatchObject({ confirmations: 1, verdict: { outcome: "rejected", reason: "insufficient_peers" } });
     expect(await confirm(b)).toMatchObject({ verdict: { outcome: "rejected", reason: "blocked_pair" } });
@@ -170,17 +176,20 @@ describe("host and peer check-in", () => {
     expect(late.verdict.reason).toBe("outside_window");
   });
 
-  it("peer: confirmations only from peer-verified attendees the target confirmed back → reciprocal_only", async () => {
+  it("peer: peer-verified confirmers the target confirmed back do not count → reciprocal_only", async () => {
     const host = await makeUser(db);
-    const [t, a, b] = [await makeUser(db), await makeUser(db), await makeUser(db)];
+    const [t, a, b, c] = [await makeUser(db), await makeUser(db), await makeUser(db), await makeUser(db)];
     const g = await makeGame(db, host);
     await addParticipant(db, g, t);
     for (const u of [a, b]) await addParticipant(db, g, u, "approved", { attendance: "verified", method: "peer" });
-    // t had confirmed a and b earlier (e.g. before being un-verified by a moderator)
-    await db.query(`insert into peer_confirmations (game_id, confirmer_id, target_id) values ($1, $2, $3), ($1, $2, $4)`, [g, t, a, b]);
+    await addParticipant(db, g, c, "approved", { attendance: "verified", method: "gps" });
+    // Earlier mutual confirmations between t and the peer-verified a, b.
+    await db.query(`insert into peer_confirmations (game_id, confirmer_id, target_id) values ($1, $2, $3), ($1, $2, $4), ($1, $3, $2)`,
+      [g, t, a, b]);
     const now = { now: at(10 * MIN) };
-    await asUser(db, a, `select public.peer_confirm($1, $2)`, [g, t], now);
-    const { r } = first(await asUser<{ r: { verdict: Verdict } }>(db, b, `select public.peer_confirm($1, $2) as r`, [g, t], now));
+    const { r } = first(await asUser<{ r: { confirmations: number; verdict: Verdict } }>(db, c,
+      `select public.peer_confirm($1, $2) as r`, [g, t], now));
+    expect(r.confirmations).toBe(1);
     expect(r.verdict.reason).toBe("reciprocal_only");
   });
 

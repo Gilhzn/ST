@@ -219,22 +219,30 @@ as $$ select floor(extract(epoch from p_now) * 1000 / (p_cfg.qr_step_seconds * 1
 create function public.dm_qr_token(p_secret text, p_game uuid, p_now timestamptz, p_cfg public.trust_config) returns jsonb
 language sql immutable set search_path = ''
 as $$
+  -- expiresAt = end of the last accepted step (step + qrAllowedDriftSteps); past-only acceptance.
   select jsonb_build_object('token', s.step::text || '.' || public.dm_qr_mac(p_secret, p_game, s.step), 'step', s.step,
-                            'expiresAt', public.dm_iso(to_timestamp((s.step + 1) * p_cfg.qr_step_seconds)))
+                            'expiresAt', public.dm_iso(to_timestamp((s.step + 1 + p_cfg.qr_allowed_drift_steps) * p_cfg.qr_step_seconds)))
   from (select public.dm_qr_step(p_now, p_cfg) as step) s
 $$;
 
+-- Order: not_host (scanner is the host), outside_window, invalid_qr (malformed / forged / other game /
+-- future step), expired_qr (authentic but older than qrAllowedDriftSteps). Past-only (security H2).
 create function public.dm_verify_qr(p_token text, p_secret text, p_game uuid, p_now timestamptz, p_cfg public.trust_config,
-                                    p_window jsonb default null)
+                                    p_window jsonb default null, p_scanner jsonb default null)
 returns jsonb
 language plpgsql immutable set search_path = ''
 as $$
 declare
   m text[];
   step bigint;
+  cur bigint := public.dm_qr_step(p_now, p_cfg);
   invalid jsonb := jsonb_build_object('outcome', 'rejected', 'method', 'qr', 'reason', 'invalid_qr',
                                       'fallbacks', jsonb_build_array('qr', 'peer', 'host'), 'signals', '[]'::jsonb);
 begin
+  if p_scanner is not null and jsonb_typeof(p_scanner) = 'object' and p_scanner ->> 'userId' = p_scanner ->> 'hostId' then
+    return jsonb_build_object('outcome', 'rejected', 'method', 'qr', 'reason', 'not_host',
+                              'fallbacks', jsonb_build_array('gps', 'peer'), 'signals', '[]'::jsonb);
+  end if;
   if p_window is not null and jsonb_typeof(p_window) = 'object'
      and not public.dm_check_in_open(public.dm_ts(p_window ->> 'startsAt'), public.dm_ts(p_window ->> 'endsAt'), p_now, p_cfg) then
     return jsonb_build_object('outcome', 'rejected', 'method', 'qr', 'reason', 'outside_window', 'fallbacks', '[]'::jsonb,
@@ -244,7 +252,8 @@ begin
   if m is null or p_secret is null then return invalid; end if;
   step := m[1]::bigint;
   if m[2] <> public.dm_qr_mac(p_secret, p_game, step) then return invalid; end if;
-  if abs(step - public.dm_qr_step(p_now, p_cfg)) > p_cfg.qr_allowed_drift_steps then
+  if step > cur then return invalid; end if;
+  if cur - step > p_cfg.qr_allowed_drift_steps then
     return jsonb_set(invalid, '{reason}', '"expired_qr"');
   end if;
   return jsonb_build_object('outcome', 'verified', 'method', 'qr', 'distanceM', null, 'signals', '[]'::jsonb);
@@ -343,7 +352,7 @@ end $$;
 -- ---------------------------------------------------------------------------
 -- Venue reports (trust/venues.ts)
 -- ---------------------------------------------------------------------------
-create function public.dm_venue_reports(p_venue jsonb, p_now timestamptz, p_cfg public.trust_config) returns jsonb
+create function public.dm_venue_reports(p_venue jsonb, p_profiles jsonb, p_now timestamptz, p_cfg public.trust_config) returns jsonb
 language plpgsql immutable set search_path = ''
 as $$
 declare
@@ -362,6 +371,11 @@ begin
     from jsonb_array_elements(coalesce(p_venue -> 'reports', '[]'::jsonb)) r
     where r ->> 'venueId' = vid and (r ->> 'reporterId') is distinct from creator
       and public.dm_ts(r ->> 'createdAt') > since and public.dm_ts(r ->> 'createdAt') <= p_now
+      -- Security M2 (isQualifiedVenueReporter): known, not red, account old enough when filing.
+      and exists (select 1 from jsonb_array_elements(coalesce(p_profiles, '[]'::jsonb)) pr
+                  where pr ->> 'id' = r ->> 'reporterId' and pr ->> 'reliabilityStatus' <> 'red'
+                    and public.dm_ts(r ->> 'createdAt') - public.dm_ts(pr ->> 'createdAt')
+                        >= p_cfg.min_reporter_account_age_days * interval '1 day')
   ), firstby as (
     select distinct on (r ->> 'reporterId') r, ord from counted order by r ->> 'reporterId', ord
   )
@@ -400,9 +414,9 @@ as $$
   select count(*) > 0 and count(*) filter (where r ->> 'reason' = 'no_venue_here') * 2 > count(*) from last_by
 $$;
 
--- ---------------------------------------------------------------------------
--- Host reliability (trust/host.ts)
--- ---------------------------------------------------------------------------
+-- Host reliability (trust/host.ts): confirmed fake venue; average ≤ hostLowRatingMax over
+-- ≥ hostLowRatingMinCount ratings in hostRatingLookbackDays; ≥ 2 host late-cancel cards in 30 days
+-- (TRUST-051(c), security M6). Nothing new while a host suspension is in force.
 create function public.dm_host_reliability(p_input jsonb, p_now timestamptz, p_cfg public.trust_config) returns jsonb
 language plpgsql immutable set search_path = ''
 as $$
@@ -410,6 +424,9 @@ declare
   host text := p_input ->> 'hostId';
   own jsonb;
   consumed timestamptz;
+  late_since timestamptz;
+  late_cards jsonb;
+  n_late int;
   ratings jsonb;
   cnt int;
   total numeric;
@@ -420,6 +437,7 @@ declare
   reason text;
   dedupe text;
   params jsonb;
+  caused jsonb := '[]'::jsonb;
   s jsonb;
   days numeric := p_cfg.host_suspension_days;
 begin
@@ -443,24 +461,64 @@ begin
   where not exists (select 1 from jsonb_array_elements(own) x where x ->> 'dedupeKey' = 'fake_venue:' || host || ':' || v)
   order by v collate "C" limit 1;
   low := cnt >= p_cfg.host_low_rating_min_count and total <= p_cfg.host_low_rating_max * cnt;
-  if fake is null and not low then
+  -- Host late-cancel cards since the last late-cancel suspension, within 30 days, not overturned.
+  select greatest(coalesce(max(public.dm_ts(x ->> 'startsAt')), '-infinity'::timestamptz), p_now - interval '30 days')
+    into late_since from jsonb_array_elements(own) x
+  where x ->> 'kind' = 'host_suspension' and x ->> 'reasonCode' = 'late_cancel';
+  select coalesce(jsonb_agg(x order by public.dm_ts(x ->> 'startsAt'), (x ->> 'id') collate "C"), '[]'::jsonb) into late_cards
+  from jsonb_array_elements(own) x
+  where x ->> 'kind' = 'yellow_card' and x ->> 'dedupeKey' like 'host\_late\_cancel:%' and x ->> 'status' <> 'overturned'
+    and public.dm_ts(x ->> 'startsAt') > late_since and public.dm_ts(x ->> 'startsAt') <= p_now;
+  n_late := jsonb_array_length(late_cards);
+  if fake is null and not low and n_late < 2 then
     return jsonb_build_object('outcome', 'none', 'reasonCode', null, 'ratingCount', cnt, 'averageRating', avg_r, 'effects', '[]'::jsonb);
   end if;
   if exists (select 1 from jsonb_array_elements(own) x where x ->> 'kind' = 'host_suspension' and public.dm_in_force(x, p_now)) then
     return jsonb_build_object('outcome', 'already_suspended', 'reasonCode', null, 'ratingCount', cnt, 'averageRating', avg_r,
                               'effects', '[]'::jsonb);
   end if;
-  reason := case when fake is not null then 'fake_venue' else 'low_host_rating' end;
-  last := ratings -> (jsonb_array_length(ratings) - 1);
-  dedupe := case when fake is not null then 'fake_venue:' || host || ':' || fake
-                 else 'low_host_rating:' || host || ':' || coalesce((last ->> 'gameId') || ':' || (last ->> 'raterId'), '') end;
-  params := case when fake is not null then jsonb_build_object('venueId', fake, 'days', days)
-                 else jsonb_build_object('average', coalesce(avg_r, 0), 'ratings', cnt, 'days', days) end;
-  s := public.dm_system_sanction('host_suspension', host::uuid, reason, params, days * 86400000, null, null, '[]'::jsonb, dedupe, p_now);
+  if fake is not null then
+    reason := 'fake_venue';
+    dedupe := 'fake_venue:' || host || ':' || fake;
+    params := jsonb_build_object('venueId', fake, 'days', days);
+  elsif low then
+    last := ratings -> (jsonb_array_length(ratings) - 1);
+    reason := 'low_host_rating';
+    dedupe := 'low_host_rating:' || host || ':' || (last ->> 'gameId') || ':' || (last ->> 'raterId');
+    params := jsonb_build_object('average', coalesce(avg_r, 0), 'ratings', cnt, 'days', days);
+  else
+    last := late_cards -> (n_late - 1);
+    reason := 'late_cancel';
+    dedupe := 'host_late_cancellations:' || host || ':' || (last ->> 'id');
+    params := jsonb_build_object('cancellations', n_late, 'windowDays', 30, 'days', days);
+    select jsonb_agg(x -> 'id') into caused from jsonb_array_elements(late_cards) x;
+  end if;
+  s := public.dm_system_sanction('host_suspension', host::uuid, reason, params, days * 86400000, null, null, caused, dedupe, p_now);
   return jsonb_build_object('outcome', 'suspend', 'reasonCode', reason, 'ratingCount', cnt, 'averageRating', avg_r,
     'effects', public.dm_issue_effects(s) || jsonb_build_array(public.dm_enqueue(public.dm_review_item(
       'host_reliability', 'normal', dedupe, host::uuid, fake::uuid, null, public.dm_sanction_id(dedupe), null, '[]'::jsonb,
-      jsonb_build_object('reason', reason, 'ratingCount', cnt, 'averageRating', avg_r), p_now))));
+      jsonb_build_object('reason', reason, 'ratingCount', cnt, 'averageRating', avg_r, 'lateGameCancellations', n_late), p_now))));
+end $$;
+
+-- GAME-047 (trust/host.ts evaluateHostGameCancellation): a host cancelling < lateCancelWindowHours before
+-- the start gets a disputable late_cancel card keyed host_late_cancel:<game>:<host> (never a deposit card).
+create function public.dm_host_game_cancellation(p_game jsonb, p_cancelled_at timestamptz, p_now timestamptz,
+                                                 p_cfg public.trust_config)
+returns jsonb
+language plpgsql immutable set search_path = ''
+as $$
+declare starts timestamptz := public.dm_ts(p_game ->> 'startsAt');
+begin
+  if not (starts - p_cancelled_at < p_cfg.late_cancel_window_hours * interval '1 hour') then
+    return jsonb_build_object('late', false, 'effects', '[]'::jsonb);
+  end if;
+  return jsonb_build_object('late', true, 'effects', public.dm_issue_effects(public.dm_system_sanction(
+    'yellow_card', (p_game ->> 'hostId')::uuid, 'late_cancel',
+    jsonb_build_object('role', 'host', 'windowHours', p_cfg.late_cancel_window_hours,
+                       'minutesBeforeStart', round(extract(epoch from starts - p_cancelled_at) / 60)::int,
+                       'disputeHours', p_cfg.dispute_window_hours),
+    p_cfg.yellow_card_lifetime_days * 86400000, p_cfg.dispute_window_hours * 3600000, (p_game ->> 'id')::uuid, '[]'::jsonb,
+    'host_late_cancel:' || (p_game ->> 'id') || ':' || (p_game ->> 'hostId'), p_now)));
 end $$;
 
 -- ---------------------------------------------------------------------------
@@ -496,9 +554,10 @@ begin
                        where p ->> 'userId' = cf.cid limit 1) pp on true
     where cf.cid <> t and p ->> 'status' = 'approved' and p ->> 'attendance' = 'verified'
   )
-  select count(*) filter (where p ->> 'checkInMethod' in ('gps', 'qr') and not is_blocked),
+  -- Security H2: only GPS-verified attendees anchor a peer check-in (a QR can be relayed).
+  select count(*) filter (where p ->> 'checkInMethod' = 'gps' and not is_blocked),
          count(*) filter (where p ->> 'checkInMethod' = 'peer' and reciprocal and not is_blocked),
-         count(*) filter (where p ->> 'checkInMethod' in ('gps', 'qr') and is_blocked)
+         count(*) filter (where p ->> 'checkInMethod' = 'gps' and is_blocked)
     into q, recip, blk
   from judged;
   select p into target from jsonb_array_elements(coalesce(p_input -> 'participants', '[]'::jsonb)) p where p ->> 'userId' = t limit 1;
@@ -555,9 +614,6 @@ declare
   ts timestamptz;
   reasons text[] := '{}';
   games int;
-  only_game text;
-  team_set jsonb;
-  target_team jsonb;
   first_id text;
   evidence jsonb;
   collusion boolean;
@@ -641,20 +697,16 @@ begin
   end if;
 
   if indep < p_cfg.toxicity_reporters then reasons := reasons || 'creation_window'::text; end if;
+  -- Security H3: every counted report from one game → review only (sock puppets of one game).
   select count(distinct c ->> 'gameId') into games from jsonb_array_elements(counted) c;
-  only_game := counted #>> '{0,gameId}';
-  if games = 1 and only_game is not null then
-    select coalesce(jsonb_agg(distinct coalesce(a -> 'team', 'null'::jsonb)), '[]'::jsonb) into team_set
-    from unnest(qual_ids) u
-    left join lateral (select x from jsonb_array_elements(coalesce(ctx -> 'attendance', '[]'::jsonb)) x
-                       where x ->> 'gameId' = only_game and x ->> 'userId' = u limit 1) z(a) on true;
-    select coalesce(x -> 'team', 'null'::jsonb) into target_team from jsonb_array_elements(coalesce(ctx -> 'attendance', '[]'::jsonb)) x
-      where x ->> 'gameId' = only_game and x ->> 'userId' = target limit 1;
-    target_team := coalesce(target_team, 'null'::jsonb);
-    if jsonb_array_length(team_set) = 1 and team_set -> 0 <> 'null'::jsonb and target_team <> 'null'::jsonb
-       and target_team <> team_set -> 0 then
-      reasons := reasons || 'rival_team'::text;
-    end if;
+  if games = 1 then reasons := reasons || 'single_game'::text; end if;
+  -- Security H3: at least one counted reporter must be GPS-verified at that game and not its host.
+  if not exists (
+    select 1 from jsonb_array_elements(counted) c
+    join lateral (select x from jsonb_array_elements(coalesce(ctx -> 'attendance', '[]'::jsonb)) x
+                  where x ->> 'gameId' = c ->> 'gameId' and x ->> 'userId' = c ->> 'reporterId' limit 1) z(a) on true
+    where a ->> 'checkInMethod' = 'gps' and coalesce((a ->> 'isHost')::boolean, false) is not true) then
+    reasons := reasons || 'no_gps_anchor'::text;
   end if;
   if exists (select 1 from jsonb_array_elements(coalesce(ctx -> 'overturns', '[]'::jsonb)) o
              where public.dm_ts(o ->> 'at') > p_now - p_cfg.post_overturn_protection_days * interval '1 day'

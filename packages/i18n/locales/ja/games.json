@@ -169,6 +169,8 @@
   "details": {
     "hiddenLocation": "正確な場所は、主催者が承認したあとに共有されます",
     "host": {
+      "hostedBy": "主催：{name}",
+      "verified": "認証済みの主催者",
       "approve": "承認",
       "reject": "却下",
       "rejectReasonLabel": "理由（任意）",

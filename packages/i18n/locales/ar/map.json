@@ -19,7 +19,10 @@
     "sortSoonest": "الأقرب موعدًا",
     "sortNearest": "الأقرب مسافة",
     "showList": "قائمة",
-    "showMap": "خريطة"
+    "showMap": "خريطة",
+    "sortA11y": "الترتيب حسب: {sort}",
+    "expand": "عرض المزيد من المباريات",
+    "collapse": "عرض أقل"
   },
   "card": {
     "distanceAway": "على بُعد {distance}",
@@ -51,7 +54,8 @@
   "empty": {
     "title": "لا توجد مباريات ضمن {distance} في {sports}.",
     "widen": "التوسيع إلى {distance}",
-    "create": "إنشاء مباراة"
+    "create": "إنشاء مباراة",
+    "allSports": "أي رياضة"
   },
   "locationDenied": {
     "title": "خدمة الموقع متوقفة",
@@ -64,5 +68,9 @@
   },
   "offline": {
     "cachedNote": "تُعرض المباريات المحفوظة."
+  },
+  "zoom": {
+    "in": "تكبير",
+    "out": "تصغير"
   }
 }

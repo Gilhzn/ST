@@ -169,6 +169,8 @@
   "details": {
     "hiddenLocation": "组织者批准你加入后，会分享确切地点",
     "host": {
+      "hostedBy": "组织者：{name}",
+      "verified": "已认证组织者",
       "approve": "批准",
       "reject": "拒绝",
       "rejectReasonLabel": "原因（选填）",

@@ -72,7 +72,8 @@
       "human": "Un moderador tomó esta decisión.",
       "askPerson": "Puedes pedir que una persona revise cualquier decisión.",
       "affectsTitle": "Qué afecta",
-      "stillAllowedTitle": "Qué puedes seguir haciendo"
+      "stillAllowedTitle": "Qué puedes seguir haciendo",
+      "ruleLine": "Norma: {rule}"
     },
     "rule": {
       "late_cancel": "Norma de cancelación tardía",
@@ -113,7 +114,8 @@
     "dispute": {
       "cta": "Impugnar esta tarjeta",
       "window": "Puedes impugnar esta tarjeta hasta el {date}.",
-      "windowClosed": "El plazo de impugnación ha terminado, pero aún puedes apelar."
+      "windowClosed": "El plazo de impugnación ha terminado, pero aún puedes apelar.",
+      "windowLeft": "Puedes impugnar esta tarjeta hasta el {date} (quedan {duration})."
     },
     "appeal": {
       "cta": "Apelar esta decisión",
@@ -144,7 +146,8 @@
         "upheld": "La decisión se mantiene.",
         "overturned": "La decisión se ha revocado."
       },
-      "reviewerNote": "Nota de quien revisó"
+      "reviewerNote": "Nota de quien revisó",
+      "reviewerNoteLine": "Nota de quien revisó: {note}"
     }
   },
   "hostRestriction": {

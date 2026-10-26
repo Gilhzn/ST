@@ -45,7 +45,9 @@
     "safety": "Account and safety",
     "safetyLocked": "Always on. We’re required to tell you about account decisions.",
     "osOff": "Notifications are off in your device settings.",
-    "osOffAction": "Open device settings"
+    "osOffAction": "Open device settings",
+    "deviceNote": "These choices are saved on this device.",
+    "unavailable": "Push notifications aren’t available here. You’ll still see updates in your Inbox."
   },
   "privacy": {
     "title": "Privacy and safety",
@@ -67,11 +69,16 @@
     "blocked": {
       "title": "Blocked players",
       "empty": "You haven’t blocked anyone.",
-      "unblockConfirm": "Unblock {name}?"
+      "unblockConfirm": "Unblock {name}?",
+      "unnamed": "Blocked player {number}",
+      "since": "Blocked on {date}",
+      "unblocked": "Player unblocked."
     },
     "data": {
       "download": "Download my data",
-      "help": "Ask for a copy of your data. We’ll let you know when it’s ready."
+      "help": "Ask for a copy of your data. We’ll let you know when it’s ready.",
+      "title": "Your data",
+      "contact": "Contact us and we’ll send you a copy."
     }
   },
   "delete": {
@@ -87,7 +94,15 @@
     "button": "Delete my account",
     "deleting": "Deleting your account…",
     "done": "Your account has been deleted.",
-    "webLink": "You can also delete your account on the web: {url}"
+    "webLink": "You can also delete your account on the web: {url}",
+    "confirmIntro": "This is the last step. Your account will be deleted right away and you’ll be signed out.",
+    "gamesTitle": "Your games",
+    "games": "You’ll be removed from games you’ve joined, with no yellow card, and any deposit holds are released. Games you host that haven’t started are handed to a co-host if there is one. Otherwise they’re cancelled and the players are told.",
+    "keptMore": "Payment records are kept in a form that doesn’t identify you for up to 7 years, because tax law requires it. Backups clear out within 30 days.",
+    "timingTitle": "When it happens",
+    "timing": "Your profile disappears from the app straight away. The rest of your personal data is erased within 24 hours.",
+    "reregister": "You can sign up again later with the same number. If a ban or warning is still running, the rest of it applies again.",
+    "keep": "Keep my account"
   },
   "about": {
     "version": "Version {version}",

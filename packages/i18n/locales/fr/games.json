@@ -169,6 +169,8 @@
   "details": {
     "hiddenLocation": "L’endroit exact est partagé une fois que l’organisateur t’a validé",
     "host": {
+      "hostedBy": "Organisée par {name}",
+      "verified": "Organisateur vérifié",
       "approve": "Valider",
       "reject": "Refuser",
       "rejectReasonLabel": "Raison (facultatif)",

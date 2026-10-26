@@ -19,7 +19,10 @@
     "sortSoonest": "הקרובים ביותר בזמן",
     "sortNearest": "הקרובים ביותר במרחק",
     "showList": "רשימה",
-    "showMap": "מפה"
+    "showMap": "מפה",
+    "sortA11y": "מיון לפי: {sort}",
+    "expand": "הצגת עוד משחקים",
+    "collapse": "הצגת פחות"
   },
   "card": {
     "distanceAway": "במרחק {distance}",
@@ -51,7 +54,8 @@
   "empty": {
     "title": "אין משחקים ברדיוס {distance} עבור {sports}.",
     "widen": "הרחבה ל-{distance}",
-    "create": "יצירת משחק"
+    "create": "יצירת משחק",
+    "allSports": "כל ענף ספורט"
   },
   "locationDenied": {
     "title": "המיקום כבוי",
@@ -64,5 +68,9 @@
   },
   "offline": {
     "cachedNote": "מוצגים משחקים שמורים."
+  },
+  "zoom": {
+    "in": "התקרבות",
+    "out": "התרחקות"
   }
 }

@@ -72,7 +72,8 @@
       "human": "A moderator made this decision.",
       "askPerson": "You can ask for a person to review any decision.",
       "affectsTitle": "What this affects",
-      "stillAllowedTitle": "What you can still do"
+      "stillAllowedTitle": "What you can still do",
+      "ruleLine": "Rule: {rule}"
     },
     "rule": {
       "late_cancel": "Late cancel rule",
@@ -113,7 +114,8 @@
     "dispute": {
       "cta": "Dispute this card",
       "window": "You can dispute this card until {date}.",
-      "windowClosed": "The dispute window has closed, but you can still appeal."
+      "windowClosed": "The dispute window has closed, but you can still appeal.",
+      "windowLeft": "You can dispute this card until {date} ({duration} left)."
     },
     "appeal": {
       "cta": "Appeal this decision",
@@ -144,7 +146,8 @@
         "upheld": "The decision stands.",
         "overturned": "The decision was reversed."
       },
-      "reviewerNote": "Reviewer’s note"
+      "reviewerNote": "Reviewer’s note",
+      "reviewerNoteLine": "Reviewer’s note: {note}"
     }
   },
   "hostRestriction": {

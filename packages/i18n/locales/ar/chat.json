@@ -17,7 +17,8 @@
     "moreOptions": "خيارات الرسالة",
     "checking": "جارٍ التحقق…",
     "notSent": "لم تُرسل. اضغط لإعادة المحاولة",
-    "queued": "بانتظار الإرسال"
+    "queued": "بانتظار الإرسال",
+    "retracted": "تمت إزالة هذه الرسالة."
   },
   "translate": {
     "translatedFrom": "مترجمة من {language}",

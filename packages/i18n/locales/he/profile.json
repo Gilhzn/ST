@@ -10,7 +10,10 @@
     "gamesHosted": "משחקים שאירחתם",
     "checkInRate": "שיעור צ׳ק-אין",
     "favoriteVenue": "המגרש המועדף",
-    "none": "עדיין אין"
+    "none": "עדיין אין",
+    "verifiedAttendance": "הגעות מאומתות",
+    "noShows": "אי-הגעות",
+    "lateCancels": "ביטולים מאוחרים"
   },
   "positions": {
     "title": "עמדות",
@@ -54,5 +57,8 @@
     "changePhoto": "החלפת תמונה",
     "removePhoto": "הסרת תמונה",
     "saved": "הפרופיל נשמר."
+  },
+  "sanctions": {
+    "openHint": "מציג למה זה חל ומה אפשר לעשות"
   }
 }

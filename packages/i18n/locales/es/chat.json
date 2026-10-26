@@ -17,7 +17,8 @@
     "moreOptions": "Opciones del mensaje",
     "checking": "Comprobando…",
     "notSent": "No enviado. Toca para reintentar",
-    "queued": "Esperando para enviarse"
+    "queued": "Esperando para enviarse",
+    "retracted": "Este mensaje se ha eliminado."
   },
   "translate": {
     "translatedFrom": "Traducido del {language}",

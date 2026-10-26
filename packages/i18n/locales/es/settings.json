@@ -45,7 +45,9 @@
     "safety": "Cuenta y seguridad",
     "safetyLocked": "Siempre activadas. Estamos obligados a informarte de las decisiones sobre tu cuenta.",
     "osOff": "Las notificaciones están desactivadas en los ajustes de tu dispositivo.",
-    "osOffAction": "Abrir ajustes del dispositivo"
+    "osOffAction": "Abrir ajustes del dispositivo",
+    "deviceNote": "Estas opciones se guardan en este dispositivo.",
+    "unavailable": "Las notificaciones push no están disponibles aquí. Seguirás viendo las novedades en tu bandeja."
   },
   "privacy": {
     "title": "Privacidad y seguridad",
@@ -67,11 +69,16 @@
     "blocked": {
       "title": "Jugadores bloqueados",
       "empty": "No has bloqueado a nadie.",
-      "unblockConfirm": "¿Desbloquear a {name}?"
+      "unblockConfirm": "¿Desbloquear a {name}?",
+      "unnamed": "Jugador bloqueado {number}",
+      "since": "Bloqueado el {date}",
+      "unblocked": "Jugador desbloqueado."
     },
     "data": {
       "download": "Descargar mis datos",
-      "help": "Solicita una copia de tus datos. Te avisaremos cuando esté lista."
+      "help": "Solicita una copia de tus datos. Te avisaremos cuando esté lista.",
+      "title": "Tus datos",
+      "contact": "Contáctanos y te enviaremos una copia."
     }
   },
   "delete": {
@@ -87,7 +94,15 @@
     "button": "Eliminar mi cuenta",
     "deleting": "Eliminando tu cuenta…",
     "done": "Tu cuenta se ha eliminado.",
-    "webLink": "También puedes eliminar tu cuenta en la web: {url}"
+    "webLink": "También puedes eliminar tu cuenta en la web: {url}",
+    "confirmIntro": "Este es el último paso. Tu cuenta se eliminará de inmediato y se cerrará tu sesión.",
+    "gamesTitle": "Tus partidos",
+    "games": "Se te quitará de los partidos a los que te hayas unido, sin tarjeta amarilla, y se liberarán las retenciones de depósito. Los partidos que organices y aún no hayan empezado pasarán a un coorganizador si lo hay. Si no, se cancelarán y se avisará a los jugadores.",
+    "keptMore": "Los registros de pagos se conservan, de una forma que no te identifica, hasta 7 años, porque lo exige la ley fiscal. Las copias de seguridad se borran en un plazo de 30 días.",
+    "timingTitle": "Cuándo ocurre",
+    "timing": "Tu perfil desaparece de la app de inmediato. El resto de tus datos personales se borra en un plazo de 24 horas.",
+    "reregister": "Podrás volver a registrarte más adelante con el mismo número. Si sigue vigente un bloqueo o una advertencia, el tiempo restante se vuelve a aplicar.",
+    "keep": "Mantener mi cuenta"
   },
   "about": {
     "version": "Versión {version}",

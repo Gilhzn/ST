@@ -10,7 +10,10 @@
     "gamesHosted": "Games hosted",
     "checkInRate": "Check-in rate",
     "favoriteVenue": "Favorite venue",
-    "none": "None yet"
+    "none": "None yet",
+    "verifiedAttendance": "Verified attendance",
+    "noShows": "No-shows",
+    "lateCancels": "Late cancels"
   },
   "positions": {
     "title": "Positions",
@@ -54,5 +57,8 @@
     "changePhoto": "Change photo",
     "removePhoto": "Remove photo",
     "saved": "Profile saved."
+  },
+  "sanctions": {
+    "openHint": "Shows why this applies and what you can do"
   }
 }

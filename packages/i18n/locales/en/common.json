@@ -113,5 +113,24 @@
     "withPercent": "{status} · {percent}",
     "a11y": "Reliability: {status}, {percent}",
     "a11yNew": "Reliability: New player"
+  },
+  "nav": {
+    "map": "Map",
+    "games": "Games",
+    "inbox": "Inbox",
+    "profile": "Profile",
+    "settings": "Settings"
+  },
+  "datetime": {
+    "dayTime": "{day}, {time}"
+  },
+  "notFound": {
+    "title": "We can’t find that page",
+    "body": "The link may be old or mistyped.",
+    "home": "Go to the map"
+  },
+  "placeholder": {
+    "title": "Coming soon",
+    "body": "This part of Sport Talent is on its way in the next update."
   }
 }

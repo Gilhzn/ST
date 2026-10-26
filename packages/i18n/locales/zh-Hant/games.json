@@ -169,6 +169,8 @@
   "details": {
     "hiddenLocation": "主辦人核准你加入後，會分享確切地點",
     "host": {
+      "hostedBy": "主辦人：{name}",
+      "verified": "已驗證的主辦人",
       "approve": "核准",
       "reject": "拒絕",
       "rejectReasonLabel": "原因（選填）",

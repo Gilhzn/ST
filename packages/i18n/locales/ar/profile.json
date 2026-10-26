@@ -10,7 +10,10 @@
     "gamesHosted": "المباريات المستضافة",
     "checkInRate": "نسبة تسجيل الحضور",
     "favoriteVenue": "الملعب المفضل",
-    "none": "لا يوجد بعد"
+    "none": "لا يوجد بعد",
+    "verifiedAttendance": "حضور مؤكَّد",
+    "noShows": "مرات عدم الحضور",
+    "lateCancels": "الإلغاءات المتأخرة"
   },
   "positions": {
     "title": "المراكز",
@@ -54,5 +57,8 @@
     "changePhoto": "تغيير الصورة",
     "removePhoto": "إزالة الصورة",
     "saved": "تم حفظ الملف الشخصي."
+  },
+  "sanctions": {
+    "openHint": "يعرض سبب ذلك وما يمكنك فعله"
   }
 }

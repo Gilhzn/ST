@@ -169,6 +169,8 @@
   "details": {
     "hiddenLocation": "आयोजक की मंज़ूरी मिलने के बाद सटीक जगह साझा की जाएगी",
     "host": {
+      "hostedBy": "आयोजक: {name}",
+      "verified": "सत्यापित आयोजक",
       "approve": "मंज़ूर करें",
       "reject": "अस्वीकार करें",
       "rejectReasonLabel": "कारण (वैकल्पिक)",

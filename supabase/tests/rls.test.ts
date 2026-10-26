@@ -47,6 +47,8 @@ const MATRIX: Record<string, [Exp, Exp, Exp, Exp, Exp, Exp]> = {
   payments: ["deny", 0, 1, 0, 0, 1],
   payment_customers: ["deny", "deny", "deny", "deny", "deny", 1],
   payment_events: ["deny", "deny", "deny", "deny", "deny", 1],
+  deposit_tiers: ["deny", 54, 54, 54, 54, 54],
+  sanction_phone_hmac: ["deny", "deny", "deny", "deny", "deny", 0],
 };
 /** Views: [anon, stranger, owner, host, moderator, service]. */
 const VIEWS: Record<string, [Exp, Exp, Exp, Exp, Exp, Exp]> = {
@@ -231,6 +233,10 @@ describe("write matrix: clients cannot write outside the granted paths", () => {
     expect(other.affectedRows ?? 0).toBe(0);
     await expect(db.asUser(ids.P!, (tx) => tx.query(`update profile_private set birth_year = 2015 where user_id = $1`, [ids.P]), { rollback: true }))
       .rejects.toThrow(/permission denied/);
+    // Gender is column-granted but limited to one change per 90 days (security H4).
+    await expect(db.asUser(ids.P!, (tx) => tx.query(`update profile_private set gender = 'female' where user_id = $1`, [ids.P]), { rollback: true }))
+      .rejects.toThrow(/ST:validation/);
+    await db.query(`update profile_private set gender_changed_at = now() - interval '91 days' where user_id = $1`, [ids.P]);
     const g = await db.asUser(ids.P!, (tx) => tx.query(`update profile_private set gender = 'female' where user_id = $1`, [ids.P]), { rollback: true });
     expect(g.affectedRows).toBe(1);
   });

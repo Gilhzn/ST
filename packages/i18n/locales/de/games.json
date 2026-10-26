@@ -169,6 +169,8 @@
   "details": {
     "hiddenLocation": "Den genauen Ort erfährst du, sobald die Organisation dich bestätigt hat",
     "host": {
+      "hostedBy": "Organisiert von {name}",
+      "verified": "Verifizierte Organisation",
       "approve": "Bestätigen",
       "reject": "Ablehnen",
       "rejectReasonLabel": "Grund (optional)",

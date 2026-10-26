@@ -19,7 +19,10 @@
     "sortSoonest": "Mais cedo",
     "sortNearest": "Mais perto",
     "showList": "Lista",
-    "showMap": "Mapa"
+    "showMap": "Mapa",
+    "sortA11y": "Ordenar por: {sort}",
+    "expand": "Mostrar mais jogos",
+    "collapse": "Mostrar menos"
   },
   "card": {
     "distanceAway": "A {distance}",
@@ -51,7 +54,8 @@
   "empty": {
     "title": "Nenhum jogo de {sports} em até {distance}.",
     "widen": "Ampliar para {distance}",
-    "create": "Criar um jogo"
+    "create": "Criar um jogo",
+    "allSports": "qualquer esporte"
   },
   "locationDenied": {
     "title": "A localização está desativada",
@@ -64,5 +68,9 @@
   },
   "offline": {
     "cachedNote": "Mostrando jogos salvos."
+  },
+  "zoom": {
+    "in": "Aumentar zoom",
+    "out": "Diminuir zoom"
   }
 }

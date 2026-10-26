@@ -17,7 +17,8 @@
     "moreOptions": "אפשרויות הודעה",
     "checking": "בודק…",
     "notSent": "לא נשלחה. הקשה לניסיון חוזר",
-    "queued": "ממתינה לשליחה"
+    "queued": "ממתינה לשליחה",
+    "retracted": "ההודעה הזו הוסרה."
   },
   "translate": {
     "translatedFrom": "תורגם מ-{language}",

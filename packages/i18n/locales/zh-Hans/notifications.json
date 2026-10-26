@@ -15,10 +15,6 @@
     "title": "你已进入候补名单",
     "body": "《{gameTitle}》已满员。你目前排在候补第 {position} 位，有空位时我们会通知你。"
   },
-  "waitlist_offer": {
-    "title": "有空位留给你",
-    "body": "你在候补名单中的一场比赛有空位了。请在邀请过期前在应用中接受。"
-  },
   "waitlist_promoted": {
     "title": "有空位了",
     "body": "你已加入 {time}的《{gameTitle}》。"

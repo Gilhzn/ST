@@ -105,16 +105,16 @@ as $$
 declare
   t timestamptz := public.st_now();
   h text;
-  row public.sanction_phone_hmac;
+  hrow public.sanction_phone_hmac;
   s public.sanctions;
   n int := 0;
 begin
   select public.st_phone_hmac(pp.phone) into h from public.profile_private pp where pp.user_id = p_uid;
   if h is null then return 0; end if;
-  select * into row from public.sanction_phone_hmac x where x.hmac = h and x.until > t;
-  if row.hmac is null then return 0; end if;
+  select * into hrow from public.sanction_phone_hmac x where x.hmac = h and x.until > t;
+  if hrow.hmac is null then return 0; end if;
   for s in select * from public.sanctions x
-           where x.id = any (row.sanction_ids) and public.st_sanction_in_force(x, t) and x.kind <> 'yellow_card'
+           where x.id = any (hrow.sanction_ids) and public.st_sanction_in_force(x, t) and x.kind <> 'yellow_card'
            order by x.starts_at, x.id
   loop
     perform public.st_apply_effects(public.dm_issue_effects(jsonb_build_object(
@@ -235,7 +235,12 @@ begin
   insert into public.venue_reports (venue_id, reporter_id, reason, note, created_at)
   values (p_venue_id, me.id, p_reason, p_note, t)
   returning * into r;
-  res := public.dm_venue_reports(public.st_venue_trust_json(v.id), t, public.st_config());
+  res := public.dm_venue_reports(public.st_venue_trust_json(v.id),
+    (select coalesce(jsonb_agg(jsonb_build_object('id', p.id, 'createdAt', public.dm_iso(p.created_at),
+                                                  'reliabilityStatus', p.reliability_status)), '[]'::jsonb)
+     from public.profiles p
+     where p.deleted_at is null and p.id in (select x.reporter_id from public.venue_reports x where x.venue_id = v.id)),
+    t, public.st_config());
   perform public.st_apply_effects(res -> 'effects');
   return r;
 end $$;
@@ -363,13 +368,14 @@ begin
   update public.games x set status = 'cancelled', cancelled_at = t where x.id = g.id;
   -- Security M6 / GAME-047: a host cancelling < lateCancelWindowHours before start gets a disputable
   -- late_cancel card, and host reliability is re-evaluated (TRUST-051(c)).
-  if g.starts_at - t < (public.st_config()).late_cancel_window_hours * interval '1 hour' then
-    perform public.st_apply_effects(public.dm_yellow_card(uid, 'late_cancel', g.id,
-      jsonb_build_object('windowHours', (public.st_config()).late_cancel_window_hours,
-                         'minutesBeforeStart', greatest(0, round(extract(epoch from g.starts_at - t) / 60))::int,
-                         'hostCancelled', 1), t, public.st_config()));
-    perform public.st_evaluate_host(uid);
-  end if;
+  declare hc jsonb := public.dm_host_game_cancellation(
+      jsonb_build_object('id', g.id, 'hostId', g.host_id, 'startsAt', public.dm_iso(g.starts_at)), t, t, public.st_config());
+  begin
+    if (hc ->> 'late')::boolean then
+      perform public.st_apply_effects(hc -> 'effects');
+      perform public.st_evaluate_host(uid);
+    end if;
+  end;
   for p in select gp.user_id from public.game_participants gp
            where gp.game_id = g.id and gp.user_id <> g.host_id and gp.status in ('requested', 'approved', 'waitlisted')
   loop
@@ -895,7 +901,7 @@ begin
   if g.host_id <> uid then perform public.st_raise('forbidden'); end if;
   -- Security L5: only while the game can still be checked into.
   if g.status <> 'scheduled' or public.st_now() >= g.ends_at then perform public.st_raise('game_not_open'); end if;
-  update public.games g set qr_secret = encode(extensions.gen_random_bytes(32), 'hex') where g.id = p_game_id;
+  update public.games x set qr_secret = encode(extensions.gen_random_bytes(32), 'hex') where x.id = p_game_id;
   return public.get_qr_token(p_game_id);
 end $$;
 
@@ -989,12 +995,10 @@ begin
     return public.st_record_checkin(g.id, p_target_user_id, public.st_verdict_verified('host'), uid);
   end if;
 
-  -- Security H2: the host displays the QR and cannot attest their own presence with it.
-  if g.host_id = uid then
-    return public.st_verdict_rejected('qr', 'not_host', '{}');
-  end if;
+  -- Security H2: the scanner is passed so the host (who displays the QR) is rejected with not_host.
   v := public.dm_verify_qr(p_token, g.qr_secret, g.id, t, cfg,
-                           jsonb_build_object('startsAt', public.dm_iso(g.starts_at), 'endsAt', public.dm_iso(g.ends_at)));
+                           jsonb_build_object('startsAt', public.dm_iso(g.starts_at), 'endsAt', public.dm_iso(g.ends_at)),
+                           jsonb_build_object('userId', uid, 'hostId', g.host_id));
   if v ->> 'outcome' <> 'verified' then
     if exists (select 1 from public.game_participants gp where gp.game_id = g.id and gp.user_id = uid) then
       insert into public.checkins (game_id, user_id, method, outcome, reason, submitted_by, created_at)
@@ -1036,9 +1040,10 @@ begin
   select * into g from public.games x where x.id = p_game_id;
   if g.id is null or not public.st_can_see_game(g.id, uid) then perform public.st_raise('not_found'); end if;
   if p_target_user_id is null or p_target_user_id = uid then perform public.st_raise('validation', 'target'); end if;
+  -- Security H2: only GPS-verified attendees may vouch (QR can be relayed; peers cannot chain).
   if not exists (select 1 from public.game_participants gp where gp.game_id = g.id and gp.user_id = uid
-                   and gp.status = 'approved' and gp.attendance = 'verified') then
-    perform public.st_raise('forbidden', 'confirmer must be a verified attendee');
+                   and gp.status = 'approved' and gp.attendance = 'verified' and gp.check_in_method = 'gps') then
+    perform public.st_raise('forbidden', 'confirmer must be a GPS-verified attendee');
   end if;
   if public.dm_check_in_open(g.starts_at, g.ends_at, t, cfg) and g.status = 'scheduled' then
     insert into public.peer_confirmations (game_id, confirmer_id, target_id, created_at)

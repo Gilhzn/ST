@@ -15,10 +15,6 @@
     "title": "Du stehst auf der Warteliste",
     "body": "„{gameTitle}“ ist voll. Du bist auf Platz {position} der Warteliste und wir melden uns, wenn ein Platz frei wird."
   },
-  "waitlist_offer": {
-    "title": "Ein Platz ist frei für dich",
-    "body": "In einem Spiel, für das du auf der Warteliste stehst, ist ein Platz frei geworden. Nimm ihn in der App an, bevor das Angebot abläuft."
-  },
   "waitlist_promoted": {
     "title": "Ein Platz ist frei geworden",
     "body": "Du bist jetzt bei „{gameTitle}“ am {time} dabei."

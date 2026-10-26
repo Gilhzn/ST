@@ -199,7 +199,7 @@ describe("toxicity reports (TRUST-041/042/043/048)", () => {
     for (const [i, c] of created.entries()) {
       const r = await makeUser(db, { createdAt: c });
       const g = games[i % games.length]!;
-      await addParticipant(db, g, r, "approved", { attendance: "verified", team: opts.teams?.[i] ?? null });
+      await addParticipant(db, g, r, "approved", { attendance: "verified", method: "gps", team: opts.teams?.[i] ?? null });
       reporters.push(r);
     }
     return { subject, reporters, games, host };
@@ -255,11 +255,12 @@ describe("toxicity reports (TRUST-041/042/043/048)", () => {
     expect(await db.query(`select 1 from notifications where user_id = $1`, [subject])).toHaveLength(0);
   });
 
-  it("collusion: all reporters from the opposing team of a single game → review only", async () => {
+  it("collusion: every report from a single game → review only (single_game)", async () => {
     const { subject, reporters, games } = await scene({ teams: [0, 0, 0], subjectTeam: 1 });
     for (const r of reporters) await report(r, subject, games[0]!);
     expect(await sanctionsOf(db, subject)).toHaveLength(0);
-    expect((await db.query<{ kind: string }>(`select kind from review_queue`)).map((x) => x.kind)).toEqual(["collusion_suspected"]);
+    const q = await db.query<{ kind: string; evidence: { reviewReasons: string } }>(`select kind, evidence from review_queue`);
+    expect(q.map((x) => [x.kind, x.evidence.reviewReasons])).toEqual([["collusion_suspected", "single_game"]]);
   });
 
   it("14-day protection after an overturned restriction: new reports go to review only", async () => {
@@ -271,13 +272,15 @@ describe("toxicity reports (TRUST-041/042/043/048)", () => {
     expect((await profileOf(db, subject)).visibility_restricted_until).toBeNull();
     const outcomes = await db.query<{ outcome: string }>(`select distinct outcome from user_reports`);
     expect(outcomes).toEqual([{ outcome: "unfounded" }]);
-    // Three new qualifying reporters within 14 days.
+    // Three new qualifying reporters within 14 days, from two games, GPS-verified.
     const g3 = await makeGame(db, host, { startsAt: at(DAY), endsAt: at(DAY + HOUR) });
-    await addParticipant(db, g3, subject, "approved", { attendance: "verified" });
+    const g4 = await makeGame(db, host, { startsAt: at(DAY + 2 * HOUR), endsAt: at(DAY + 3 * HOUR) });
+    for (const g of [g3, g4]) await addParticipant(db, g, subject, "approved", { attendance: "verified" });
     for (let i = 0; i < 3; i++) {
       const r = await makeUser(db, { createdAt: at(-(200 + i * 10) * DAY) });
-      await addParticipant(db, g3, r, "approved", { attendance: "verified" });
-      await report(r, subject, g3, at(2 * DAY));
+      const g = i % 2 === 0 ? g3 : g4;
+      await addParticipant(db, g, r, "approved", { attendance: "verified", method: "gps" });
+      await report(r, subject, g, at(2 * DAY));
     }
     const s = await sanctionsOf(db, subject);
     expect(s.filter((x) => x.status !== "overturned")).toHaveLength(0);

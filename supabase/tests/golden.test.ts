@@ -44,7 +44,7 @@ const NOW = `$3::timestamptz`;
 const PURE: Record<string, { sql: string; pick?: string[] }> = {
   "checkin.qrToken": { sql: `public.dm_qr_token($1->>'qrSecret', ($1->>'gameId')::uuid, ${NOW}, ${CFG})` },
   "checkin.verifyQr": {
-    sql: `public.dm_verify_qr($1->>'token', $1->>'qrSecret', ($1->>'gameId')::uuid, ${NOW}, ${CFG}, $1->'window')`,
+    sql: `public.dm_verify_qr($1->>'token', $1->>'qrSecret', ($1->>'gameId')::uuid, ${NOW}, ${CFG}, $1->'window', $1->'scanner')`,
   },
   "checkin.verifyPeer": { sql: `public.dm_verify_peer($1, ${NOW}, ${CFG})` },
   "games.windows": {
@@ -52,7 +52,10 @@ const PURE: Record<string, { sql: string; pick?: string[] }> = {
   },
   "games.waitlist": { sql: `public.dm_waitlist($1, ${NOW}, ${CFG})` },
   "trust.reliability": { sql: `public.dm_reliability($1->'participations', $1->'sanctions', ${NOW}, ${CFG})` },
-  "trust.venueReports": { sql: `public.dm_venue_reports($1->'venue', ${NOW}, ${CFG})`, pick: ["hide", "effects"] },
+  "trust.venueReports": {
+    sql: `public.dm_venue_reports($1->'venue', coalesce($1->'reporterProfiles', '[]'), ${NOW}, ${CFG})`,
+    pick: ["hide", "effects"],
+  },
   "trust.hostReliability": { sql: `public.dm_host_reliability($1, ${NOW}, ${CFG})`, pick: ["outcome", "reasonCode", "effects"] },
   "trust.evaluateReports": {
     sql: `public.dm_evaluate_reports($1->'reports', $1->'reporterProfiles', ${NOW}, ${CFG}, coalesce($1->'context', '{}'))`,

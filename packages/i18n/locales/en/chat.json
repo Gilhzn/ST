@@ -17,7 +17,8 @@
     "moreOptions": "Message options",
     "checking": "Checking…",
     "notSent": "Not sent. Tap to retry",
-    "queued": "Waiting to send"
+    "queued": "Waiting to send",
+    "retracted": "This message was removed."
   },
   "translate": {
     "translatedFrom": "Translated from {language}",

@@ -169,6 +169,8 @@
   "details": {
     "hiddenLocation": "Il punto esatto viene condiviso dopo l’approvazione dell’organizzatore",
     "host": {
+      "hostedBy": "Organizzata da {name}",
+      "verified": "Organizzatore verificato",
       "approve": "Approva",
       "reject": "Rifiuta",
       "rejectReasonLabel": "Motivo (facoltativo)",

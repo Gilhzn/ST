@@ -37,7 +37,7 @@ import { postgis } from "@electric-sql/pglite-postgis";
 const SUPABASE_DIR = resolve(dirname(fileURLToPath(import.meta.url)), "..");
 const MIGRATIONS_DIR = join(SUPABASE_DIR, "migrations");
 const CACHE_DIR = resolve(SUPABASE_DIR, "..", "node_modules", ".cache", "st-pglite");
-const HARNESS_VERSION = "1";
+const HARNESS_VERSION = "2";
 
 /** Query surface handed to role-scoped callbacks (a PGlite transaction). */
 export type Tx = Pick<Transaction, "query" | "exec" | "sql">;
@@ -333,10 +333,11 @@ export async function createHarness(opts: HarnessOptions = {}): Promise<Harness>
     if (!/^[a-z_][a-z0-9_]*$/.test(role)) throw new Error(`Invalid role name: ${role}`);
     const allClaims = { role, ...claims, ...(o.claims ?? {}) };
     return pg.transaction(async (tx) => {
-      await tx.query(`select set_config('request.jwt.claims', $1, true), set_config('st.now', $2, true)`, [
-        JSON.stringify(allClaims),
-        o.now ? toIso(o.now) : "",
-      ]);
+      // st.now is honoured by public.st_now() only in test mode (security L2).
+      await tx.query(
+        `select set_config('request.jwt.claims', $1, true), set_config('st.now', $2, true), set_config('st.test_mode', 'on', true)`,
+        [JSON.stringify(allClaims), o.now ? toIso(o.now) : ""],
+      );
       await tx.exec(`set local role ${role}`);
       const result = await fn(tx);
       if (o.rollback && !tx.closed) await tx.rollback();

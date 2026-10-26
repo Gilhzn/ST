@@ -33,8 +33,9 @@ begin
     t, public.st_config(),
     jsonb_build_object(
       'attendance', (select coalesce(jsonb_agg(jsonb_build_object('gameId', gp.game_id, 'userId', gp.user_id, 'status', gp.status,
-                                                                  'attendance', gp.attendance, 'team', gp.team)), '[]'::jsonb)
-                     from public.game_participants gp
+                                                                  'attendance', gp.attendance, 'checkInMethod', gp.check_in_method,
+                                                                  'isHost', gp.user_id = g.host_id, 'team', gp.team)), '[]'::jsonb)
+                     from public.game_participants gp join public.games g on g.id = gp.game_id
                      where gp.game_id in (select r.game_id from public.user_reports r where r.target_user_id = p_target)),
       'sanctions', public.st_user_sanctions_json(p_target),
       'overturns', (select coalesce(jsonb_agg(jsonb_build_object('sanctionId', s.id, 'at', public.dm_iso(s.overturned_at))), '[]'::jsonb)

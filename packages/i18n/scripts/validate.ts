@@ -35,6 +35,63 @@ const SAME_AS_EN_OK = new Set<string>(['legal:contact.email']);
 // Loading
 // ---------------------------------------------------------------------------
 
+/**
+ * Paths of object keys that occur twice in the same JSON object. `JSON.parse` silently keeps
+ * the last one, which hides copy (two `"host": {...}` blocks, the first lost).
+ */
+export function findDuplicateKeys(text: string): string[] {
+  const dups: string[] = [];
+  let i = 0;
+  const ws = (): void => {
+    while (i < text.length && /\s/.test(text.charAt(i))) i++;
+  };
+  const str = (): string => {
+    const start = i++;
+    while (i < text.length && text.charAt(i) !== '"') i += text.charAt(i) === '\\' ? 2 : 1;
+    i++;
+    return JSON.parse(text.slice(start, i)) as string;
+  };
+  const value = (path: string): void => {
+    ws();
+    const c = text.charAt(i);
+    if (c === '{') {
+      i++;
+      const seen = new Set<string>();
+      ws();
+      while (text.charAt(i) !== '}' && i < text.length) {
+        ws();
+        const key = str();
+        const here = path ? `${path}.${key}` : key;
+        if (seen.has(key)) dups.push(here);
+        seen.add(key);
+        ws();
+        i++; // ':'
+        value(here);
+        ws();
+        if (text.charAt(i) === ',') i++;
+        ws();
+      }
+      i++;
+    } else if (c === '[') {
+      i++;
+      ws();
+      while (text.charAt(i) !== ']' && i < text.length) {
+        value(path);
+        ws();
+        if (text.charAt(i) === ',') i++;
+        ws();
+      }
+      i++;
+    } else if (c === '"') {
+      str();
+    } else {
+      while (i < text.length && !/[,}\]\s]/.test(text.charAt(i))) i++;
+    }
+  };
+  value('');
+  return dups;
+}
+
 export function loadCatalog(localesDir: string): Catalog {
   const catalog: Catalog = {};
   for (const locale of readdirSync(localesDir).sort()) {
@@ -45,7 +102,10 @@ export function loadCatalog(localesDir: string): Catalog {
       if (!file.endsWith('.json')) continue;
       const path = join(dir, file);
       try {
-        namespaces[file.slice(0, -'.json'.length)] = JSON.parse(readFileSync(path, 'utf8'));
+        const text = readFileSync(path, 'utf8');
+        const dups = findDuplicateKeys(text);
+        if (dups.length) throw new Error(`duplicate key${dups.length > 1 ? 's' : ''}: ${dups.join(', ')} (JSON keeps only the last)`);
+        namespaces[file.slice(0, -'.json'.length)] = JSON.parse(text);
       } catch (e) {
         namespaces[file.slice(0, -'.json'.length)] = { __parseError: String(e) };
       }

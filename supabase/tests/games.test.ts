@@ -406,7 +406,7 @@ describe("save_teams, submit_result, rate_host", () => {
     await expectSt(asUser(db, a, `select public.save_teams($1, $2::jsonb)`, [g, "{}"]), "forbidden");
   });
 
-  it("submit_result only between ends_at and ends_at + 2h, by approved participants, one score per team", async () => {
+  it("submit_result only between ends_at and ends_at + 2h, by the host only, one score per team", async () => {
     const host = await makeUser(db);
     const [a, out] = [await makeUser(db), await makeUser(db)];
     const g = await makeGame(db, host, { teamCount: 2 });
@@ -414,13 +414,14 @@ describe("save_teams, submit_result, rate_host", () => {
     const end = at(90 * MIN);
     const submit = (u: string, now: Date, scores = "{3,2}") =>
       asUser(db, u, `select * from public.submit_result($1, $2::int[])`, [g, scores], { now });
-    await expectSt(submit(a, new Date(end.getTime() - MIN)), "outside_window");
-    await expectSt(submit(a, new Date(end.getTime() + 2 * HOUR + 1000)), "outside_window");
-    await expectSt(submit(a, end, "{3}"), "validation");
-    await expectSt(submit(a, end, "{3,-1}"), "validation");
+    await expectSt(submit(host, new Date(end.getTime() - MIN)), "outside_window");
+    await expectSt(submit(host, new Date(end.getTime() + 2 * HOUR + 1000)), "outside_window");
+    await expectSt(submit(host, end, "{3}"), "validation");
+    await expectSt(submit(host, end, "{3,-1}"), "validation");
     await expectSt(submit(out, end), "forbidden");
-    const [r] = await submit(a, new Date(end.getTime() + 2 * HOUR));
-    expect(r).toMatchObject({ team_scores: [3, 2], submitted_by: a });
+    await expectSt(submit(a, end), "forbidden"); // security M1: approved players cannot
+    const [r] = await submit(host, new Date(end.getTime() + 2 * HOUR));
+    expect(r).toMatchObject({ team_scores: [3, 2], submitted_by: host });
     const [r2] = await submit(host, new Date(end.getTime() + HOUR), "{4,4}");
     expect(r2).toMatchObject({ team_scores: [4, 4], submitted_by: host });
   });

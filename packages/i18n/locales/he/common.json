@@ -113,5 +113,24 @@
     "withPercent": "{status} · {percent}",
     "a11y": "אמינות: {status}, {percent}",
     "a11yNew": "אמינות: שחקן/ית חדש/ה"
+  },
+  "nav": {
+    "map": "מפה",
+    "games": "משחקים",
+    "inbox": "תיבת הודעות",
+    "profile": "פרופיל",
+    "settings": "הגדרות"
+  },
+  "datetime": {
+    "dayTime": "{day}, {time}"
+  },
+  "notFound": {
+    "title": "לא מצאנו את העמוד הזה",
+    "body": "ייתכן שהקישור ישן או שהוקלד בטעות.",
+    "home": "למפה"
+  },
+  "placeholder": {
+    "title": "בקרוב",
+    "body": "החלק הזה של Sport Talent יגיע בעדכון הבא."
   }
 }

@@ -7,7 +7,9 @@
     "title": "Checking your location",
     "progress": "Checking your location… {done} of {total}",
     "accuracy": "Accuracy: {accuracy}",
-    "retry": "Try again"
+    "retry": "Try again",
+    "intro": "Stay where you are. We take three location readings a few seconds apart.",
+    "start": "Check my location"
   },
   "success": {
     "title": "You’re checked in",
@@ -42,13 +44,22 @@
     "hint": "Point your camera at the code on the host’s screen.",
     "enterCode": "Enter code instead",
     "codeLabel": "6-digit code",
-    "scanInstead": "Scan the QR code instead"
+    "scanInstead": "Scan the QR code instead",
+    "submit": "Check in with code",
+    "tokenHint": "Type the code shown under the host’s QR code.",
+    "tokenLabel": "Check-in code"
   },
   "peer": {
     "ask": "Ask a teammate",
     "hint": "We’ll ask players who are already checked in to confirm you’re here.",
     "waiting": "Waiting for {needed, plural, one {# confirmation} other {# confirmations}} · {received} received",
-    "sent": "Request sent to your teammates."
+    "sent": "Request sent to your teammates.",
+    "confirm": "Confirm",
+    "confirmA11y": "Confirm {name} is here",
+    "confirmHint": "Confirm only players you can see at the venue right now.",
+    "confirmTitle": "Confirm teammates",
+    "confirmed": "{count, plural, one {Thanks. # confirmation so far.} other {Thanks. # confirmations so far.}}",
+    "waitingNeeded": "Waiting for {needed, plural, one {# teammate} other {# teammates}} who are checked in to confirm you."
   },
   "permission": {
     "location": {
@@ -82,6 +93,13 @@
     "manualTitle": "Mark players",
     "markPresent": "Mark {name} as here",
     "present": "Here",
-    "notHere": "Not here"
-  }
+    "notHere": "Not here",
+    "newCode": "New code",
+    "qrA11y": "Check-in QR code for players to scan"
+  },
+  "geofence": {
+    "title": "Sport Talent",
+    "body": "You’re near the game — tap to check in."
+  },
+  "fallbacks": "{count, plural, one {Try the other way below.} other {Try one of the other ways below.}}"
 }

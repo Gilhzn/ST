@@ -95,7 +95,8 @@
       "venueNameLabel": "Nombre del lugar",
       "venueNameHint": "Ponle nombre al sitio para que los jugadores lo encuentren.",
       "hideExactLabel": "Ocultar la ubicación exacta hasta que apruebe a los jugadores",
-      "hideExactHelp": "Los jugadores ven primero la zona. Compartes el punto exacto cuando los apruebas."
+      "hideExactHelp": "Los jugadores ven primero la zona. Compartes el punto exacto cuando los apruebas.",
+      "pinHere": "Usar la zona actual del mapa como punto de encuentro"
     },
     "when": {
       "title": "¿Cuándo?",
@@ -122,7 +123,13 @@
       "minReliable": "Solo fiables",
       "approval": "Unirse",
       "approvalAuto": "Aprobar jugadores automáticamente",
-      "approvalManual": "Apruebo a cada jugador"
+      "approvalManual": "Apruebo a cada jugador",
+      "fewer": "Menos jugadores",
+      "more": "Más jugadores",
+      "minPlayers": "Mínimo de jugadores",
+      "minPlayersHelp": "{count, plural, one {El partido se juega con al menos # jugador.} many {El partido se juega con al menos # de jugadores.} other {El partido se juega con al menos # jugadores.}}",
+      "fewerMin": "Bajar el mínimo",
+      "moreMin": "Subir el mínimo"
     },
     "deposit": {
       "title": "Depósito (opcional)",
@@ -136,7 +143,11 @@
       "edit": "Editar",
       "publish": "Publicar partido",
       "publishing": "Publicando…",
-      "offlineHint": "Publícalo cuando vuelvas a tener conexión."
+      "offlineHint": "Publícalo cuando vuelvas a tener conexión.",
+      "whenValue": "{start} · {duration}",
+      "whoValue": "{capacity, plural, one {# jugador} many {# de jugadores} other {# jugadores}} (mín. {min}) · {visibility}",
+      "noDeposit": "Sin depósito",
+      "editA11y": "Editar {section}"
     },
     "published": {
       "title": "Tu partido ya está publicado",
@@ -144,7 +155,8 @@
       "whatsapp": "Compartir por WhatsApp",
       "copyLink": "Copiar enlace",
       "linkCopied": "Enlace copiado.",
-      "showQr": "Mostrar código QR"
+      "showQr": "Mostrar código QR",
+      "viewGame": "Ver partido"
     },
     "discard": {
       "title": "¿Descartar el borrador?",
@@ -164,11 +176,14 @@
       "title": "Ahora no puedes organizar partidos",
       "body": "La organización está en pausa en tu cuenta. Consulta el motivo y cuándo termina.",
       "action": "Ver detalles"
-    }
+    },
+    "defaultTitle": "Partido de {sport}"
   },
   "details": {
     "hiddenLocation": "El punto exacto se comparte cuando el organizador te apruebe",
     "host": {
+      "hostedBy": "Organiza {name}",
+      "verified": "Organizador verificado",
       "approve": "Aprobar",
       "reject": "Rechazar",
       "rejectReasonLabel": "Motivo (opcional)",
@@ -185,7 +200,11 @@
       "cancelConfirm": "Cancelar este partido",
       "showQr": "Mostrar QR de check-in",
       "teams": "Equipos",
-      "enterResult": "Introducir resultado"
+      "enterResult": "Introducir resultado",
+      "badge": "Organizador",
+      "approved": "Jugador aprobado.",
+      "waitlisted": "El partido está completo, así que el jugador queda en la lista de espera.",
+      "rejected": "Solicitud rechazada."
     },
     "facts": {
       "players": "{joined} de {capacity} jugadores",
@@ -213,7 +232,8 @@
       "directions": "Cómo llegar",
       "cantMakeIt": "No puedo ir",
       "leaveWaitlist": "Salir de la lista de espera",
-      "waitlistPosition": "Eres el n.º {position} en la lista de espera."
+      "waitlistPosition": "Eres el n.º {position} en la lista de espera.",
+      "requestHint": "Envía una solicitud al organizador"
     },
     "outcome": {
       "joined": "Estás dentro. Nos vemos allí.",
@@ -225,7 +245,10 @@
       "lateWarning": "Cancelar con menos de {hours, plural, one {# hora} many {# de horas} other {# horas}} de antelación al inicio cuenta como cancelación tardía y te da una tarjeta amarilla.",
       "freeUntil": "Puedes cancelar sin penalización hasta {time}.",
       "confirm": "Cancelar mi plaza",
-      "keep": "Mantener mi plaza"
+      "keep": "Mantener mi plaza",
+      "done": "Tu plaza se ha cancelado.",
+      "cardIssued": "Tu plaza se ha cancelado. Esta cancelación tardía te ha supuesto una tarjeta amarilla.",
+      "lateRecorded": "Tu plaza se ha cancelado. Como ha sido tarde, puedes recibir una tarjeta amarilla después del partido, a menos que alguien de la lista de espera ocupe tu plaza."
     },
     "deposit": {
       "disclosure": "Retención de {amount} · se libera tras el check-in",
@@ -237,20 +260,33 @@
         "released": "Liberado",
         "forfeited": "Conservado",
         "failed": "Retención fallida"
-      }
+      },
+      "saved": "Método de pago guardado. La retención se hace el día antes del partido."
     },
     "banner": {
       "cancelled": "Este partido se ha cancelado. Motivo: {reason}",
       "cancelledNoReason": "Este partido se ha cancelado.",
       "ended": "Este partido ha terminado.",
       "rateHost": "Valorar al organizador"
+    },
+    "when": "{relative} · {absolute}",
+    "playersAfterJoin": "Verás quién juega cuando el organizador te apruebe.",
+    "checkedIn": "Check-in hecho",
+    "offer": {
+      "title": "Se ha liberado una plaza",
+      "body": "Eres el siguiente en la lista de espera. Acepta la plaza para unirte al partido.",
+      "flash": "El partido empieza pronto, así que todos los de la lista de espera han recibido esta oferta. Quien acepte primero se queda la plaza.",
+      "acceptWithin": "Acepta en {duration} (hasta las {time}).",
+      "accept": "Quedarme con la plaza",
+      "accepted": "Estás dentro. Nos vemos allí."
     }
   },
   "invite": {
     "title": "Te han invitado",
     "join": "Unirme",
     "signUpToJoin": "Regístrate para unirte",
-    "expired": "Esta invitación ha caducado. Pide un enlace nuevo al organizador."
+    "expired": "Esta invitación ha caducado. Pide un enlace nuevo al organizador.",
+    "signedOutBody": "Inicia sesión o crea una cuenta para ver este partido y unirte."
   },
   "teams": {
     "title": "Equipos",
@@ -262,7 +298,10 @@
     "movePlayer": "Mover jugador",
     "moveTo": "Mover al {team}",
     "lock": "Bloquear equipos",
-    "locked": "Los equipos están bloqueados. Se ha avisado a los jugadores."
+    "locked": "Los equipos están bloqueados. Se ha avisado a los jugadores.",
+    "coverageTeam": "{team}: {roles}",
+    "notLocked": "El organizador aún no ha definido los equipos.",
+    "reshuffled": "Equipos mezclados."
   },
   "result": {
     "title": "Introducir resultado",
@@ -274,6 +313,41 @@
     "didntPlay": "No jugamos",
     "submit": "Guardar resultado",
     "saved": "Resultado guardado. Los jugadores pueden impugnarlo durante {hours, plural, one {# hora} many {# de horas} other {# horas}}.",
-    "closed": "El plazo para el resultado terminó a las {time}."
+    "closed": "El plazo para el resultado terminó a las {time}.",
+    "notYet": "Podrás introducir el resultado cuando el partido termine a las {time}."
+  },
+  "my": {
+    "refresh": "Actualizar",
+    "segmentsA11y": "Mostrar partidos",
+    "segment": {
+      "upcoming": "Próximos",
+      "hosting": "Organizo",
+      "past": "Pasados"
+    },
+    "findGame": "Buscar un partido",
+    "hostGame": "Organizar un partido",
+    "empty": {
+      "upcoming": {
+        "title": "No hay partidos próximos",
+        "body": "Los partidos a los que te unes o que organizas aparecen aquí. Busca uno en el mapa."
+      },
+      "hosting": {
+        "title": "No organizas ningún partido",
+        "body": "Organiza un partido y tus jugadores aparecerán aquí."
+      },
+      "past": {
+        "title": "Aún no hay partidos pasados",
+        "body": "Los partidos que hayas jugado u organizado aparecerán aquí."
+      }
+    },
+    "state": {
+      "hosting": "Organizas",
+      "going": "Estás dentro",
+      "waitlisted": "En lista de espera",
+      "requested": "Solicitud enviada",
+      "cancelled": "Cancelado",
+      "checkedIn": "Check-in hecho",
+      "noShow": "No se presentó"
+    }
   }
 }

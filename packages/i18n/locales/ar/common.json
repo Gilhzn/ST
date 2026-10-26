@@ -113,5 +113,24 @@
     "withPercent": "{status} · {percent}",
     "a11y": "الموثوقية: {status}، {percent}",
     "a11yNew": "الموثوقية: لاعب جديد"
+  },
+  "nav": {
+    "map": "الخريطة",
+    "games": "المباريات",
+    "inbox": "الوارد",
+    "profile": "الملف الشخصي",
+    "settings": "الإعدادات"
+  },
+  "datetime": {
+    "dayTime": "{day}، {time}"
+  },
+  "notFound": {
+    "title": "تعذّر العثور على هذه الصفحة",
+    "body": "قد يكون الرابط قديمًا أو كُتب بشكل خاطئ.",
+    "home": "الانتقال إلى الخريطة"
+  },
+  "placeholder": {
+    "title": "قريبًا",
+    "body": "هذا الجزء من Sport Talent قادم في التحديث التالي."
   }
 }

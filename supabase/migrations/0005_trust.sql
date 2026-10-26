@@ -37,7 +37,7 @@ create table public.trust_config (
   gps_max_spread_m numeric not null default 30,
   gps_max_speed_kmh numeric not null default 250,
   check_in_opens_minutes_before_start numeric not null default 30,
-  qr_step_seconds int not null default 30 check (qr_step_seconds > 0),
+  qr_step_seconds int not null default 20 check (qr_step_seconds > 0),
   qr_allowed_drift_steps int not null default 1 check (qr_allowed_drift_steps between 0 and 10),
   peer_min_confirmations int not null default 2,
   result_window_hours numeric not null default 2,

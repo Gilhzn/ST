@@ -15,10 +15,6 @@
     "title": "Você está na lista de espera",
     "body": "{gameTitle} está lotado. Você é o nº {position} na lista de espera e avisaremos se uma vaga abrir."
   },
-  "waitlist_offer": {
-    "title": "Abriu uma vaga para você",
-    "body": "Abriu uma vaga em um jogo em que você está na lista de espera. Aceite no app antes que a oferta expire."
-  },
   "waitlist_promoted": {
     "title": "Abriu uma vaga",
     "body": "Agora você está em {gameTitle} em {time}."
@@ -70,5 +66,9 @@
   "deposit_action_required": {
     "title": "Ação necessária no seu depósito",
     "body": "Precisamos que você confirme a reserva de {amount} do depósito de {gameTitle}. Abra o app para continuar."
+  },
+  "waitlist_offer": {
+    "title": "Há uma vaga para você",
+    "body": "Abriu uma vaga em um jogo em que você está na lista de espera. Aceite no app antes que a oferta expire."
   }
 }

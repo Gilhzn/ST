@@ -95,7 +95,8 @@
       "venueNameLabel": "Venue name",
       "venueNameHint": "Name the place so players can find it.",
       "hideExactLabel": "Hide exact location until I approve players",
-      "hideExactHelp": "Players see the area first. You share the exact spot after you approve them."
+      "hideExactHelp": "Players see the area first. You share the exact spot after you approve them.",
+      "pinHere": "Use the current map area as the meeting point"
     },
     "when": {
       "title": "When?",
@@ -122,7 +123,13 @@
       "minReliable": "Reliable only",
       "approval": "Joining",
       "approvalAuto": "Approve players automatically",
-      "approvalManual": "I approve each player"
+      "approvalManual": "I approve each player",
+      "fewer": "Fewer players",
+      "more": "More players",
+      "minPlayers": "Minimum players",
+      "minPlayersHelp": "{count, plural, one {The game goes ahead with at least # player.} other {The game goes ahead with at least # players.}}",
+      "fewerMin": "Lower the minimum",
+      "moreMin": "Raise the minimum"
     },
     "deposit": {
       "title": "Deposit (optional)",
@@ -136,7 +143,11 @@
       "edit": "Edit",
       "publish": "Publish game",
       "publishing": "Publishing…",
-      "offlineHint": "Publish when you’re back online."
+      "offlineHint": "Publish when you’re back online.",
+      "whenValue": "{start} · {duration}",
+      "whoValue": "{capacity, plural, one {# player} other {# players}} (min. {min}) · {visibility}",
+      "noDeposit": "No deposit",
+      "editA11y": "Edit {section}"
     },
     "published": {
       "title": "Your game is live",
@@ -144,7 +155,8 @@
       "whatsapp": "Share on WhatsApp",
       "copyLink": "Copy link",
       "linkCopied": "Link copied.",
-      "showQr": "Show QR code"
+      "showQr": "Show QR code",
+      "viewGame": "View game"
     },
     "discard": {
       "title": "Discard draft?",
@@ -164,13 +176,35 @@
       "title": "You can’t host right now",
       "body": "Hosting is paused on your account. See why and when it ends.",
       "action": "See details"
-    }
+    },
+    "defaultTitle": "{sport} game"
   },
   "details": {
     "hiddenLocation": "Exact spot shared after the host approves you",
     "host": {
       "hostedBy": "Hosted by {name}",
-      "verified": "Verified host"
+      "verified": "Verified host",
+      "approve": "Approve",
+      "reject": "Reject",
+      "rejectReasonLabel": "Reason (optional)",
+      "rejectTemplate": {
+        "full": "The game is full.",
+        "level": "This game isn’t the right fit.",
+        "unknown": "I don’t know you yet. Please message the group first."
+      },
+      "pendingCount": "{count, plural, one {# request is} other {# requests are}} waiting for you",
+      "edit": "Edit game",
+      "cancelGame": "Cancel game",
+      "cancelReasonLabel": "Reason",
+      "cancelHelp": "Everyone who joined will be notified.",
+      "cancelConfirm": "Cancel this game",
+      "showQr": "Show check-in QR",
+      "teams": "Teams",
+      "enterResult": "Enter result",
+      "badge": "Host",
+      "approved": "Player approved.",
+      "waitlisted": "The game is full, so the player is on the waitlist.",
+      "rejected": "Request declined."
     },
     "facts": {
       "players": "{joined} of {capacity} players",
@@ -198,7 +232,8 @@
       "directions": "Directions",
       "cantMakeIt": "Can’t make it",
       "leaveWaitlist": "Leave waitlist",
-      "waitlistPosition": "You’re #{position} on the waitlist."
+      "waitlistPosition": "You’re #{position} on the waitlist.",
+      "requestHint": "Sends a request to the host"
     },
     "outcome": {
       "joined": "You’re in. See you there.",
@@ -210,7 +245,10 @@
       "lateWarning": "Cancelling less than {hours, plural, one {# hour} other {# hours}} before the start counts as a late cancel and gives you a yellow card.",
       "freeUntil": "You can cancel without penalty until {time}.",
       "confirm": "Cancel my spot",
-      "keep": "Keep my spot"
+      "keep": "Keep my spot",
+      "done": "Your spot is cancelled.",
+      "cardIssued": "Your spot is cancelled. This late cancel gave you a yellow card.",
+      "lateRecorded": "Your spot is cancelled. Because it was late, you may get a yellow card after the game, unless someone from the waitlist takes your spot."
     },
     "deposit": {
       "disclosure": "{amount} hold · released after check-in",
@@ -222,39 +260,33 @@
         "released": "Released",
         "forfeited": "Kept",
         "failed": "Hold failed"
-      }
-    },
-    "host": {
-      "approve": "Approve",
-      "reject": "Reject",
-      "rejectReasonLabel": "Reason (optional)",
-      "rejectTemplate": {
-        "full": "The game is full.",
-        "level": "This game isn’t the right fit.",
-        "unknown": "I don’t know you yet. Please message the group first."
       },
-      "pendingCount": "{count, plural, one {# request is} other {# requests are}} waiting for you",
-      "edit": "Edit game",
-      "cancelGame": "Cancel game",
-      "cancelReasonLabel": "Reason",
-      "cancelHelp": "Everyone who joined will be notified.",
-      "cancelConfirm": "Cancel this game",
-      "showQr": "Show check-in QR",
-      "teams": "Teams",
-      "enterResult": "Enter result"
+      "saved": "Payment method saved. The hold is placed the day before the game."
     },
     "banner": {
       "cancelled": "This game was cancelled. Reason: {reason}",
       "cancelledNoReason": "This game was cancelled.",
       "ended": "This game has ended.",
       "rateHost": "Rate the host"
+    },
+    "when": "{relative} · {absolute}",
+    "playersAfterJoin": "You’ll see who’s playing once the host approves you.",
+    "checkedIn": "Checked in",
+    "offer": {
+      "title": "A spot opened up",
+      "body": "You’re next on the waitlist. Accept the spot to join the game.",
+      "flash": "The game starts soon, so everyone on the waitlist got this offer. The first to accept gets the spot.",
+      "acceptWithin": "Accept within {duration} (until {time}).",
+      "accept": "Take the spot",
+      "accepted": "You’re in. See you there."
     }
   },
   "invite": {
     "title": "You’re invited",
     "join": "Join",
     "signUpToJoin": "Sign up to join",
-    "expired": "This invite has expired. Ask the host for a new link."
+    "expired": "This invite has expired. Ask the host for a new link.",
+    "signedOutBody": "Sign in or create an account to see this game and join it."
   },
   "teams": {
     "title": "Teams",
@@ -266,7 +298,10 @@
     "movePlayer": "Move player",
     "moveTo": "Move to {team}",
     "lock": "Lock teams",
-    "locked": "Teams are locked. Players have been notified."
+    "locked": "Teams are locked. Players have been notified.",
+    "coverageTeam": "{team}: {roles}",
+    "notLocked": "The host hasn’t set the teams yet.",
+    "reshuffled": "Teams shuffled."
   },
   "result": {
     "title": "Enter result",
@@ -278,6 +313,41 @@
     "didntPlay": "We didn’t play",
     "submit": "Save result",
     "saved": "Result saved. Players can dispute it for {hours, plural, one {# hour} other {# hours}}.",
-    "closed": "The result window closed at {time}."
+    "closed": "The result window closed at {time}.",
+    "notYet": "You can enter the result when the game ends at {time}."
+  },
+  "my": {
+    "refresh": "Refresh",
+    "segmentsA11y": "Show games",
+    "segment": {
+      "upcoming": "Upcoming",
+      "hosting": "Hosting",
+      "past": "Past"
+    },
+    "findGame": "Find a game",
+    "hostGame": "Host a game",
+    "empty": {
+      "upcoming": {
+        "title": "No upcoming games",
+        "body": "Games you join or host show up here. Find one on the map."
+      },
+      "hosting": {
+        "title": "You’re not hosting anything",
+        "body": "Host a game and your players will be listed here."
+      },
+      "past": {
+        "title": "No past games yet",
+        "body": "Games you’ve played or hosted will be listed here."
+      }
+    },
+    "state": {
+      "hosting": "Hosting",
+      "going": "You’re in",
+      "waitlisted": "On the waitlist",
+      "requested": "Request sent",
+      "cancelled": "Cancelled",
+      "checkedIn": "Checked in",
+      "noShow": "No-show"
+    }
   }
 }

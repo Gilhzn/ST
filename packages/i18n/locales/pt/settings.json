@@ -45,7 +45,9 @@
     "safety": "Conta e segurança",
     "safetyLocked": "Sempre ativadas. Somos obrigados a avisar você sobre decisões na sua conta.",
     "osOff": "As notificações estão desativadas nos ajustes do seu dispositivo.",
-    "osOffAction": "Abrir ajustes do dispositivo"
+    "osOffAction": "Abrir ajustes do dispositivo",
+    "deviceNote": "Estas escolhas ficam salvas neste dispositivo.",
+    "unavailable": "As notificações push não estão disponíveis aqui. Você continuará vendo as novidades na caixa de entrada."
   },
   "privacy": {
     "title": "Privacidade e segurança",
@@ -67,11 +69,16 @@
     "blocked": {
       "title": "Jogadores bloqueados",
       "empty": "Você não bloqueou ninguém.",
-      "unblockConfirm": "Desbloquear {name}?"
+      "unblockConfirm": "Desbloquear {name}?",
+      "unnamed": "Jogador bloqueado {number}",
+      "since": "Bloqueado em {date}",
+      "unblocked": "Jogador desbloqueado."
     },
     "data": {
       "download": "Baixar meus dados",
-      "help": "Peça uma cópia dos seus dados. Avisaremos quando ela estiver pronta."
+      "help": "Peça uma cópia dos seus dados. Avisaremos quando ela estiver pronta.",
+      "title": "Seus dados",
+      "contact": "Entre em contato e enviaremos uma cópia."
     }
   },
   "delete": {
@@ -87,7 +94,15 @@
     "button": "Excluir minha conta",
     "deleting": "Excluindo sua conta…",
     "done": "Sua conta foi excluída.",
-    "webLink": "Você também pode excluir sua conta pela web: {url}"
+    "webLink": "Você também pode excluir sua conta pela web: {url}",
+    "confirmIntro": "Este é o último passo. Sua conta será excluída na hora e você será desconectado.",
+    "gamesTitle": "Seus jogos",
+    "games": "Você será removido dos jogos em que entrou, sem cartão amarelo, e as reservas de depósito serão liberadas. Os jogos que você organiza e que ainda não começaram passam para um coorganizador, se houver. Caso contrário, são cancelados e os jogadores são avisados.",
+    "keptMore": "Os registros de pagamento são mantidos, de uma forma que não identifica você, por até 7 anos, porque a lei fiscal exige. Os backups são apagados em até 30 dias.",
+    "timingTitle": "Quando acontece",
+    "timing": "Seu perfil some do app na hora. O restante dos seus dados pessoais é apagado em até 24 horas.",
+    "reregister": "Você pode se cadastrar de novo depois, com o mesmo número. Se um bloqueio ou aviso ainda estiver em andamento, o tempo restante volta a valer.",
+    "keep": "Manter minha conta"
   },
   "about": {
     "version": "Versão {version}",
