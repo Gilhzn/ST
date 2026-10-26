@@ -55,7 +55,8 @@
     "title": "Aucune partie dans un rayon de {distance} pour {sports}.",
     "widen": "Élargir à {distance}",
     "create": "Créer une partie",
-    "allSports": "aucun sport en particulier"
+    "allSports": "aucun sport en particulier",
+    "hint": "Élargis le rayon, ou lance un match et laisse les joueurs te rejoindre."
   },
   "locationDenied": {
     "title": "La localisation est désactivée",
@@ -72,5 +73,11 @@
   "zoom": {
     "in": "Zoom avant",
     "out": "Zoom arrière"
+  },
+  "searchArea": {
+    "cta": "Rechercher dans cette zone"
+  },
+  "carousel": {
+    "label": "Matchs sur la carte"
   }
 }

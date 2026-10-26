@@ -55,7 +55,8 @@
     "title": "{distance}以内に{sports}の試合はありません。",
     "widen": "{distance}に広げる",
     "create": "試合を作成",
-    "allSports": "いずれかの種目"
+    "allSports": "いずれかの種目",
+    "hint": "範囲を広げるか、ゲームを作成してプレーヤーの参加を待ちましょう。"
   },
   "locationDenied": {
     "title": "位置情報がオフです",
@@ -72,5 +73,11 @@
   "zoom": {
     "in": "拡大",
     "out": "縮小"
+  },
+  "searchArea": {
+    "cta": "このエリアを検索"
+  },
+  "carousel": {
+    "label": "マップ上のゲーム"
   }
 }

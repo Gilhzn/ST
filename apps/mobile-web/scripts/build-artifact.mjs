@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 /**
- * Turns the static web export (`dist/`, built with EXPO_PUBLIC_DATA=mock) into a
- * claude.ai Artifact bundle in `dist-artifact/`:
+ * Turns the static web export (`dist/`, built with EXPO_PUBLIC_DATA=mock and
+ * EXPO_PUBLIC_MAP_OFFLINE=1) into a claude.ai Artifact bundle in `dist-artifact/`:
  *
  * - `index.html` keeps only head/body content (the Artifact host adds its own
  *   doctype/html/head/body skeleton), with a theme-aware body background so the
@@ -9,7 +9,12 @@
  * - Every other exported file is copied unchanged. Artifacts get their own
  *   origin, so the bundle's absolute `/_expo/...` and `/assets/...` URLs resolve.
  *
- * Usage: EXPO_PUBLIC_DATA=mock npx expo export --platform web --output-dir dist
+ * The Artifact CSP blocks every external host (no tiles, glyphs or sprites), so the export
+ * MUST use the offline map canvas (EXPO_PUBLIC_MAP_OFFLINE=1); otherwise the map would try to
+ * fetch the OpenFreeMap style and stay on its fallback with console errors.
+ *
+ * Usage: npm run export:artifact            (does both steps below)
+ *        EXPO_PUBLIC_DATA=mock EXPO_PUBLIC_MAP_OFFLINE=1 npx expo export --platform web --output-dir dist
  *        node scripts/build-artifact.mjs
  */
 import { cpSync, mkdirSync, readdirSync, readFileSync, rmSync, writeFileSync } from 'node:fs';

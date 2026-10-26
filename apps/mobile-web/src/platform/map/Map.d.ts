@@ -8,4 +8,4 @@ import type { JSX } from 'react';
 import type { MapViewProps } from './Map.types';
 
 export declare function Map(props: MapViewProps): JSX.Element;
-export type { MapPoint, MapRegion, MapViewProps, MapPinState } from './Map.types';
+export type { MapPoint, MapRegion, MapViewProps, MapPinState, MapPadding } from './Map.types';

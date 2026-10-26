@@ -1,0 +1,11 @@
+{
+  "version": 8,
+  "name": "Sport Talent offline canvas",
+  "metadata": {
+    "st:note": "No sources, sprites or glyphs: renders with zero network (Artifact CSP, e2e). The dotted lattice, vignette, radius ring and labels are drawn as overlays by src/platform/map. Colors are replaced per theme by style.ts."
+  },
+  "sources": {},
+  "layers": [
+    { "id": "land", "type": "background", "paint": { "background-color": "#EDEFF5" } }
+  ]
+}

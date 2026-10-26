@@ -55,7 +55,8 @@
     "title": "No games within {distance} for {sports}.",
     "widen": "Widen to {distance}",
     "create": "Create a game",
-    "allSports": "any sport"
+    "allSports": "any sport",
+    "hint": "Try a wider radius, or start a game and let players come to you."
   },
   "locationDenied": {
     "title": "Location is off",
@@ -72,5 +73,11 @@
   "zoom": {
     "in": "Zoom in",
     "out": "Zoom out"
+  },
+  "searchArea": {
+    "cta": "Search this area"
+  },
+  "carousel": {
+    "label": "Games on the map"
   }
 }

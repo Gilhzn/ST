@@ -55,7 +55,8 @@
     "title": "Nessuna partita entro {distance} per {sports}.",
     "widen": "Amplia a {distance}",
     "create": "Crea una partita",
-    "allSports": "qualsiasi sport"
+    "allSports": "qualsiasi sport",
+    "hint": "Prova un raggio più ampio, oppure crea una partita e lascia che i giocatori si uniscano."
   },
   "locationDenied": {
     "title": "La posizione è disattivata",
@@ -72,5 +73,11 @@
   "zoom": {
     "in": "Ingrandisci",
     "out": "Riduci"
+  },
+  "searchArea": {
+    "cta": "Cerca in questa zona"
+  },
+  "carousel": {
+    "label": "Partite sulla mappa"
   }
 }

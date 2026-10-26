@@ -55,7 +55,8 @@
     "title": "Keine Spiele im Umkreis von {distance} für {sports}.",
     "widen": "Auf {distance} erweitern",
     "create": "Spiel erstellen",
-    "allSports": "jede Sportart"
+    "allSports": "jede Sportart",
+    "hint": "Vergrößere den Radius oder starte ein Spiel – die Spieler kommen zu dir."
   },
   "locationDenied": {
     "title": "Der Standort ist aus",
@@ -72,5 +73,11 @@
   "zoom": {
     "in": "Vergrößern",
     "out": "Verkleinern"
+  },
+  "searchArea": {
+    "cta": "In diesem Bereich suchen"
+  },
+  "carousel": {
+    "label": "Spiele auf der Karte"
   }
 }

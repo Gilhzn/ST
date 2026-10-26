@@ -26,7 +26,7 @@ export function buildClusterIndex(points: readonly MapPoint[]): ClusterIndex {
   const games = points.filter((p) => p.kind === 'game');
   const venues = points.filter((p) => p.kind === 'venue');
   const index = new Supercluster<PointProps, ClusterProps>({
-    radius: 56,
+    radius: 46,
     maxZoom: 16,
     map: (props) => ({ sports: [games[props.index]?.sport].filter((s): s is SportId => !!s) }),
     reduce: (acc, props) => {

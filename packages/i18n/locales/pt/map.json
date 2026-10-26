@@ -55,7 +55,8 @@
     "title": "Nenhum jogo de {sports} em até {distance}.",
     "widen": "Ampliar para {distance}",
     "create": "Criar um jogo",
-    "allSports": "qualquer esporte"
+    "allSports": "qualquer esporte",
+    "hint": "Tente um raio maior ou crie um jogo e deixe os jogadores virem até você."
   },
   "locationDenied": {
     "title": "A localização está desativada",
@@ -72,5 +73,11 @@
   "zoom": {
     "in": "Aumentar zoom",
     "out": "Diminuir zoom"
+  },
+  "searchArea": {
+    "cta": "Buscar nesta área"
+  },
+  "carousel": {
+    "label": "Jogos no mapa"
   }
 }

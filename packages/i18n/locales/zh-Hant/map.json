@@ -55,7 +55,8 @@
     "title": "{distance}內沒有{sports}比賽。",
     "widen": "擴大到 {distance}",
     "create": "建立比賽",
-    "allSports": "任何運動"
+    "allSports": "任何運動",
+    "hint": "試試擴大範圍，或發起一場比賽，等球友加入。"
   },
   "locationDenied": {
     "title": "位置服務已關閉",
@@ -72,5 +73,11 @@
   "zoom": {
     "in": "放大",
     "out": "縮小"
+  },
+  "searchArea": {
+    "cta": "搜尋此區域"
+  },
+  "carousel": {
+    "label": "地圖上的比賽"
   }
 }

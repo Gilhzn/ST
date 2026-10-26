@@ -22,19 +22,34 @@ export interface MapRegion {
   zoom: number;
 }
 
+/** Screen space covered by floating UI (search bar, sheet). The camera centres in what's left. */
+export interface MapPadding {
+  top: number;
+  bottom: number;
+}
+
 export interface MapViewProps {
   points: readonly MapPoint[];
-  /** Controlled camera target; changing it moves the camera. */
+  /**
+   * Controlled camera target. The camera moves when `center`/`zoom` change or when
+   * `cameraKey` changes (re-centre on the same spot after the user panned away).
+   */
   center: LatLng;
   zoom: number;
+  cameraKey?: number;
+  padding?: MapPadding;
   /** Draws the search radius ring (km) around `center`. */
   radiusKm?: number | null;
+  /** Localized ring label, e.g. "5 km". */
+  radiusLabel?: string;
   /** User location dot. */
   userLocation?: LatLng | null;
   selectedId?: string | null;
   scheme: 'light' | 'dark';
   onPressPoint?: (point: MapPoint) => void;
-  /** Fires after the user pans/zooms (debounced by the implementation). */
+  /** Tap on empty map (clears the selection). */
+  onPressMap?: () => void;
+  /** Fires after the user pans/zooms (not for programmatic camera moves). */
   onRegionChange?: (region: MapRegion) => void;
   /** Localized label for a cluster ("12 games: football, tennis. Double-tap to zoom in."). */
   clusterLabel: (count: number, sports: readonly SportId[]) => string;
@@ -51,5 +66,12 @@ export const VENUE_MIN_ZOOM = 14;
 
 /** Camera zoom that roughly fits a search radius on a phone-sized viewport. */
 export function zoomForRadius(radiusKm: number): number {
-  return Math.max(3, Math.min(16, 13.6 - Math.log2(Math.max(0.5, radiusKm))));
+  return Math.max(3, Math.min(16, 13.15 - Math.log2(Math.max(0.5, radiusKm))));
+}
+
+/** Camera move duration: long hops fly, short ones ease (design §7, reduced motion = instant). */
+export function cameraDurationMs(distanceKm: number, zoomDelta: number, reducedMotion: boolean): number {
+  if (reducedMotion) return 0;
+  if (distanceKm > 50) return 1400;
+  return Math.min(900, 450 + Math.abs(zoomDelta) * 120 + Math.min(distanceKm, 20) * 15);
 }

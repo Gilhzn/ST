@@ -80,7 +80,7 @@
     "typecheck": "tsc --noEmit",
     "export:web": "expo export --platform web --output-dir dist",
     "e2e": "playwright test",
-    "export:artifact": "EXPO_PUBLIC_DATA=mock expo export --platform web --output-dir dist && node scripts/build-artifact.mjs"
+    "export:artifact": "EXPO_PUBLIC_DATA=mock EXPO_PUBLIC_MAP_OFFLINE=1 expo export --platform web --output-dir dist && node scripts/build-artifact.mjs"
   },
   "private": true
 }
