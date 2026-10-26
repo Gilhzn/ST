@@ -97,23 +97,151 @@
       },
       "cancel": {
         "done": "Your spot is cancelled.",
-        "cardIssued": "Your spot is cancelled. This late cancel gave you a yellow card."
+        "cardIssued": "Your spot is cancelled. This late cancel gave you a yellow card.",
+        "lateRecorded": "Your spot is cancelled. Because it was late, you may get a yellow card after the game, unless someone from the waitlist takes your spot."
       },
       "deposit": {
         "saved": "Payment method saved. The hold is placed the day before the game."
       },
       "when": "{relative} · {absolute}",
       "playersAfterJoin": "You’ll see who’s playing once the host approves you.",
-      "checkedIn": "Checked in"
+      "checkedIn": "Checked in",
+      "offer": {
+        "title": "A spot opened up",
+        "body": "You’re next on the waitlist. Accept the spot to join the game.",
+        "flash": "The game starts soon, so everyone on the waitlist got this offer. The first to accept gets the spot.",
+        "acceptWithin": "Accept within {duration} (until {time}).",
+        "accept": "Take the spot",
+        "accepted": "You’re in. See you there."
+      }
     },
     "invite": {
       "signedOutBody": "Sign in or create an account to see this game and join it."
+    },
+    "my": {
+      "refresh": "Refresh",
+      "segmentsA11y": "Show games",
+      "segment": {
+        "upcoming": "Upcoming",
+        "hosting": "Hosting",
+        "past": "Past"
+      },
+      "findGame": "Find a game",
+      "hostGame": "Host a game",
+      "empty": {
+        "upcoming": {
+          "title": "No upcoming games",
+          "body": "Games you join or host show up here. Find one on the map."
+        },
+        "hosting": {
+          "title": "You’re not hosting anything",
+          "body": "Host a game and your players will be listed here."
+        },
+        "past": {
+          "title": "No past games yet",
+          "body": "Games you’ve played or hosted will be listed here."
+        }
+      },
+      "state": {
+        "hosting": "Hosting",
+        "going": "You’re in",
+        "waitlisted": "On the waitlist",
+        "requested": "Request sent",
+        "cancelled": "Cancelled",
+        "checkedIn": "Checked in",
+        "noShow": "No-show"
+      }
+    },
+    "result": {
+      "notYet": "You can enter the result when the game ends at {time}."
+    },
+    "teams": {
+      "coverageTeam": "{team}: {roles}",
+      "notLocked": "The host hasn’t set the teams yet.",
+      "reshuffled": "Teams shuffled."
     }
   },
   "checkin": {
     "geofence": {
       "title": "Sport Talent",
       "body": "You’re near the game — tap to check in."
+    },
+    "fallbacks": "{count, plural, one {Try the other way below.} other {Try one of the other ways below.}}",
+    "gps": {
+      "intro": "Stay where you are. We take three location readings a few seconds apart.",
+      "start": "Check my location"
+    },
+    "host": {
+      "newCode": "New code",
+      "qrA11y": "Check-in QR code for players to scan"
+    },
+    "peer": {
+      "confirm": "Confirm",
+      "confirmA11y": "Confirm {name} is here",
+      "confirmHint": "Confirm only players you can see at the venue right now.",
+      "confirmTitle": "Confirm teammates",
+      "confirmed": "{count, plural, one {Thanks. # confirmation so far.} other {Thanks. # confirmations so far.}}",
+      "waitingNeeded": "Waiting for {needed, plural, one {# teammate} other {# teammates}} who are checked in to confirm you."
+    },
+    "qr": {
+      "submit": "Check in with code",
+      "tokenHint": "Type the code shown under the host’s QR code.",
+      "tokenLabel": "Check-in code"
+    }
+  },
+  "profile": {
+    "stats": {
+      "verifiedAttendance": "Verified attendance",
+      "noShows": "No-shows",
+      "lateCancels": "Late cancels"
+    },
+    "sanctions": {
+      "openHint": "Shows why this applies and what you can do"
+    }
+  },
+  "settings": {
+    "notifications": {
+      "deviceNote": "These choices are saved on this device.",
+      "unavailable": "Push notifications aren’t available here. You’ll still see updates in your Inbox."
+    },
+    "privacy": {
+      "blocked": {
+        "unnamed": "Blocked player {number}",
+        "since": "Blocked on {date}",
+        "unblocked": "Player unblocked."
+      },
+      "data": {
+        "title": "Your data",
+        "contact": "Contact us and we’ll send you a copy."
+      }
+    },
+    "delete": {
+      "confirmIntro": "This is the last step. Your account will be deleted right away and you’ll be signed out.",
+      "gamesTitle": "Your games",
+      "games": "You’ll be removed from games you’ve joined, with no yellow card, and any deposit holds are released. Games you host that haven’t started are handed to a co-host if there is one. Otherwise they’re cancelled and the players are told.",
+      "keptMore": "Payment records are kept in a form that doesn’t identify you for up to 7 years, because tax law requires it. Backups clear out within 30 days.",
+      "timingTitle": "When it happens",
+      "timing": "Your profile disappears from the app straight away. The rest of your personal data is erased within 24 hours.",
+      "reregister": "You can sign up again later with the same number. If a ban or warning is still running, the rest of it applies again.",
+      "keep": "Keep my account"
+    }
+  },
+  "chat": {
+    "message": {
+      "retracted": "This message was removed."
+    }
+  },
+  "trust": {
+    "sanctions": {
+      "appeal": {
+        "reviewerNoteLine": "Reviewer’s note: {note}"
+      },
+      "dispute": {
+        "windowLeft": "You can dispute this card until {date} ({duration} left)."
+      },
+      "statement": {
+        "ruleLine": "Rule: {rule}"
+      }
     }
   }
 }

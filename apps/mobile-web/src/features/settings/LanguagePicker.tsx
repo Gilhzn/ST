@@ -3,9 +3,9 @@
  * (radio), "Use device language" on top. Web switches instantly; native asks to
  * restart when the reading direction changes (design §13.17).
  */
-import { LOCALES, type Locale } from '@st/domain';
-import { tFor } from '@st/i18n';
-import { BidiText, localeNativeNames, radius, Row, spacing, Stack, Text, useTheme } from '@st/ui';
+import type { Locale } from '@st/domain';
+import { LANGUAGES, nativeNameOf, tFor } from '@st/i18n';
+import { BidiText, radius, Row, spacing, Stack, Text, useTheme } from '@st/ui';
 import { useState } from 'react';
 import { Pressable } from 'react-native';
 
@@ -15,7 +15,7 @@ import { useData } from '@/data/DataProvider';
 import { useLanguage, useT } from '@/i18n';
 import { useSession } from '@/state/session';
 
-export function LanguagePicker() {
+export function LanguagePicker({ showTitle = true }: { showTitle?: boolean } = {}) {
   const { t } = useT();
   const { colors } = useTheme();
   const lang = useLanguage();
@@ -36,6 +36,7 @@ export function LanguagePicker() {
       testID={`settings.language.${key}`}
       accessibilityRole="radio"
       accessibilityState={{ checked: selected }}
+      aria-checked={selected}
       onPress={onPress}
       style={({ pressed }) => ({
         minHeight: 56,
@@ -70,14 +71,14 @@ export function LanguagePicker() {
 
   return (
     <Stack gap="xs" testID="settings.language" accessibilityRole="radiogroup">
-      <Text variant="title3">{t('settings:language.title')}</Text>
-      {row('device', t('settings:language.useDevice'), lang.followsDevice, () => void choose(null), t('settings:language.deviceNow', { language: localeNativeNames[lang.deviceLocale] }))}
-      {LOCALES.map((l) => row(l, localeNativeNames[l], !lang.followsDevice && lang.locale === l, () => void choose(l), displayName(l)))}
+      {showTitle ? <Text variant="title3">{t('settings:language.title')}</Text> : null}
+      {row('device', t('settings:language.useDevice'), lang.followsDevice, () => void choose(null), t('settings:language.deviceNow', { language: nativeNameOf(lang.deviceLocale) }))}
+      {LANGUAGES.map((l) => row(l.locale, l.nativeName, !lang.followsDevice && lang.locale === l.locale, () => void choose(l.locale), displayName(l.locale)))}
       <ConfirmDialog
         testID="settings.language.restart"
         visible={!!pendingRestart}
         // Shown in the target language (design §13.14), body in the current one.
-        title={pendingRestart ? tFor(pendingRestart)('settings:language.restart.title', { language: localeNativeNames[pendingRestart] }) : ''}
+        title={pendingRestart ? tFor(pendingRestart)('settings:language.restart.title', { language: nativeNameOf(pendingRestart) }) : ''}
         body={t('settings:language.restart.body')}
         confirmLabel={t('settings:language.restart.restartNow')}
         cancelLabel={t('settings:language.restart.later')}
