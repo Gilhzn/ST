@@ -274,8 +274,12 @@ export function isRadiusKm(value: unknown): value is RadiusKm {
 /** Maximum number of sports in a map filter at once (PRD §2). Enforced by the RPCs too. */
 export const MAX_SPORT_FILTERS = 3;
 
-/** Minimum user age at launch (compliance: 16+). */
-export const MIN_AGE_YEARS = 16;
+/**
+ * Minimum user age, worldwide (owner decision: 18+). Mirrors
+ * `DEFAULT_TRUST_CONFIG.minAgeYears` / `trust_config.min_age_years`, which the
+ * server enforces in `create_profile`.
+ */
+export const MIN_AGE_YEARS = 18;
 
 // ---------------------------------------------------------------------------
 // Profiles and users
@@ -987,6 +991,10 @@ export type NewReviewQueueItem = Omit<
  * parameter. Units are part of each name.
  */
 export interface TrustConfig {
+  // Eligibility
+  /** Minimum age in completed years to create a profile (owner decision: 18+ worldwide). */
+  minAgeYears: number;
+
   // Cancellations and cards
   /** Cancelling less than this before start is a late cancel (yellow card). */
   lateCancelWindowHours: number;
@@ -1116,6 +1124,8 @@ export interface TrustConfig {
  * camelCase of the column names (`trust_config_json()` converts mechanically).
  */
 export const DEFAULT_TRUST_CONFIG: Readonly<TrustConfig> = Object.freeze({
+  minAgeYears: 18,
+
   lateCancelWindowHours: 2,
   disputeWindowHours: 48,
   yellowCardLifetimeDays: 30,

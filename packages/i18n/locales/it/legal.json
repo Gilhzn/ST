@@ -27,7 +27,7 @@
     },
     "age": {
       "title": "Limite di età",
-      "body": "Sport Talent è per chi ha almeno 16 anni."
+      "body": "Sport Talent è per chi ha almeno 18 anni."
     }
   },
   "terms": {
@@ -35,7 +35,7 @@
     "intro": "Questi termini spiegano come puoi usare Sport Talent. I termini completi saranno pubblicati qui prima del lancio.",
     "account": {
       "title": "Il tuo account",
-      "body": "Devi avere almeno 16 anni. Conserva con cura le tue credenziali e fornisci informazioni corrette."
+      "body": "Devi avere almeno 18 anni. Conserva con cura le tue credenziali e fornisci informazioni corrette."
     },
     "conduct": {
       "title": "Fair play e comportamento",

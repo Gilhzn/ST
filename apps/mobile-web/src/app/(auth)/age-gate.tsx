@@ -1,4 +1,4 @@
-/** Age gate 16+ (design §13.2): neutral month/year pickers, respectful stop screen, 24 h soft lock. */
+/** Age gate 18+ (design §13.2): neutral month/year pickers, respectful stop screen, 24 h soft lock. */
 import { MIN_AGE_YEARS } from '@st/domain';
 import { Button, EmptyState, Stack, Text } from '@st/ui';
 import { router } from 'expo-router';
@@ -64,9 +64,9 @@ export default function AgeGateScreen() {
         <Stack gap="lg" testID="auth.age.blocked" accessibilityLiveRegion="polite">
           <EmptyState
             tone="restricted"
-            title={t('auth:ageGate.under16.title')}
-            body={t('auth:ageGate.under16.body')}
-            actionLabel={t('auth:ageGate.under16.close')}
+            title={t('auth:ageGate.under18.title')}
+            body={t('auth:ageGate.under18.body')}
+            actionLabel={t('auth:ageGate.under18.close')}
             onAction={() => void session.signOut()}
           />
         </Stack>

@@ -54,7 +54,7 @@ end $$;
 -- Profiles
 -- ---------------------------------------------------------------------------
 
--- Onboarding with the 16+ age gate (birth year/month only). Phone is copied from auth.users.
+-- Onboarding with the age gate (trust_config.min_age_years, 18+; birth year/month only). Phone is copied from auth.users.
 create function public.create_profile(
   p_display_name text, p_locale public.locale_code, p_birth_year int, p_birth_month int,
   p_gender public.gender default 'undisclosed', p_country_code text default null,
@@ -78,7 +78,7 @@ begin
   -- Completed months of age, assuming the latest possible birthday in the birth month (conservative).
   months := (extract(year from t at time zone 'UTC')::int * 12 + extract(month from t at time zone 'UTC')::int)
             - (p_birth_year * 12 + p_birth_month) - 1;
-  if months < 16 * 12 then
+  if months < (public.st_config()).min_age_years * 12 then
     perform public.st_raise('age_restricted');
   end if;
   if p_display_name is null or char_length(btrim(p_display_name)) not between 1 and 40 then

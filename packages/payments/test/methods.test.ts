@@ -33,8 +33,8 @@ describe('method capability matrix', () => {
     expect(types({ country: 'IN', currency: 'INR', includePlanned: true })).toContain('upi');
   });
 
-  it('routes Israeli cards and Bit to the local PSP', () => {
-    expect(routeFor('card', 'IL')).toBe('payplus');
+  it('routes Israeli cards via Stripe (foreign entity) and Bit to the planned local PSP', () => {
+    expect(routeFor('card', 'IL')).toBe('stripe');
     expect(routeFor('bit', 'IL')).toBe('payplus');
     expect(routeFor('card', 'NL')).toBe('stripe');
     expect(routeFor('upi', 'IN')).toBe('razorpay');

@@ -27,7 +27,7 @@
     },
     "age": {
       "title": "Âge minimum",
-      "body": "Sport Talent est réservé aux personnes de 16 ans et plus."
+      "body": "Sport Talent est réservé aux personnes de 18 ans et plus."
     }
   },
   "terms": {
@@ -35,7 +35,7 @@
     "intro": "Ces conditions expliquent comment tu peux utiliser Sport Talent. Les conditions complètes seront publiées ici avant le lancement.",
     "account": {
       "title": "Ton compte",
-      "body": "Tu dois avoir 16 ans ou plus. Garde tes identifiants en sécurité et donne-nous des informations exactes."
+      "body": "Tu dois avoir 18 ans ou plus. Garde tes identifiants en sécurité et donne-nous des informations exactes."
     },
     "conduct": {
       "title": "Fair-play et comportement",

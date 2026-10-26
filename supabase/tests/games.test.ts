@@ -14,15 +14,15 @@ afterAll(() => db?.close());
 const before = { now: at(-1 * DAY) };
 
 describe("create_profile", () => {
-  it("enforces the 16+ age gate by birth year/month and copies the phone", async () => {
+  it("enforces the 18+ age gate by birth year/month and copies the phone", async () => {
     const u = await db.createUser({ phone: "+972501111111" });
     const now = { now: new Date("2026-06-15T12:00:00Z") };
-    // Turns 16 in July 2026: still 15 in June → restricted.
+    // Turns 18 in July 2026: still 17 in June → restricted.
     await expectSt(
-      asUser(db, u, `select public.create_profile('Dana', 'he', 2010, 7)`, [], now), "age_restricted");
-    // Born June 2010: conservatively counted as 16 only from July.
-    await expectSt(asUser(db, u, `select public.create_profile('Dana', 'he', 2010, 6)`, [], now), "age_restricted");
-    await asUser(db, u, `select public.create_profile('Dana', 'he', 2010, 5, 'female')`, [], now);
+      asUser(db, u, `select public.create_profile('Dana', 'he', 2008, 7)`, [], now), "age_restricted");
+    // Born June 2008: conservatively counted as 18 only from July.
+    await expectSt(asUser(db, u, `select public.create_profile('Dana', 'he', 2008, 6)`, [], now), "age_restricted");
+    await asUser(db, u, `select public.create_profile('Dana', 'he', 2008, 5, 'female')`, [], now);
     const [pp] = await db.query<{ phone: string; gender: string }>(`select phone, gender from profile_private where user_id = $1`, [u]);
     expect(pp).toEqual({ phone: "+972501111111", gender: "female" });
     await expectSt(asUser(db, u, `select public.create_profile('Dana', 'he', 2000, 5)`, [], now), "conflict");

@@ -66,11 +66,11 @@ test.describe("APP-01 sign-up to map to game", () => {
     expect(errors, errors.join("\n")).toEqual([]);
   });
 
-  test("under 16 is stopped with an explanation", async ({ page }) => {
+  test("under 18 is stopped with an explanation", async ({ page }) => {
     await signIn(page, { national: "201666" + String(Date.now()).slice(-4) });
     await expect(page).toHaveURL(/\/age-gate$/);
     await page.getByTestId("auth.age.month").selectOption("12");
-    await page.getByTestId("auth.age.year").selectOption(String(new Date().getFullYear() - 15));
+    await page.getByTestId("auth.age.year").selectOption(String(new Date().getFullYear() - 17));
     await page.getByTestId("auth.age.submit").click();
     await expect(page.getByTestId("auth.age.blocked")).toBeVisible();
   });

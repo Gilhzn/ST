@@ -102,11 +102,11 @@ function matches(list: '*' | readonly string[], value: string | null): boolean {
 }
 
 /**
- * Card traffic for buyers in these countries is routed to a local PSP: Stripe
- * does not onboard Israeli merchants (MON-002). The UI and `create-deposit`
- * use this to pick the adapter.
+ * Card traffic for buyers in these countries would be routed to a local PSP.
+ * Empty by owner decision (ADR 0006): a foreign entity runs Stripe as the single
+ * global processor, Israel included. Bit stays `planned` on the PayPlus route.
  */
-const LOCAL_CARD_ROUTES: Readonly<Record<string, MethodRoute>> = { IL: 'payplus' };
+const LOCAL_CARD_ROUTES: Readonly<Record<string, MethodRoute>> = {};
 
 /** Adapter that processes `type` for a buyer in `country`. */
 export function routeFor(type: PaymentMethodType, country: CountryCode | null): MethodRoute {

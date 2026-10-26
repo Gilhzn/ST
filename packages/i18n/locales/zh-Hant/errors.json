@@ -5,7 +5,7 @@
   "validation": "有些資料需要再檢查一下。請查看標示的欄位後再試一次。",
   "conflict": "在你操作期間內容發生了變化。請重新整理後再試一次。",
   "rate_limited": "操作太頻繁了。請稍候片刻後再試一次。",
-  "age_restricted": "Sport Talent 僅提供給 16 歲以上的使用者。",
+  "age_restricted": "Sport Talent 僅提供給 18 歲以上的使用者。",
   "otp_invalid": "驗證碼不正確。請查看最新的簡訊，或重新取得。",
   "otp_expired": "驗證碼已過期，請重新取得。",
   "join_banned": "你的帳號已暫停加入比賽。請在帳號狀態中查看結束時間。",

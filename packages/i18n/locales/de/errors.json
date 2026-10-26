@@ -5,7 +5,7 @@
   "validation": "Einige Angaben brauchen einen zweiten Blick. Prüfe die markierten Felder und versuche es noch einmal.",
   "conflict": "Das hat sich geändert, während du daran gearbeitet hast. Lade neu und versuche es noch einmal.",
   "rate_limited": "Du bist etwas zu schnell. Warte einen Moment und versuche es noch einmal.",
-  "age_restricted": "Sport Talent ist für Menschen ab 16 Jahren.",
+  "age_restricted": "Sport Talent ist für Menschen ab 18 Jahren.",
   "otp_invalid": "Der Code stimmt nicht. Prüfe die neueste SMS oder fordere einen neuen Code an.",
   "otp_expired": "Der Code ist abgelaufen. Fordere einen neuen an.",
   "join_banned": "Der Beitritt zu Spielen ist für dein Konto pausiert. Im Kontostatus siehst du, wann das endet.",

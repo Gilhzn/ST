@@ -103,3 +103,11 @@ describe('ordering tie-breaks', () => {
     expect(matchBlocklist('i d i o t you', 'en').terms).toEqual(['idiot']);
   });
 });
+
+describe('minimum age (owner decision: 18+ worldwide)', () => {
+  it('MIN_AGE_YEARS mirrors DEFAULT_TRUST_CONFIG.minAgeYears', async () => {
+    const { MIN_AGE_YEARS, DEFAULT_TRUST_CONFIG } = await import('../src');
+    expect(MIN_AGE_YEARS).toBe(18);
+    expect(DEFAULT_TRUST_CONFIG.minAgeYears).toBe(MIN_AGE_YEARS);
+  });
+});

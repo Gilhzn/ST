@@ -93,7 +93,7 @@ types, `set search_path = ''` in every function). Time: every rule reads `public
 
 | RPC | Who | Notes |
 |---|---|---|
-| `create_profile(name, locale, birth_year, birth_month, gender?, country?, avatar?, bio?)` | authenticated | 16+ gate (`age_restricted`), copies phone from `auth.users` |
+| `create_profile(name, locale, birth_year, birth_month, gender?, country?, avatar?, bio?)` | authenticated | 18+ gate (`age_restricted`; minimum from `trust_config.min_age_years`, default 18), copies phone from `auth.users` |
 | `nearby_venues(lat, lng, radius_km, sports[])` | authenticated | radius ∈ {1,2,5,10,30,50} (`invalid_radius`), ≤ 3 sports (`too_many_sports`), active only, by distance |
 | `nearby_games(lat, lng, radius_km, sports[], from?, to?, include_full?)` | authenticated | same validation; ≤ 60-day range; ordered by `starts_at`, distance (DataPort contract) |
 | `create_venue`, `rate_venue(venue, sport, overall, attributes)`, `report_venue(venue, reason, note?)` | authenticated | per-sport attributes; `already_reported`; 3 distinct reporters → hidden + review |

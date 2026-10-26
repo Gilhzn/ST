@@ -28,6 +28,7 @@ create table public.trust_config (
   host_low_rating_min_count int not null default 5,
   host_suspension_days numeric not null default 14,
   venue_reports_to_hide int not null default 3,
+  min_age_years int not null default 18 check (min_age_years >= 13),
   wake_geofence_radius_m numeric not null default 150,
   gps_max_accuracy_m numeric not null default 25,
   gps_base_radius_m numeric not null default 50,

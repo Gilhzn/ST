@@ -27,7 +27,7 @@
     },
     "age": {
       "title": "Age limit",
-      "body": "Sport Talent is for people aged 16 and older."
+      "body": "Sport Talent is for people aged 18 and older."
     }
   },
   "terms": {
@@ -35,7 +35,7 @@
     "intro": "These terms explain how you can use Sport Talent. The full terms will be published here before launch.",
     "account": {
       "title": "Your account",
-      "body": "You must be 16 or older. Keep your sign-in details safe and give us accurate information."
+      "body": "You must be 18 or older. Keep your sign-in details safe and give us accurate information."
     },
     "conduct": {
       "title": "Fair play and conduct",
