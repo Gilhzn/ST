@@ -11,5 +11,9 @@
     "@electric-sql/pglite": "^0.5.11",
     "@electric-sql/pglite-postgis": "^0.2.11",
     "esbuild": "^0.28.2"
+  },
+  "dependencies": {
+    "@st/domain": "*",
+    "@st/payments": "*"
   }
 }

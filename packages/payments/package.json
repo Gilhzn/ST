@@ -12,6 +12,7 @@
     "typecheck": "tsc -p tsconfig.json"
   },
   "dependencies": {
-    "stripe": "^23.0.1"
+    "stripe": "^23.0.1",
+    "@st/domain": "*"
   }
 }
