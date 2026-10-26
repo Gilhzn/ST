@@ -213,7 +213,7 @@ grant execute on function
   public.rate_venue(uuid, text, int, jsonb),
   public.report_venue(uuid, public.venue_report_reason, text),
   public.create_game(text, text, public.game_visibility, uuid, double precision, double precision, boolean, int,
-                     timestamptz, timestamptz, int, text, boolean, int, text, public.deposit_forfeit_target),
+                     timestamptz, timestamptz, int, text, boolean, int, text, public.deposit_forfeit_target, int),
   public.cancel_game(uuid),
   public.nearby_games(double precision, double precision, numeric, text[], timestamptz, timestamptz, boolean),
   public.resolve_invite(text),

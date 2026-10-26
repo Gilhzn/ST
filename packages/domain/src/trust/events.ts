@@ -1,21 +1,13 @@
-import type { GameId, IsoDateTime, TrustEvent, UserId } from '../types';
+import type { TrustEvent } from '../types';
 
 /**
  * Emitted at attendance finalisation for every late canceller (TRUST-020(b) /
- * TRUST-021). The late-cancel yellow card is decided here, not at cancel time,
- * so no card exists when a waitlisted player filled the spot before the start
- * and checked in.
- * TODO(contract): add to `TrustEvent` in types.ts.
+ * TRUST-021). Part of the contract `TrustEvent` since v2.
  */
-export interface LateCancelFinalizedEvent {
-  type: 'LateCancelFinalized';
-  gameId: GameId;
-  userId: UserId;
-  startsAt: IsoDateTime;
-  cancelledAt: IsoDateTime;
-  /** A waitlisted replacement was promoted into the spot before `startsAt` and checked in. */
-  refilled: boolean;
-}
+export type LateCancelFinalizedEvent = Extract<TrustEvent, { type: 'LateCancelFinalized' }>;
 
-/** Every event the domain trust engine accepts: the contract's plus local additions. */
-export type DomainTrustEvent = TrustEvent | LateCancelFinalizedEvent;
+/**
+ * @deprecated Since contract v2 every event the engine accepts is in
+ * `TrustEvent`; use that. Kept as an alias for existing callers.
+ */
+export type DomainTrustEvent = TrustEvent;

@@ -184,7 +184,10 @@ export interface GamesApi {
   resolveInvite(inviteToken: string): Promise<GameDetail | null>;
   /** Games the caller hosts or participates in, upcoming first. */
   listMyGames(): Promise<GameDetail[]>;
-  /** Rejects `host_suspended`, `account_banned`, `validation`. The caller becomes host and an approved participant. */
+  /**
+   * Rejects `host_suspended`, `account_banned`, `validation` (including
+   * `minPlayers` outside 2..capacity). The caller becomes host and an approved participant.
+   */
   createGame(input: GameCreateInput): Promise<GameDetail>;
   /** Host only. Releases deposits and notifies participants. */
   cancelGame(gameId: GameId): Promise<GameDetail>;
@@ -203,10 +206,22 @@ export interface GamesApi {
   /** Host only. Removes an approved/waitlisted player (`removed`), promoting the waitlist. */
   removeParticipant(gameId: GameId, userId: UserId): Promise<Participant>;
   /**
-   * The caller withdraws. Within `lateCancelWindowHours` of start this is a late
-   * cancel and returns the yellow card issued. Promotes the waitlist.
+   * The caller withdraws and the freed spot is offered to the waitlist. Within
+   * `lateCancelWindowHours` of start this is a late cancel
+   * (`participant.lateCancel`); the yellow card is decided only at finalisation
+   * (`endsAt + finalizeAfterEndHours`) and is skipped if a waitlisted player
+   * took the spot and checked in (TRUST-021). `CancelResult.sanction` is always `null`.
    */
   cancelParticipation(gameId: GameId): Promise<CancelResult>;
+  /**
+   * A waitlisted caller accepts the spot offered to them (`participant.offerExpiresAt`,
+   * notification `waitlist_offer`) and becomes `approved` (SQL `accept_waitlist_offer`).
+   * In a flash fill the first to accept wins. Rejects `game_not_open` (cancelled or
+   * started), `not_found` (no offer), `outside_window` (offer expired), `game_full`
+   * (someone else took it). With a deposit, the payment method must then be secured
+   * (`participant.paymentReady`).
+   */
+  acceptWaitlistOffer(gameId: GameId): Promise<Participant>;
   /** Participants visible to the caller (approved players see each other; host sees requests too). */
   listParticipants(gameId: GameId): Promise<ParticipantView[]>;
   /** Host only. Saves team assignments (e.g. from squad balancing). Missing users become unassigned. */

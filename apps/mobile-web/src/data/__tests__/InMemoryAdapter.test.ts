@@ -53,9 +53,12 @@ describe('InMemoryAdapter', () => {
     setNow(Date.parse(g!.startsAt) - 30 * 60 * 1000);
     const r = await a.cancelParticipation('g-tlv-1');
     expect(r.participant.lateCancel).toBe(true);
-    expect(r.sanction?.kind).toBe('yellow_card');
-    expect(r.sanction?.disputeUntil).not.toBeNull();
-    const appeal = await a.fileAppeal(r.sanction!.id, 'I was injured on the way, sorry.');
+    expect(r.sanction).toBeNull(); // contract v2: decided at finalisation
+    setNow(Date.parse(g!.endsAt) + 3 * 60 * 60 * 1000);
+    const card = (await a.listMySanctions()).find((s) => s.gameId === 'g-tlv-1');
+    expect(card?.kind).toBe('yellow_card');
+    expect(card?.disputeUntil).not.toBeNull();
+    const appeal = await a.fileAppeal(card!.id, 'I was injured on the way, sorry.');
     expect(appeal.isDispute).toBe(true);
   });
 

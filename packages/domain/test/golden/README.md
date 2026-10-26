@@ -65,7 +65,7 @@ The pgcrypto version is in `src/crypto/uuid.ts`. Fixture rows in `input.state.sa
 
 `TrustState` lists default to empty: `sanctions`, `appeals`, `chatBlocks`, `reports`, `reporterProfiles`, `attendance`, `hostRatings`, `reviewItems`, `venues`, `overturns`, `depositSettlements`, `pendingLateCancels` (see `src/trust/engine.ts`).
 
-`LateCancelFinalized` is a domain-local event (not yet in `TrustEvent`): `{ type, gameId, userId, startsAt, cancelledAt, refilled }`, produced by `processNoShows` at `endsAt + 2h`.
+`LateCancelFinalized` (`{ type, gameId, userId, startsAt, cancelledAt, refilled }`, in `TrustEvent` since contract v2) is produced by `processNoShows` at `endsAt + finalizeAfterEndHours`.
 
 ## Coverage of required scenarios
 

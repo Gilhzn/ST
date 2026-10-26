@@ -65,6 +65,7 @@ begin
     res := public.dm_process_no_shows(jsonb_build_object(
         'game', jsonb_build_object('id', g.id, 'hostId', g.host_id, 'startsAt', public.dm_iso(g.starts_at),
                                    'endsAt', public.dm_iso(g.ends_at), 'status', g.status),
+        'minPlayers', g.min_players,
         'participants', (select coalesce(jsonb_agg(jsonb_build_object('userId', gp.user_id, 'status', gp.status,
                                    'attendance', gp.attendance, 'lateCancel', gp.late_cancel,
                                    'cancelledAt', public.dm_iso(gp.cancelled_at))), '[]'::jsonb)
@@ -501,6 +502,9 @@ begin
           then greatest(p.visibility_restricted_until, public.st_ts(e -> 'until')) else p.visibility_restricted_until end,
         host_suspended_until = case when ty = 'SuspendHost' then greatest(p.host_suspended_until, public.st_ts(e -> 'until')) else p.host_suspended_until end
       where p.id = uid;
+    elsif ty = 'BanAccount' then
+      -- Projection of a moderator's permanent ban (the sanctions insert trigger sets it too).
+      update public.profiles p set permanently_banned = true where p.id = uid;
     elsif ty = 'LiftRestrictions' then
       -- Clears the projections; the engine re-projects remaining in-force sanctions right after.
       update public.profiles p set
@@ -557,7 +561,8 @@ as $$
 begin
   if p_effects is null or jsonb_typeof(p_effects) <> 'array' then perform public.st_raise('validation', 'effects must be an array'); end if;
   if exists (select 1 from jsonb_array_elements(p_effects) e
-             where e ->> 'type' = 'IssueSanction' and e #>> '{sanction,kind}' = 'permanent_ban') then
+             where (e ->> 'type' = 'IssueSanction' and e #>> '{sanction,kind}' = 'permanent_ban')
+                or e ->> 'type' = 'BanAccount') then
     perform public.st_raise('forbidden', 'permanent_ban is moderator-only (moderator_decide)');
   end if;
   return public.st_apply_effects(p_effects);

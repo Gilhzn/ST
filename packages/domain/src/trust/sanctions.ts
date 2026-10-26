@@ -10,6 +10,7 @@
  *   `appeal`), and a deterministic `dedupeKey`.
  */
 import type {
+  AppealPath,
   Effect,
   EpochMs,
   GameId,
@@ -30,8 +31,10 @@ import type {
 import { deriveReviewItemId, deriveSanctionId } from '../crypto/uuid';
 import { HOUR_MS, toEpochMs, toIso } from '../time';
 
-/** How the user can contest a sanction; surfaced in the statement of reasons. */
-export type AppealPath = 'dispute' | 'appeal';
+/** How the user can contest a sanction (`Sanction.appealPath`, `statementParams.appealPath`). */
+export function appealPathFor(disputeUntil: IsoDateTime | null): AppealPath {
+  return disputeUntil !== null ? 'dispute' : 'appeal';
+}
 
 /** Statuses in which a sanction is in force (a dispute does not suspend it). */
 export const IN_FORCE_STATUSES = ['active', 'disputed', 'upheld'] as const;
@@ -87,7 +90,7 @@ export function buildSystemSanction(args: SystemSanctionArgs, now: EpochMs): New
     userId: args.userId,
     reasonCode: args.reasonCode,
     statementKey: statementKeyFor(args.reasonCode),
-    statementParams: { ...args.statementParams, appealPath: disputeUntil ? 'dispute' : 'appeal' },
+    statementParams: { ...args.statementParams, appealPath: appealPathFor(disputeUntil) },
     startsAt: toIso(now),
     expiresAt: toIso(now + args.durationMs),
     disputeUntil,
@@ -110,7 +113,7 @@ export function buildModeratorPermanentBan(
     userId,
     reasonCode: 'moderator_decision',
     statementKey: statementKeyFor('moderator_decision'),
-    statementParams: { appealPath: 'appeal' },
+    statementParams: { appealPath: appealPathFor(null) },
     startsAt: toIso(now),
     expiresAt: null,
     disputeUntil: null,
@@ -123,7 +126,14 @@ export function buildModeratorPermanentBan(
 
 /** Materialises an emitted sanction as the row the adapter will insert (id derived from `dedupeKey`). */
 export function materializeSanction(s: NewSanction, now: EpochMs): Sanction {
-  return { ...s, id: deriveSanctionId(s.dedupeKey), status: 'active', createdAt: toIso(now) } as Sanction;
+  return {
+    ...s,
+    id: deriveSanctionId(s.dedupeKey),
+    status: 'active',
+    appealPath: appealPathFor(s.disputeUntil),
+    overturnedAt: null,
+    createdAt: toIso(now),
+  };
 }
 
 /** The projection effect for a restriction kind. */
@@ -163,7 +173,7 @@ export function sanctionNotice(s: NewSanction): Effect {
       statementKey: s.statementKey,
       expiresAt: s.expiresAt ?? '',
       disputeUntil: s.disputeUntil ?? '',
-      appealPath: s.disputeUntil ? 'dispute' : 'appeal',
+      appealPath: appealPathFor(s.disputeUntil),
     },
     gameId: s.gameId,
     sanctionDedupeKey: s.dedupeKey,
@@ -172,11 +182,12 @@ export function sanctionNotice(s: NewSanction): Effect {
 
 /**
  * Effects for issuing a sanction: `IssueSanction`, its projection (restriction
- * kinds) and the user notice, in that order.
+ * kinds → `*_until`, `permanent_ban` → `BanAccount`) and the user notice, in that order.
  */
 export function issueEffects(s: NewSanction): Effect[] {
   const effects: Effect[] = [{ type: 'IssueSanction', sanction: s }];
-  if (isProjectedKind(s.kind) && s.expiresAt) effects.push(projectionEffect(s.kind, s.userId, s.expiresAt));
+  if (s.kind === 'permanent_ban') effects.push({ type: 'BanAccount', userId: s.userId });
+  else if (isProjectedKind(s.kind)) effects.push(projectionEffect(s.kind, s.userId, s.expiresAt));
   effects.push(sanctionNotice(s));
   return effects;
 }

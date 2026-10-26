@@ -28,8 +28,17 @@
  *   coordinating with every owner listed in `docs/agents.md`.
  */
 
-/** Incremented on any breaking change to this contract. */
-export const CONTRACT_VERSION = 1 as const;
+/**
+ * Incremented on any breaking change to this contract.
+ *
+ * - v2 (contract reconciliation, M3): `Game.minPlayers`; waitlist offer and
+ *   refill fields on `Participant`; `Sanction.appealPath` / `overturnedAt`;
+ *   `LateCancelFinalized` event; `BanAccount` effect; `waitlist_offer`
+ *   notification; `spoofing_suspected` review kind; `PeerConfirmation`;
+ *   17 PRD v5 `TrustConfig` fields; `hostSuspensionDays` 30 → 14 (PRD TRUST-051);
+ *   `CancelResult.sanction` is always `null` (late cancels are decided at finalisation).
+ */
+export const CONTRACT_VERSION = 2 as const;
 
 // ---------------------------------------------------------------------------
 // Primitives
@@ -516,6 +525,12 @@ export interface Game {
   hideExactLocation: boolean;
   /** Maximum approved players, host included. Further joiners are waitlisted. */
   capacity: number;
+  /**
+   * Minimum players for the game to go ahead (PRD GAME-001; ≥ 2, ≤ `capacity`).
+   * The game *happened* when at least `max(2, ⌈minPlayers / 2⌉)` participants
+   * were verified (TRUST-011); otherwise nobody gets a card.
+   */
+  minPlayers: number;
   startsAt: IsoDateTime;
   endsAt: IsoDateTime;
   /** Deposit per player in minor units; `0` means no deposit. */
@@ -564,6 +579,8 @@ export interface GameCreateInput {
   location?: LatLng | null;
   hideExactLocation: boolean;
   capacity: number;
+  /** Defaults to 2. Must be ≤ `capacity`. */
+  minPlayers?: number;
   startsAt: IsoDateTime;
   endsAt: IsoDateTime;
   depositMinor: number;
@@ -604,14 +621,35 @@ export interface Participant {
   position: PositionId | null;
   /** 1-based rank while `waitlisted`, otherwise `null`. */
   waitlistRank: number | null;
-  /** True when cancelled less than {@link TrustConfig.lateCancelWindowHours} before start. */
+  /**
+   * True when cancelled less than {@link TrustConfig.lateCancelWindowHours} before
+   * start. The card itself is decided at finalisation (`endsAt + finalizeAfterEndHours`).
+   */
   lateCancel: boolean;
+  /** A late cancel whose spot was refilled from the waitlist by a player who checked in (no card, TRUST-021). */
+  lateCancelRefilled: boolean;
+  /** When the current waitlist offer was made; `null` without an active offer. */
+  offeredAt: IsoDateTime | null;
+  /** Deadline to accept the active offer (`DataPort.acceptWaitlistOffer`); `null` without one. */
+  offerExpiresAt: IsoDateTime | null;
+  /** Window of the active offer (GAME-045); `null` without one. */
+  offerMode: WaitlistOfferMode | null;
+  /** The deposit payment method is secured (always true for games without a deposit). */
+  paymentReady: boolean;
   checkInMethod: CheckInMethod | null;
   checkedInAt: IsoDateTime | null;
   requestedAt: IsoDateTime;
   decidedAt: IsoDateTime | null;
   cancelledAt: IsoDateTime | null;
 }
+
+/**
+ * Waitlist offer windows (PRD GAME-045), chosen by lead time to `startsAt`:
+ * - `standard`: more than {@link TrustConfig.waitlistLongThresholdHours} → {@link TrustConfig.waitlistConfirmLongMinutes} to accept;
+ * - `short`: down to {@link TrustConfig.waitlistFlashFillHours} → {@link TrustConfig.waitlistConfirmShortMinutes};
+ * - `flash`: less than that → the whole list is offered, first to accept wins.
+ */
+export type WaitlistOfferMode = 'standard' | 'short' | 'flash';
 
 /** A participant joined with their public profile, for lists. */
 export interface ParticipantView extends Participant {
@@ -712,6 +750,15 @@ export interface QrToken {
   expiresAt: IsoDateTime;
 }
 
+/** A stored peer confirmation (`peer_confirmations`, unique per game+confirmer+target). */
+export interface PeerConfirmation {
+  gameId: GameId;
+  /** A GPS/QR-verified attendee vouching for `targetId`. */
+  confirmerId: UserId;
+  targetId: UserId;
+  createdAt: IsoDateTime;
+}
+
 /** Result of one peer confirmation. */
 export interface PeerConfirmResult {
   /** Distinct qualifying confirmations the target now has. */
@@ -770,22 +817,42 @@ export type SanctionStatus = 'active' | 'disputed' | 'upheld' | 'overturned' | '
 /** Who decided a sanction. Automated decisions are always temporary. */
 export type SanctionDecider = 'system' | 'moderator';
 
+/**
+ * How a sanction is contested (statement of reasons, DSA Art. 17): `dispute`
+ * for sanctions with a dispute window (yellow cards; after `disputeUntil` the
+ * route becomes an appeal), `appeal` for everything else (DSA Art. 20).
+ * Equals `disputeUntil !== null ? 'dispute' : 'appeal'`.
+ */
+export type AppealPath = 'dispute' | 'appeal';
+
 interface SanctionCommon {
   id: SanctionId;
   userId: UserId;
   reasonCode: SanctionReasonCode;
   statementKey: SanctionStatementKey;
-  /** ICU parameters for the statement (e.g. `{ gameTitle, hours }`). */
+  /**
+   * ICU parameters for the statement (e.g. `{ gameTitle, hours }`). Always
+   * includes `appealPath` (same value as {@link SanctionCommon.appealPath}) so
+   * the copy can render the contest route.
+   */
   statementParams: Readonly<Record<string, string | number>>;
+  /** Derived read-model field; see {@link AppealPath}. */
+  appealPath: AppealPath;
   startsAt: IsoDateTime;
   /** End of the dispute window (yellow cards only), else `null`. */
   disputeUntil: IsoDateTime | null;
   status: SanctionStatus;
+  /** When a moderator (or the overturn cascade) overturned it; `null` otherwise. */
+  overturnedAt: IsoDateTime | null;
   /** Game that caused it, if any. */
   gameId: GameId | null;
   /** Earlier sanctions that caused this one (escalation), for cascade on overturn. */
   causedBy: readonly SanctionId[];
-  /** Idempotency key; unique in the DB. See {@link IssueSanctionEffect.sanction}. */
+  /**
+   * Idempotency key; unique in the DB. The row id is derived from it:
+   * `id = stableUuid('sanction:' + dedupeKey)` (`deriveSanctionId`), so effects
+   * can reference a sanction before it is inserted.
+   */
   dedupeKey: string;
   createdAt: IsoDateTime;
 }
@@ -801,8 +868,11 @@ export type Sanction = SanctionCommon &
     | { kind: 'permanent_ban'; expiresAt: null; decidedBy: 'moderator' }
   );
 
-/** A sanction to be created (id, status and createdAt are assigned on insert). */
-export type NewSanction = DistributiveOmit<Sanction, 'id' | 'status' | 'createdAt'>;
+/**
+ * A sanction to be created. `id` is derived from `dedupeKey`; `status` starts
+ * `active`; `appealPath`, `overturnedAt` and `createdAt` are read-model fields.
+ */
+export type NewSanction = DistributiveOmit<Sanction, 'id' | 'status' | 'appealPath' | 'overturnedAt' | 'createdAt'>;
 
 /** - `open`: awaiting a moderator. `upheld`/`overturned` mirror the sanction outcome. */
 export type AppealStatus = 'open' | 'upheld' | 'overturned' | 'withdrawn';
@@ -860,7 +930,9 @@ export type ReviewKind =
   | 'venue_reports'
   | 'sanction_dispute'
   | 'appeal'
-  | 'chat_recheck';
+  | 'chat_recheck'
+  /** Repeated spoofing signals on check-in. Review only: signals never sanction on their own. */
+  | 'spoofing_suspected';
 
 export type ReviewStatus = 'open' | 'in_review' | 'resolved';
 export type ReviewPriority = 'low' | 'normal' | 'high';
@@ -891,7 +963,7 @@ export interface ReviewQueueItem {
   evidence: Readonly<Record<string, string | number | boolean | null>>;
   /** Target handling time (SLA). */
   dueBy: IsoDateTime;
-  /** Idempotency key; unique in the DB. */
+  /** Idempotency key; unique in the DB. `id = stableUuid('review:' + dedupeKey)` (`deriveReviewItemId`). */
   dedupeKey: string;
   resolution: ModeratorDecision | null;
   resolvedBy: UserId | null;
@@ -930,6 +1002,14 @@ export interface TrustConfig {
   joinBanLongDays: number;
   /** Active cards that enqueue a permanent-ban review (never automatic). */
   reviewAtCards: number;
+  /** Attendance, no-show and late-cancel cards are finalised this long after `endsAt` (TRUST-010); host marks are accepted until then. */
+  finalizeAfterEndHours: number;
+
+  // Disputes (TRUST-023)
+  /** A dispute not decided within this many days voids the card (fairness by default). */
+  disputeAutoVoidDays: number;
+  /** Auto-void applies only to a user's first N disputes in 90 days; later ones wait for a human. */
+  disputeAutoVoidMaxPer90Days: number;
 
   // Toxicity reports
   /** Distinct qualifying reporters needed for a visibility restriction. */
@@ -940,6 +1020,12 @@ export interface TrustConfig {
   /** Reporters whose accounts were all created within this window are treated as colluding (queue only). */
   collusionCreationWindowHours: number;
   visibilityRestrictionHours: number;
+  /** After an overturned restriction, new report-based restrictions are review-only for this long (TRUST-048). */
+  postOverturnProtectionDays: number;
+  /** Reporters whose resolved-report accuracy is below this do not count (TRUST-041)... */
+  reporterMinAccuracy: number;
+  /** ...once they have at least this many resolved reports. */
+  reporterAccuracyMinReports: number;
 
   // Chat moderation
   chatBlocksForCard: number;
@@ -953,7 +1039,12 @@ export interface TrustConfig {
   hostLowRatingMax: number;
   /** ...over at least this many ratings triggers a host suspension + review. */
   hostLowRatingMinCount: number;
+  /** Automatic host suspension length (TRUST-051); always paired with a review. */
   hostSuspensionDays: number;
+  /** Players may rate the host for this long after `endsAt`. */
+  hostRatingWindowHours: number;
+  /** Host ratings older than this do not count toward the low-rating rule. */
+  hostRatingLookbackDays: number;
   /** Distinct reports that auto-hide a venue pending review. */
   venueReportsToHide: number;
 
@@ -988,6 +1079,25 @@ export interface TrustConfig {
   /** Deposit hold is placed this long before start (card holds expire after ~7 days). */
   depositHoldLeadHours: number;
 
+  // Waitlist offers (GAME-045, see WaitlistOfferMode)
+  /** Lead time above which an offer is `standard`. */
+  waitlistLongThresholdHours: number;
+  waitlistConfirmLongMinutes: number;
+  waitlistConfirmShortMinutes: number;
+  /** Lead time below which every waitlisted player is offered at once (`flash`). */
+  waitlistFlashFillHours: number;
+
+  // Retention (compliance.md)
+  /** Location-derived check-in data (best distance, signals). */
+  locationSamplesRetentionDays: number;
+  /** QR secrets and invite tokens are erased this long after `endsAt`. */
+  qrSecretRetentionHours: number;
+  /** Reporter identity on user reports is pseudonymised after this long. */
+  userReportRetentionDays: number;
+  auditLogRetentionDays: number;
+  /** Pseudonymised trust rows of deleted accounts are erased after this long. */
+  sanctionRetentionAfterDeletionDays: number;
+
   // Reliability
   reliabilityWindowDays: number;
   reliabilityGreenMin: number;
@@ -1000,7 +1110,11 @@ export interface TrustConfig {
   reliabilityMinGames: number;
 }
 
-/** Launch defaults (docs/plan.md, Trust Engine). Mirrored by the `trust_config` seed row. */
+/**
+ * Launch defaults (PRD v5 appendix A). Must equal the column defaults of
+ * `trust_config` exactly (checked by the golden/SQL tests); field names are the
+ * camelCase of the column names (`trust_config_json()` converts mechanically).
+ */
 export const DEFAULT_TRUST_CONFIG: Readonly<TrustConfig> = Object.freeze({
   lateCancelWindowHours: 2,
   disputeWindowHours: 48,
@@ -1010,12 +1124,19 @@ export const DEFAULT_TRUST_CONFIG: Readonly<TrustConfig> = Object.freeze({
   joinBanLongAtCards: 3,
   joinBanLongDays: 30,
   reviewAtCards: 4,
+  finalizeAfterEndHours: 2,
+
+  disputeAutoVoidDays: 7,
+  disputeAutoVoidMaxPer90Days: 3,
 
   toxicityReporters: 3,
   toxicityWindowDays: 14,
   minReporterAccountAgeDays: 7,
   collusionCreationWindowHours: 48,
   visibilityRestrictionHours: 72,
+  postOverturnProtectionDays: 14,
+  reporterMinAccuracy: 0.3,
+  reporterAccuracyMinReports: 5,
 
   chatBlocksForCard: 3,
   chatBlocksWindowDays: 7,
@@ -1024,7 +1145,9 @@ export const DEFAULT_TRUST_CONFIG: Readonly<TrustConfig> = Object.freeze({
 
   hostLowRatingMax: 2,
   hostLowRatingMinCount: 5,
-  hostSuspensionDays: 30,
+  hostSuspensionDays: 14,
+  hostRatingWindowHours: 48,
+  hostRatingLookbackDays: 90,
   venueReportsToHide: 3,
 
   wakeGeofenceRadiusM: 150,
@@ -1045,6 +1168,17 @@ export const DEFAULT_TRUST_CONFIG: Readonly<TrustConfig> = Object.freeze({
   chatTtlHoursAfterEnd: 3,
   moderationRetentionDays: 90,
   depositHoldLeadHours: 24,
+
+  waitlistLongThresholdHours: 6,
+  waitlistConfirmLongMinutes: 120,
+  waitlistConfirmShortMinutes: 20,
+  waitlistFlashFillHours: 1,
+
+  locationSamplesRetentionDays: 30,
+  qrSecretRetentionHours: 24,
+  userReportRetentionDays: 365,
+  auditLogRetentionDays: 730,
+  sanctionRetentionAfterDeletionDays: 730,
 
   reliabilityWindowDays: 90,
   reliabilityGreenMin: 0.85,
@@ -1147,6 +1281,9 @@ export type NotificationKind =
   | 'join_approved'
   | 'join_rejected'
   | 'join_waitlisted'
+  /** A spot is offered to a waitlisted player (params: `mode`, `acceptBy`). */
+  | 'waitlist_offer'
+  /** The player accepted an offer and is now approved. */
   | 'waitlist_promoted'
   | 'participant_removed'
   | 'game_cancelled'
@@ -1249,8 +1386,12 @@ export interface JoinResult {
 /** Result of `DataPort.cancelParticipation`. */
 export interface CancelResult {
   participant: Participant;
-  /** The yellow card issued for a late cancel, if any. */
-  sanction: Sanction | null;
+  /**
+   * @deprecated Always `null`: a late cancel is decided at finalisation
+   * (`endsAt + finalizeAfterEndHours`, TRUST-021), not at cancel time. Use
+   * `participant.lateCancel` to warn the user. Will be removed in contract v3.
+   */
+  sanction: null;
 }
 
 // ---------------------------------------------------------------------------
@@ -1263,9 +1404,36 @@ export interface CancelResult {
  * the state type is owned by the domain package. Additive changes only.
  */
 export type TrustEvent =
+  /** A player withdrew. Records a pending late cancel; no card is issued yet. */
   | { type: 'ParticipationCancelled'; gameId: GameId; userId: UserId; startsAt: IsoDateTime; cancelledAt: IsoDateTime }
+  /**
+   * Emitted by attendance finalisation (`endsAt + finalizeAfterEndHours`) for each
+   * late canceller. Issues the late-cancel card unless `refilled` (TRUST-020(b)/021)
+   * or the game did not happen.
+   */
+  | {
+      type: 'LateCancelFinalized';
+      gameId: GameId;
+      userId: UserId;
+      startsAt: IsoDateTime;
+      cancelledAt: IsoDateTime;
+      /** A waitlisted replacement took the spot before `startsAt` and checked in. */
+      refilled: boolean;
+    }
   | { type: 'AttendanceFinalized'; gameId: GameId; userId: UserId; attendance: AttendanceStatus; endsAt: IsoDateTime }
-  | { type: 'ChatMessageBlocked'; gameId: GameId; userId: UserId; at: IsoDateTime; categories: readonly ModerationCategory[] }
+  | {
+      type: 'ChatMessageBlocked';
+      gameId: GameId;
+      userId: UserId;
+      at: IsoDateTime;
+      categories: readonly ModerationCategory[];
+      /**
+       * Id of the blocked message (its `moderation_retained` row, or the client's
+       * `clientMsgId`). When present, blocks are de-duplicated by it instead of by
+       * `(gameId, at)`. Optional for backwards compatibility.
+       */
+      messageId?: MessageId;
+    }
   | { type: 'UserReported'; report: UserReport }
   | { type: 'VenueReported'; report: VenueReport }
   | { type: 'HostRated'; hostId: UserId; gameId: GameId; raterId: UserId; stars: Stars; at: IsoDateTime }
@@ -1296,7 +1464,9 @@ export interface IssueSanctionEffect {
  *
  * `MuteChat`, `BanJoins`, `RestrictVisibility` and `SuspendHost` project an
  * issued sanction onto the denormalised `profiles.*_until` columns; apply them
- * as `greatest(current, until)`. Sanctions remain the source of truth.
+ * as `greatest(current, until)`. `BanAccount` projects a permanent ban onto
+ * `profiles.permanently_banned`; `LiftRestrictions` clears projections.
+ * Sanctions remain the source of truth.
  */
 export type Effect =
   | IssueSanctionEffect
@@ -1316,6 +1486,12 @@ export type Effect =
   | { type: 'BanJoins'; userId: UserId; until: IsoDateTime }
   | { type: 'RestrictVisibility'; userId: UserId; until: IsoDateTime }
   | { type: 'SuspendHost'; userId: UserId; until: IsoDateTime }
+  /**
+   * Projects a moderator's `permanent_ban` onto `profiles.permanently_banned`.
+   * Emitted only after a moderator decision; `apply_effects` (Edge Functions)
+   * refuses it together with the permanent-ban `IssueSanction`.
+   */
+  | { type: 'BanAccount'; userId: UserId }
   | { type: 'LiftRestrictions'; userId: UserId; kinds: readonly SanctionKind[] }
   | { type: 'SetVenueStatus'; venueId: VenueId; status: VenueStatus }
   | { type: 'SetAttendance'; gameId: GameId; userId: UserId; attendance: AttendanceStatus }

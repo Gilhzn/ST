@@ -292,6 +292,11 @@ async function checkEffects(c: GoldenCase, before: Snapshot): Promise<void> {
         expect(iso(row.v), `${e.type}`).toBe(e.until);
         break;
       }
+      case "BanAccount": {
+        const [row] = await db.query<{ v: boolean }>(`select permanently_banned v from profiles where id = $1`, [e.userId]);
+        expect(row?.v, "BanAccount").toBe(true);
+        break;
+      }
       case "SetAttendance": {
         const [row] = await db.query<{ attendance: string }>(
           `select attendance from game_participants where game_id = $1 and user_id = $2`, [e.gameId, e.userId]);

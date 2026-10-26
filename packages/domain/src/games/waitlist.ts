@@ -1,32 +1,41 @@
 /**
  * Waitlist promotion (GAME-044 / GAME-045). Waitlisted players were already
  * approved by the host "if a spot frees up", so a freed spot is *offered*:
- * - more than {@link WAITLIST_STANDARD_MIN_LEAD_HOURS} h to start → the next player gets
- *   {@link WAITLIST_STANDARD_OFFER_MINUTES} min to accept (`standard`);
- * - between that and {@link WAITLIST_FLASH_FILL_LEAD_MINUTES} min → {@link WAITLIST_SHORT_OFFER_MINUTES} min (`short`);
- * - under {@link WAITLIST_FLASH_FILL_LEAD_MINUTES} min → **flash fill**: everyone on the list is
+ * - more than `waitlistLongThresholdHours` to start → the next player gets
+ *   `waitlistConfirmLongMinutes` to accept (`standard`);
+ * - between that and `waitlistFlashFillHours` → `waitlistConfirmShortMinutes` (`short`);
+ * - under `waitlistFlashFillHours` → **flash fill**: everyone on the list is
  *   notified at once and the first to accept takes the spot (`flash`);
+ * Offers are announced with the `waitlist_offer` notification; acceptance with `waitlist_promoted`.
  * - at/after the start nothing is offered (`closed`).
  * An unanswered offer expires and the next player is offered on the next pass.
  * Order: regulars of a recurring game first, then `waitlistRank`, `requestedAt`, `userId`.
  * Acceptance is transactional in SQL (row lock); {@link acceptWaitlistOffer} is the rule.
  */
-import type { EpochMs, ErrorCode, Game, IsoDateTime, Participant, Result, UserId, Effect } from '../types';
-import { HOUR_MS, MINUTE_MS, toEpochMs, toIso } from '../time';
 import {
-  WAITLIST_FLASH_FILL_LEAD_MINUTES,
-  WAITLIST_SHORT_OFFER_MINUTES,
-  WAITLIST_STANDARD_MIN_LEAD_HOURS,
-  WAITLIST_STANDARD_OFFER_MINUTES,
-} from '../trust/constants';
+  DEFAULT_TRUST_CONFIG,
+  type EpochMs,
+  type ErrorCode,
+  type Game,
+  type IsoDateTime,
+  type Participant,
+  type Result,
+  type TrustConfig,
+  type UserId,
+  type Effect,
+  type WaitlistOfferMode,
+} from '../types';
+import { HOUR_MS, MINUTE_MS, toEpochMs, toIso } from '../time';
 
-export type WaitlistMode = 'standard' | 'short' | 'flash' | 'closed';
+/** Offer window for a vacancy, or `closed` once the game has started. */
+export type WaitlistMode = WaitlistOfferMode | 'closed';
 
+/** A `waitlist_offers` row (surfaced on `Participant.offeredAt/offerExpiresAt/offerMode`). */
 export interface WaitlistOffer {
   userId: UserId;
   offeredAt: IsoDateTime;
   acceptBy: IsoDateTime;
-  mode: Exclude<WaitlistMode, 'closed'>;
+  mode: WaitlistOfferMode;
 }
 
 export type WaitlistParticipant = Pick<Participant, 'userId' | 'status' | 'waitlistRank' | 'requestedAt'>;
@@ -50,11 +59,11 @@ export interface WaitlistPlan {
 }
 
 /** Promotion mode for a vacancy at `now`. */
-export function waitlistMode(startsAt: IsoDateTime, now: EpochMs): WaitlistMode {
+export function waitlistMode(startsAt: IsoDateTime, now: EpochMs, config: TrustConfig = DEFAULT_TRUST_CONFIG): WaitlistMode {
   const lead = toEpochMs(startsAt) - now;
   if (lead <= 0) return 'closed';
-  if (lead < WAITLIST_FLASH_FILL_LEAD_MINUTES * MINUTE_MS) return 'flash';
-  if (lead <= WAITLIST_STANDARD_MIN_LEAD_HOURS * HOUR_MS) return 'short';
+  if (lead < config.waitlistFlashFillHours * HOUR_MS) return 'flash';
+  if (lead <= config.waitlistLongThresholdHours * HOUR_MS) return 'short';
   return 'standard';
 }
 
@@ -97,9 +106,13 @@ export function decideJoinOutcome(approvedCount: number, capacity: number): 'app
 }
 
 /** Plans offers for the free spots at `now`. Pure: the caller records the returned offers. */
-export function promoteFromWaitlist(input: WaitlistInput, now: EpochMs): WaitlistPlan {
+export function promoteFromWaitlist(
+  input: WaitlistInput,
+  now: EpochMs,
+  config: TrustConfig = DEFAULT_TRUST_CONFIG,
+): WaitlistPlan {
   const { game } = input;
-  const mode = input.game.status === 'scheduled' ? waitlistMode(game.startsAt, now) : 'closed';
+  const mode = input.game.status === 'scheduled' ? waitlistMode(game.startsAt, now, config) : 'closed';
   const spots = freeSpots(game, input.participants);
   const plan: WaitlistPlan = { mode, freeSpots: spots, offers: [], effects: [] };
   if (mode === 'closed' || spots === 0) return plan;
@@ -117,7 +130,7 @@ export function promoteFromWaitlist(input: WaitlistInput, now: EpochMs): Waitlis
   } else {
     const slots = Math.max(0, spots - active.size);
     candidates = queue.filter((p) => !everOffered.has(p.userId)).slice(0, slots);
-    const minutes = mode === 'standard' ? WAITLIST_STANDARD_OFFER_MINUTES : WAITLIST_SHORT_OFFER_MINUTES;
+    const minutes = mode === 'standard' ? config.waitlistConfirmLongMinutes : config.waitlistConfirmShortMinutes;
     acceptBy = Math.min(now + minutes * MINUTE_MS, start);
   }
   for (const p of candidates) {
@@ -126,8 +139,7 @@ export function promoteFromWaitlist(input: WaitlistInput, now: EpochMs): Waitlis
     plan.effects.push({
       type: 'Notify',
       userId: p.userId,
-      // TODO(contract): a dedicated `waitlist_offer` NotificationKind.
-      kind: 'waitlist_promoted',
+      kind: 'waitlist_offer',
       params: { offer: 1, mode, acceptBy: offer.acceptBy },
       gameId: game.id,
       sanctionDedupeKey: null,

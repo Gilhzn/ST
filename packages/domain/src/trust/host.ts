@@ -6,7 +6,7 @@
  * 1. A venue created by the host was confirmed fake (moderator removed it):
  *    reason `fake_venue`, one suspension per venue.
  * 2. Average host rating ≤ `hostLowRatingMax` over ≥ `hostLowRatingMinCount`
- *    ratings in the last {@link HOST_RATING_WINDOW_DAYS} days (TRUST-051(b)):
+ *    ratings in the last `config.hostRatingLookbackDays` days (TRUST-051(b)):
  *    reason `low_host_rating`. Only ratings submitted after the latest
  *    `low_host_rating` suspension started count (a fresh start).
  * Not implemented here (no data in the contract yet): TRUST-051(a) "fake game"
@@ -27,7 +27,6 @@ import {
 } from '../types';
 import { deriveSanctionId } from '../crypto/uuid';
 import { DAY_MS, toEpochMs } from '../time';
-import { HOST_RATING_WINDOW_DAYS } from './constants';
 import { buildReviewItem, buildSystemSanction, isInForce, issueEffects } from './sanctions';
 
 /** One `host_ratings` row (unique per game + rater). */
@@ -76,7 +75,7 @@ export function evaluateHostReliability(
   for (const r of input.ratings) {
     if (r.hostId !== hostId || r.raterId === hostId) continue;
     const at = toEpochMs(r.at);
-    if (at <= consumedUntil || at > now || at <= now - HOST_RATING_WINDOW_DAYS * DAY_MS) continue;
+    if (at <= consumedUntil || at > now || at <= now - config.hostRatingLookbackDays * DAY_MS) continue;
     const k = ratingKey(r);
     const prev = unique.get(k);
     if (!prev || toEpochMs(r.at) > toEpochMs(prev.at)) unique.set(k, r);

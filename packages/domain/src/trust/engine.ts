@@ -29,9 +29,9 @@ import {
   type UserReport,
 } from '../types';
 import { isLateCancel } from '../games/windows';
-import { DAY_MS, HOUR_MS, toEpochMs } from '../time';
+import { DAY_MS, HOUR_MS, toEpochMs, toIso } from '../time';
 import { evaluateChatBlocks, type ChatBlockRecord } from './chat';
-import { AUTO_VOID_LOOKBACK_DAYS, AUTO_VOID_MAX_DISPUTES, DISPUTE_AUTO_VOID_DAYS } from './constants';
+import { AUTO_VOID_LOOKBACK_DAYS } from './constants';
 import { evaluateEscalation } from './escalation';
 import type { DomainTrustEvent } from './events';
 import { evaluateHostReliability, type HostRatingRecord } from './host';
@@ -160,7 +160,7 @@ class Ctx {
         const i = this.st.sanctions.findIndex((s) => s.id === e.sanctionId);
         const cur = this.st.sanctions[i];
         if (!cur || cur.status === e.status) continue;
-        this.st.sanctions[i] = { ...cur, status: e.status };
+        this.st.sanctions[i] = { ...cur, status: e.status, overturnedAt: e.status === 'overturned' ? toIso(this.now) : cur.overturnedAt };
       } else if (e.type === 'SetVenueStatus') {
         this.st.venues = this.st.venues.map((v) => (v.venueId === e.venueId ? { ...v, status: e.status } : v));
       } else if (e.type === 'SettleDeposit') {
@@ -281,20 +281,20 @@ function runEscalation(ctx: Ctx): void {
 }
 
 function onTick(ctx: Ctx): void {
-  const { now } = ctx;
-  // 1. TRUST-023: undecided disputes void the card after DISPUTE_AUTO_VOID_DAYS (first N disputes in 90 days only).
+  const { now, config } = ctx;
+  // 1. TRUST-023: undecided disputes void the card after `disputeAutoVoidDays` (first N disputes in 90 days only).
   const disputes = ctx.st.appeals
     .filter((a) => a.isDispute)
     .sort((a, b) => toEpochMs(a.createdAt) - toEpochMs(b.createdAt) || (a.id < b.id ? -1 : 1));
   for (const appeal of disputes) {
-    if (appeal.status !== 'open' || toEpochMs(appeal.createdAt) + DISPUTE_AUTO_VOID_DAYS * DAY_MS > now) continue;
+    if (appeal.status !== 'open' || toEpochMs(appeal.createdAt) + config.disputeAutoVoidDays * DAY_MS > now) continue;
     const sanction = ctx.st.sanctions.find((s) => s.id === appeal.sanctionId);
     if (!sanction || sanction.status !== 'disputed') continue;
     const created = toEpochMs(appeal.createdAt);
     const priorDisputes = disputes.filter(
       (d) => toEpochMs(d.createdAt) <= created && toEpochMs(d.createdAt) > created - AUTO_VOID_LOOKBACK_DAYS * DAY_MS,
     );
-    if (priorDisputes.length > AUTO_VOID_MAX_DISPUTES) continue;
+    if (priorDisputes.length > config.disputeAutoVoidMaxPer90Days) continue;
     overturnCascade(ctx, sanction.id, new Date(now).toISOString());
     ctx.emit([
       decisionNotice(ctx, sanction, 'auto_void', appeal.id),
@@ -302,7 +302,7 @@ function onTick(ctx: Ctx): void {
         type: 'Audit',
         action: 'sanction.auto_voided',
         subjectUserId: ctx.st.userId,
-        data: { sanctionId: sanction.id, appealId: appeal.id, days: DISPUTE_AUTO_VOID_DAYS },
+        data: { sanctionId: sanction.id, appealId: appeal.id, days: config.disputeAutoVoidDays },
       },
     ]);
   }
@@ -448,9 +448,13 @@ export function applyTrustEvent(
     }
     case 'ChatMessageBlocked': {
       assertSubject(state, event.userId, 'chat block');
-      if (!st.chatBlocks.some((b) => b.gameId === event.gameId && b.at === event.at)) {
-        st.chatBlocks.push({ gameId: event.gameId, at: event.at });
-      }
+      const { messageId } = event;
+      const seen = st.chatBlocks.some((b) =>
+        messageId !== undefined && b.messageId !== undefined
+          ? b.messageId === messageId
+          : b.gameId === event.gameId && b.at === event.at,
+      );
+      if (!seen) st.chatBlocks.push(messageId === undefined ? { gameId: event.gameId, at: event.at } : { gameId: event.gameId, at: event.at, messageId });
       ctx.emit(evaluateChatBlocks(st.userId, st.chatBlocks, st.sanctions, now, config).effects);
       break;
     }

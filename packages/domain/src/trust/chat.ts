@@ -10,6 +10,7 @@ import {
   type EpochMs,
   type GameId,
   type IsoDateTime,
+  type MessageId,
   type Sanction,
   type TrustConfig,
   type UserId,
@@ -22,6 +23,8 @@ import { buildSystemSanction, issueEffects } from './sanctions';
 export interface ChatBlockRecord {
   gameId: GameId;
   at: IsoDateTime;
+  /** Blocked message id, when known (de-duplication key). */
+  messageId?: MessageId;
 }
 
 export interface ChatBlockEvaluation {

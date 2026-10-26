@@ -1,6 +1,6 @@
 # Sport Talent: System Architecture
 
-Status: approved for MVP (M1a). Owner: Architect. Related: [plan](plan.md), [research](research/findings.md), ADRs in [adr/](adr/).
+Status: approved for MVP (M1a); reconciled with the built system in M3 (contract v2). Owner: Architect. Related: [plan](plan.md), [research](research/findings.md), ADRs in [adr/](adr/).
 
 The shared contract is code, not prose: `packages/domain/src/types.ts` (entities, enums, `TrustConfig`, engine `Effect`s, `ErrorCode`) and `apps/mobile-web/src/data/DataPort.ts` (the app's data surface). When this document and those files disagree, the files win and this document gets fixed.
 
@@ -87,7 +87,7 @@ Rules:
 2. **Screens never import Supabase.** They call `useData()` which returns a `DataPort`. Every DataPort method rejects only with `StError` carrying a stable `ErrorCode`.
 3. **Adapters translate, they do not decide.** `SupabaseAdapter` maps snake_case rows to camelCase types, `[lng, lat]` to `{lat, lng}`, and Postgres errors raised as `ST:<code>` to `StError(code)`.
 4. **InMemoryAdapter is a full fake.** It uses the same domain functions so e2e tests exercise real rules. It is seeded deterministically.
-5. **Additive contract changes only** (see `CONTRACT_VERSION` in types.ts).
+5. **Additive contract changes only.** A breaking change bumps `CONTRACT_VERSION` (now 2) and lists itself in its TSDoc changelog.
 
 ## 4. Backend (Supabase)
 
@@ -99,27 +99,30 @@ Rules:
 | Business writes | `SECURITY DEFINER` RPCs with `set search_path = ''`, which check `auth.uid()` and raise `ST:<ErrorCode>`. Trust columns (`reliability_*`, `*_until`, sanctions) are writable only by definer functions or `service_role`. |
 | Server logic needing secrets or vendors | Edge Functions (Deno). Each exports a pure `handle(req: Request, deps: Deps): Promise<Response>`; `index.ts` only wires real deps (`db`, `clock`, `moderation`, `translate`, `payments`, `push`). Tests call `handle` with fakes. Domain code is bundled with esbuild into `supabase/functions/_shared/domain.mjs`. |
 | Realtime | Broadcast on private channel `game:<gameId>` with Realtime Authorization (RLS on `realtime.messages`: approved participants only, before chat expiry). Messages are broadcast by `send-message`, never by clients. No `postgres_changes` for chat (cost and fan-out). |
-| Scheduled work | `pg_cron` jobs, each guarded by an advisory lock and idempotent: `process_no_shows`, `place_deposit_holds`, `settle_deposits`, `expire_sanctions`, `purge_expired_messages`, `purge_retained`, `recheck_pending_messages`. Jobs needing vendors call Edge Functions via `pg_net`. |
-| Config | `trust_config` single row mirroring `DEFAULT_TRUST_CONFIG` (snake_case), read by RPCs and passed to domain functions. |
+| Scheduled work | `pg_cron` jobs, each guarded by an advisory lock and idempotent: `process_no_shows` (attendance finalisation at `ends_at + 2h`), `expire_sanctions` (dispute auto-void, expiry, escalation), `expire_waitlist_offers`, `place_deposit_holds`, `settle_deposits`, `purge_expired_messages`, `purge_retained`, `purge_retention`, `recheck_pending_messages`. Jobs needing vendors call Edge Functions via `pg_net`. |
+| Config | `trust_config` single row whose column defaults equal `DEFAULT_TRUST_CONFIG` exactly (snake_case ↔ camelCase is mechanical: `trust_config_json()` / `st_config_merge()`; a SQL test asserts key-for-key equality). Read by RPCs and passed to domain functions; Edge Functions cache it per isolate. |
 | Storage | Avatars only in MVP (public bucket, size/type limits). Media vault is deferred. |
 
 **Where each trust rule runs.** Transactional rules run in SQL inside the RPC that causes them; rules needing vendors or secrets run in Edge Functions via `@st/domain`. Both implementations are pinned by the shared golden cases in `packages/domain/test/golden/*.json` (vitest for TS, pglite for SQL).
 
 | Rule | Authoritative | Trigger |
 |---|---|---|
-| Late cancel → yellow card | SQL `cancel_participation` | RPC |
-| Waitlist promotion | SQL (`cancel_participation`, `decide_join`, `remove_participant`) | RPC |
-| Card escalation 2 → 7d ban, 3 → 30d ban, 4+ → review | SQL trigger after card insert | any card |
-| No-show → yellow card | SQL `process_no_shows` | pg_cron after `ends_at` |
+| Late cancel (< 2 h before start) → yellow card | Flagged by `cancel_participation`; **decided at finalisation** by `process_no_shows` (`LateCancelFinalized`), voided when a waitlisted replacement took the spot and checked in (TRUST-021) | RPC, then pg_cron at `ends_at + 2h` |
+| Waitlist offers (GAME-045: 2 h / 20 min / flash fill) | SQL offer planning in `cancel_participation`, `decide_join`, `remove_participant`, `expire_waitlist_offers`; `accept_waitlist_offer` (row lock) | RPC / pg_cron |
+| No-show → yellow card | SQL `process_no_shows`, only if the game happened (≥ max(2, ⌈`min_players`/2⌉) verified, TRUST-011) | pg_cron at `ends_at + 2h` |
+| Card escalation 2 → 7d ban, 3 → 30d ban, 4+ → 30d + review | `expire_sanctions` and moderator *uphold*: a card counts once **settled** (dispute window closed undisputed, or upheld); cards in their window or `disputed` do not count | pg_cron / RPC |
+| Dispute auto-void (undecided after 7 d; first 3 disputes per 90 d) | `expire_sanctions` | pg_cron |
 | 3 independent reporters → 72h restriction + review | SQL `report_user` | RPC |
 | 3 venue reports → hide + review | SQL `report_venue` | RPC |
-| Host reliability → suspension + review | SQL on `host_ratings` insert / venue removal | RPC |
+| Host reliability → 14-day host suspension + review (TRUST-051) | SQL on `host_ratings` insert / venue removal | RPC |
 | GPS / QR / host check-in | Edge `checkin-verify` (domain `verifyGps`, `verifyQr`, `verifyHost`) | app |
 | Peer confirmation | SQL `peer_confirm` (domain `verifyPeer` mirror) | RPC |
 | Chat moderation, 3 blocks/7d → card + 24h mute | Edge `send-message` (domain moderation + trust) | app |
 | Reliability % | SQL recompute on attendance/cancel change | trigger |
 
-Edge Functions apply domain `Effect[]` through one service-role-only RPC, `apply_effects(effects jsonb)`, in a single transaction. Every effect is idempotent: `IssueSanction` and `EnqueueReview` carry a deterministic `dedupeKey` (unique index), projections use `greatest(current, until)`.
+Edge Functions apply domain `Effect[]` through one service-role-only RPC, `apply_effects(effects jsonb)`, in a single transaction (it refuses `permanent_ban` and `BanAccount`, which only `moderator_decide` may produce). Every effect is idempotent: `IssueSanction` and `EnqueueReview` carry a deterministic `dedupeKey` (unique index), projections use `greatest(current, until)`.
+
+**Deterministic ids.** Rows created from effects get ids derived from the dedupe key: `sanctions.id = stableUuid('sanction:' + dedupeKey)`, `review_queue.id = stableUuid('review:' + dedupeKey)` (first 16 bytes of SHA-256, RFC 4122 variant bits; `deriveSanctionId` / `deriveReviewItemId` in TS, `dm_sanction_id` / `dm_review_id` in SQL). The pure engine can therefore reference a sanction it has just emitted (escalation `causedBy`, review `sanctionId`) before the database assigns anything.
 
 ## 5. Data flows
 
@@ -143,6 +146,7 @@ sequenceDiagram
 ```
 
 - Exact location is withheld until approval (`hideExactLocation`): RLS/view returns only `approxLocation` (~500 m rounding) to non-participants.
+- **Waitlist offers (GAME-045).** A freed spot is *offered*, not assigned: more than 6 h before start the next player gets 2 h to accept, between 6 h and 1 h they get 20 min, under 1 h every waitlisted player is offered at once (flash fill, first to accept wins). The offer is announced with the `waitlist_offer` notification and shown on `Participant.offeredAt / offerExpiresAt / offerMode`; the player accepts with `DataPort.acceptWaitlistOffer` (`accept_waitlist_offer`, row-locked) and gets `waitlist_promoted`. Unanswered offers expire and move on (`expire_waitlist_offers`).
 - With a deposit, `requestJoin` returns a `DepositSetup` (SetupIntent client secret). The request is visible to the host only after the payment method is saved (`payment_required` otherwise).
 - Push is best effort; the `notifications` row is the record and the in-app inbox reads it.
 
@@ -172,7 +176,7 @@ sequenceDiagram
 - **Stage 2** is foreground, precise, server-verified. Raw samples are not persisted beyond the verdict, best distance and spoofing signals, which are kept for the dispute window only.
 - **Fallbacks:** QR = `HMAC(qr_secret, gameId‖⌊t/30s⌋)` accepting ±1 step; `rotateQr` replaces the secret (screenshots die). Host marks present. Peer: ≥ 2 verified attendees, excluding blocked pairs and reciprocal-only confirmations.
 - **Spoofing signals never sanction.** They downgrade to a fallback and are logged.
-- **No-show:** after `endsAt`, `process_no_shows` sets `no_show_unverified` for approved players still `unknown` and issues a yellow card disputable for 48 h.
+- **Finalisation (TRUST-010/011):** at `endsAt + finalizeAfterEndHours` (2 h; host marks are accepted until then) `process_no_shows` decides whether the game *happened* (≥ max(2, ⌈`Game.minPlayers`/2⌉) verified). If not, nobody gets a card, everyone is excused, deposits are released and the host is queued for review. If it did, approved players still `unknown` become `no_show_unverified` with a yellow card disputable for 48 h, and every late canceller gets a `LateCancelFinalized` event (card unless refilled).
 
 ### 5.3 Chat send with moderation
 
@@ -213,7 +217,8 @@ sequenceDiagram
   participant U as User app
   participant M as Moderator
   Src->>DB: rule fires → insert sanction (reason_code, statement key+params, expires_at, dispute_until)
-  DB->>DB: projections (profiles.*_until), escalation trigger, notification(sanction_issued)
+  DB->>DB: projections (profiles.*_until / permanently_banned), notification(sanction_issued)
+  Note over DB: escalation runs later, once cards are settled (expire_sanctions / uphold)
   DB-->>U: push + inbox: statement of reasons, expiry, "Dispute/Appeal"
   U->>DB: fileAppeal(sanctionId, text)
   DB->>DB: appeal open; sanction → disputed (within dispute window); review_queue item
@@ -222,7 +227,9 @@ sequenceDiagram
 ```
 
 - Automated measures are always temporary (`expiresAt` non-null by type). `permanent_ban` is only issued by a moderator (the `Sanction` union enforces this at compile time; a CHECK constraint enforces it in SQL).
-- A disputed card stays in force until decided (prevents dispute-spam evasion); if overturned, every sanction listing it in `causedBy` is overturned too and the deposit is refunded.
+- A disputed card remains a visible warning but does **not** count toward escalation until a moderator decides; its deposit is not captured meanwhile. A dispute nobody decides within 7 days voids the card (fairness by default), limited to a user's first 3 disputes in 90 days so it cannot be farmed. Overturning a card stamps `overturnedAt` and overturns every sanction listing it in `causedBy`; the deposit is released or refunded.
+- `Sanction.appealPath` (`dispute` for cards with a dispute window, else `appeal`) is derived from `disputeUntil` and also carried in `statementParams.appealPath` for the statement-of-reasons copy.
+- A moderator's `permanent_ban` is projected onto `profiles.permanently_banned` by the `BanAccount` effect.
 - Visibility restrictions are never silent: the user is notified with reasons and the appeal path (DSA Art. 17).
 
 ### 5.5 Account deletion
@@ -286,7 +293,7 @@ sequenceDiagram
 | Production | Supabase production project | EAS Build `production` + store submit; EAS Update channel `production` |
 
 - CI (GitHub Actions): `npm ci` → `npm run verify` (typecheck, lint, unit, SQL, i18n, web export, e2e). Native builds run on EAS, not in CI containers.
-- Migrations are forward-only; `supabase db push` runs on merge to main after tests. Edge Functions deploy with `supabase functions deploy` after `_shared/domain.mjs` is rebuilt.
+- Migrations are forward-only from the first deployment; `supabase db push` runs on merge to main after tests. (Contract v2 was reconciled by editing the not-yet-deployed migrations in place.) Edge Functions deploy with `supabase functions deploy` after `_shared/domain.mjs` is rebuilt.
 - OTA updates use `runtimeVersion` policy `fingerprint` so JS never lands on an incompatible native binary.
 
 ## 12. Cost notes (indicative, verify before launch)

@@ -93,7 +93,8 @@ function issue(s: NewSanctionJ): Json[] {
   const f = (k: string): Json => s[k] as Json;
   const out: Json[] = [{ type: 'IssueSanction', sanction: s }];
   const proj = PROJECTION[f('kind') as string];
-  if (proj) out.push({ type: proj, userId: f('userId'), until: f('expiresAt') });
+  if (f('kind') === 'permanent_ban') out.push({ type: 'BanAccount', userId: f('userId') });
+  else if (proj) out.push({ type: proj, userId: f('userId'), until: f('expiresAt') });
   out.push({
     type: 'Notify',
     userId: f('userId'),
@@ -1106,9 +1107,9 @@ function add(c: GoldenCase): void {
           kind: 'host_suspension',
           userId: HOST,
           reasonCode: 'low_host_rating',
-          params: { average: 2, ratings: 5, days: 30 },
+          params: { average: 2, ratings: 5, days: 14 },
           now: T,
-          durationMs: 30 * D,
+          durationMs: 14 * D,
           dedupeKey: key,
         }),
       ),
@@ -1216,7 +1217,7 @@ function add(c: GoldenCase): void {
   const notify = (n: number, mode: string, acceptBy: number) => ({
     type: 'Notify',
     userId: U(n),
-    kind: 'waitlist_promoted',
+    kind: 'waitlist_offer',
     params: { offer: 1, mode, acceptBy: iso(acceptBy) },
     gameId: G(1),
     sanctionDedupeKey: null,

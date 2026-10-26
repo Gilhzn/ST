@@ -112,6 +112,7 @@ export function mapGameSummary(r: Row): GameSummary {
     approxLocation: { lat: num(r.approx_lat), lng: num(r.approx_lng) },
     hideExactLocation: bool(r.hide_exact_location),
     capacity: num(r.capacity),
+    minPlayers: num(r.min_players ?? 2),
     startsAt: str(r.starts_at),
     endsAt: str(r.ends_at),
     depositMinor: num(r.deposit_minor),
@@ -137,6 +138,11 @@ export function mapParticipant(r: Row): Participant {
     position: strOrNull(r.position) as Participant['position'],
     waitlistRank: numOrNull(r.waitlist_rank),
     lateCancel: bool(r.late_cancel),
+    lateCancelRefilled: bool(r.late_cancel_refilled),
+    offeredAt: strOrNull(r.offered_at),
+    offerExpiresAt: strOrNull(r.offer_expires_at),
+    offerMode: strOrNull(r.offer_mode) as Participant['offerMode'],
+    paymentReady: r.payment_ready == null ? true : bool(r.payment_ready),
     checkInMethod: strOrNull(r.check_in_method) as Participant['checkInMethod'],
     checkedInAt: strOrNull(r.checked_in_at),
     requestedAt: str(r.requested_at),
@@ -156,13 +162,15 @@ export function mapSanction(r: Row): Sanction {
     startsAt: str(r.starts_at),
     expiresAt: strOrNull(r.expires_at),
     disputeUntil: strOrNull(r.dispute_until),
+    appealPath: str(r.appeal_path) || (r.dispute_until ? 'dispute' : 'appeal'),
+    overturnedAt: strOrNull(r.overturned_at),
     status: str(r.status),
     gameId: strOrNull(r.game_id),
     causedBy: arr<string>(r.caused_by),
     dedupeKey: str(r.dedupe_key),
     createdAt: str(r.created_at),
     decidedBy: str(r.decided_by) || 'system',
-  } as Sanction;
+  } as unknown as Sanction;
 }
 
 export function mapAppeal(r: Row): Appeal {

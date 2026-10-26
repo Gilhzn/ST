@@ -28,6 +28,7 @@ import { Banner, ErrorView, InlineError, Skeleton } from '@/components/States';
 import { Tag } from '@/components/Tag';
 import { useToast } from '@/components/Toast';
 import { useData } from '@/data/DataProvider';
+import { hasActiveOffer, WaitlistOffer } from '@/features/game/WaitlistOffer';
 import { directionsUrl } from '@/features/map/VenueDetails';
 import { useAction, useAsync } from '@/hooks/useAsync';
 import { useNow } from '@/hooks/useNow';
@@ -122,12 +123,7 @@ export default function GameDetailsScreen() {
     const res = await cancel.run();
     setConfirmCancel(false);
     if (!res) return;
-    if (res.sanction) {
-      toast(t('games:details.cancel.cardIssued'));
-      router.push(`/sanctions/${res.sanction.id}`);
-    } else {
-      toast(t('games:details.cancel.done'));
-    }
+    toast(res.participant.lateCancel ? t('games:details.cancel.lateRecorded') : t('games:details.cancel.done'));
     await refresh();
   };
 
@@ -196,6 +192,8 @@ export default function GameDetailsScreen() {
           <Button testID="game.cancelRequest" variant="secondary" label={t('games:details.action.cancelRequest')} loading={cancel.busy} onPress={() => void onCancelSpot()} />
         </Row>
       );
+    } else if (me.status === 'waitlisted' && hasActiveOffer(me, now)) {
+      footer = <WaitlistOffer gameId={g.id} participant={me} onAccepted={() => void refresh()} />;
     } else if (me.status === 'waitlisted') {
       footer = (
         <Row gap="sm" align="center">

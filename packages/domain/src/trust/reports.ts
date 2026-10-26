@@ -7,8 +7,8 @@
  * are consumed by a restriction), and it qualifies:
  * - reporter ≠ target and has a profile; reliability not `red`;
  * - not spamming: ≤ {@link REPORT_SPAM_MAX_PER_7D} reports filed in the 7 days before `now`;
- * - accurate: once ≥ {@link REPORTER_ACCURACY_MIN_RESOLVED} of their reports were resolved,
- *   ≥ {@link REPORTER_MIN_ACCURACY} of them were upheld;
+ * - accurate: once ≥ `config.reporterAccuracyMinReports` of their reports were resolved,
+ *   ≥ `config.reporterMinAccuracy` of them were upheld;
  * - account ≥ `minReporterAccountAgeDays` old **when the report was filed**;
  * - co-attendance (TRUST-041): the report names a game in which the target was an
  *   approved participant and the reporter was an approved participant with attendance
@@ -23,7 +23,7 @@
  *   which is not the target's team (a rival team brigading).
  * Both tests are monotone: removing a reporter never increases severity.
  * Overturn protection (TRUST-048): if a toxicity restriction of the target was
- * overturned within {@link OVERTURN_PROTECTION_DAYS}, the outcome is review only.
+ * overturned within `config.postOverturnProtectionDays`, the outcome is review only.
  * Otherwise → `visibility_restriction` for `visibilityRestrictionHours` +
  * `RestrictVisibility` + `Notify(visibility_restricted)` with the statement key +
  * `EnqueueReview(toxicity_reports)`. Nothing new is issued while one is in force.
@@ -50,13 +50,7 @@ import {
 } from '../types';
 import { deriveSanctionId } from '../crypto/uuid';
 import { DAY_MS, HOUR_MS, toEpochMs, toIso } from '../time';
-import {
-  OVERTURN_PROTECTION_DAYS,
-  REPORT_SPAM_MAX_PER_7D,
-  REPORTER_ACCURACY_MIN_RESOLVED,
-  REPORTER_MIN_ACCURACY,
-  SEVERE_REPORT_SLA_HOURS,
-} from './constants';
+import { REPORT_SPAM_MAX_PER_7D, SEVERE_REPORT_SLA_HOURS } from './constants';
 import { buildReviewItem, buildSystemSanction, isInForce, issueEffects } from './sanctions';
 
 /** Categories that always reach a human quickly (TRUST-045). */
@@ -150,13 +144,14 @@ function reporterExclusion(
   p: ReporterProfile | undefined,
   attendance: ReadonlyMap<string, GameAttendanceRecord>,
   minAgeMs: number,
+  config: TrustConfig,
 ): ReporterExclusion | null {
   if (r.reporterId === target) return 'self';
   if (!p) return 'unknown_profile';
   if (p.reliabilityStatus === 'red') return 'red_status';
   if (p.reportsLast7d > REPORT_SPAM_MAX_PER_7D) return 'spamming';
   const resolved = p.reportsResolved ?? 0;
-  if (resolved >= REPORTER_ACCURACY_MIN_RESOLVED && (p.reportsUpheld ?? 0) < REPORTER_MIN_ACCURACY * resolved) {
+  if (resolved >= config.reporterAccuracyMinReports && (p.reportsUpheld ?? 0) < config.reporterMinAccuracy * resolved) {
     return 'low_accuracy';
   }
   if (toEpochMs(r.createdAt) - toEpochMs(p.createdAt) < minAgeMs) return 'account_too_new';
@@ -212,7 +207,7 @@ export function evaluateReports(
   for (const r of relevant) {
     const id = r.reporterId;
     const p = profiles.get(id);
-    const reason = reporterExclusion(r, target, p, attendance, minAge);
+    const reason = reporterExclusion(r, target, p, attendance, minAge, config);
     if (reason === null && p) {
       qualifying.set(id, p);
       exclusion.delete(id);
@@ -264,7 +259,7 @@ export function evaluateReports(
       result.reviewReasons.push('rival_team');
     }
   }
-  const protectedSince = now - OVERTURN_PROTECTION_DAYS * DAY_MS;
+  const protectedSince = now - config.postOverturnProtectionDays * DAY_MS;
   const restrictionIds = new Set(toxicity.map((s) => s.id));
   if ((context.overturns ?? []).some((o) => restrictionIds.has(o.sanctionId) && toEpochMs(o.at) > protectedSince)) {
     result.reviewReasons.push('overturn_protection');

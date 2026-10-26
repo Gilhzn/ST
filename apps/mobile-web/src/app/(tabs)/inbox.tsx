@@ -1,8 +1,5 @@
-import { PlaceholderScreen } from '@/components/PlaceholderScreen';
-import { useT } from '@/i18n';
+import { InboxScreen } from '@/features/inbox/InboxScreen';
 
-/** Inbox (design §13.15): chats + notifications. Next wave. */
-export default function InboxScreen() {
-  const { t } = useT();
-  return <PlaceholderScreen title={t('common:nav.inbox')} testID="screen.inbox" back={false} />;
+export default function InboxRoute() {
+  return <InboxScreen />;
 }

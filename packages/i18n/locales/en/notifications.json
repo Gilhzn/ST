@@ -15,6 +15,10 @@
     "title": "You’re on the waitlist",
     "body": "{gameTitle} is full. You’re #{position} on the waitlist, and we’ll tell you if a spot opens."
   },
+  "waitlist_offer": {
+    "title": "A spot is open for you",
+    "body": "A spot opened up in a game you’re waitlisted for. Accept it in the app before the offer expires."
+  },
   "waitlist_promoted": {
     "title": "A spot opened up",
     "body": "You’re now in {gameTitle} on {time}."

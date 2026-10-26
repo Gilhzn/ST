@@ -50,7 +50,7 @@ create function public.st_config_merge(p_overrides jsonb) returns public.trust_c
 language sql stable security definer set search_path = ''
 as $$
   select jsonb_populate_record(public.st_config(),
-           coalesce((select jsonb_object_agg(lower(regexp_replace(e.key, '([A-Z])', '_\1', 'g')), e.value)
+           coalesce((select jsonb_object_agg(lower(regexp_replace(e.key, '([A-Z]|[0-9]+)', '_\1', 'g')), e.value)
                      from jsonb_each(coalesce(p_overrides, '{}'::jsonb)) e), '{}'::jsonb))
 $$;
 
@@ -71,7 +71,8 @@ as $$
     'statementParams', s.statement_params, 'startsAt', public.dm_iso(s.starts_at), 'expiresAt', public.dm_iso(s.expires_at),
     'disputeUntil', public.dm_iso(s.dispute_until), 'status', s.status, 'gameId', s.game_id,
     'causedBy', to_jsonb(s.caused_by), 'dedupeKey', s.dedupe_key, 'decidedBy', s.decided_by,
-    'createdAt', public.dm_iso(s.created_at))
+    'appealPath', case when s.dispute_until is not null then 'dispute' else 'appeal' end,
+    'overturnedAt', public.dm_iso(s.overturned_at), 'createdAt', public.dm_iso(s.created_at))
 $$;
 
 create function public.st_user_sanctions_json(p_uid uuid) returns jsonb
@@ -120,6 +121,9 @@ create function public.dm_issue_effects(s jsonb) returns jsonb
 language sql immutable set search_path = ''
 as $$
   select jsonb_build_array(jsonb_build_object('type', 'IssueSanction', 'sanction', s))
+         || case when s ->> 'kind' = 'permanent_ban'
+                 then jsonb_build_array(jsonb_build_object('type', 'BanAccount', 'userId', s -> 'userId'))
+                 else '[]'::jsonb end
          || case when s ->> 'kind' in ('join_ban', 'chat_mute', 'visibility_restriction', 'host_suspension')
                       and s ->> 'expiresAt' is not null
                  then jsonb_build_array(jsonb_build_object(
@@ -748,7 +752,7 @@ begin
   loop
     offers := offers || jsonb_build_array(jsonb_build_object('userId', w.uid, 'offeredAt', public.dm_iso(p_now),
                                                              'acceptBy', public.dm_iso(accept_by), 'mode', mode));
-    effects := effects || jsonb_build_array(public.dm_notify(w.uid::uuid, 'waitlist_promoted',
+    effects := effects || jsonb_build_array(public.dm_notify(w.uid::uuid, 'waitlist_offer',
       jsonb_build_object('offer', 1, 'mode', mode, 'acceptBy', public.dm_iso(accept_by)), (g ->> 'id')::uuid, null));
   end loop;
   return jsonb_build_object('mode', mode, 'freeSpots', spots, 'offers', offers, 'effects', effects);

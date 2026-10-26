@@ -321,7 +321,7 @@ describe('evaluateHostReliability (TRUST-051)', () => {
     const r = evaluateHostReliability({ hostId: HOST, ratings: five, confirmedFakeVenueIds: [], sanctions: [] }, T0);
     expect(r).toMatchObject({ outcome: 'suspend', reasonCode: 'low_host_rating', ratingCount: 5, averageRating: 2 });
     const [s] = assertSanctionInvariants(r.effects);
-    expect(s).toMatchObject({ kind: 'host_suspension', expiresAt: iso(T0 + 30 * DAY_MS), statementParams: { average: 2, ratings: 5, days: 30 } });
+    expect(s).toMatchObject({ kind: 'host_suspension', expiresAt: iso(T0 + 14 * DAY_MS), statementParams: { average: 2, ratings: 5, days: 14 } });
     expect(r.effects.map((e) => e.type)).toEqual(['IssueSanction', 'SuspendHost', 'Notify', 'EnqueueReview']);
   });
 

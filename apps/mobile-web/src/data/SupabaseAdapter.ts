@@ -21,7 +21,8 @@
  *   RPC  cancel_game(p_game_id) · resolve_invite(p_token)               → game_views row | null
  *   RPC  request_join(p_game_id, p_position, p_invite_token)          → participant row
  *   RPC  decide_join(p_game_id, p_user_id, p_decision) · remove_participant(p_game_id, p_user_id)
- *   RPC  cancel_participation(p_game_id)                              → { participant, sanction }
+ *   RPC  cancel_participation(p_game_id)                              → { participant, sanction: null }
+ *   RPC  accept_waitlist_offer(p_game_id)                             → participant_views row
  *   RPC  save_teams(p_game_id, p_assignments jsonb) · submit_result(p_game_id, p_team_scores) · rate_host(p_game_id, p_stars)
  *   RPC  peer_confirm(p_game_id, p_target_user_id)                    → { confirmations, verdict }
  *   RPC  get_qr_token(p_game_id) · rotate_qr(p_game_id)               → { token, step, expires_at }
@@ -524,10 +525,16 @@ export class SupabaseAdapter implements DataPort {
     return mapParticipant(await this.rpc<Row>('remove_participant', { p_game_id: gameId, p_user_id: userId }));
   }
 
+  async acceptWaitlistOffer(gameId: GameId): Promise<Participant> {
+    await this.uid();
+    return mapParticipant(await this.rpc<Row>('accept_waitlist_offer', { p_game_id: gameId }));
+  }
+
   async cancelParticipation(gameId: GameId): Promise<CancelResult> {
     await this.uid();
     const res = await this.rpc<{ participant: Row; sanction: Row | null }>('cancel_participation', { p_game_id: gameId });
-    return { participant: mapParticipant(res.participant), sanction: res.sanction ? mapSanction(res.sanction) : null };
+    // Contract v2: late-cancel cards are decided at finalisation, never at cancel time.
+    return { participant: mapParticipant(res.participant), sanction: null };
   }
 
   async listParticipants(gameId: GameId): Promise<ParticipantView[]> {

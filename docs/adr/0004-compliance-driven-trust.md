@@ -19,3 +19,10 @@ Keep the goal (reliable attendance, deterrence, safety); change the mechanism:
 - − Requires a moderator workflow and SLA (review queue), i.e. some human cost.
 - − Less "magic" than background tracking; check-in needs a user action.
 - − Legal review by counsel is still required per market (Israel Amendment 13, CCPA, DSA).
+
+## Update (M3, contract v2)
+- **Fairness timing.** A late-cancel card is decided at finalisation (`endsAt + 2h`) and is not issued if a waitlisted player filled the spot and checked in (TRUST-021); `CancelResult.sanction` is therefore always `null`. No card at all when the game did not happen (TRUST-011, threshold from `Game.minPlayers`).
+- **Disputes.** Cards inside their 48 h window or under dispute do not count toward escalation. An undecided dispute voids the card after 7 days (first 3 disputes per 90 days), so slow moderation never harms the user.
+- **Host suspension is 14 days** (PRD TRUST-051), always paired with a review; changed from the provisional 30 days.
+- **Overturn protection.** For 14 days after an overturned restriction, report-based restrictions on that user are review-only (TRUST-048).
+- Spoofing signals can enqueue `spoofing_suspected` reviews but still never sanction on their own.

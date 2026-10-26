@@ -52,7 +52,7 @@
         {
           "type": "Notify",
           "userId": "00000000-0000-4000-8000-000000000002",
-          "kind": "waitlist_promoted",
+          "kind": "waitlist_offer",
           "params": {
             "offer": 1,
             "mode": "standard",
@@ -120,7 +120,7 @@
         {
           "type": "Notify",
           "userId": "00000000-0000-4000-8000-000000000002",
-          "kind": "waitlist_promoted",
+          "kind": "waitlist_offer",
           "params": {
             "offer": 1,
             "mode": "short",
@@ -201,7 +201,7 @@
         {
           "type": "Notify",
           "userId": "00000000-0000-4000-8000-000000000002",
-          "kind": "waitlist_promoted",
+          "kind": "waitlist_offer",
           "params": {
             "offer": 1,
             "mode": "flash",
@@ -213,7 +213,7 @@
         {
           "type": "Notify",
           "userId": "00000000-0000-4000-8000-000000000003",
-          "kind": "waitlist_promoted",
+          "kind": "waitlist_offer",
           "params": {
             "offer": 1,
             "mode": "flash",
@@ -225,7 +225,7 @@
         {
           "type": "Notify",
           "userId": "00000000-0000-4000-8000-000000000004",
-          "kind": "waitlist_promoted",
+          "kind": "waitlist_offer",
           "params": {
             "offer": 1,
             "mode": "flash",
@@ -296,7 +296,7 @@
         {
           "type": "Notify",
           "userId": "00000000-0000-4000-8000-000000000004",
-          "kind": "waitlist_promoted",
+          "kind": "waitlist_offer",
           "params": {
             "offer": 1,
             "mode": "standard",
@@ -372,7 +372,7 @@
         {
           "type": "Notify",
           "userId": "00000000-0000-4000-8000-000000000003",
-          "kind": "waitlist_promoted",
+          "kind": "waitlist_offer",
           "params": {
             "offer": 1,
             "mode": "standard",

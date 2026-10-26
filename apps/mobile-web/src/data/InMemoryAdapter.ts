@@ -83,6 +83,8 @@ import {
   type VenueRatingInput,
   type VenueReport,
   type VenueReportReason,
+  type WaitlistOffer,
+  type Effect,
 } from '@st/domain';
 
 import type { DataPort, ListMessagesOptions, NearbyGamesOptions, OtpSent, RequestJoinOptions } from './DataPort';
@@ -90,6 +92,7 @@ import { toStError } from './errors';
 import {
   DAY_MS,
   HOUR_MS,
+  acceptWaitlistOffer as acceptOffer,
   approximateLocation,
   buildSystemSanction,
   canDispute,
@@ -106,6 +109,7 @@ import {
   isLateCancel,
   matchBlocklist,
   materializeSanction,
+  promoteFromWaitlist,
   toEpochMs,
   toIso,
   verifyGps,
@@ -147,6 +151,8 @@ export class InMemoryAdapter implements DataPort {
   private readonly authListeners = new Set<(user: AuthUser | null) => void>();
   private readonly chatListeners = new Map<GameId, Set<(event: ChatEvent) => void>>();
   private readonly otpSent = new Map<PhoneE164, EpochMs>();
+  /** Waitlist taker (`game|user`) → the late canceller (`game|user`) whose spot they took. */
+  private readonly refills = new Map<string, string>();
   /** Blocked messages per sender (`moderation_retained` stand-in, for the 3-blocks-in-7-days rule). */
   private readonly chatBlocks = new Map<UserId, ChatBlockRecord[]>();
   private readonly clock: () => EpochMs;
@@ -318,7 +324,10 @@ export class InMemoryAdapter implements DataPort {
       ...s,
       host: this.publicOf(g.hostId),
       venue,
-      myParticipation: this.participant(g.id, viewer) ?? null,
+      myParticipation: (() => {
+        const mine = this.participant(g.id, viewer);
+        return mine ? this.withOffer(mine) : null;
+      })(),
       isHost: g.hostId === viewer,
     };
   }
@@ -354,19 +363,37 @@ export class InMemoryAdapter implements DataPort {
     });
   }
 
+  private offersOf(gameId: GameId): WaitlistOffer[] {
+    return [...this.state.offers.entries()].filter(([k]) => k.startsWith(`${gameId}|`)).map(([, o]) => o);
+  }
+
+  /** Applies the engine's Notify effects (other effect types are handled by the caller). */
+  private applyNotify(effects: readonly Effect[], g: MockGame): void {
+    for (const e of effects) {
+      if (e.type !== 'Notify') continue;
+      // The planner marks offers with `offer: 1`; contract v2 has a dedicated kind for them.
+      const kind = e.params.offer ? 'waitlist_offer' : e.kind;
+      this.notify(e.userId, kind, { gameTitle: g.title, time: g.startsAt, ...e.params }, e.gameId);
+    }
+  }
+
+  /**
+   * A spot freed up: plan waitlist offers with the domain rules (GAME-045: > 6 h the next player
+   * gets 120 min, 6–1 h 20 min, < 1 h flash fill for everyone; none after start). Mirrors
+   * `st_promote_waitlist`: nobody is moved automatically; players accept their offer.
+   */
   private promoteWaitlist(g: MockGame): void {
     this.rerankWaitlist(g.id);
-    while (this.counts(g.id).approved < g.capacity) {
-      const next = this.participantsOf(g.id)
-        .filter((p) => p.status === 'waitlisted')
-        .sort((a, b) => (a.waitlistRank ?? 0) - (b.waitlistRank ?? 0))[0];
-      if (!next) break;
-      next.status = 'approved';
-      next.waitlistRank = null;
-      next.decidedAt = this.nowIso();
-      this.notify(next.userId, 'waitlist_promoted', { gameTitle: g.title, time: g.startsAt }, g.id);
-      this.rerankWaitlist(g.id);
-    }
+    const plan = promoteFromWaitlist({ game: g, participants: this.participantsOf(g.id), offers: this.offersOf(g.id) }, this.now());
+    if (plan.freeSpots === 0) for (const k of [...this.state.offers.keys()]) if (k.startsWith(`${g.id}|`)) this.state.offers.delete(k);
+    for (const o of plan.offers) this.state.offers.set(`${g.id}|${o.userId}`, o);
+    this.applyNotify(plan.effects, g);
+  }
+
+  /** Participant snapshot with its active waitlist offer (participant_views offer columns). */
+  private withOffer(p: Participant): Participant {
+    const o = p.status === 'waitlisted' ? this.state.offers.get(`${p.gameId}|${p.userId}`) : undefined;
+    return { ...p, offeredAt: o?.offeredAt ?? null, offerExpiresAt: o?.acceptBy ?? null, offerMode: o?.mode ?? null };
   }
 
   private settleDeposit(gameId: GameId, userId: UserId, outcome: 'released' | 'forfeited'): void {
@@ -387,7 +414,11 @@ export class InMemoryAdapter implements DataPort {
   private recordSanction(newSanction: Parameters<typeof materializeSanction>[0]): Sanction {
     const existing = this.state.sanctions.find((x) => x.dedupeKey === newSanction.dedupeKey);
     if (existing) return existing;
-    const s = materializeSanction(newSanction, this.now());
+    const s = {
+      ...materializeSanction(newSanction, this.now()),
+      appealPath: newSanction.disputeUntil ? 'dispute' : 'appeal',
+      overturnedAt: null,
+    } as Sanction;
     this.state.sanctions.push(s);
     this.notify(s.userId, 'sanction_issued', {}, s.gameId, s.id);
     const p = this.state.users.get(s.userId)?.profile;
@@ -815,6 +846,7 @@ export class InMemoryAdapter implements DataPort {
         depositForfeitTo: input.depositForfeitTo ?? 'pot',
         womenOnly: input.womenOnly,
         status: 'scheduled',
+        minPlayers: input.minPlayers ?? 2,
         teamCount: input.teamCount,
         inviteToken: `inv-${this.state.seq}-${Math.floor(now / 1000).toString(36)}`,
         createdAt: toIso(now),
@@ -830,6 +862,11 @@ export class InMemoryAdapter implements DataPort {
         position: null,
         waitlistRank: null,
         lateCancel: false,
+        lateCancelRefilled: false,
+        offeredAt: null,
+        offerExpiresAt: null,
+        offerMode: null,
+        paymentReady: true,
         checkInMethod: null,
         checkedInAt: null,
         requestedAt: toIso(now),
@@ -886,6 +923,11 @@ export class InMemoryAdapter implements DataPort {
         position: position as PositionId | null,
         waitlistRank: null,
         lateCancel: false,
+        lateCancelRefilled: false,
+        offeredAt: null,
+        offerExpiresAt: null,
+        offerMode: null,
+        paymentReady: true,
         checkInMethod: null,
         checkedInAt: null,
         requestedAt: toIso(now),
@@ -967,6 +1009,37 @@ export class InMemoryAdapter implements DataPort {
     });
   }
 
+  /** A waitlisted player takes the spot they were offered (first to accept wins in flash fill). */
+  acceptWaitlistOffer(gameId: GameId): Promise<Participant> {
+    return this.run(() => {
+      const me = this.me();
+      const g = this.gameOr404(gameId, me);
+      const res = acceptOffer({ game: g, participants: this.participantsOf(gameId), offers: this.offersOf(gameId) }, me, this.now());
+      if (!res.ok) fail(res.error);
+      for (const e of res.value) {
+        if (e.type !== 'PromoteWaitlist') continue;
+        const p = this.participant(gameId, e.userId);
+        if (!p) continue;
+        p.status = 'approved';
+        p.waitlistRank = null;
+        p.decidedAt = this.nowIso();
+        this.state.offers.delete(`${gameId}|${e.userId}`);
+        // Link the taker to the earliest late canceller whose spot is not yet taken (TRUST-021).
+        const taken = new Set(this.refills.values());
+        const refill = this.participantsOf(gameId)
+          .filter((x) => x.lateCancel && !taken.has(`${gameId}|${x.userId}`))
+          .sort((a, b) => (a.cancelledAt ?? '').localeCompare(b.cancelledAt ?? ''))[0];
+        if (refill) this.refills.set(`${gameId}|${e.userId}`, `${gameId}|${refill.userId}`);
+      }
+      this.applyNotify(res.value, g);
+      this.rerankWaitlist(gameId);
+      if (this.counts(gameId).approved >= g.capacity) {
+        for (const k of [...this.state.offers.keys()]) if (k.startsWith(`${gameId}|`)) this.state.offers.delete(k);
+      }
+      return this.participant(gameId, me) as Participant;
+    });
+  }
+
   cancelParticipation(gameId: GameId): Promise<CancelResult> {
     return this.run(() => {
       const me = this.me();
@@ -981,18 +1054,9 @@ export class InMemoryAdapter implements DataPort {
       p.waitlistRank = null;
       p.cancelledAt = nowIso;
       p.lateCancel = late;
-      let sanction: Sanction | null = null;
+      // Contract v2: the card is decided at finalisation (endsAt + finalizeAfterEndHours), and is
+      // waived when the spot was refilled from the waitlist (TRUST-021). See finalizeLateCancels().
       if (late) {
-        sanction = this.issueSanction({
-          kind: 'yellow_card',
-          userId: me,
-          reasonCode: 'late_cancel',
-          statementParams: { date: g.startsAt, gameTitle: g.title, hours: this.config.lateCancelWindowHours },
-          durationMs: this.config.yellowCardLifetimeDays * DAY_MS,
-          disputeMs: this.config.disputeWindowHours * HOUR_MS,
-          gameId: g.id,
-          dedupeKey: `late_cancel:${g.id}:${me}`,
-        });
         const rel = this.myProfile().reliability;
         rel.lateCancelCount += 1;
         rel.commitmentCount += this.config.reliabilityLateCancelWeight;
@@ -1001,15 +1065,42 @@ export class InMemoryAdapter implements DataPort {
       }
       if (wasApproved) this.promoteWaitlist(g);
       else this.rerankWaitlist(gameId);
-      return { participant: p, sanction };
+      return { participant: p, sanction: null };
     });
+  }
+
+  /** Mirrors the finalisation job for the caller: late cancels not refilled become disputable yellow cards. */
+  private finalizeLateCancels(userId: UserId): void {
+    const now = this.now();
+    for (const p of this.state.participants.values()) {
+      if (p.userId !== userId || !p.lateCancel || p.lateCancelRefilled) continue;
+      const g = this.state.games.get(p.gameId);
+      if (!g || g.status === 'cancelled' || toEpochMs(g.endsAt) + this.config.finalizeAfterEndHours * HOUR_MS > now) continue;
+      // No card when a waitlisted player took the spot and checked in.
+      const replacement = [...this.refills.entries()].find(([, c]) => c === `${p.gameId}|${userId}`)?.[0];
+      const taker = replacement ? this.state.participants.get(replacement) : undefined;
+      if (taker?.attendance === 'verified') {
+        p.lateCancelRefilled = true;
+        continue;
+      }
+      this.issueSanction({
+        kind: 'yellow_card',
+        userId,
+        reasonCode: 'late_cancel',
+        statementParams: { date: g.startsAt, gameTitle: g.title, hours: this.config.lateCancelWindowHours },
+        durationMs: this.config.yellowCardLifetimeDays * DAY_MS,
+        disputeMs: this.config.disputeWindowHours * HOUR_MS,
+        gameId: g.id,
+        dedupeKey: `late_cancel:${g.id}:${userId}`,
+      });
+    }
   }
 
   listParticipants(gameId: GameId): Promise<ParticipantView[]> {
     return this.run(() => {
       const me = this.me();
       const g = this.gameOr404(gameId, me);
-      return this.visibleParticipants(g, me).map((p) => ({ ...p, profile: this.publicOf(p.userId) }));
+      return this.visibleParticipants(g, me).map((p) => ({ ...this.withOffer(p), profile: this.publicOf(p.userId) }));
     });
   }
 
@@ -1023,7 +1114,7 @@ export class InMemoryAdapter implements DataPort {
       for (const p of this.participantsOf(gameId)) {
         p.team = p.status === 'approved' && assignments[p.userId] !== undefined ? (assignments[p.userId] as number) : null;
       }
-      return this.visibleParticipants(g, me).map((p) => ({ ...p, profile: this.publicOf(p.userId) }));
+      return this.visibleParticipants(g, me).map((p) => ({ ...this.withOffer(p), profile: this.publicOf(p.userId) }));
     });
   }
 
@@ -1204,6 +1295,7 @@ export class InMemoryAdapter implements DataPort {
   listMySanctions(): Promise<Sanction[]> {
     return this.run(() => {
       const me = this.me();
+      this.finalizeLateCancels(me);
       return this.state.sanctions
         .filter((s) => s.userId === me)
         .map((s) => this.withDerivedStatus(s))
@@ -1214,6 +1306,7 @@ export class InMemoryAdapter implements DataPort {
   getSanction(sanctionId: SanctionId): Promise<Sanction | null> {
     return this.run(() => {
       const me = this.me();
+      this.finalizeLateCancels(me);
       const s = this.state.sanctions.find((x) => x.id === sanctionId && x.userId === me);
       return s ? this.withDerivedStatus(s) : null;
     });

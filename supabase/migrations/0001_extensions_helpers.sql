@@ -38,7 +38,7 @@ create type public.appeal_status as enum ('open', 'upheld', 'overturned', 'withd
 create type public.user_report_category as enum ('violence', 'unsportsmanlike', 'harassment', 'spam', 'other');
 create type public.review_kind as enum (
   'toxicity_reports', 'collusion_suspected', 'permanent_ban_candidate', 'host_reliability', 'venue_reports',
-  'sanction_dispute', 'appeal', 'chat_recheck');
+  'sanction_dispute', 'appeal', 'chat_recheck', 'spoofing_suspected');
 create type public.review_status as enum ('open', 'in_review', 'resolved');
 create type public.review_priority as enum ('low', 'normal', 'high');
 create type public.moderator_decision as enum
@@ -47,7 +47,7 @@ create type public.moderator_decision as enum
 create type public.message_moderation as enum ('allow', 'nudge', 'pending');
 create type public.translation_provider as enum ('deepl', 'google', 'llm');
 create type public.notification_kind as enum (
-  'join_requested', 'join_approved', 'join_rejected', 'join_waitlisted', 'waitlist_promoted', 'participant_removed',
+  'join_requested', 'join_approved', 'join_rejected', 'join_waitlisted', 'waitlist_offer', 'waitlist_promoted', 'participant_removed',
   'game_cancelled', 'game_reminder', 'checkin_open', 'result_requested', 'sanction_issued', 'sanction_decided',
   'appeal_decided', 'visibility_restricted', 'chat_muted', 'venue_hidden', 'deposit_action_required');
 create type public.push_platform as enum ('ios', 'android', 'web');

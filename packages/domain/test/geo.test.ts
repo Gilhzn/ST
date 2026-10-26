@@ -36,7 +36,8 @@ describe('haversineMeters', () => {
         const ab = haversineMeters(a, b);
         expect(ab).toBeGreaterThanOrEqual(0);
         expect(Math.abs(ab - haversineMeters(b, a))).toBeLessThan(1e-6);
-        expect(ab).toBeLessThanOrEqual(haversineMeters(a, c) + haversineMeters(c, b) + 1e-3);
+        // Haversine loses ~0.1 m of precision near antipodal points (asin close to 1), hence the 1 m slack.
+        expect(ab).toBeLessThanOrEqual(haversineMeters(a, c) + haversineMeters(c, b) + 1);
         expect(ab).toBeLessThanOrEqual(Math.PI * 6_371_008.8 + 1);
       }),
     );

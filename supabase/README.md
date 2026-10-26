@@ -65,7 +65,7 @@ types, `set search_path = ''` in every function). Time: every rule reads `public
 | `nearby_venues(lat, lng, radius_km, sports[])` | authenticated | radius ∈ {1,2,5,10,30,50} (`invalid_radius`), ≤ 3 sports (`too_many_sports`), active only, by distance |
 | `nearby_games(lat, lng, radius_km, sports[], from?, to?, include_full?)` | authenticated | same validation; ≤ 60-day range; ordered by `starts_at`, distance (DataPort contract) |
 | `create_venue`, `rate_venue(venue, sport, overall, attributes)`, `report_venue(venue, reason, note?)` | authenticated | per-sport attributes; `already_reported`; 3 distinct reporters → hidden + review |
-| `create_game(...)`, `cancel_game(game)` | authenticated / host | `host_suspended`, join-banned/restricted users cannot create public games, venue must be active |
+| `create_game(..., p_min_players = 2)`, `cancel_game(game)` | authenticated / host | `min_players` 2..capacity, `host_suspended`, join-banned/restricted users cannot create public games, venue must be active |
 | `resolve_invite(token)` | authenticated | grants visibility of a private game |
 | `request_join(game, position?, invite_token?)` | authenticated | `account_banned`, `join_banned`, `blocked`, `not_found`, `game_not_open`, `women_only`, `conflict`; deposit → request hidden until payment secured |
 | `decide_join(game, user, 'approve'\|'reject')` | host | approved while room, else waitlisted; `payment_required` |
@@ -102,15 +102,15 @@ co-attendee of the reported game or member of its chat) → 72 h visibility rest
 statement of reasons. Collusion (fewer independent reporters than the threshold by 48 h creation windows, or a
 rival team of one game) → review only; within 14 days of an overturned restriction → review only.
 
-## TrustConfig columns not yet in the contract
+## TrustConfig parity
 
-`trust_config` adds PRD v5 thresholds with defaults (mirrored by `packages/domain/src/trust/constants.ts`):
-`dispute_auto_void_days` 7, `dispute_auto_void_max_per_90_days` 3, `post_overturn_protection_days` 14,
-`finalize_after_end_hours` 2, `waitlist_long_threshold_hours` 6, `waitlist_confirm_long_minutes` 120,
-`waitlist_confirm_short_minutes` 20, `waitlist_flash_fill_hours` 1, `reporter_min_accuracy` 0.3,
-`reporter_accuracy_min_reports` 5, `host_rating_window_hours` 48, `host_rating_lookback_days` 90,
-`location_samples_retention_days` 30, `qr_secret_retention_hours` 24, `user_report_retention_days` 365,
-`audit_log_retention_days` 730, `sanction_retention_after_deletion_days` 730.
+Every `trust_config` column is a `TrustConfig` field (contract v2) with the same default, including the PRD v5
+additions (`dispute_auto_void_days` 7, `dispute_auto_void_max_per_90_days` 3, `post_overturn_protection_days` 14,
+`finalize_after_end_hours` 2, `waitlist_*`, `reporter_*`, `host_rating_*`, retention periods) and
+`host_suspension_days` 14 (PRD TRUST-051). camelCase ↔ snake_case is mechanical in both directions (digits form their
+own segment: `disputeAutoVoidMaxPer90Days` ↔ `dispute_auto_void_max_per_90_days`); `schema.test.ts` asserts
+`trust_config_json()` equals `DEFAULT_TRUST_CONFIG` key for key. Fixed rule constants (peer cap 6, spam 10/7 d,
+game-happened floor 2, severe SLA 1 h) live in `packages/domain/src/trust/constants.ts` and are hard-coded here.
 
 ## Tests
 

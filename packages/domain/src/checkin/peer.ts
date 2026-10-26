@@ -19,17 +19,15 @@ import {
   type EpochMs,
   type Participant,
   type PeerConfirmResult,
+  type PeerConfirmation,
   type TrustConfig,
   type UserId,
 } from '../types';
 import { isCheckInOpen, type GameWindow } from '../games/windows';
 import { PEER_MAX_CONFIRMATIONS_PER_CONFIRMER } from '../trust/constants';
 
-/** One stored peer confirmation (`peer_confirmations` row) within a game. */
-export interface PeerConfirmation {
-  confirmerId: UserId;
-  targetId: UserId;
-}
+/** The fields of a `PeerConfirmation` that verification reads (list order = chronological). */
+export type PeerConfirmationRef = Pick<PeerConfirmation, 'confirmerId' | 'targetId'>;
 
 /** The participant fields peer verification reads. */
 export type PeerParticipant = Pick<Participant, 'userId' | 'status' | 'attendance' | 'checkInMethod'>;
@@ -39,7 +37,7 @@ export interface PeerCheckInInput {
   targetUserId: UserId;
   participants: readonly PeerParticipant[];
   /** All confirmations of the game (other targets are ignored). */
-  confirmations: readonly PeerConfirmation[];
+  confirmations: readonly PeerConfirmationRef[];
   /** Blocks involving any participant (direction is irrelevant). */
   blocks: readonly Pick<Block, 'blockerId' | 'blockedId'>[];
   /** When given, confirmations outside the check-in window are rejected. */

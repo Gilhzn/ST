@@ -44,6 +44,16 @@ describe("create_game", () => {
     expect(g).toMatchObject({ approved_count: 1, is_host: true });
     expect(g!.lat).toBeCloseTo(TLV.lat, 5);
     expect(g!.invite_token).toMatch(/^[0-9a-f]{36}$/);
+    expect(g).toMatchObject({ min_players: 2 }); // Game.minPlayers default (contract v2)
+    const [g6] = await asUser<{ min_players: number }>(db, host,
+      `select * from public.create_game('football', 'Six', 'public', $1, null, null, false, 10, $2, $3, p_min_players => 6)`,
+      [venue, iso(T0), iso(at(90 * MIN))], before);
+    expect(g6!.min_players).toBe(6);
+    for (const bad of [1, 11]) {
+      await expectSt(asUser(db, host,
+        `select public.create_game('football', 'x', 'public', $1, null, null, false, 10, $2, $3, p_min_players => ${bad})`,
+        [venue, iso(T0), iso(at(90 * MIN))], before), "validation");
+    }
 
     await expectSt(asUser(db, host, `select public.create_game('padel', 'x', 'public', $1, null, null, false, 4, $2, $3)`,
       [venue, iso(T0), iso(at(HOUR))], before), "validation");
@@ -193,9 +203,9 @@ describe("decide_join and the waitlist (GAME-045)", () => {
     const offers = await db.query<{ user_id: string; accept_by: Date; mode: string }>(
       `select user_id, accept_by, mode from waitlist_offers where game_id = $1`, [g]);
     expect(offers).toEqual([{ user_id: b, accept_by: at(-8 * HOUR), mode: "standard" }]);
-    const [mine] = await asUser<{ offer_accept_by: Date; offer_mode: string }>(db, b,
-      `select offer_accept_by, offer_mode from participant_views where game_id = $1 and user_id = $2`, [g, b], now);
-    expect(mine).toEqual({ offer_accept_by: at(-8 * HOUR), offer_mode: "standard" });
+    const [mine] = await asUser<{ offer_expires_at: Date; offer_mode: string }>(db, b,
+      `select offer_expires_at, offer_mode from participant_views where game_id = $1 and user_id = $2`, [g, b], now);
+    expect(mine).toEqual({ offer_expires_at: at(-8 * HOUR), offer_mode: "standard" });
     await expectSt(asUser(db, c, `select public.accept_waitlist_offer($1)`, [g], now), "not_found");
 
     // b lets the offer expire → the next pass offers c (still > 6h: 120 minutes); b cannot accept late.
@@ -231,7 +241,7 @@ describe("decide_join and the waitlist (GAME-045)", () => {
     const flash = await db.query<{ n: number }>(`select count(*)::int n from waitlist_offers where game_id = $1 and mode = 'flash' and accept_by = $2`,
       [g, iso(T0)]);
     expect(flash[0]!.n).toBe(3);
-    const notified = await db.query<{ n: number }>(`select count(*)::int n from notifications where kind = 'waitlist_promoted' and game_id = $1`, [g]);
+    const notified = await db.query<{ n: number }>(`select count(*)::int n from notifications where kind = 'waitlist_offer' and game_id = $1`, [g]);
     expect(notified[0]!.n).toBe(3);
     const [win] = await asUser<{ status: string }>(db, w[2]!, `select * from public.accept_waitlist_offer($1)`, [g], now);
     expect(win!.status).toBe("approved");
@@ -350,6 +360,19 @@ describe("cancel_participation", () => {
     expect((await sanctionsOf(db, sub)).map((c) => c.reason_code)).toEqual(["no_show"]);
   });
 
+  it("TRUST-011: the finalisation job uses games.min_players (3 verified of min 8 → not happened)", async () => {
+    const host = await makeUser(db);
+    const [a, v1, v2, v3] = [await makeUser(db), await makeUser(db), await makeUser(db), await makeUser(db)];
+    const g = await makeGame(db, host, { capacity: 10 });
+    await db.query(`update games set min_players = 8 where id = $1`, [g]);
+    await addParticipant(db, g, a);
+    for (const u of [v1, v2, v3]) await addParticipant(db, g, u, "approved", { attendance: "verified" });
+    await asService(db, `select public.process_no_shows()`, [], { now: at(4 * HOUR) });
+    expect(await sanctionsOf(db, a)).toHaveLength(0); // threshold max(2, ⌈8/2⌉) = 4 > 3 verified
+    const { happened } = first(await db.query<{ happened: boolean }>(`select happened from games where id = $1`, [g]));
+    expect(happened).toBe(false);
+  });
+
   it("TRUST-011: a game that did not happen (< 2 verified) gives no cards and excuses everyone", async () => {
     const host = await makeUser(db);
     const [a, b] = [await makeUser(db), await makeUser(db)];
@@ -428,7 +451,7 @@ describe("save_teams, submit_result, rate_host", () => {
     await asUser(db, raters[4]!, `select public.rate_host($1, 2)`, [g], now);
     const s = await sanctionsOf(db, host);
     expect(s.map((x) => [x.kind, x.reason_code])).toEqual([["host_suspension", "low_host_rating"]]);
-    expect((await profileOf(db, host)).host_suspended_until).toEqual(new Date(at(3 * HOUR).getTime() + 30 * DAY));
+    expect((await profileOf(db, host)).host_suspended_until).toEqual(new Date(at(3 * HOUR).getTime() + 14 * DAY)); // PRD TRUST-051: 14 days
     const [q] = await db.query<{ kind: string }>(`select kind from review_queue where subject_user_id = $1`, [host]);
     expect(q!.kind).toBe("host_reliability");
   });

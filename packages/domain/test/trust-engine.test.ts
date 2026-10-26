@@ -302,6 +302,24 @@ describe('reports, venue reports, ratings and chat via the engine', () => {
     expect(types(third.effects)).toEqual(['IssueSanction', 'Notify', 'IssueSanction', 'MuteChat', 'Notify']);
     expect(run(third.state, ev(1)).effects).toEqual([]);
   });
+
+  it('chat blocks with a messageId are de-duplicated by id, not by (gameId, at)', () => {
+    const at = iso(T0 - HOUR_MS);
+    const ev = (messageId: string): DomainTrustEvent => ({ type: 'ChatMessageBlocked', gameId: G1, userId: U1, at, categories: [], messageId });
+    let s = createTrustState(U1);
+    s = run(s, ev('m1')).state;
+    s = run(s, ev('m1')).state;
+    expect(s.chatBlocks).toEqual([{ gameId: G1, at, messageId: 'm1' }]);
+    s = run(s, ev('m2')).state;
+    expect(s.chatBlocks.map((b) => b.messageId)).toEqual(['m1', 'm2']);
+  });
+
+  it('issued sanctions carry the read-model fields; overturn stamps overturnedAt', () => {
+    const r = run(createTrustState(U1), lateCancel(false));
+    const card = r.state.sanctions[0];
+    expect(card).toMatchObject({ appealPath: 'dispute', overturnedAt: null, status: 'active' });
+    expect(card?.statementParams['appealPath']).toBe('dispute');
+  });
 });
 
 describe('engine properties', () => {

@@ -1,11 +1,8 @@
 import { useLocalSearchParams } from 'expo-router';
 
-import { PlaceholderScreen } from '@/components/PlaceholderScreen';
-import { useT } from '@/i18n';
+import { TeamsScreen } from '@/features/teams/TeamsScreen';
 
-/** Design §13.9. Route exists and navigates; the full screen lands in the next wave. */
-export default function GameSubScreen() {
-  const { t } = useT();
+export default function GameRoute() {
   const { id } = useLocalSearchParams<{ id: string }>();
-  return <PlaceholderScreen title={t('games:teams.title')} testID="screen.game.teams" key={id} />;
+  return <TeamsScreen key={String(id)} gameId={String(id)} />;
 }

@@ -26,7 +26,7 @@ create table public.trust_config (
   moderation_timeout_ms int not null default 1500,
   host_low_rating_max numeric not null default 2,
   host_low_rating_min_count int not null default 5,
-  host_suspension_days numeric not null default 30,
+  host_suspension_days numeric not null default 14,
   venue_reports_to_hide int not null default 3,
   wake_geofence_radius_m numeric not null default 150,
   gps_max_accuracy_m numeric not null default 25,

@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import {
+  DEFAULT_TRUST_CONFIG,
   acceptWaitlistOffer,
   checkCreateGameEligibility,
   checkJoinEligibility,
@@ -55,11 +56,18 @@ describe('promoteFromWaitlist', () => {
     expect(plan).toMatchObject({ mode: 'standard', freeSpots: 1 });
     expect(plan.offers).toEqual([{ userId: U1, offeredAt: iso(now), acceptBy: iso(now + 2 * HOUR_MS), mode: 'standard' }]);
     expect(plan.effects).toEqual([
-      { type: 'Notify', userId: U1, kind: 'waitlist_promoted', params: { offer: 1, mode: 'standard', acceptBy: iso(now + 2 * HOUR_MS) }, gameId: G1, sanctionDedupeKey: null },
+      { type: 'Notify', userId: U1, kind: 'waitlist_offer', params: { offer: 1, mode: 'standard', acceptBy: iso(now + 2 * HOUR_MS) }, gameId: G1, sanctionDedupeKey: null },
     ]);
     expect(promoteFromWaitlist({ ...base, offers: plan.offers }, now + HOUR_MS).offers).toEqual([]);
     const next = promoteFromWaitlist({ ...base, offers: plan.offers }, now + 2 * HOUR_MS);
     expect(next.offers.map((o) => o.userId)).toEqual([U2]);
+  });
+
+  it('offer windows come from TrustConfig', () => {
+    const config = { ...DEFAULT_TRUST_CONFIG, waitlistLongThresholdHours: 12, waitlistConfirmShortMinutes: 45, waitlistFlashFillHours: 2 };
+    const now = T0 - 10 * HOUR_MS;
+    expect(promoteFromWaitlist(base, now, config).offers[0]).toMatchObject({ mode: 'short', acceptBy: iso(now + 45 * 60_000) });
+    expect(promoteFromWaitlist(base, T0 - 90 * 60_000, config).mode).toBe('flash');
   });
 
   it('short window: 20 minutes, capped at the start', () => {

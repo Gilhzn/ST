@@ -30,6 +30,7 @@ export const NOTIFICATION_PARAMS = {
   join_approved: ['gameTitle', 'time'],
   join_rejected: ['gameTitle'],
   join_waitlisted: ['gameTitle', 'position'],
+  waitlist_offer: [],
   waitlist_promoted: ['gameTitle', 'time'],
   participant_removed: ['gameTitle'],
   game_cancelled: ['gameTitle', 'time'],

@@ -16,6 +16,8 @@ create table public.games (
   approx_geog extensions.geography(Point, 4326) not null,
   hide_exact_location boolean not null default false,
   capacity int not null check (capacity between 2 and 200),
+  -- Game.minPlayers (GAME-001); TRUST-011: the game happened with ≥ max(2, ⌈min_players/2⌉) verified.
+  min_players int not null default 2 check (min_players >= 2),
   starts_at timestamptz not null,
   ends_at timestamptz not null,
   deposit_minor int not null default 0 check (deposit_minor >= 0 and deposit_minor <= 100000000),
@@ -36,7 +38,8 @@ create table public.games (
   updated_at timestamptz not null default now(),
   check (ends_at > starts_at),
   check (ends_at - starts_at <= interval '24 hours'),
-  check (team_count <= capacity)
+  check (team_count <= capacity),
+  check (min_players <= capacity)
 );
 create index games_geog_gist on public.games using gist (geog);
 create index games_approx_geog_gist on public.games using gist (approx_geog);
@@ -263,7 +266,8 @@ create view public.game_views with (security_barrier = true) as
          g.created_at,
          (select count(*)::int from public.game_participants gp where gp.game_id = g.id and gp.status = 'approved') as approved_count,
          (select count(*)::int from public.game_participants gp where gp.game_id = g.id and gp.status = 'waitlisted') as waitlist_count,
-         (g.host_id = auth.uid()) as is_host
+         (g.host_id = auth.uid()) as is_host,
+         g.min_players
   from public.games g
   cross join lateral (select public.st_my_exact(g.id) as exact) x
   where public.st_my_game_visible(g.id);
@@ -286,7 +290,7 @@ create view public.participant_views with (security_barrier = true) as
          gp.late_cancel_refilled,
          (select o.accept_by from public.waitlist_offers o
            where o.game_id = gp.game_id and o.user_id = gp.user_id and gp.status = 'waitlisted'
-             and o.accept_by > public.st_now()) as offer_accept_by,
+             and o.accept_by > public.st_now()) as offer_expires_at,
          (select o.mode from public.waitlist_offers o
            where o.game_id = gp.game_id and o.user_id = gp.user_id and gp.status = 'waitlisted'
              and o.accept_by > public.st_now()) as offer_mode,
@@ -295,7 +299,10 @@ create view public.participant_views with (security_barrier = true) as
          gp.checked_in_at,
          gp.requested_at,
          gp.decided_at,
-         gp.cancelled_at
+         gp.cancelled_at,
+         (select o.offered_at from public.waitlist_offers o
+           where o.game_id = gp.game_id and o.user_id = gp.user_id and gp.status = 'waitlisted'
+             and o.accept_by > public.st_now()) as offered_at
   from public.game_participants gp
   where auth.uid() is not null
     and (

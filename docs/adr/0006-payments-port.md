@@ -17,3 +17,6 @@ Optional no-show deposits are a key product lever (paid events average about 17%
 - − Lowest-common-denominator port: provider-specific features need explicit port extensions.
 - − Host payouts (Stripe Connect / marketplace rules) are deferred; MVP forfeits go to a platform-held pot.
 - − Native payment sheets require extra dependencies (e.g. `@stripe/stripe-react-native`) and EAS config.
+
+## Update (M3, contract v2)
+- A no-show deposit is captured only after an **undisputed** 48 h dispute window, or after a moderator upholds the card; an overturn or auto-void releases or refunds it. Waitlist acceptance (`acceptWaitlistOffer`) collects the payment method at that moment (`Participant.paymentReady`).

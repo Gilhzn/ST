@@ -15,6 +15,10 @@
     "title": "Estás en la lista de espera",
     "body": "{gameTitle} está completo. Eres el n.º {position} en la lista de espera y te avisaremos si se libera una plaza."
   },
+  "waitlist_offer": {
+    "title": "Hay una plaza para ti",
+    "body": "Se ha liberado una plaza en un partido en el que estás en lista de espera. Acéptala en la app antes de que caduque la oferta."
+  },
   "waitlist_promoted": {
     "title": "Se ha liberado una plaza",
     "body": "Ya estás dentro de {gameTitle} el {time}."

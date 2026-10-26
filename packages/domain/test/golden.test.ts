@@ -48,8 +48,8 @@ const RUNNERS: Record<string, Runner> = {
   'trust.applyEvent': (i: any, c, now) => ({
     effects: applyTrustEvent(createTrustState(i.state.userId, i.state), i.event, c, now).effects,
   }),
-  'trust.processNoShows': (i: any, _c, now) => {
-    const r = processNoShows(i, now);
+  'trust.processNoShows': (i: any, c, now) => {
+    const r = processNoShows(i, now, c);
     return { finalized: r.finalized, gameHappened: r.gameHappened, effects: r.effects, events: r.events };
   },
   'trust.evaluateReports': (i: any, c, now) => {
@@ -73,7 +73,7 @@ const RUNNERS: Record<string, Runner> = {
     canSubmitResult: canSubmitResult(i.game, now, c),
     chatOpen: isChatOpen(i.game, now, c),
   }),
-  'games.waitlist': (i: any, _c, now) => promoteFromWaitlist(i, now),
+  'games.waitlist': (i: any, c, now) => promoteFromWaitlist(i, now, c),
   'checkin.qrToken': (i: any, c, now) => generateQrToken(i.qrSecret, i.gameId, now, c),
   'checkin.verifyQr': (i: any, c, now) => verifyQr(i.token, i.qrSecret, i.gameId, now, c, i.window),
   'checkin.verifyPeer': (i: any, c, now) => verifyPeer(i, now, c),

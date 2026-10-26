@@ -29,6 +29,8 @@ export function sanctionRow(overrides: Partial<Sanction> & Pick<Sanction, 'dedup
     expiresAt: iso(Date.parse(startsAt) + 30 * DAY_MS),
     disputeUntil: iso(Date.parse(startsAt) + 48 * HOUR_MS),
     status: 'active',
+    appealPath: 'dispute',
+    overturnedAt: null,
     gameId: G1,
     causedBy: [],
     decidedBy: 'system',

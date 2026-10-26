@@ -226,7 +226,7 @@ create function public.create_game(
   p_lat double precision, p_lng double precision, p_hide_exact_location boolean, p_capacity int,
   p_starts_at timestamptz, p_ends_at timestamptz, p_deposit_minor int default 0, p_currency text default 'EUR',
   p_women_only boolean default false, p_team_count int default 2, p_notes text default null,
-  p_deposit_forfeit_to public.deposit_forfeit_target default 'pot')
+  p_deposit_forfeit_to public.deposit_forfeit_target default 'pot', p_min_players int default 2)
 returns public.game_views
 language plpgsql security definer set search_path = ''
 as $$
@@ -273,6 +273,9 @@ begin
      or p_team_count is null or p_team_count < 1 or p_team_count > p_capacity then
     perform public.st_raise('validation', 'capacity/team count');
   end if;
+  if p_min_players is null or p_min_players < 2 or p_min_players > p_capacity then
+    perform public.st_raise('validation', 'min players');
+  end if;
   if coalesce(p_deposit_minor, 0) < 0 or p_currency is null or p_currency !~ '^[A-Z]{3}$' then
     perform public.st_raise('validation', 'deposit');
   end if;
@@ -282,10 +285,10 @@ begin
 
   insert into public.games (host_id, sport, title, notes, visibility, venue_id, geog, approx_geog, hide_exact_location,
                             capacity, starts_at, ends_at, deposit_minor, currency, deposit_forfeit_to, women_only,
-                            team_count, created_at)
+                            team_count, min_players, created_at)
   values (me.id, p_sport, btrim(p_title), p_notes, p_visibility, p_venue_id, pos, pos, coalesce(p_hide_exact_location, false),
           p_capacity, p_starts_at, p_ends_at, coalesce(p_deposit_minor, 0), p_currency,
-          coalesce(p_deposit_forfeit_to, 'pot'), coalesce(p_women_only, false), p_team_count, t)
+          coalesce(p_deposit_forfeit_to, 'pot'), coalesce(p_women_only, false), p_team_count, p_min_players, t)
   returning id into g_id;
   -- The host is an approved participant and counts toward capacity.
   insert into public.game_participants (game_id, user_id, status, requested_at, decided_at)

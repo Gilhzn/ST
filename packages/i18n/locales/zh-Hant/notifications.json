@@ -15,6 +15,10 @@
     "title": "你已進入候補名單",
     "body": "「{gameTitle}」已額滿。你目前排在候補第 {position} 位，有空位時我們會通知你。"
   },
+  "waitlist_offer": {
+    "title": "有空位留給你",
+    "body": "你在候補名單中的一場比賽有空位了。請在邀請過期前在應用程式中接受。"
+  },
   "waitlist_promoted": {
     "title": "有空位了",
     "body": "你已加入 {time}的「{gameTitle}」。"
