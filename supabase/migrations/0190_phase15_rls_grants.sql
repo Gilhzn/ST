@@ -13,7 +13,7 @@ begin
   foreach t in array array['phase15_config', 'game_series', 'series_occurrences', 'series_roster', 'series_auto_joins',
                            'invite_joins', 'result_confirmations', 'peer_ratings', 'skill_ratings', 'rating_periods',
                            'rating_updates', 'game_rating_status', 'media_items', 'media_tags', 'media_reports',
-                           'connections', 'network_privacy'] loop
+                           'connections', 'network_privacy', 'account_review_holds'] loop
     execute format('alter table public.%I enable row level security', t);
     execute format('revoke all on public.%I from anon, authenticated, public', t);
     execute format('grant all on public.%I to service_role', t);
@@ -22,47 +22,12 @@ end $$;
 revoke all on public.series_views from anon, authenticated, public;
 grant select on public.series_views to service_role;
 
--- Every function created by the Phase 1.5 migrations starts with no client EXECUTE; the grants
--- below are the complete list. (0090's default privileges already do this; repeated defensively.)
-do $$
-declare f record;
-begin
-  for f in select p.oid::regprocedure as sig from pg_catalog.pg_proc p join pg_catalog.pg_namespace n on n.oid = p.pronamespace
-           where n.nspname = 'public'
-             and p.proname in (
-               'st_p15', 'phase15_config_json', 'st_p15_merge', 'st_is_iana_tz', 'st_local_to_utc', 'st_hhmm', 'st_series_geo',
-               'st_is_regular', 'st_can_see_series', 'st_can_see_series_exact', 'st_my_series_visible', 'st_my_series_exact',
-               'st_am_series_host', 'st_am_regular', 'st_roster_priority_blocks', 'st_games_series_cancel', 'st_series_slots',
-               'st_occurrence_times', 'st_occurrence_key', 'st_autojoin_eligible', 'st_series_autojoin', 'st_series_generate',
-               'generate_occurrences', 'always_in_autojoin', 'st_release_autojoin', 'st_validate_series', 'st_next_weekday',
-               'st_jtime', 'st_jdate', 'st_jint', 'create_series', 'st_cancel_occurrence', 'st_host_series', 'st_has_participants',
-               'skip_occurrence', 'st_retime_occurrence', 'st_notify_occurrence', 'update_series', 'end_series', 'st_roster_gates',
-               'st_roster_cap_check', 'join_roster', 'resolve_series_invite', 'invite_to_roster', 'accept_roster_invite',
-               'remove_from_roster', 'leave_roster', 'set_always_in', 'reconfirm_auto_join',
-               'get_invite_preview', 'rotate_invite_link', 'migration_stats', 'series_migration_stats',
-               'dm_round_half_up', 'dm_exp', 'dm_glicko2_g', 'dm_glicko2_f', 'dm_glicko2_volatility', 'dm_inflate_rd',
-               'dm_glicko2_update', 'dm_team_composite', 'dm_glicko_level', 'dm_is_provisional', 'dm_is_frozen',
-               'dm_format_family', 'dm_rating_period_index', 'dm_rating_period_start', 'dm_rating_period_key',
-               'dm_parse_rating_period_key', 'dm_process_rating_period', 'dm_current_skill_rating', 'dm_result_summary',
-               'dm_game_rating_eligibility', 'dm_peer_rating_eligibility', 'dm_validate_peer_ratings', 'dm_self_prior',
-               'dm_all_max', 'dm_peer_rating_weights', 'dm_aggregate_peer_ratings', 'st_verified_ids', 'st_result_summary',
-               'st_game_format_family', 'st_game_teams', 'st_game_rating_eligibility', 'st_peer_eligibility', 'st_peer_summary',
-               'confirm_result', 'result_confirmation', 'game_rating_status', 'rating_eligibility', 'submit_peer_ratings',
-               'my_peer_summary', 'game_skill_bands', 'my_skill_ratings', 'run_rating_period',
-               'st_media_ext', 'dm_media_upload_reject', 'st_media_reject', 'st_media_game_allows_public', 'st_media_blockers',
-               'st_media_refresh_visibility', 'st_media_visible', 'st_my_media_visible', 'st_am_media_uploader', 'st_media_json',
-               'create_upload_intent', 'finalize_media', 'tag_user', 'respond_tag', 'untag', 'set_visibility', 'delete_media',
-               'st_remove_media', 'report_media', 'moderate_media', 'game_gallery', 'venue_vault', 'my_tag_requests',
-               'purge_media', 'st_media_delete_account',
-               'st_played_with', 'st_are_friends', 'st_friend_state', 'st_connection_view', 'derive_played_with',
-               'st_blocks_unfriend', 'st_friend_transition', 'request_friend', 'respond_friend', 'remove_friend', 'list_network',
-               'get_network_privacy', 'set_network_privacy', 'friends_upcoming_games', 'st_network_delete_account',
-               'st_phase15_delete_account', 'purge_phase15_retention')
-  loop
-    execute format('revoke execute on function %s from public, anon, authenticated', f.sig);
-    execute format('grant execute on function %s to service_role', f.sig);
-  end loop;
-end $$;
+-- Functions: 0090's default privileges already create every later function without client
+-- EXECUTE; repeated defensively for PUBLIC and anon (the exact authenticated allow-list is pinned by
+-- rls.test.ts). anon gets back st_now and get_invite_preview only.
+revoke execute on all functions in schema public from public, anon;
+grant execute on function public.st_now() to anon;
+grant execute on all functions in schema public to service_role;
 
 -- ---------------------------------------------------------------------------
 -- Series
@@ -123,7 +88,7 @@ grant select on public.game_rating_status to authenticated;
 create policy game_rating_status_read on public.game_rating_status for select to authenticated
   using (public.st_my_game_visible(game_id));
 
--- rating_periods: service role only.
+-- rating_periods, account_review_holds: service role only.
 
 -- ---------------------------------------------------------------------------
 -- Media Vault
@@ -171,6 +136,8 @@ grant execute on function public.get_invite_preview(text) to anon, authenticated
 
 -- Client RPCs (each checks auth.uid() itself).
 grant execute on function
+  public.create_game(text, text, public.game_visibility, uuid, double precision, double precision, boolean, int,
+                     timestamptz, timestamptz, int, text, boolean, int, text, public.deposit_forfeit_target, int, text),
   public.phase15_config_json(),
   public.create_series(jsonb),
   public.update_series(uuid, text, text, jsonb),

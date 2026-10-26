@@ -32,7 +32,8 @@ import { SEVERE_REPORT_SLA_HOURS } from '../trust/constants';
 
 /** Accepted MIME types (VAULT-009 pickers produce these). */
 export const MEDIA_MIME_TYPES = {
-  photo: ['image/jpeg', 'image/png', 'image/heic', 'image/heif', 'image/webp'],
+  // HEIC/HEIF are excluded: the media-process pipeline cannot strip their EXIF/GPS metadata (VAULT-003).
+  photo: ['image/jpeg', 'image/png', 'image/webp'],
   video: ['video/mp4', 'video/quicktime', 'video/webm'],
 } as const;
 

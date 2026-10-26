@@ -96,7 +96,7 @@ begin
   return jsonb_build_object('occurrences', occs, 'effects', effects);
 end $$;
 
--- occurrenceJoinPhase() + checkOccurrenceJoinWindow() → Result<'roster_only' | 'open', 'game_not_open'>.
+-- occurrenceJoinPhase() + checkOccurrenceJoinWindow() → Result<'roster_only' | 'open', 'game_not_open' | 'roster_priority'>.
 create function public.dm_occurrence_join_window(p_input jsonb, p_now timestamptz) returns jsonb
 language plpgsql immutable set search_path = ''
 as $$
@@ -112,9 +112,8 @@ begin
   regular := p_input ->> 'userId' = p_input #>> '{series,hostId}' or exists (
     select 1 from jsonb_array_elements(coalesce(p_input -> 'roster', '[]'::jsonb)) r
     where r ->> 'userId' = p_input ->> 'userId' and r ->> 'status' = 'regular');
-  if phase in ('closed', 'not_open') or (phase = 'roster_only' and not regular) then
-    return jsonb_build_object('ok', false, 'error', 'game_not_open');
-  end if;
+  if phase in ('closed', 'not_open') then return jsonb_build_object('ok', false, 'error', 'game_not_open'); end if;
+  if phase = 'roster_only' and not regular then return jsonb_build_object('ok', false, 'error', 'roster_priority'); end if;
   return jsonb_build_object('ok', true, 'value', phase);
 end $$;
 
@@ -275,7 +274,8 @@ begin
   if v ->> 'decision' = 'block' then
     effects := effects || jsonb_build_array(jsonb_build_object(
       'type', 'Notify15', 'userId', item -> 'uploaderId', 'kind', 'media_blocked',
-      'params', jsonb_build_object('mediaId', item -> 'id', 'reasonKey', coalesce(v -> 'reasonKey', to_jsonb('media.blocked.policy'::text))),
+      'params', jsonb_build_object('mediaId', item -> 'id', 'reasonKey', case when coalesce(jsonb_typeof(v -> 'reasonKey'), 'null') = 'null'
+                                                                   then to_jsonb('media.blocked.policy'::text) else v -> 'reasonKey' end),
       'gameId', item -> 'gameId', 'seriesId', null, 'dedupeKey', 'notify:media_blocked:' || id));
   else
     effects := effects || jsonb_build_array(

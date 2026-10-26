@@ -46,7 +46,7 @@ begin
     select count(*) into appr from public.game_participants gp where gp.game_id = g.id and gp.status = 'approved';
     return jsonb_build_object(
       'sport', g.sport, 'title', g.title, 'startsAt', public.dm_iso(g.starts_at),
-      'timeZone', s.time_zone, 'recurrence', s.recurrence, 'weekday', s.weekday,
+      'timeZone', coalesce(s.time_zone, g.time_zone), 'recurrence', s.recurrence, 'weekday', s.weekday,
       'localStartTime', case when s.id is not null then public.st_hhmm(s.start_time) end,
       'areaLabel', label, 'spotsLeft', greatest(0, g.capacity - appr), 'capacity', g.capacity,
       'womenOnly', g.women_only, 'hostDisplayName', host_name, 'ogImageUrl', null);

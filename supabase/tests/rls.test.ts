@@ -49,6 +49,25 @@ const MATRIX: Record<string, [Exp, Exp, Exp, Exp, Exp, Exp]> = {
   payment_events: ["deny", "deny", "deny", "deny", "deny", 1],
   deposit_tiers: ["deny", 54, 54, 54, 54, 54],
   sanction_phone_hmac: ["deny", "deny", "deny", "deny", "deny", 0],
+  // Phase 1.5 (owner = a regular of both series, uploader, rater, friend of the host; the owner blocked the stranger).
+  phase15_config: ["deny", 1, 1, 1, 1, 1],
+  game_series: ["deny", 1, 2, 2, 2, 2],
+  series_occurrences: ["deny", 1, 1, 1, 1, 1],
+  series_roster: ["deny", 0, 2, 3, 3, 3],
+  series_auto_joins: ["deny", 0, 1, 1, 0, 1],
+  invite_joins: ["deny", 0, 1, 1, 0, 1],
+  result_confirmations: ["deny", 0, 1, 0, 0, 1],
+  peer_ratings: ["deny", 0, 1, 0, 0, 1],
+  skill_ratings: ["deny", 0, 1, 0, 0, 1],
+  rating_periods: ["deny", "deny", "deny", "deny", "deny", 1],
+  rating_updates: ["deny", 0, 1, 0, 0, 1],
+  game_rating_status: ["deny", 1, 1, 1, 1, 1],
+  media_items: ["deny", 0, 2, 1, 2, 2],
+  media_tags: ["deny", 0, 1, 1, 0, 1],
+  media_reports: ["deny", 0, 0, 1, 1, 1],
+  connections: ["deny", 0, 1, 1, 0, 2],
+  network_privacy: ["deny", 0, 1, 0, 0, 1],
+  account_review_holds: ["deny", "deny", "deny", "deny", "deny", 1],
 };
 /** Views: [anon, stranger, owner, host, moderator, service]. */
 const VIEWS: Record<string, [Exp, Exp, Exp, Exp, Exp, Exp]> = {
@@ -56,6 +75,7 @@ const VIEWS: Record<string, [Exp, Exp, Exp, Exp, Exp, Exp]> = {
   game_views: ["deny", 2, 1, 2, 2, 0],
   participant_views: ["deny", 1, 2, 5, 5, 0],
   venue_views: ["deny", 1, 2, 1, 2, 2],
+  series_views: ["deny", 1, 2, 2, 2, 0],
 };
 /** Tables where some client writes are granted (tested explicitly below). */
 const CLIENT_WRITABLE: Record<string, ("insert" | "update" | "delete")[]> = {
@@ -138,6 +158,49 @@ beforeAll(async () => {
     insert into payment_customers (user_id, provider, customer_id) values ('${P}', 'stripe', 'cus_1');
     insert into payment_events (id, provider, type, payment_id) values ('evt_1', 'stripe', 'setup_intent.succeeded', '00000000-0000-4000-8000-0000000000f1');
   `);
+  // Phase 1.5 rows (one scenario per new table).
+  const SER = (ids.SER = "00000000-0000-4000-8000-00000000c0a1");
+  const SER2 = "00000000-0000-4000-8000-00000000c0a2";
+  const MI = (ids.MI = "00000000-0000-4000-8000-00000000d0a1");
+  await db.exec(`
+    insert into game_series (id, host_id, sport, title, visibility, geog, approx_geog, capacity, weekday, start_time, time_zone,
+                             duration_minutes, anchor_date)
+    values ('${SER}', '${H}', 'football', 'Weekly', 'public', st_point(32.08, 34.78), st_point(32.08, 34.78), 10, 1, '20:00',
+            'Asia/Jerusalem', 90, '2026-11-02'),
+           ('${SER2}', '${H}', 'football', 'Private weekly', 'private', st_point(32.08, 34.78), st_point(32.08, 34.78), 10, 1,
+            '20:00', 'Asia/Jerusalem', 90, '2026-11-02');
+    insert into series_occurrences (occurrence_key, series_id, slot_date, schedule_revision, game_id, starts_at, ends_at, opens_at,
+                                    priority_until, reconfirm_at, release_at)
+    values ('${SER}:0:2026-11-09', '${SER}', '2026-11-09', 0, gen_random_uuid(), '2026-11-09T18:00:00Z', '2026-11-09T19:30:00Z',
+            '2026-10-12T18:00:00Z', '2026-10-13T18:00:00Z', '2026-11-07T18:00:00Z', '2026-11-08T18:00:00Z');
+    insert into series_roster (series_id, user_id, status, always_in, joined_via) values
+      ('${SER}', '${P}', 'regular', true, 'invite_link'), ('${SER}', '${R}', 'left', false, 'invite_link'),
+      ('${SER2}', '${P}', 'regular', false, 'host');
+    insert into series_auto_joins (game_id, series_id, user_id, joined_as) values ('${G}', '${SER}', '${P}', 'approved');
+    insert into invite_joins (kind, series_id, user_id) values ('series', '${SER}', '${P}');
+    insert into result_confirmations (game_id, user_id, verdict) values ('${G}', '${P}', 'confirm');
+    insert into peer_ratings (game_id, rater_id, ratee_id, sport, scores) values ('${G}', '${P}', '${H}', 'football', '{"overall": 4}');
+    insert into skill_ratings (user_id, sport, format_family, r, rd, sigma) values ('${P}', 'football', 'small_sided', 1500, 350, 0.06);
+    insert into rating_periods (period, starts_at, ends_at) values ('2026-W44', '2026-10-26T00:00:00Z', '2026-11-02T00:00:00Z');
+    insert into rating_updates (dedupe_key, user_id, sport, format_family, period, r_before, rd_before, sigma_before, r_after, rd_after,
+                                sigma_after, games_added, frozen)
+      values ('rating:p', '${P}', 'football', 'small_sided', '2026-W44', 1500, 350, 0.06, 1500, 350, 0.06, 0, true);
+    insert into game_rating_status (game_id, period, eligible, reason) values ('${G}', '2026-W44', false, 'too_few_verified');
+    insert into media_items (id, game_id, uploader_id, kind, status, mime_type, size_bytes, storage_path, upload_expires_at, expires_at,
+                             published_at, published_path)
+      values ('${MI}', '${G}', '${P}', 'photo', 'published', 'image/jpeg', 1000, 'originals/a/b/c.jpg', now(), now() + interval '1 year',
+              now(), 'media/x/y/display.jpg'),
+             (gen_random_uuid(), '${G}', '${P}', 'photo', 'processing', 'image/jpeg', 1000, 'originals/a/b/d.jpg', now(),
+              now() + interval '1 year', null, null);
+    insert into media_tags (media_id, user_id, tagged_by, status) values ('${MI}', '${H}', '${P}', 'requested');
+    insert into media_reports (media_id, reporter_id, reason) values ('${MI}', '${H}', 'privacy');
+    insert into connections (user_a, user_b, games_together, friend_status, friend_requested_by, friend_requested_at, friend_accepted_at)
+      select least('${P}'::uuid, '${H}'::uuid), greatest('${P}'::uuid, '${H}'::uuid), 3, 'accepted', '${P}', now(), now();
+    insert into connections (user_a, user_b, games_together)
+      select least('${P}'::uuid, '${S}'::uuid), greatest('${P}'::uuid, '${S}'::uuid), 1;
+    insert into network_privacy (user_id) values ('${P}');
+    insert into account_review_holds (user_id, reason, until, dedupe_key) values ('${S}', 'csam_match', now() + interval '30 days', 'hold:s');
+  `);
 });
 afterAll(() => db?.close());
 
@@ -162,6 +225,30 @@ describe("catalog invariants", () => {
     for (const v of views) expect(v.opts.some((o) => /security_(barrier|invoker)=true/.test(o))).toBe(true);
   });
 
+  it("authenticated can execute exactly the client RPCs and caller-relative helpers (no internals, no jobs)", async () => {
+    const got = await db.query<{ f: string }>(
+      `select distinct p.proname f from pg_proc p join pg_namespace n on n.oid = p.pronamespace
+       where n.nspname = 'public' and has_function_privilege('authenticated', p.oid, 'execute') order by 1`);
+    expect(got.map((r) => r.f)).toEqual([
+    "accept_roster_invite", "accept_waitlist_offer", "block_user", "cancel_game", "cancel_participation", "confirm_result",
+    "create_game", "create_profile", "create_series", "create_upload_intent", "create_venue", "decide_join",
+    "delete_media", "delete_my_account", "end_series", "file_appeal", "friends_upcoming_games", "game_gallery",
+    "game_rating_status", "game_skill_bands", "get_invite_preview", "get_network_privacy", "get_qr_token",
+    "invite_to_roster", "join_roster", "leave_roster", "list_network", "migration_stats", "moderate_media",
+    "moderator_decide", "my_peer_summary", "my_skill_ratings", "my_tag_requests", "nearby_games", "nearby_venues",
+    "peer_confirm", "phase15_config_json", "rate_host", "rate_venue", "rating_eligibility", "reconfirm_auto_join",
+    "register_push_token", "remove_friend", "remove_from_roster", "remove_participant", "report_media", "report_user",
+    "report_venue", "request_friend", "request_join", "resolve_invite", "resolve_series_invite", "respond_friend",
+    "respond_tag", "result_confirmation", "rotate_invite_link", "rotate_qr", "save_teams", "series_migration_stats",
+    "set_always_in", "set_network_privacy", "set_visibility", "skip_occurrence", "st_am_approved", "st_am_host",
+    "st_am_media_uploader", "st_am_moderator", "st_am_regular", "st_am_series_host", "st_hhmm", "st_hidden_from_me",
+    "st_media_object_readable", "st_media_object_uploadable", "st_my_blocked", "st_my_chat", "st_my_exact",
+    "st_my_game_visible", "st_my_media_visible", "st_my_series_exact", "st_my_series_visible", "st_now", "st_raise",
+    "st_realtime_can_read", "submit_checkin", "submit_peer_ratings", "submit_result", "tag_user", "trust_config_json",
+    "unblock_user", "untag", "update_series", "venue_vault"
+    ]);
+  });
+
   it("every SECURITY DEFINER function pins search_path; anon can execute nothing but st_now", async () => {
     const unpinned = await db.query(
       `select p.proname from pg_proc p join pg_namespace n on n.oid = p.pronamespace
@@ -170,7 +257,8 @@ describe("catalog invariants", () => {
     const anonExec = await db.query<{ f: string }>(
       `select p.proname f from pg_proc p join pg_namespace n on n.oid = p.pronamespace
        where n.nspname = 'public' and has_function_privilege('anon', p.oid, 'execute') order by 1`);
-    expect(anonExec.map((r) => r.f)).toEqual(["st_now"]);
+    // The invite rich preview is the only anon RPC (safe public fields only; security_regressions/phase15 tests).
+    expect(anonExec.map((r) => r.f)).toEqual(["get_invite_preview", "st_now"]);
     const serviceOnly = ["apply_effects", "record_checkin_verdict", "process_no_shows", "expire_sanctions", "settle_deposits",
       "place_deposit_holds", "purge_expired_messages", "purge_retained", "purge_retention", "recheck_pending_messages",
       "expire_waitlist_offers", "due_deposit_holds", "due_deposit_settlements", "st_issue_sanction", "st_overturn_sanction",
@@ -285,3 +373,4 @@ describe("write matrix: clients cannot write outside the granted paths", () => {
     expect(iso(at(0))).toBeTruthy();
   });
 });
+

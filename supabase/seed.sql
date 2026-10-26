@@ -89,3 +89,57 @@ insert into public.game_participants (game_id, user_id, status, requested_at, de
 select g.id, g.host_id, 'approved', now(), now()
 from public.games g where g.id::text like '33333333-0000-4000-8000-%'
 on conflict do nothing;
+
+-- Recurring series (GAME-010): a weekly Tuesday 20:00 game in Tel Aviv (Asia/Jerusalem) and a weekly
+-- Thursday 19:30 game in London (Europe/London), generated 4 weeks ahead in local time (DST-correct),
+-- each with two regulars (one "always in", auto-joined to every occurrence).
+insert into auth.users (id, phone, created_at, raw_user_meta_data)
+select u.id, u.phone, now() - interval '90 days', '{"demo": true}'::jsonb
+from (values
+  ('11111111-0000-4000-8000-000000000011'::uuid, '15550000011'),
+  ('11111111-0000-4000-8000-000000000012'::uuid, '15550000012'),
+  ('11111111-0000-4000-8000-000000000021'::uuid, '15550000021'),
+  ('11111111-0000-4000-8000-000000000022'::uuid, '15550000022')
+) as u(id, phone)
+on conflict (id) do nothing;
+
+insert into public.profiles (id, display_name, locale, country_code, created_at)
+values
+  ('11111111-0000-4000-8000-000000000011', 'Yoni (Tel Aviv)', 'he', 'IL', now() - interval '90 days'),
+  ('11111111-0000-4000-8000-000000000012', 'Dana (Tel Aviv)', 'he', 'IL', now() - interval '90 days'),
+  ('11111111-0000-4000-8000-000000000021', 'Sam (London)', 'en', 'GB', now() - interval '90 days'),
+  ('11111111-0000-4000-8000-000000000022', 'Priya (London)', 'en', 'GB', now() - interval '90 days')
+on conflict (id) do nothing;
+
+insert into public.profile_private (user_id, phone, birth_year, birth_month, gender)
+select p.id, '+' || u.phone, 1994, 3, 'undisclosed'
+from public.profiles p join auth.users u on u.id = p.id
+where p.id in ('11111111-0000-4000-8000-000000000011', '11111111-0000-4000-8000-000000000012',
+               '11111111-0000-4000-8000-000000000021', '11111111-0000-4000-8000-000000000022')
+on conflict (user_id) do nothing;
+
+insert into public.game_series (id, host_id, sport, title, visibility, venue_id, geog, approx_geog, capacity, min_players, deposit_minor,
+                                currency, team_count, recurrence, weekday, start_time, time_zone, duration_minutes, anchor_date,
+                                created_at, updated_at)
+select s.id::uuid, s.host::uuid, s.sport, s.title, 'public', s.venue::uuid, ve.geog, ve.geog, s.cap, 6, 0, s.currency, 2, 'weekly', s.wd,
+       s.st::time, s.tz, s.minutes,
+       ((now() at time zone s.tz)::date + ((s.wd - extract(isodow from (now() at time zone s.tz)::date)::int + 7) % 7))::date,
+       now(), now()
+from (values
+  ('44444444-0000-4000-8000-000000000101', '11111111-0000-4000-8000-000000000001', '22222222-0000-4000-8000-000000000102',
+   'football', 'Tuesday night 7-a-side', 14, 'ILS', 2, '20:00', 'Asia/Jerusalem', 90),
+  ('44444444-0000-4000-8000-000000000201', '11111111-0000-4000-8000-000000000002', '22222222-0000-4000-8000-000000000203',
+   'football', 'Thursday 5-a-side', 10, 'GBP', 4, '19:30', 'Europe/London', 60)
+) as s(id, host, venue, sport, title, cap, currency, wd, st, tz, minutes)
+join public.venues ve on ve.id = s.venue::uuid
+on conflict (id) do nothing;
+
+insert into public.series_roster (series_id, user_id, status, always_in, joined_via, joined_at)
+values
+  ('44444444-0000-4000-8000-000000000101', '11111111-0000-4000-8000-000000000011', 'regular', true, 'invite_link', now() - interval '2 days'),
+  ('44444444-0000-4000-8000-000000000101', '11111111-0000-4000-8000-000000000012', 'regular', false, 'invite_link', now() - interval '1 day'),
+  ('44444444-0000-4000-8000-000000000201', '11111111-0000-4000-8000-000000000021', 'regular', true, 'invite_link', now() - interval '2 days'),
+  ('44444444-0000-4000-8000-000000000201', '11111111-0000-4000-8000-000000000022', 'regular', false, 'host', now() - interval '1 day')
+on conflict do nothing;
+
+select public.st_series_generate(s.id, now()) from public.game_series s where s.id::text like '44444444-0000-4000-8000-%';

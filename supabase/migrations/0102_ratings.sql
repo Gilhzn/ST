@@ -518,15 +518,15 @@ declare
   can boolean;
   rateable jsonb;
 begin
-  if not coalesce((rater ->> 'verifiedInGame')::boolean, false) then reasons := reasons || 'not_verified'; end if;
+  if not coalesce((rater ->> 'verifiedInGame')::boolean, false) then reasons := array_append(reasons, 'not_verified'); end if;
   if rater -> 'reliability' is null or jsonb_typeof(rater -> 'reliability') = 'null'
      or (rater ->> 'reliability')::double precision < p15.peer_rater_min_reliability then
-    reasons := reasons || 'low_reliability';
+    reasons := array_append(reasons, 'low_reliability');
   end if;
-  if (rater ->> 'verifiedGamesInSport')::int < p15.peer_rater_min_verified_games then reasons := reasons || 'too_few_games'; end if;
-  if coalesce((rater ->> 'hasActiveSanction')::boolean, false) then reasons := reasons || 'active_sanction'; end if;
-  if p_now < ends then reasons := reasons || 'window_not_open'; end if;
-  if p_now > closes then reasons := reasons || 'window_closed'; end if;
+  if (rater ->> 'verifiedGamesInSport')::int < p15.peer_rater_min_verified_games then reasons := array_append(reasons, 'too_few_games'); end if;
+  if coalesce((rater ->> 'hasActiveSanction')::boolean, false) then reasons := array_append(reasons, 'active_sanction'); end if;
+  if p_now < ends then reasons := array_append(reasons, 'window_not_open'); end if;
+  if p_now > closes then reasons := array_append(reasons, 'window_closed'); end if;
   remaining := greatest(0, p15.peer_rating_max_ratees - jsonb_array_length(coalesce(p_input -> 'alreadyRated', '[]'::jsonb)));
   can := cardinality(reasons) = 0 and remaining > 0;
   select coalesce(jsonb_agg(u order by u collate "C"), '[]'::jsonb) into rateable
@@ -975,9 +975,9 @@ declare
   pstart timestamptz;
   pend timestamptz;
   pkey text;
-  g record;
+  g public.games;
   elig jsonb;
-  games jsonb;
+  rated jsonb;
   res jsonb;
   x jsonb;
   n int := 0;
@@ -994,7 +994,7 @@ begin
     pend := public.dm_rating_period_start(idx + 1, days);
     exit when pend + p15.peer_rating_window_hours * interval '1 hour' > t or runs >= 8;
     pkey := public.dm_rating_period_key(idx, days);
-    games := '[]'::jsonb;
+    rated := '[]'::jsonb;
     n_rated := 0;
     n_not := 0;
     for g in select x.* from public.games x
@@ -1006,7 +1006,7 @@ begin
       values (g.id, pkey, (elig ->> 'eligible')::boolean, elig ->> 'reason', public.st_game_format_family(g), t);
       if (elig ->> 'eligible')::boolean then
         n_rated := n_rated + 1;
-        games := games || jsonb_build_array(jsonb_build_object(
+        rated := rated || jsonb_build_array(jsonb_build_object(
           'gameId', g.id, 'sport', g.sport, 'formatFamily', public.st_game_format_family(g), 'endsAt', public.dm_iso(g.ends_at),
           'teams', public.st_game_teams(g.id),
           'teamScores', (select to_jsonb(gr.team_scores) from public.game_results gr where gr.game_id = g.id)));
@@ -1014,17 +1014,17 @@ begin
         n_not := n_not + 1;
       end if;
     end loop;
-    if jsonb_array_length(games) > 0 then
+    if jsonb_array_length(rated) > 0 then
       res := public.dm_process_rating_period(jsonb_build_object(
-          'period', pkey, 'games', games,
+          'period', pkey, 'games', rated,
           'ratings', (select coalesce(jsonb_agg(jsonb_build_object('userId', s.user_id, 'sport', s.sport, 'formatFamily', s.format_family,
                                                                    'r', s.r, 'rd', s.rd, 'sigma', s.sigma, 'games', s.games,
                                                                    'lastPeriod', s.last_period)), '[]'::jsonb)
                       from public.skill_ratings s
-                      where s.user_id in (select (u #>> '{}')::uuid from jsonb_array_elements(games) gg,
+                      where s.user_id in (select (u #>> '{}')::uuid from jsonb_array_elements(rated) gg,
                                             jsonb_array_elements(gg -> 'teams') tm, jsonb_array_elements(tm) u)),
           'reliability', (select coalesce(jsonb_object_agg(p.id, p.reliability_score), '{}'::jsonb) from public.profiles p
-                          where p.id in (select (u #>> '{}')::uuid from jsonb_array_elements(games) gg,
+                          where p.id in (select (u #>> '{}')::uuid from jsonb_array_elements(rated) gg,
                                            jsonb_array_elements(gg -> 'teams') tm, jsonb_array_elements(tm) u))),
         p15, t);
       for x in select y from jsonb_array_elements(res -> 'ratings') y loop

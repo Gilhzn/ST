@@ -213,6 +213,9 @@ create trigger game_series_geo before insert or update of geog, venue_id on publ
 -- Games materialised from a series.
 alter table public.games add column series_id uuid references public.game_series (id) on delete set null;
 alter table public.games add column invite_rotated_at timestamptz;
+-- IANA zone of the game's wall clock (series occurrences: the series zone; one-off games: given at
+-- creation). Used for local times in invite previews and share messages.
+alter table public.games add column time_zone text check (time_zone is null or char_length(time_zone) <= 64);
 create index games_series_idx on public.games (series_id, starts_at) where series_id is not null;
 
 -- ---------------------------------------------------------------------------
@@ -723,37 +726,77 @@ as $$
      and (not g.women_only or exists (select 1 from public.profile_private pp where pp.user_id = p_uid and pp.gender = 'female'))
 $$;
 
--- Auto-join one "always in" regular to an occurrence: approved while there is room, else
--- waitlisted. Deposit occurrences are skipped (a deposit needs the player's own payment step).
--- Returns 'approved' | 'waitlisted' | null.
-create function public.st_series_autojoin(p_game_id uuid, p_uid uuid, p_at timestamptz) returns text
+-- GameSeries JSON (types.ts) of a stored series, for the mirrors.
+create function public.st_series_json(s public.game_series) returns jsonb
+language sql stable security definer set search_path = ''
+as $$
+  select jsonb_build_object(
+    'id', s.id, 'hostId', s.host_id, 'sport', s.sport, 'title', s.title, 'notes', s.notes, 'visibility', s.visibility,
+    'venueId', s.venue_id,
+    'location', jsonb_build_object('lat', extensions.st_y(s.geog::extensions.geometry), 'lng', extensions.st_x(s.geog::extensions.geometry)),
+    'approxLocation', jsonb_build_object('lat', extensions.st_y(s.approx_geog::extensions.geometry),
+                                         'lng', extensions.st_x(s.approx_geog::extensions.geometry)),
+    'hideExactLocation', s.hide_exact_location, 'capacity', s.capacity, 'minPlayers', s.min_players,
+    'depositMinor', s.deposit_minor, 'currency', s.currency, 'depositForfeitTo', s.deposit_forfeit_to, 'womenOnly', s.women_only,
+    'teamCount', s.team_count, 'recurrence', s.recurrence, 'weekday', s.weekday, 'startTime', public.st_hhmm(s.start_time),
+    'timeZone', s.time_zone, 'durationMinutes', s.duration_minutes, 'anchorDate', to_char(s.anchor_date, 'YYYY-MM-DD'),
+    'endDate', to_char(s.end_date, 'YYYY-MM-DD'), 'horizonWeeks', s.horizon_weeks, 'rosterPriorityHours', s.roster_priority_hours,
+    'autoJoinReconfirmHours', s.auto_join_reconfirm_hours,
+    'skippedDates', (select coalesce(jsonb_agg(to_char(d, 'YYYY-MM-DD') order by d), '[]'::jsonb) from unnest(s.skipped_dates) d),
+    'scheduleRevision', s.schedule_revision, 'status', s.status, 'inviteToken', null,
+    'createdAt', public.dm_iso(s.created_at), 'updatedAt', public.dm_iso(s.updated_at))
+$$;
+
+create function public.st_roster_json(p_series_id uuid) returns jsonb
+language sql stable security definer set search_path = ''
+as $$
+  select coalesce(jsonb_agg(jsonb_build_object(
+           'seriesId', r.series_id, 'userId', r.user_id, 'status', r.status, 'alwaysIn', r.always_in, 'joinedVia', r.joined_via,
+           'consecutiveMisses', r.consecutive_misses, 'leaveOfferedAt', public.dm_iso(r.leave_offered_at),
+           'joinedAt', public.dm_iso(r.joined_at), 'leftAt', public.dm_iso(r.left_at))
+         order by r.joined_at, r.user_id), '[]'::jsonb)
+  from public.series_roster r where r.series_id = p_series_id
+$$;
+
+create function public.st_occurrence_json(o public.series_occurrences) returns jsonb
+language sql immutable set search_path = ''
+as $$
+  select jsonb_build_object(
+    'seriesId', o.series_id, 'occurrenceKey', o.occurrence_key, 'slotDate', to_char(o.slot_date, 'YYYY-MM-DD'),
+    'scheduleRevision', o.schedule_revision, 'gameId', o.game_id, 'startsAt', public.dm_iso(o.starts_at),
+    'endsAt', public.dm_iso(o.ends_at), 'opensAt', public.dm_iso(o.opens_at), 'priorityUntil', public.dm_iso(o.priority_until),
+    'reconfirmAt', public.dm_iso(o.reconfirm_at), 'releaseAt', public.dm_iso(o.release_at), 'status', o.status,
+    'overridden', o.overridden)
+$$;
+
+-- Applies one AutoJoin effect: the regular joins as planned (approved / waitlisted) unless they
+-- already have a participant row or are blocked with an approved participant (DB-side guard).
+create function public.st_apply_autojoin(p_game_id uuid, p_uid uuid, p_joined_as text, p_at timestamptz) returns boolean
 language plpgsql security definer set search_path = ''
 as $$
-declare
-  g public.games;
-  n int;
-  st public.participant_status;
+declare g public.games;
 begin
   select * into g from public.games x where x.id = p_game_id for update;
-  if g.id is null or g.series_id is null or g.status <> 'scheduled' or g.starts_at <= p_at or g.deposit_minor > 0
-     or g.host_id = p_uid or not public.st_autojoin_eligible(g, p_uid, p_at)
-     or exists (select 1 from public.game_participants gp where gp.game_id = g.id and gp.user_id = p_uid) then
-    return null;
+  if g.id is null or g.series_id is null or g.status <> 'scheduled' or g.host_id = p_uid
+     or exists (select 1 from public.game_participants gp where gp.game_id = g.id and gp.user_id = p_uid)
+     or not public.st_autojoin_eligible(g, p_uid, p_at) then
+    return false;
   end if;
-  select count(*) into n from public.game_participants gp where gp.game_id = g.id and gp.status = 'approved';
-  st := case when n < g.capacity then 'approved' else 'waitlisted' end;
   insert into public.game_participants (game_id, user_id, status, requested_at, decided_at, waitlisted_at)
-  values (g.id, p_uid, st, p_at, p_at, case when st = 'waitlisted' then p_at end);
+  values (g.id, p_uid, p_joined_as::public.participant_status, p_at, p_at, case when p_joined_as = 'waitlisted' then p_at end);
   insert into public.series_auto_joins (game_id, series_id, user_id, joined_as, joined_at)
-  values (g.id, g.series_id, p_uid, st::text, p_at)
+  values (g.id, g.series_id, p_uid, p_joined_as, p_at)
   on conflict do nothing;
-  return st::text;
+  return true;
 end $$;
 
--- Materialise due occurrences of one series (opensAt ≤ now < startsAt, inside the horizon), with
--- the host approved and "always in" regulars auto-joined. Idempotent (deterministic keys/ids).
--- Nothing is generated while the series is not active, the host is deleted/banned/suspended (or,
--- for public series, join-banned or visibility-restricted), or the venue is no longer active.
+-- Materialise due occurrences of one series with the domain plan (dm_plan_series_occurrences ≡
+-- planSeriesOccurrences): slots starting in (now, now + horizon], CreateOccurrence (game with the host
+-- approved + occurrence row, deterministic ids) then AutoJoin per "always in" regular. DB-side
+-- gates: nothing is generated while the host is deleted/banned/suspended (or, for public series,
+-- join-banned or visibility-restricted) or the venue is no longer active; regulars failing the join
+-- gates (blocks with the host, bans, women-only) and every regular of a deposit series (a deposit
+-- needs the player's own payment step) are passed as ineligibleUserIds. Idempotent.
 -- Returns the number of games created.
 create function public.st_series_generate(p_series_id uuid, p_now timestamptz) returns int
 language plpgsql security definer set search_path = ''
@@ -762,11 +805,10 @@ declare
   cfg public.phase15_config := public.st_p15();
   s public.game_series;
   h public.profiles;
-  d date;
-  tm record;
-  k text;
+  plan jsonb;
+  e jsonb;
+  o jsonb;
   gid uuid;
-  m record;
   n int := 0;
 begin
   select * into s from public.game_series x where x.id = p_series_id for update;
@@ -780,40 +822,45 @@ begin
   if s.venue_id is not null and not exists (select 1 from public.venues v where v.id = s.venue_id and v.status = 'active') then
     return 0;
   end if;
-  for d in select x from public.st_series_slots(s.anchor_date, s.recurrence, s.end_date,
-                                                (p_now at time zone s.time_zone)::date - 1,
-                                                ((p_now + s.horizon_weeks * interval '168 hours') at time zone s.time_zone)::date + 1) x
-  loop
-    continue when d = any (s.skipped_dates);
-    select * into tm from public.st_occurrence_times(s, d, cfg, p_now);
-    -- planSeriesOccurrences(): slots starting in (now, now + horizon].
-    continue when tm.starts_at <= p_now or tm.starts_at > p_now + s.horizon_weeks * interval '168 hours';
-    k := public.st_occurrence_key(s.id, s.schedule_revision, d);
-    continue when exists (select 1 from public.series_occurrences o where o.occurrence_key = k)
-               or exists (select 1 from public.series_occurrences o
-                          where o.series_id = s.id and o.slot_date = d and o.status = 'scheduled');
-    gid := public.dm_stable_uuid('occurrence:' || k);
-    insert into public.games (id, host_id, sport, title, notes, visibility, venue_id, geog, approx_geog, hide_exact_location,
-                              capacity, min_players, starts_at, ends_at, deposit_minor, currency, deposit_forfeit_to,
-                              women_only, team_count, series_id, created_at)
-    values (gid, s.host_id, s.sport, s.title, s.notes, s.visibility, s.venue_id, s.geog, s.geog, s.hide_exact_location,
-            s.capacity, s.min_players, tm.starts_at, tm.ends_at, s.deposit_minor, s.currency, s.deposit_forfeit_to,
-            s.women_only, s.team_count, s.id, p_now);
-    insert into public.game_participants (game_id, user_id, status, requested_at, decided_at)
-    values (gid, s.host_id, 'approved', p_now, p_now);
-    insert into public.series_occurrences (occurrence_key, series_id, slot_date, schedule_revision, game_id, starts_at, ends_at,
-                                           opens_at, priority_until, reconfirm_at, release_at, status, created_at)
-    values (k, s.id, d, s.schedule_revision, gid, tm.starts_at, tm.ends_at, tm.opens_at, tm.priority_until,
-            tm.reconfirm_at, tm.release_at, 'scheduled', p_now);
-    -- "Always in" regulars in seniority order, only while there is time to reconfirm.
-    if p_now < tm.reconfirm_at then
-      for m in select r.user_id from public.series_roster r
-               where r.series_id = s.id and r.status = 'regular' and r.always_in and r.user_id <> s.host_id
-               order by r.joined_at, r.user_id::text collate "C" loop
-        perform public.st_series_autojoin(gid, m.user_id, p_now);
-      end loop;
+  plan := public.dm_plan_series_occurrences(jsonb_build_object(
+      'series', public.st_series_json(s),
+      'existing', (select coalesce(jsonb_agg(jsonb_build_object('slotDate', to_char(x.slot_date, 'YYYY-MM-DD'),
+                                                                'scheduleRevision', x.schedule_revision, 'status', x.status)), '[]'::jsonb)
+                   from public.series_occurrences x where x.series_id = s.id),
+      'roster', public.st_roster_json(s.id),
+      'ineligibleUserIds', (select coalesce(jsonb_agg(r.user_id), '[]'::jsonb) from public.series_roster r
+                            where r.series_id = s.id and r.status = 'regular' and r.always_in
+                              and (s.deposit_minor > 0 or public.st_is_blocked(s.host_id, r.user_id)
+                                   or not exists (select 1 from public.profiles p
+                                                  where p.id = r.user_id and p.deleted_at is null and not p.permanently_banned
+                                                    and coalesce(p.join_banned_until <= p_now, true)
+                                                    and (s.visibility = 'private' or coalesce(p.visibility_restricted_until <= p_now, true)))
+                                   or (s.women_only and not exists (select 1 from public.profile_private pp
+                                                                    where pp.user_id = r.user_id and pp.gender = 'female'))))),
+    cfg, p_now);
+  for e in select x from jsonb_array_elements(plan -> 'effects') x loop
+    if e ->> 'type' = 'CreateOccurrence' then
+      o := e -> 'occurrence';
+      gid := (o ->> 'gameId')::uuid;
+      continue when exists (select 1 from public.series_occurrences x where x.occurrence_key = o ->> 'occurrenceKey');
+      insert into public.games (id, host_id, sport, title, notes, visibility, venue_id, geog, approx_geog, hide_exact_location,
+                                capacity, min_players, starts_at, ends_at, deposit_minor, currency, deposit_forfeit_to,
+                                women_only, team_count, series_id, time_zone, created_at)
+      values (gid, s.host_id, s.sport, s.title, s.notes, s.visibility, s.venue_id, s.geog, s.geog, s.hide_exact_location,
+              s.capacity, s.min_players, (o ->> 'startsAt')::timestamptz, (o ->> 'endsAt')::timestamptz, s.deposit_minor, s.currency,
+              s.deposit_forfeit_to, s.women_only, s.team_count, s.id, s.time_zone, p_now);
+      insert into public.game_participants (game_id, user_id, status, requested_at, decided_at)
+      values (gid, s.host_id, 'approved', p_now, p_now);
+      insert into public.series_occurrences (occurrence_key, series_id, slot_date, schedule_revision, game_id, starts_at, ends_at,
+                                             opens_at, priority_until, reconfirm_at, release_at, status, created_at)
+      values (o ->> 'occurrenceKey', s.id, (o ->> 'slotDate')::date, (o ->> 'scheduleRevision')::int, gid,
+              (o ->> 'startsAt')::timestamptz, (o ->> 'endsAt')::timestamptz, (o ->> 'opensAt')::timestamptz,
+              (o ->> 'priorityUntil')::timestamptz, (o ->> 'reconfirmAt')::timestamptz, (o ->> 'releaseAt')::timestamptz,
+              'scheduled', p_now);
+      n := n + 1;
+    elsif e ->> 'type' = 'AutoJoin' then
+      perform public.st_apply_autojoin((e ->> 'gameId')::uuid, (e ->> 'userId')::uuid, e ->> 'joinedAs', p_now);
     end if;
-    n := n + 1;
   end loop;
   return n;
 end $$;
@@ -834,23 +881,23 @@ begin
   return n;
 end $$;
 
--- Job: "always in" cycle (series/roster.ts processAutoJoins), per scheduled occurrence with
--- reconfirmAt ≤ now < startsAt: before releaseAt every held (not released, not reconfirmed)
--- auto-join gets one reconfirmation request (series_reconfirm, deadline releaseAt); from releaseAt
--- every auto-join still held is released (no card, waitlist offered) and notified. A released member
--- who had been asked counts a miss; reaching rosterMissesBeforeLeaveOffer consecutive misses sends
--- one roster_leave_offer (GAME-011, no card). Auto-joins whose player already left the game are
--- closed silently. Verified attendance at a later occurrence resets the streak. Returns the number
--- of requests plus releases.
+-- Job: "always in" cycle with the domain rule (dm_process_auto_joins ≡ processAutoJoins), per
+-- scheduled occurrence with reconfirmAt ≤ now < startsAt: before releaseAt every held auto-join gets
+-- one reconfirmation request (series_reconfirm, deadline releaseAt); from releaseAt every one still
+-- held is released (no card, waitlist offered) and notified; a released member who had been asked
+-- counts a miss, and reaching rosterMissesBeforeLeaveOffer sends one roster_leave_offer (GAME-011,
+-- no card). DB-side: auto-joins whose player already left the game are closed silently first, and
+-- verified attendance at a later occurrence resets the streak. Returns requests + releases.
 create function public.always_in_autojoin() returns int
 language plpgsql security definer set search_path = ''
 as $$
 declare
   cfg public.phase15_config := public.st_p15();
   t timestamptz := public.st_now();
-  a record;
+  o public.series_occurrences;
+  fx jsonb;
+  e jsonb;
   n int := 0;
-  rm public.series_roster;
 begin
   if not pg_catalog.pg_try_advisory_xact_lock(pg_catalog.hashtext('st:always_in_autojoin')) then return 0; end if;
   update public.series_auto_joins aj set released_at = t
@@ -862,39 +909,45 @@ begin
     select 1 from public.game_participants gp join public.games g on g.id = gp.game_id
     where g.series_id = r.series_id and gp.user_id = r.user_id and gp.attendance = 'verified'
       and g.starts_at > coalesce(r.last_missed_at, '-infinity'::timestamptz));
-  for a in select aj.*, o.starts_at, o.release_at, s.title, (t >= o.release_at) as releasing
-           from public.series_auto_joins aj
-           join public.series_occurrences o on o.game_id = aj.game_id and o.status = 'scheduled'
-           join public.game_series s on s.id = aj.series_id
-           where aj.released_at is null and aj.reconfirmed_at is null
-             and o.reconfirm_at <= t and t < o.starts_at
-             and (t >= o.release_at or aj.reconfirm_requested_at is null)
-           order by o.starts_at, aj.game_id, aj.user_id::text collate "C"
-           for update of aj skip locked
+  for o in select x.* from public.series_occurrences x
+           where x.status = 'scheduled' and x.reconfirm_at <= t and t < x.starts_at
+             and exists (select 1 from public.series_auto_joins aj where aj.game_id = x.game_id
+                           and aj.released_at is null and aj.reconfirmed_at is null)
+           order by x.starts_at, x.occurrence_key
   loop
-    if not a.releasing then
-      update public.series_auto_joins x set reconfirm_requested_at = t where x.game_id = a.game_id and x.user_id = a.user_id;
-      perform public.st_notify(a.user_id, 'series_reconfirm',
-        jsonb_build_object('seriesTitle', a.title, 'startsAt', public.dm_iso(a.starts_at), 'deadline', public.dm_iso(a.release_at)),
-        a.game_id, null, 'notify:series_reconfirm:' || a.game_id::text || ':' || a.user_id::text);
-      n := n + 1;
-      continue;
-    end if;
-    perform public.st_release_autojoin(a.game_id, a.user_id, t);
-    perform public.st_notify(a.user_id, 'series_auto_released',
-      jsonb_build_object('seriesTitle', a.title, 'startsAt', public.dm_iso(a.starts_at)),
-      a.game_id, null, 'notify:series_auto_released:' || a.game_id::text || ':' || a.user_id::text);
-    n := n + 1;
-    continue when a.reconfirm_requested_at is null; -- never asked (job outage): no miss
-    update public.series_roster r set consecutive_misses = r.consecutive_misses + 1, last_missed_at = t
-    where r.series_id = a.series_id and r.user_id = a.user_id
-    returning * into rm;
-    if rm.series_id is not null and rm.consecutive_misses >= cfg.roster_misses_before_leave_offer and rm.leave_offered_at is null then
-      update public.series_roster r set leave_offered_at = t where r.series_id = rm.series_id and r.user_id = rm.user_id;
-      perform public.st_notify(a.user_id, 'roster_leave_offer',
-        jsonb_build_object('seriesTitle', a.title, 'misses', rm.consecutive_misses), null, null,
-        'notify:roster_leave_offer:' || a.series_id::text || ':' || a.user_id::text || ':' || a.game_id::text);
-    end if;
+    fx := public.dm_process_auto_joins(jsonb_build_object(
+        'series', (select jsonb_build_object('id', s.id, 'title', s.title) from public.game_series s where s.id = o.series_id),
+        'occurrence', public.st_occurrence_json(o),
+        'autoJoins', (select coalesce(jsonb_agg(jsonb_build_object(
+                        'gameId', aj.game_id, 'seriesId', aj.series_id, 'userId', aj.user_id, 'joinedAs', aj.joined_as,
+                        'reconfirmRequestedAt', public.dm_iso(aj.reconfirm_requested_at),
+                        'reconfirmedAt', public.dm_iso(aj.reconfirmed_at), 'releasedAt', public.dm_iso(aj.released_at))), '[]'::jsonb)
+                      from public.series_auto_joins aj where aj.game_id = o.game_id),
+        'roster', public.st_roster_json(o.series_id)),
+      cfg, t) -> 'effects';
+    for e in select x from jsonb_array_elements(fx) x loop
+      case e ->> 'type'
+        when 'RequestReconfirm' then
+          update public.series_auto_joins x set reconfirm_requested_at = t
+          where x.game_id = (e ->> 'gameId')::uuid and x.user_id = (e ->> 'userId')::uuid and x.reconfirm_requested_at is null;
+          n := n + 1;
+        when 'ReleaseAutoJoin' then
+          perform public.st_release_autojoin((e ->> 'gameId')::uuid, (e ->> 'userId')::uuid, t);
+          n := n + 1;
+        when 'UpdateRosterMember' then
+          update public.series_roster r
+             set consecutive_misses = coalesce((e #>> '{patch,consecutiveMisses}')::int, r.consecutive_misses),
+                 leave_offered_at = coalesce(public.dm_ts(e #>> '{patch,leaveOfferedAt}'), r.leave_offered_at),
+                 last_missed_at = t
+          where r.series_id = (e ->> 'seriesId')::uuid and r.user_id = (e ->> 'userId')::uuid;
+        when 'Notify15' then
+          perform public.st_notify((e ->> 'userId')::uuid, (e ->> 'kind')::public.notification_kind,
+            (e -> 'params') || jsonb_build_object('seriesId', e -> 'seriesId'), nullif(e ->> 'gameId', '')::uuid, null,
+            e ->> 'dedupeKey');
+        else
+          perform public.st_raise('validation', 'unexpected effect ' || (e ->> 'type'));
+      end case;
+    end loop;
   end loop;
   return n;
 end $$;

@@ -38,10 +38,12 @@ afterEach(() => db.reset());
 afterAll(() => db?.close());
 
 const CFG = `public.st_config_merge($2::jsonb)`;
+/** Phase 1.5 thresholds with the same camelCase overrides (DomainConfig = TrustConfig ∪ Phase15Config). */
+const P15 = `public.st_p15_merge($2::jsonb)`;
 const NOW = `$3::timestamptz`;
 
 /** SQL expression per pure kind; `$1` = input, `$2` = config overrides, `$3` = now. Returns jsonb. */
-const PURE: Record<string, { sql: string; pick?: string[] }> = {
+const PURE: Record<string, { sql: string; pick?: string[]; round6?: boolean }> = {
   "checkin.qrToken": { sql: `public.dm_qr_token($1->>'qrSecret', ($1->>'gameId')::uuid, ${NOW}, ${CFG})` },
   "checkin.verifyQr": {
     sql: `public.dm_verify_qr($1->>'token', $1->>'qrSecret', ($1->>'gameId')::uuid, ${NOW}, ${CFG}, $1->'window', $1->'scanner')`,
@@ -65,7 +67,34 @@ const PURE: Record<string, { sql: string; pick?: string[] }> = {
     sql: `public.dm_process_no_shows($1, ${NOW}, ${CFG})`,
     pick: ["finalized", "gameHappened", "effects", "events"],
   },
+  // Phase 1.5 (contract v3): migrations 0102 / 0106.
+  "series.occurrences": { sql: `public.dm_plan_series_occurrences($1, ${P15}, ${NOW})` },
+  "series.autoJoins": { sql: `public.dm_process_auto_joins($1, ${P15}, ${NOW})` },
+  "series.joinWindow": { sql: `public.dm_occurrence_join_window($1, ${NOW})` },
+  "rating.glicko2": {
+    sql: `public.dm_glicko2_update($1->'player', $1->'results', ($1->>'tau')::float8, coalesce(($1->>'maxRd')::float8, 'Infinity'))`,
+    round6: true,
+  },
+  "rating.glickoPeriod": { sql: `public.dm_process_rating_period($1, ${P15}, ${NOW})`, round6: true },
+  "rating.gameEligibility": { sql: `public.dm_game_rating_eligibility($1, ${P15})` },
+  "rating.resultConfirmation": { sql: `public.dm_result_summary($1, $1->>'viewerId')` },
+  "rating.peerEligibility": { sql: `public.dm_peer_rating_eligibility($1, ${P15}, ${NOW})` },
+  "rating.peerAggregate": { sql: `public.dm_aggregate_peer_ratings($1, ${P15})` },
+  "vault.upload": { sql: `public.dm_check_media_upload($1, ${P15}, ${NOW})` },
+  "vault.visibility": { sql: `public.dm_request_media_visibility($1, ${NOW})` },
+  "vault.verdict": { sql: `public.dm_apply_media_verdict($1, ${NOW})`, pick: ["item", "effects"] },
+  "network.playedWith": { sql: `public.dm_derive_played_with($1, ${P15}, ${NOW})` },
+  "network.friend": { sql: `public.dm_friend_transition($1, ${NOW})` },
+  "network.friendsGames": { sql: `public.dm_filter_friends_games($1, ${NOW})` },
 };
+
+/** Golden float rule (README): every non-integer number rounded to 6 decimals, recursively, on both sides. */
+function round6(v: unknown): unknown {
+  if (typeof v === "number") return Number.isInteger(v) ? v : Math.round(v * 1e6) / 1e6;
+  if (Array.isArray(v)) return v.map(round6);
+  if (v && typeof v === "object") return Object.fromEntries(Object.entries(v).map(([k, x]) => [k, round6(x)]));
+  return v;
+}
 
 function pick(o: Record<string, unknown>, keys?: string[]): unknown {
   if (!keys) return o;
@@ -82,12 +111,14 @@ for (const [kind, spec] of Object.entries(PURE)) {
   const list = cases.filter((c) => c.kind === kind);
   describe(`golden: ${kind}`, () => {
     it.each(list.map((c) => [c.name, c] as const))("%s", async (_n, c) => {
-      const [row] = await db.query<{ r: Record<string, unknown> }>(`select ${spec.sql.replaceAll("$1", "($1::jsonb)")} as r`, [
+      const [row] = await db.query<{ r: Record<string, unknown> }>(`select ${spec.sql.replaceAll("$1", "($1::jsonb)")} as r, $2::jsonb as _cfg, $3::timestamptz as _now`, [
         JSON.stringify(c.input),
         JSON.stringify(c.config ?? {}),
         c.now,
       ]);
-      expect(pick(row!.r, spec.pick)).toEqual(c.expected);
+      const got = pick(row!.r as Record<string, unknown>, spec.pick);
+      if (spec.round6) expect(round6(got)).toEqual(round6(c.expected));
+      else expect(got).toEqual(c.expected);
     });
   });
 }

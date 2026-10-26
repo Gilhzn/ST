@@ -108,25 +108,6 @@ as $$
          end
 $$;
 
--- checkMediaUpload() → MediaRejectReason (first failing check) or null.
-create function public.dm_media_upload_reject(p_starts timestamptz, p_ends timestamptz, p_verified boolean, p_kind public.media_kind,
-                                              p_mime text, p_size bigint, p_duration numeric, p_existing int,
-                                              p15 public.phase15_config, p_now timestamptz) returns text
-language sql immutable set search_path = ''
-as $$
-  select case
-    when not coalesce(p_verified, false) then 'not_verified_attendee'
-    when p_now < p_starts then 'window_not_open'
-    when p_now > p_ends + p15.media_upload_after_end_hours * interval '1 hour' then 'window_closed'
-    when p_kind is null or p_mime is null or public.st_media_ext(p_kind, p_mime) is null then 'unsupported_type'
-    when p_kind = 'video' and (p_duration is null or not (p_duration >= 0)) then 'unsupported_type'
-    when p_size is null or not (p_size > 0)
-      or p_size > (case when p_kind = 'photo' then p15.media_photo_max_mb else p15.media_video_max_mb end) * 1048576 then 'too_large'
-    when p_kind = 'video' and p_duration > p15.media_video_max_seconds then 'too_long'
-    when p_existing >= p15.media_max_items_per_user_per_game then 'user_cap_reached'
-  end
-$$;
-
 -- mediaRejectErrorCode()
 create function public.st_media_reject(p_reason text) returns void
 language plpgsql immutable set search_path = ''
@@ -237,7 +218,7 @@ declare
   p15 public.phase15_config := public.st_p15();
   g public.games;
   existing int;
-  reason text;
+  res jsonb;
   mid uuid := gen_random_uuid();
   path text;
 begin
@@ -246,11 +227,21 @@ begin
   if g.status = 'cancelled' then perform public.st_raise('game_not_open'); end if;
   select count(*) into existing from public.media_items m
   where m.game_id = g.id and m.uploader_id = me.id and m.status <> 'removed';
-  reason := public.dm_media_upload_reject(g.starts_at, g.ends_at,
-    exists (select 1 from public.game_participants gp where gp.game_id = g.id and gp.user_id = me.id
-              and gp.status = 'approved' and gp.attendance = 'verified'),
-    p_kind, p_mime_type, p_size_bytes, p_duration_seconds, existing, p15, t);
-  if reason is not null then perform public.st_media_reject(reason); end if;
+  -- checkMediaUpload() (dm_check_media_upload, vault.upload goldens).
+  res := public.dm_check_media_upload(jsonb_build_object(
+      'game', jsonb_build_object('startsAt', public.dm_iso(g.starts_at), 'endsAt', public.dm_iso(g.ends_at)),
+      'verifiedAttendee', exists (select 1 from public.game_participants gp where gp.game_id = g.id and gp.user_id = me.id
+                                    and gp.status = 'approved' and gp.attendance = 'verified'),
+      'request', jsonb_build_object('gameId', g.id, 'kind', p_kind, 'mimeType', p_mime_type, 'sizeBytes', p_size_bytes,
+                                    'durationSeconds', p_duration_seconds),
+      'existingCount', existing), p15, t);
+  if not (res ->> 'ok')::boolean then perform public.st_media_reject(res ->> 'error'); end if;
+  -- DB guards on top of the domain rule: the pipeline cannot sanitise HEIC/HEIF (refused, never
+  -- published unsanitised), and an account restricted pending a CSAM review cannot upload.
+  if lower(p_mime_type) in ('image/heic', 'image/heif') then perform public.st_media_reject('unsupported_type'); end if;
+  if exists (select 1 from public.account_review_holds x where x.user_id = me.id and x.until > t) then
+    perform public.st_raise('forbidden', 'account restricted pending review');
+  end if;
   path := 'originals/' || g.id::text || '/' || me.id::text || '/' || mid::text || '.' || public.st_media_ext(p_kind, p_mime_type);
   insert into public.media_items (id, game_id, venue_id, uploader_id, kind, status, mime_type, size_bytes, duration_seconds,
                                   storage_path, upload_expires_at, created_at, expires_at)
@@ -258,7 +249,7 @@ begin
           case when p_kind = 'video' then p_duration_seconds end, path, t + interval '2 hours', t,
           ((t at time zone 'UTC') + p15.media_retention_months * interval '1 month') at time zone 'UTC');
   return jsonb_build_object('mediaId', mid, 'storagePath', path,
-    'maxBytes', ((case when p_kind = 'photo' then p15.media_photo_max_mb else p15.media_video_max_mb end) * 1048576)::bigint,
+    'maxBytes', (res #>> '{value,maxBytes}')::bigint,
     'expiresAt', public.dm_iso(t + interval '2 hours'));
 end $$;
 

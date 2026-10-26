@@ -952,7 +952,9 @@ export type ReviewKind =
   /** Repeated spoofing signals on check-in. Review only: signals never sanction on their own. */
   | 'spoofing_suspected'
   /** Contract v3: an upload matched a CSAM hash (VAULT-003); P0, account restricted pending this review. */
-  | 'media_csam';
+  | 'media_csam'
+  /** Contract v3: a user reported a gallery item (VAULT-008). */
+  | 'media_report';
 
 export type ReviewStatus = 'open' | 'in_review' | 'resolved';
 export type ReviewPriority = 'low' | 'normal' | 'high';
@@ -1641,7 +1643,9 @@ export type Phase15NotificationKind =
   /** Someone tagged the user; invisible until accepted (VAULT-005). */
   | 'media_tag_request'
   /** The user's upload was blocked by the pre-publication pipeline (with SoR). */
-  | 'media_blocked';
+  | 'media_blocked'
+  /** The user's displayed Glicko level changed after a rating period (params: `sport`, `formatFamily`, `level`). */
+  | 'rating_level_changed';
 
 // ---------------------------------------------------------------------------
 // Phase 1.5 configuration

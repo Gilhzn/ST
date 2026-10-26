@@ -25,4 +25,20 @@ describe("seed.sql", () => {
     const hidden = tlv.rows.find((r) => r.women_only);
     expect(hidden?.lat).toBeNull(); // hidden exact location until approval
   });
+
+  it("has recurring series in Tel Aviv and London with a 4-week horizon at local wall-clock time", async () => {
+    const rows = await db.query<{ tz: string; n: number; local: string[]; auto: number }>(
+      `select s.time_zone tz, count(o.*)::int n,
+              array_agg(distinct to_char(o.starts_at at time zone s.time_zone, 'HH24:MI')) local,
+              (select count(*)::int from series_auto_joins aj where aj.series_id = s.id) auto
+       from game_series s join series_occurrences o on o.series_id = s.id
+       group by s.id, s.time_zone order by s.time_zone`);
+    expect(rows.map((r) => r.tz)).toEqual(["Asia/Jerusalem", "Europe/London"]);
+    for (const r of rows) {
+      expect(r.n).toBeGreaterThanOrEqual(4);
+      expect(r.n).toBeLessThanOrEqual(5);
+      expect(r.auto).toBeGreaterThanOrEqual(3); // the "always in" regular in every occurrence before T−48h
+    }
+    expect(rows.map((r) => r.local)).toEqual([["20:00"], ["19:30"]]);
+  });
 });
