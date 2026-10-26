@@ -105,7 +105,8 @@
             "evidence": {
               "reason": "low_host_rating",
               "ratingCount": 5,
-              "averageRating": 2
+              "averageRating": 2,
+              "lateGameCancellations": 0
             },
             "dueBy": "2026-03-03T18:00:00.000Z",
             "dedupeKey": "low_host_rating:00000000-0000-4000-8000-0000000000ff:00000000-0000-4000-8000-0000000a0001:00000000-0000-4000-8000-000000000301"

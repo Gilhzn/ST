@@ -139,14 +139,17 @@ const att = (userId: string, gameId = G1, extra: Partial<GameAttendanceRecord> =
   userId,
   status: 'approved',
   attendance: 'verified',
+  checkInMethod: 'gps',
+  isHost: false,
   team: null,
   ...extra,
 });
 
 describe('evaluateReports (TRUST-041…048)', () => {
   const profiles = [profile(U2, 30), profile(U3, 60), profile(U4, 90)];
-  const reports = [report('r1', U2, 20), report('r2', U3, 10), report('r3', U4, 1)];
-  const attendance = [att(U1), att(U2), att(U3), att(U4)];
+  // Reports span two games (a single game is review-only) and every reporter was GPS-verified there.
+  const reports = [report('r1', U2, 20), report('r2', U3, 10, { gameId: G2 }), report('r3', U4, 1)];
+  const attendance = [U1, U2, U3, U4].flatMap((u) => [att(u), att(u, G2)]);
 
   it('3 independent qualifying co-attendees → 72h restriction + notice + review (AC-TRUST-043)', () => {
     const r = evaluateReports(reports, profiles, T0, undefined, { attendance });
@@ -176,27 +179,41 @@ describe('evaluateReports (TRUST-041…048)', () => {
     expect(r.effects.some((e) => e.type === 'Notify')).toBe(false);
   });
 
-  it('rival-team brigading from one game → review only', () => {
-    const a = [att(U1, G1, { team: 0 }), att(U2, G1, { team: 1 }), att(U3, G1, { team: 1 }), att(U4, G1, { team: 1 })];
-    expect(evaluateReports(reports, profiles, T0, undefined, { attendance: a }).reviewReasons).toEqual(['rival_team']);
-    const mixed = [att(U1, G1, { team: 0 }), att(U2, G1, { team: 1 }), att(U3, G1, { team: 0 }), att(U4, G1, { team: 1 })];
-    expect(evaluateReports(reports, profiles, T0, undefined, { attendance: mixed }).outcome).toBe('restrict');
+  it('SECURITY: reports all from one game are review-only (single_game)', () => {
+    const oneGame = reports.map((r) => ({ ...r, gameId: G1 }));
+    const r = evaluateReports(oneGame, profiles, T0, undefined, { attendance });
+    expect(r).toMatchObject({ outcome: 'review_only', reviewReasons: ['single_game'] });
+    expect(assertSanctionInvariants(r.effects)).toEqual([]);
+    expect(r.effects[0]).toMatchObject({ item: { kind: 'collusion_suspected' } });
+  });
+
+  it('SECURITY: needs a GPS-verified, non-host reporter as anchor (no_gps_anchor)', () => {
+    const qrOnly = [U1, U2, U3, U4].flatMap((u) => [att(u, G1, { checkInMethod: 'qr' }), att(u, G2, { checkInMethod: 'host' })]);
+    expect(evaluateReports(reports, profiles, T0, undefined, { attendance: qrOnly })).toMatchObject({
+      outcome: 'review_only',
+      reviewReasons: ['no_gps_anchor'],
+    });
+    const hostAnchor = qrOnly.map((a) => (a.userId === U2 && a.gameId === G1 ? { ...a, checkInMethod: 'gps' as const, isHost: true } : a));
+    expect(evaluateReports(reports, profiles, T0, undefined, { attendance: hostAnchor }).reviewReasons).toEqual(['no_gps_anchor']);
+    const oneAnchor = qrOnly.map((a) => (a.userId === U3 && a.gameId === G2 ? { ...a, checkInMethod: 'gps' as const } : a));
+    expect(evaluateReports(reports, profiles, T0, undefined, { attendance: oneAnchor }).outcome).toBe('restrict');
   });
 
   it('reporters must have been checked in at the same game as the subject (co-attendance)', () => {
-    const r = evaluateReports(reports, profiles, T0, undefined, { attendance: [att(U1), att(U2), att(U3), att(U4, G1, { attendance: 'no_show_unverified' })] });
+    const noShowU4 = attendance.map((a) => (a.userId === U4 ? { ...a, attendance: 'no_show_unverified' as const } : a));
+    const r = evaluateReports(reports, profiles, T0, undefined, { attendance: noShowU4 });
     expect(r.outcome).toBe('none');
     expect(r.excluded).toEqual([{ reporterId: U4, reason: 'not_co_attendee' }]);
     expect(evaluateReports(reports, profiles, T0).excluded.map((e) => e.reason)).toEqual(['not_co_attendee', 'not_co_attendee', 'not_co_attendee']);
     const noGame = evaluateReports([report('r9', U2, 1, { gameId: null })], profiles, T0, undefined, { attendance });
     expect(noGame.excluded).toEqual([{ reporterId: U2, reason: 'not_co_attendee' }]);
-    const notSubject = evaluateReports(reports, profiles, T0, undefined, { attendance: [att(U2), att(U3), att(U4)] });
+    const notSubject = evaluateReports(reports, profiles, T0, undefined, { attendance: attendance.filter((a) => a.userId !== U1) });
     expect(notSubject.qualifyingReporterIds).toEqual([]);
   });
 
   it('a reported chat message counts from any approved participant (same chat)', () => {
     const chat = reports.map((r) => ({ ...r, messageId: `m-${r.id}` }));
-    const a = [att(U1), att(U2, G1, { attendance: 'unknown' }), att(U3), att(U4)];
+    const a = attendance.map((x) => (x.userId === U2 ? { ...x, attendance: 'unknown' as const, checkInMethod: null } : x));
     expect(evaluateReports(chat, profiles, T0, undefined, { attendance: a }).outcome).toBe('restrict');
   });
 
@@ -368,10 +385,11 @@ describe('evaluateVenueReports', () => {
     note: null,
     createdAt: iso(T0 - hoursAgo * HOUR_MS),
   });
+  const VP = [U1, U2, U3, U4, HOST].map((id) => profile(id, 30));
   const venue = (reports: VenueReport[], extra = {}) => ({ venueId: 'v1', status: 'active' as const, createdBy: HOST, lastReviewedAt: null, reports, ...extra });
 
   it('3 distinct reporters hide the venue pending review and notify the creator', () => {
-    const r = evaluateVenueReports(venue([vr('a', U1), vr('b', U2, 'closed'), vr('c', U3)]), T0);
+    const r = evaluateVenueReports(venue([vr('a', U1), vr('b', U2, 'closed'), vr('c', U3)]), VP, T0);
     expect(r.hide).toBe(true);
     expect(r.effects).toEqual([
       { type: 'SetVenueStatus', venueId: 'v1', status: 'hidden_pending_review' },
@@ -381,13 +399,22 @@ describe('evaluateVenueReports', () => {
   });
 
   it('2 reporters, duplicate reporters, creator self-reports, consumed reports and non-active venues do not hide', () => {
-    expect(evaluateVenueReports(venue([vr('a', U1), vr('b', U2)]), T0).hide).toBe(false);
-    expect(evaluateVenueReports(venue([vr('a', U1), vr('b', U2), vr('c', U2)]), T0).hide).toBe(false);
-    expect(evaluateVenueReports(venue([vr('a', U1), vr('b', U2), vr('c', HOST)]), T0).hide).toBe(false);
-    expect(evaluateVenueReports(venue([vr('a', U1, undefined, 5), vr('b', U2), vr('c', U3)], { lastReviewedAt: iso(T0 - 2 * HOUR_MS) }), T0).hide).toBe(false);
-    expect(evaluateVenueReports(venue([vr('a', U1), vr('b', U2), vr('c', U3)], { status: 'hidden_pending_review' }), T0).hide).toBe(false);
-    const noCreator = evaluateVenueReports(venue([vr('a', U1), vr('b', U2), vr('c', U3)], { createdBy: null }), T0);
+    expect(evaluateVenueReports(venue([vr('a', U1), vr('b', U2)]), VP, T0).hide).toBe(false);
+    expect(evaluateVenueReports(venue([vr('a', U1), vr('b', U2), vr('c', U2)]), VP, T0).hide).toBe(false);
+    expect(evaluateVenueReports(venue([vr('a', U1), vr('b', U2), vr('c', HOST)]), VP, T0).hide).toBe(false);
+    expect(evaluateVenueReports(venue([vr('a', U1, undefined, 5), vr('b', U2), vr('c', U3)], { lastReviewedAt: iso(T0 - 2 * HOUR_MS) }), VP, T0).hide).toBe(false);
+    expect(evaluateVenueReports(venue([vr('a', U1), vr('b', U2), vr('c', U3)], { status: 'hidden_pending_review' }), VP, T0).hide).toBe(false);
+    const noCreator = evaluateVenueReports(venue([vr('a', U1), vr('b', U2), vr('c', U3)], { createdBy: null }), VP, T0);
     expect(noCreator.effects.map((e) => e.type)).toEqual(['SetVenueStatus', 'EnqueueReview']);
+  });
+
+  it('SECURITY: only qualified reporters count (account age at report time, not red)', () => {
+    const three = venue([vr('a', U1), vr('b', U2), vr('c', U3)]);
+    expect(evaluateVenueReports(three, [profile(U1, 30), profile(U2, 30), profile(U3, 6.9)], T0).hide).toBe(false);
+    expect(evaluateVenueReports(three, [profile(U1, 30), profile(U2, 30), profile(U3, 30, { reliabilityStatus: 'red' })], T0).hide).toBe(false);
+    expect(evaluateVenueReports(three, [profile(U1, 30), profile(U2, 30)], T0)).toMatchObject({ hide: false, reporterIds: [U1, U2] });
+    expect(evaluateVenueReports(three, [profile(U1, 30), profile(U2, 30), profile(U3, 7 + 1 / 24 + 1e-6)], T0).hide).toBe(true);
+    expect(evaluateVenueReports(venue([vr('a', U1), vr('b', U2), vr('c', U3), vr('d', U4)]), [...VP.slice(0, 2), profile(U3, 1), profile(U4, 40)], T0).reporterIds).toEqual([U1, U2, U4]);
   });
 
   it('isConfirmedFake needs a majority of no_venue_here', () => {

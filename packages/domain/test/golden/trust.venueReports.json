@@ -3,6 +3,32 @@
     "name": "venue.3-distinct-reporters.auto-hide",
     "kind": "trust.venueReports",
     "input": {
+      "reporterProfiles": [
+        {
+          "id": "00000000-0000-4000-8000-000000000002",
+          "createdAt": "2026-01-30T18:00:00.000Z",
+          "reliabilityStatus": "green",
+          "reportsLast7d": 0
+        },
+        {
+          "id": "00000000-0000-4000-8000-000000000003",
+          "createdAt": "2026-01-30T18:00:00.000Z",
+          "reliabilityStatus": "green",
+          "reportsLast7d": 0
+        },
+        {
+          "id": "00000000-0000-4000-8000-000000000004",
+          "createdAt": "2026-01-30T18:00:00.000Z",
+          "reliabilityStatus": "green",
+          "reportsLast7d": 0
+        },
+        {
+          "id": "00000000-0000-4000-8000-0000000000ff",
+          "createdAt": "2026-01-30T18:00:00.000Z",
+          "reliabilityStatus": "green",
+          "reportsLast7d": 0
+        }
+      ],
       "venue": {
         "venueId": "00000000-0000-4000-8000-00000000beef",
         "status": "active",
@@ -86,6 +112,32 @@
     "name": "venue.2-reporters.stays-active",
     "kind": "trust.venueReports",
     "input": {
+      "reporterProfiles": [
+        {
+          "id": "00000000-0000-4000-8000-000000000002",
+          "createdAt": "2026-01-30T18:00:00.000Z",
+          "reliabilityStatus": "green",
+          "reportsLast7d": 0
+        },
+        {
+          "id": "00000000-0000-4000-8000-000000000003",
+          "createdAt": "2026-01-30T18:00:00.000Z",
+          "reliabilityStatus": "green",
+          "reportsLast7d": 0
+        },
+        {
+          "id": "00000000-0000-4000-8000-000000000004",
+          "createdAt": "2026-01-30T18:00:00.000Z",
+          "reliabilityStatus": "green",
+          "reportsLast7d": 0
+        },
+        {
+          "id": "00000000-0000-4000-8000-0000000000ff",
+          "createdAt": "2026-01-30T18:00:00.000Z",
+          "reliabilityStatus": "green",
+          "reportsLast7d": 0
+        }
+      ],
       "venue": {
         "venueId": "00000000-0000-4000-8000-00000000beef",
         "status": "active",
@@ -124,6 +176,32 @@
     "name": "venue.same-reporter-twice.not-distinct",
     "kind": "trust.venueReports",
     "input": {
+      "reporterProfiles": [
+        {
+          "id": "00000000-0000-4000-8000-000000000002",
+          "createdAt": "2026-01-30T18:00:00.000Z",
+          "reliabilityStatus": "green",
+          "reportsLast7d": 0
+        },
+        {
+          "id": "00000000-0000-4000-8000-000000000003",
+          "createdAt": "2026-01-30T18:00:00.000Z",
+          "reliabilityStatus": "green",
+          "reportsLast7d": 0
+        },
+        {
+          "id": "00000000-0000-4000-8000-000000000004",
+          "createdAt": "2026-01-30T18:00:00.000Z",
+          "reliabilityStatus": "green",
+          "reportsLast7d": 0
+        },
+        {
+          "id": "00000000-0000-4000-8000-0000000000ff",
+          "createdAt": "2026-01-30T18:00:00.000Z",
+          "reliabilityStatus": "green",
+          "reportsLast7d": 0
+        }
+      ],
       "venue": {
         "venueId": "00000000-0000-4000-8000-00000000beef",
         "status": "active",
@@ -167,6 +245,32 @@
     "name": "venue.creator-report-excluded",
     "kind": "trust.venueReports",
     "input": {
+      "reporterProfiles": [
+        {
+          "id": "00000000-0000-4000-8000-000000000002",
+          "createdAt": "2026-01-30T18:00:00.000Z",
+          "reliabilityStatus": "green",
+          "reportsLast7d": 0
+        },
+        {
+          "id": "00000000-0000-4000-8000-000000000003",
+          "createdAt": "2026-01-30T18:00:00.000Z",
+          "reliabilityStatus": "green",
+          "reportsLast7d": 0
+        },
+        {
+          "id": "00000000-0000-4000-8000-000000000004",
+          "createdAt": "2026-01-30T18:00:00.000Z",
+          "reliabilityStatus": "green",
+          "reportsLast7d": 0
+        },
+        {
+          "id": "00000000-0000-4000-8000-0000000000ff",
+          "createdAt": "2026-01-30T18:00:00.000Z",
+          "reliabilityStatus": "green",
+          "reportsLast7d": 0
+        }
+      ],
       "venue": {
         "venueId": "00000000-0000-4000-8000-00000000beef",
         "status": "active",
@@ -210,6 +314,32 @@
     "name": "venue.reports-before-last-review-consumed",
     "kind": "trust.venueReports",
     "input": {
+      "reporterProfiles": [
+        {
+          "id": "00000000-0000-4000-8000-000000000002",
+          "createdAt": "2026-01-30T18:00:00.000Z",
+          "reliabilityStatus": "green",
+          "reportsLast7d": 0
+        },
+        {
+          "id": "00000000-0000-4000-8000-000000000003",
+          "createdAt": "2026-01-30T18:00:00.000Z",
+          "reliabilityStatus": "green",
+          "reportsLast7d": 0
+        },
+        {
+          "id": "00000000-0000-4000-8000-000000000004",
+          "createdAt": "2026-01-30T18:00:00.000Z",
+          "reliabilityStatus": "green",
+          "reportsLast7d": 0
+        },
+        {
+          "id": "00000000-0000-4000-8000-0000000000ff",
+          "createdAt": "2026-01-30T18:00:00.000Z",
+          "reliabilityStatus": "green",
+          "reportsLast7d": 0
+        }
+      ],
       "venue": {
         "venueId": "00000000-0000-4000-8000-00000000beef",
         "status": "active",
@@ -248,5 +378,199 @@
       "hide": false,
       "effects": []
     }
+  },
+  {
+    "name": "venue.reporter-account-too-new.stays-active",
+    "kind": "trust.venueReports",
+    "description": "Security fix: venue reporters must qualify like user reporters (account ≥ 7 days old at report time)",
+    "input": {
+      "reporterProfiles": [
+        {
+          "id": "00000000-0000-4000-8000-000000000002",
+          "createdAt": "2026-01-30T18:00:00.000Z",
+          "reliabilityStatus": "green",
+          "reportsLast7d": 0
+        },
+        {
+          "id": "00000000-0000-4000-8000-000000000003",
+          "createdAt": "2026-01-30T18:00:00.000Z",
+          "reliabilityStatus": "green",
+          "reportsLast7d": 0
+        },
+        {
+          "id": "00000000-0000-4000-8000-000000000004",
+          "createdAt": "2026-02-22T18:00:00.000Z",
+          "reliabilityStatus": "green",
+          "reportsLast7d": 0
+        }
+      ],
+      "venue": {
+        "venueId": "00000000-0000-4000-8000-00000000beef",
+        "status": "active",
+        "createdBy": "00000000-0000-4000-8000-0000000000ff",
+        "lastReviewedAt": null,
+        "reports": [
+          {
+            "id": "00000000-0000-4000-8000-000000000201",
+            "venueId": "00000000-0000-4000-8000-00000000beef",
+            "reporterId": "00000000-0000-4000-8000-000000000002",
+            "reason": "no_venue_here",
+            "note": null,
+            "createdAt": "2026-03-01T09:00:00.000Z"
+          },
+          {
+            "id": "00000000-0000-4000-8000-000000000202",
+            "venueId": "00000000-0000-4000-8000-00000000beef",
+            "reporterId": "00000000-0000-4000-8000-000000000003",
+            "reason": "no_venue_here",
+            "note": null,
+            "createdAt": "2026-03-01T10:00:00.000Z"
+          },
+          {
+            "id": "00000000-0000-4000-8000-000000000203",
+            "venueId": "00000000-0000-4000-8000-00000000beef",
+            "reporterId": "00000000-0000-4000-8000-000000000004",
+            "reason": "no_venue_here",
+            "note": null,
+            "createdAt": "2026-03-01T11:00:00.000Z"
+          }
+        ]
+      }
+    },
+    "now": "2026-03-01T18:00:00.000Z",
+    "expected": {
+      "hide": false,
+      "effects": []
+    },
+    "tags": [
+      "security",
+      "boundary"
+    ]
+  },
+  {
+    "name": "venue.red-reporter.stays-active",
+    "kind": "trust.venueReports",
+    "input": {
+      "reporterProfiles": [
+        {
+          "id": "00000000-0000-4000-8000-000000000002",
+          "createdAt": "2026-01-30T18:00:00.000Z",
+          "reliabilityStatus": "green",
+          "reportsLast7d": 0
+        },
+        {
+          "id": "00000000-0000-4000-8000-000000000003",
+          "createdAt": "2026-01-30T18:00:00.000Z",
+          "reliabilityStatus": "green",
+          "reportsLast7d": 0
+        },
+        {
+          "id": "00000000-0000-4000-8000-000000000004",
+          "createdAt": "2026-01-30T18:00:00.000Z",
+          "reliabilityStatus": "red",
+          "reportsLast7d": 0
+        }
+      ],
+      "venue": {
+        "venueId": "00000000-0000-4000-8000-00000000beef",
+        "status": "active",
+        "createdBy": "00000000-0000-4000-8000-0000000000ff",
+        "lastReviewedAt": null,
+        "reports": [
+          {
+            "id": "00000000-0000-4000-8000-000000000201",
+            "venueId": "00000000-0000-4000-8000-00000000beef",
+            "reporterId": "00000000-0000-4000-8000-000000000002",
+            "reason": "no_venue_here",
+            "note": null,
+            "createdAt": "2026-03-01T09:00:00.000Z"
+          },
+          {
+            "id": "00000000-0000-4000-8000-000000000202",
+            "venueId": "00000000-0000-4000-8000-00000000beef",
+            "reporterId": "00000000-0000-4000-8000-000000000003",
+            "reason": "no_venue_here",
+            "note": null,
+            "createdAt": "2026-03-01T10:00:00.000Z"
+          },
+          {
+            "id": "00000000-0000-4000-8000-000000000203",
+            "venueId": "00000000-0000-4000-8000-00000000beef",
+            "reporterId": "00000000-0000-4000-8000-000000000004",
+            "reason": "no_venue_here",
+            "note": null,
+            "createdAt": "2026-03-01T11:00:00.000Z"
+          }
+        ]
+      }
+    },
+    "now": "2026-03-01T18:00:00.000Z",
+    "expected": {
+      "hide": false,
+      "effects": []
+    },
+    "tags": [
+      "security"
+    ]
+  },
+  {
+    "name": "venue.unknown-reporter-profile.stays-active",
+    "kind": "trust.venueReports",
+    "input": {
+      "reporterProfiles": [
+        {
+          "id": "00000000-0000-4000-8000-000000000002",
+          "createdAt": "2026-01-30T18:00:00.000Z",
+          "reliabilityStatus": "green",
+          "reportsLast7d": 0
+        },
+        {
+          "id": "00000000-0000-4000-8000-000000000003",
+          "createdAt": "2026-01-30T18:00:00.000Z",
+          "reliabilityStatus": "green",
+          "reportsLast7d": 0
+        }
+      ],
+      "venue": {
+        "venueId": "00000000-0000-4000-8000-00000000beef",
+        "status": "active",
+        "createdBy": "00000000-0000-4000-8000-0000000000ff",
+        "lastReviewedAt": null,
+        "reports": [
+          {
+            "id": "00000000-0000-4000-8000-000000000201",
+            "venueId": "00000000-0000-4000-8000-00000000beef",
+            "reporterId": "00000000-0000-4000-8000-000000000002",
+            "reason": "no_venue_here",
+            "note": null,
+            "createdAt": "2026-03-01T09:00:00.000Z"
+          },
+          {
+            "id": "00000000-0000-4000-8000-000000000202",
+            "venueId": "00000000-0000-4000-8000-00000000beef",
+            "reporterId": "00000000-0000-4000-8000-000000000003",
+            "reason": "no_venue_here",
+            "note": null,
+            "createdAt": "2026-03-01T10:00:00.000Z"
+          },
+          {
+            "id": "00000000-0000-4000-8000-000000000203",
+            "venueId": "00000000-0000-4000-8000-00000000beef",
+            "reporterId": "00000000-0000-4000-8000-000000000004",
+            "reason": "no_venue_here",
+            "note": null,
+            "createdAt": "2026-03-01T11:00:00.000Z"
+          }
+        ]
+      }
+    },
+    "now": "2026-03-01T18:00:00.000Z",
+    "expected": {
+      "hide": false,
+      "effects": []
+    },
+    "tags": [
+      "security"
+    ]
   }
 ]

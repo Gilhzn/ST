@@ -20,7 +20,7 @@
           "reporterId": "00000000-0000-4000-8000-000000000003",
           "targetUserId": "00000000-0000-4000-8000-000000000001",
           "category": "harassment",
-          "gameId": "00000000-0000-4000-8000-0000000a0001",
+          "gameId": "00000000-0000-4000-8000-0000000a0002",
           "messageId": null,
           "note": null,
           "createdAt": "2026-03-01T08:00:00.000Z"
@@ -63,6 +63,17 @@
             "userId": "00000000-0000-4000-8000-000000000001",
             "status": "approved",
             "attendance": "verified",
+            "checkInMethod": "gps",
+            "isHost": false,
+            "team": null
+          },
+          {
+            "gameId": "00000000-0000-4000-8000-0000000a0002",
+            "userId": "00000000-0000-4000-8000-000000000001",
+            "status": "approved",
+            "attendance": "verified",
+            "checkInMethod": "gps",
+            "isHost": false,
             "team": null
           },
           {
@@ -70,6 +81,17 @@
             "userId": "00000000-0000-4000-8000-000000000002",
             "status": "approved",
             "attendance": "verified",
+            "checkInMethod": "gps",
+            "isHost": false,
+            "team": null
+          },
+          {
+            "gameId": "00000000-0000-4000-8000-0000000a0002",
+            "userId": "00000000-0000-4000-8000-000000000002",
+            "status": "approved",
+            "attendance": "verified",
+            "checkInMethod": "gps",
+            "isHost": false,
             "team": null
           },
           {
@@ -77,6 +99,17 @@
             "userId": "00000000-0000-4000-8000-000000000003",
             "status": "approved",
             "attendance": "verified",
+            "checkInMethod": "gps",
+            "isHost": false,
+            "team": null
+          },
+          {
+            "gameId": "00000000-0000-4000-8000-0000000a0002",
+            "userId": "00000000-0000-4000-8000-000000000003",
+            "status": "approved",
+            "attendance": "verified",
+            "checkInMethod": "gps",
+            "isHost": false,
             "team": null
           },
           {
@@ -84,6 +117,17 @@
             "userId": "00000000-0000-4000-8000-000000000004",
             "status": "approved",
             "attendance": "verified",
+            "checkInMethod": "gps",
+            "isHost": false,
+            "team": null
+          },
+          {
+            "gameId": "00000000-0000-4000-8000-0000000a0002",
+            "userId": "00000000-0000-4000-8000-000000000004",
+            "status": "approved",
+            "attendance": "verified",
+            "checkInMethod": "gps",
+            "isHost": false,
             "team": null
           }
         ]
@@ -194,7 +238,7 @@
           "reporterId": "00000000-0000-4000-8000-000000000003",
           "targetUserId": "00000000-0000-4000-8000-000000000001",
           "category": "harassment",
-          "gameId": "00000000-0000-4000-8000-0000000a0001",
+          "gameId": "00000000-0000-4000-8000-0000000a0002",
           "messageId": null,
           "note": null,
           "createdAt": "2026-03-01T08:00:00.000Z"
@@ -237,6 +281,17 @@
             "userId": "00000000-0000-4000-8000-000000000001",
             "status": "approved",
             "attendance": "verified",
+            "checkInMethod": "gps",
+            "isHost": false,
+            "team": null
+          },
+          {
+            "gameId": "00000000-0000-4000-8000-0000000a0002",
+            "userId": "00000000-0000-4000-8000-000000000001",
+            "status": "approved",
+            "attendance": "verified",
+            "checkInMethod": "gps",
+            "isHost": false,
             "team": null
           },
           {
@@ -244,6 +299,17 @@
             "userId": "00000000-0000-4000-8000-000000000002",
             "status": "approved",
             "attendance": "verified",
+            "checkInMethod": "gps",
+            "isHost": false,
+            "team": null
+          },
+          {
+            "gameId": "00000000-0000-4000-8000-0000000a0002",
+            "userId": "00000000-0000-4000-8000-000000000002",
+            "status": "approved",
+            "attendance": "verified",
+            "checkInMethod": "gps",
+            "isHost": false,
             "team": null
           },
           {
@@ -251,6 +317,17 @@
             "userId": "00000000-0000-4000-8000-000000000003",
             "status": "approved",
             "attendance": "verified",
+            "checkInMethod": "gps",
+            "isHost": false,
+            "team": null
+          },
+          {
+            "gameId": "00000000-0000-4000-8000-0000000a0002",
+            "userId": "00000000-0000-4000-8000-000000000003",
+            "status": "approved",
+            "attendance": "verified",
+            "checkInMethod": "gps",
+            "isHost": false,
             "team": null
           },
           {
@@ -258,6 +335,17 @@
             "userId": "00000000-0000-4000-8000-000000000004",
             "status": "approved",
             "attendance": "verified",
+            "checkInMethod": "gps",
+            "isHost": false,
+            "team": null
+          },
+          {
+            "gameId": "00000000-0000-4000-8000-0000000a0002",
+            "userId": "00000000-0000-4000-8000-000000000004",
+            "status": "approved",
+            "attendance": "verified",
+            "checkInMethod": "gps",
+            "isHost": false,
             "team": null
           }
         ]
@@ -326,7 +414,7 @@
           "reporterId": "00000000-0000-4000-8000-000000000003",
           "targetUserId": "00000000-0000-4000-8000-000000000001",
           "category": "harassment",
-          "gameId": "00000000-0000-4000-8000-0000000a0001",
+          "gameId": "00000000-0000-4000-8000-0000000a0002",
           "messageId": null,
           "note": null,
           "createdAt": "2026-03-01T08:00:00.000Z"
@@ -369,6 +457,17 @@
             "userId": "00000000-0000-4000-8000-000000000001",
             "status": "approved",
             "attendance": "verified",
+            "checkInMethod": "gps",
+            "isHost": false,
+            "team": null
+          },
+          {
+            "gameId": "00000000-0000-4000-8000-0000000a0002",
+            "userId": "00000000-0000-4000-8000-000000000001",
+            "status": "approved",
+            "attendance": "verified",
+            "checkInMethod": "gps",
+            "isHost": false,
             "team": null
           },
           {
@@ -376,6 +475,17 @@
             "userId": "00000000-0000-4000-8000-000000000002",
             "status": "approved",
             "attendance": "verified",
+            "checkInMethod": "gps",
+            "isHost": false,
+            "team": null
+          },
+          {
+            "gameId": "00000000-0000-4000-8000-0000000a0002",
+            "userId": "00000000-0000-4000-8000-000000000002",
+            "status": "approved",
+            "attendance": "verified",
+            "checkInMethod": "gps",
+            "isHost": false,
             "team": null
           },
           {
@@ -383,6 +493,17 @@
             "userId": "00000000-0000-4000-8000-000000000003",
             "status": "approved",
             "attendance": "verified",
+            "checkInMethod": "gps",
+            "isHost": false,
+            "team": null
+          },
+          {
+            "gameId": "00000000-0000-4000-8000-0000000a0002",
+            "userId": "00000000-0000-4000-8000-000000000003",
+            "status": "approved",
+            "attendance": "verified",
+            "checkInMethod": "gps",
+            "isHost": false,
             "team": null
           },
           {
@@ -390,6 +511,17 @@
             "userId": "00000000-0000-4000-8000-000000000004",
             "status": "approved",
             "attendance": "verified",
+            "checkInMethod": "gps",
+            "isHost": false,
+            "team": null
+          },
+          {
+            "gameId": "00000000-0000-4000-8000-0000000a0002",
+            "userId": "00000000-0000-4000-8000-000000000004",
+            "status": "approved",
+            "attendance": "verified",
+            "checkInMethod": "gps",
+            "isHost": false,
             "team": null
           }
         ]
@@ -480,8 +612,9 @@
     ]
   },
   {
-    "name": "reports.rival-team-brigading.review-only",
+    "name": "reports.all-from-one-game.review-only",
     "kind": "trust.evaluateReports",
+    "description": "Security fix: one game's players (e.g. a rival team) cannot restrict alone",
     "input": {
       "reports": [
         {
@@ -542,28 +675,72 @@
             "userId": "00000000-0000-4000-8000-000000000001",
             "status": "approved",
             "attendance": "verified",
-            "team": 0
+            "checkInMethod": "gps",
+            "isHost": false,
+            "team": null
+          },
+          {
+            "gameId": "00000000-0000-4000-8000-0000000a0002",
+            "userId": "00000000-0000-4000-8000-000000000001",
+            "status": "approved",
+            "attendance": "verified",
+            "checkInMethod": "gps",
+            "isHost": false,
+            "team": null
           },
           {
             "gameId": "00000000-0000-4000-8000-0000000a0001",
             "userId": "00000000-0000-4000-8000-000000000002",
             "status": "approved",
             "attendance": "verified",
-            "team": 1
+            "checkInMethod": "gps",
+            "isHost": false,
+            "team": null
+          },
+          {
+            "gameId": "00000000-0000-4000-8000-0000000a0002",
+            "userId": "00000000-0000-4000-8000-000000000002",
+            "status": "approved",
+            "attendance": "verified",
+            "checkInMethod": "gps",
+            "isHost": false,
+            "team": null
           },
           {
             "gameId": "00000000-0000-4000-8000-0000000a0001",
             "userId": "00000000-0000-4000-8000-000000000003",
             "status": "approved",
             "attendance": "verified",
-            "team": 1
+            "checkInMethod": "gps",
+            "isHost": false,
+            "team": null
+          },
+          {
+            "gameId": "00000000-0000-4000-8000-0000000a0002",
+            "userId": "00000000-0000-4000-8000-000000000003",
+            "status": "approved",
+            "attendance": "verified",
+            "checkInMethod": "gps",
+            "isHost": false,
+            "team": null
           },
           {
             "gameId": "00000000-0000-4000-8000-0000000a0001",
             "userId": "00000000-0000-4000-8000-000000000004",
             "status": "approved",
             "attendance": "verified",
-            "team": 1
+            "checkInMethod": "gps",
+            "isHost": false,
+            "team": null
+          },
+          {
+            "gameId": "00000000-0000-4000-8000-0000000a0002",
+            "userId": "00000000-0000-4000-8000-000000000004",
+            "status": "approved",
+            "attendance": "verified",
+            "checkInMethod": "gps",
+            "isHost": false,
+            "team": null
           }
         ]
       }
@@ -598,7 +775,7 @@
               "windowDays": 14,
               "excludedReporters": 0,
               "collusionSuspected": true,
-              "reviewReasons": "rival_team"
+              "reviewReasons": "single_game"
             },
             "dueBy": "2026-03-03T18:00:00.000Z",
             "dedupeKey": "collusion_suspected:00000000-0000-4000-8000-000000000001:00000000-0000-4000-8000-000000000101"
@@ -607,13 +784,14 @@
       ]
     },
     "tags": [
+      "security",
       "prd-v5:TRUST-042"
     ]
   },
   {
-    "name": "reports.reporter-not-checked-in-at-game.does-not-count",
+    "name": "reports.no-gps-verified-reporter.review-only",
     "kind": "trust.evaluateReports",
-    "description": "PRD v5 TRUST-041: reporters count only if checked in at the same game as the subject",
+    "description": "Security fix: at least one counted reporter must be GPS-verified at the game and not its host",
     "input": {
       "reports": [
         {
@@ -631,7 +809,7 @@
           "reporterId": "00000000-0000-4000-8000-000000000003",
           "targetUserId": "00000000-0000-4000-8000-000000000001",
           "category": "harassment",
-          "gameId": "00000000-0000-4000-8000-0000000a0001",
+          "gameId": "00000000-0000-4000-8000-0000000a0002",
           "messageId": null,
           "note": null,
           "createdAt": "2026-03-01T08:00:00.000Z"
@@ -674,6 +852,17 @@
             "userId": "00000000-0000-4000-8000-000000000001",
             "status": "approved",
             "attendance": "verified",
+            "checkInMethod": "gps",
+            "isHost": false,
+            "team": null
+          },
+          {
+            "gameId": "00000000-0000-4000-8000-0000000a0002",
+            "userId": "00000000-0000-4000-8000-000000000001",
+            "status": "approved",
+            "attendance": "verified",
+            "checkInMethod": "gps",
+            "isHost": false,
             "team": null
           },
           {
@@ -681,6 +870,17 @@
             "userId": "00000000-0000-4000-8000-000000000002",
             "status": "approved",
             "attendance": "verified",
+            "checkInMethod": "qr",
+            "isHost": false,
+            "team": null
+          },
+          {
+            "gameId": "00000000-0000-4000-8000-0000000a0002",
+            "userId": "00000000-0000-4000-8000-000000000002",
+            "status": "approved",
+            "attendance": "verified",
+            "checkInMethod": "qr",
+            "isHost": false,
             "team": null
           },
           {
@@ -688,6 +888,368 @@
             "userId": "00000000-0000-4000-8000-000000000003",
             "status": "approved",
             "attendance": "verified",
+            "checkInMethod": "host",
+            "isHost": false,
+            "team": null
+          },
+          {
+            "gameId": "00000000-0000-4000-8000-0000000a0002",
+            "userId": "00000000-0000-4000-8000-000000000003",
+            "status": "approved",
+            "attendance": "verified",
+            "checkInMethod": "host",
+            "isHost": false,
+            "team": null
+          },
+          {
+            "gameId": "00000000-0000-4000-8000-0000000a0001",
+            "userId": "00000000-0000-4000-8000-000000000004",
+            "status": "approved",
+            "attendance": "verified",
+            "checkInMethod": "qr",
+            "isHost": false,
+            "team": null
+          },
+          {
+            "gameId": "00000000-0000-4000-8000-0000000a0002",
+            "userId": "00000000-0000-4000-8000-000000000004",
+            "status": "approved",
+            "attendance": "verified",
+            "checkInMethod": "qr",
+            "isHost": false,
+            "team": null
+          }
+        ]
+      }
+    },
+    "now": "2026-03-01T18:00:00.000Z",
+    "expected": {
+      "outcome": "review_only",
+      "qualifyingReporterIds": [
+        "00000000-0000-4000-8000-000000000002",
+        "00000000-0000-4000-8000-000000000003",
+        "00000000-0000-4000-8000-000000000004"
+      ],
+      "effects": [
+        {
+          "type": "EnqueueReview",
+          "item": {
+            "kind": "collusion_suspected",
+            "priority": "normal",
+            "subjectUserId": "00000000-0000-4000-8000-000000000001",
+            "venueId": null,
+            "gameId": null,
+            "sanctionId": null,
+            "appealId": null,
+            "reportIds": [
+              "00000000-0000-4000-8000-000000000101",
+              "00000000-0000-4000-8000-000000000102",
+              "00000000-0000-4000-8000-000000000103"
+            ],
+            "evidence": {
+              "reporters": 3,
+              "independentReporters": 3,
+              "windowDays": 14,
+              "excludedReporters": 0,
+              "collusionSuspected": true,
+              "reviewReasons": "no_gps_anchor"
+            },
+            "dueBy": "2026-03-03T18:00:00.000Z",
+            "dedupeKey": "collusion_suspected:00000000-0000-4000-8000-000000000001:00000000-0000-4000-8000-000000000101"
+          }
+        }
+      ]
+    },
+    "tags": [
+      "security"
+    ]
+  },
+  {
+    "name": "reports.only-gps-reporter-is-host.review-only",
+    "kind": "trust.evaluateReports",
+    "input": {
+      "reports": [
+        {
+          "id": "00000000-0000-4000-8000-000000000101",
+          "reporterId": "00000000-0000-4000-8000-000000000002",
+          "targetUserId": "00000000-0000-4000-8000-000000000001",
+          "category": "harassment",
+          "gameId": "00000000-0000-4000-8000-0000000a0001",
+          "messageId": null,
+          "note": null,
+          "createdAt": "2026-02-28T22:00:00.000Z"
+        },
+        {
+          "id": "00000000-0000-4000-8000-000000000102",
+          "reporterId": "00000000-0000-4000-8000-000000000003",
+          "targetUserId": "00000000-0000-4000-8000-000000000001",
+          "category": "harassment",
+          "gameId": "00000000-0000-4000-8000-0000000a0002",
+          "messageId": null,
+          "note": null,
+          "createdAt": "2026-03-01T08:00:00.000Z"
+        },
+        {
+          "id": "00000000-0000-4000-8000-000000000103",
+          "reporterId": "00000000-0000-4000-8000-000000000004",
+          "targetUserId": "00000000-0000-4000-8000-000000000001",
+          "category": "harassment",
+          "gameId": "00000000-0000-4000-8000-0000000a0001",
+          "messageId": null,
+          "note": null,
+          "createdAt": "2026-03-01T17:00:00.000Z"
+        }
+      ],
+      "reporterProfiles": [
+        {
+          "id": "00000000-0000-4000-8000-000000000002",
+          "createdAt": "2026-01-30T18:00:00.000Z",
+          "reliabilityStatus": "green",
+          "reportsLast7d": 1
+        },
+        {
+          "id": "00000000-0000-4000-8000-000000000003",
+          "createdAt": "2025-12-31T18:00:00.000Z",
+          "reliabilityStatus": "green",
+          "reportsLast7d": 1
+        },
+        {
+          "id": "00000000-0000-4000-8000-000000000004",
+          "createdAt": "2025-12-01T18:00:00.000Z",
+          "reliabilityStatus": "green",
+          "reportsLast7d": 1
+        }
+      ],
+      "context": {
+        "attendance": [
+          {
+            "gameId": "00000000-0000-4000-8000-0000000a0001",
+            "userId": "00000000-0000-4000-8000-000000000001",
+            "status": "approved",
+            "attendance": "verified",
+            "checkInMethod": "gps",
+            "isHost": false,
+            "team": null
+          },
+          {
+            "gameId": "00000000-0000-4000-8000-0000000a0002",
+            "userId": "00000000-0000-4000-8000-000000000001",
+            "status": "approved",
+            "attendance": "verified",
+            "checkInMethod": "gps",
+            "isHost": false,
+            "team": null
+          },
+          {
+            "gameId": "00000000-0000-4000-8000-0000000a0001",
+            "userId": "00000000-0000-4000-8000-000000000002",
+            "status": "approved",
+            "attendance": "verified",
+            "checkInMethod": "gps",
+            "isHost": true,
+            "team": null
+          },
+          {
+            "gameId": "00000000-0000-4000-8000-0000000a0002",
+            "userId": "00000000-0000-4000-8000-000000000002",
+            "status": "approved",
+            "attendance": "verified",
+            "checkInMethod": "gps",
+            "isHost": true,
+            "team": null
+          },
+          {
+            "gameId": "00000000-0000-4000-8000-0000000a0001",
+            "userId": "00000000-0000-4000-8000-000000000003",
+            "status": "approved",
+            "attendance": "verified",
+            "checkInMethod": "qr",
+            "isHost": false,
+            "team": null
+          },
+          {
+            "gameId": "00000000-0000-4000-8000-0000000a0002",
+            "userId": "00000000-0000-4000-8000-000000000003",
+            "status": "approved",
+            "attendance": "verified",
+            "checkInMethod": "qr",
+            "isHost": false,
+            "team": null
+          },
+          {
+            "gameId": "00000000-0000-4000-8000-0000000a0001",
+            "userId": "00000000-0000-4000-8000-000000000004",
+            "status": "approved",
+            "attendance": "verified",
+            "checkInMethod": "qr",
+            "isHost": false,
+            "team": null
+          },
+          {
+            "gameId": "00000000-0000-4000-8000-0000000a0002",
+            "userId": "00000000-0000-4000-8000-000000000004",
+            "status": "approved",
+            "attendance": "verified",
+            "checkInMethod": "qr",
+            "isHost": false,
+            "team": null
+          }
+        ]
+      }
+    },
+    "now": "2026-03-01T18:00:00.000Z",
+    "expected": {
+      "outcome": "review_only",
+      "qualifyingReporterIds": [
+        "00000000-0000-4000-8000-000000000002",
+        "00000000-0000-4000-8000-000000000003",
+        "00000000-0000-4000-8000-000000000004"
+      ],
+      "effects": [
+        {
+          "type": "EnqueueReview",
+          "item": {
+            "kind": "collusion_suspected",
+            "priority": "normal",
+            "subjectUserId": "00000000-0000-4000-8000-000000000001",
+            "venueId": null,
+            "gameId": null,
+            "sanctionId": null,
+            "appealId": null,
+            "reportIds": [
+              "00000000-0000-4000-8000-000000000101",
+              "00000000-0000-4000-8000-000000000102",
+              "00000000-0000-4000-8000-000000000103"
+            ],
+            "evidence": {
+              "reporters": 3,
+              "independentReporters": 3,
+              "windowDays": 14,
+              "excludedReporters": 0,
+              "collusionSuspected": true,
+              "reviewReasons": "no_gps_anchor"
+            },
+            "dueBy": "2026-03-03T18:00:00.000Z",
+            "dedupeKey": "collusion_suspected:00000000-0000-4000-8000-000000000001:00000000-0000-4000-8000-000000000101"
+          }
+        }
+      ]
+    },
+    "tags": [
+      "security"
+    ]
+  },
+  {
+    "name": "reports.reporter-not-checked-in-at-game.does-not-count",
+    "kind": "trust.evaluateReports",
+    "description": "PRD v5 TRUST-041: reporters count only if checked in at the same game as the subject",
+    "input": {
+      "reports": [
+        {
+          "id": "00000000-0000-4000-8000-000000000101",
+          "reporterId": "00000000-0000-4000-8000-000000000002",
+          "targetUserId": "00000000-0000-4000-8000-000000000001",
+          "category": "harassment",
+          "gameId": "00000000-0000-4000-8000-0000000a0001",
+          "messageId": null,
+          "note": null,
+          "createdAt": "2026-02-28T22:00:00.000Z"
+        },
+        {
+          "id": "00000000-0000-4000-8000-000000000102",
+          "reporterId": "00000000-0000-4000-8000-000000000003",
+          "targetUserId": "00000000-0000-4000-8000-000000000001",
+          "category": "harassment",
+          "gameId": "00000000-0000-4000-8000-0000000a0002",
+          "messageId": null,
+          "note": null,
+          "createdAt": "2026-03-01T08:00:00.000Z"
+        },
+        {
+          "id": "00000000-0000-4000-8000-000000000103",
+          "reporterId": "00000000-0000-4000-8000-000000000004",
+          "targetUserId": "00000000-0000-4000-8000-000000000001",
+          "category": "harassment",
+          "gameId": "00000000-0000-4000-8000-0000000a0001",
+          "messageId": null,
+          "note": null,
+          "createdAt": "2026-03-01T17:00:00.000Z"
+        }
+      ],
+      "reporterProfiles": [
+        {
+          "id": "00000000-0000-4000-8000-000000000002",
+          "createdAt": "2026-01-30T18:00:00.000Z",
+          "reliabilityStatus": "green",
+          "reportsLast7d": 1
+        },
+        {
+          "id": "00000000-0000-4000-8000-000000000003",
+          "createdAt": "2025-12-31T18:00:00.000Z",
+          "reliabilityStatus": "green",
+          "reportsLast7d": 1
+        },
+        {
+          "id": "00000000-0000-4000-8000-000000000004",
+          "createdAt": "2025-12-01T18:00:00.000Z",
+          "reliabilityStatus": "green",
+          "reportsLast7d": 1
+        }
+      ],
+      "context": {
+        "attendance": [
+          {
+            "gameId": "00000000-0000-4000-8000-0000000a0001",
+            "userId": "00000000-0000-4000-8000-000000000001",
+            "status": "approved",
+            "attendance": "verified",
+            "checkInMethod": "gps",
+            "isHost": false,
+            "team": null
+          },
+          {
+            "gameId": "00000000-0000-4000-8000-0000000a0002",
+            "userId": "00000000-0000-4000-8000-000000000001",
+            "status": "approved",
+            "attendance": "verified",
+            "checkInMethod": "gps",
+            "isHost": false,
+            "team": null
+          },
+          {
+            "gameId": "00000000-0000-4000-8000-0000000a0001",
+            "userId": "00000000-0000-4000-8000-000000000002",
+            "status": "approved",
+            "attendance": "verified",
+            "checkInMethod": "gps",
+            "isHost": false,
+            "team": null
+          },
+          {
+            "gameId": "00000000-0000-4000-8000-0000000a0002",
+            "userId": "00000000-0000-4000-8000-000000000002",
+            "status": "approved",
+            "attendance": "verified",
+            "checkInMethod": "gps",
+            "isHost": false,
+            "team": null
+          },
+          {
+            "gameId": "00000000-0000-4000-8000-0000000a0001",
+            "userId": "00000000-0000-4000-8000-000000000003",
+            "status": "approved",
+            "attendance": "verified",
+            "checkInMethod": "gps",
+            "isHost": false,
+            "team": null
+          },
+          {
+            "gameId": "00000000-0000-4000-8000-0000000a0002",
+            "userId": "00000000-0000-4000-8000-000000000003",
+            "status": "approved",
+            "attendance": "verified",
+            "checkInMethod": "gps",
+            "isHost": false,
             "team": null
           },
           {
@@ -695,6 +1257,17 @@
             "userId": "00000000-0000-4000-8000-000000000004",
             "status": "approved",
             "attendance": "no_show_unverified",
+            "checkInMethod": null,
+            "isHost": false,
+            "team": null
+          },
+          {
+            "gameId": "00000000-0000-4000-8000-0000000a0002",
+            "userId": "00000000-0000-4000-8000-000000000004",
+            "status": "approved",
+            "attendance": "no_show_unverified",
+            "checkInMethod": null,
+            "isHost": false,
             "team": null
           }
         ]
@@ -733,7 +1306,7 @@
           "reporterId": "00000000-0000-4000-8000-000000000003",
           "targetUserId": "00000000-0000-4000-8000-000000000001",
           "category": "harassment",
-          "gameId": "00000000-0000-4000-8000-0000000a0001",
+          "gameId": "00000000-0000-4000-8000-0000000a0002",
           "messageId": null,
           "note": null,
           "createdAt": "2026-03-01T08:00:00.000Z"
@@ -776,6 +1349,17 @@
             "userId": "00000000-0000-4000-8000-000000000001",
             "status": "approved",
             "attendance": "verified",
+            "checkInMethod": "gps",
+            "isHost": false,
+            "team": null
+          },
+          {
+            "gameId": "00000000-0000-4000-8000-0000000a0002",
+            "userId": "00000000-0000-4000-8000-000000000001",
+            "status": "approved",
+            "attendance": "verified",
+            "checkInMethod": "gps",
+            "isHost": false,
             "team": null
           },
           {
@@ -783,6 +1367,17 @@
             "userId": "00000000-0000-4000-8000-000000000002",
             "status": "approved",
             "attendance": "verified",
+            "checkInMethod": "gps",
+            "isHost": false,
+            "team": null
+          },
+          {
+            "gameId": "00000000-0000-4000-8000-0000000a0002",
+            "userId": "00000000-0000-4000-8000-000000000002",
+            "status": "approved",
+            "attendance": "verified",
+            "checkInMethod": "gps",
+            "isHost": false,
             "team": null
           },
           {
@@ -790,6 +1385,17 @@
             "userId": "00000000-0000-4000-8000-000000000003",
             "status": "approved",
             "attendance": "verified",
+            "checkInMethod": "gps",
+            "isHost": false,
+            "team": null
+          },
+          {
+            "gameId": "00000000-0000-4000-8000-0000000a0002",
+            "userId": "00000000-0000-4000-8000-000000000003",
+            "status": "approved",
+            "attendance": "verified",
+            "checkInMethod": "gps",
+            "isHost": false,
             "team": null
           },
           {
@@ -797,6 +1403,17 @@
             "userId": "00000000-0000-4000-8000-000000000004",
             "status": "approved",
             "attendance": "verified",
+            "checkInMethod": "gps",
+            "isHost": false,
+            "team": null
+          },
+          {
+            "gameId": "00000000-0000-4000-8000-0000000a0002",
+            "userId": "00000000-0000-4000-8000-000000000004",
+            "status": "approved",
+            "attendance": "verified",
+            "checkInMethod": "gps",
+            "isHost": false,
             "team": null
           }
         ]
@@ -835,7 +1452,7 @@
           "reporterId": "00000000-0000-4000-8000-000000000003",
           "targetUserId": "00000000-0000-4000-8000-000000000001",
           "category": "harassment",
-          "gameId": "00000000-0000-4000-8000-0000000a0001",
+          "gameId": "00000000-0000-4000-8000-0000000a0002",
           "messageId": null,
           "note": null,
           "createdAt": "2026-03-01T08:00:00.000Z"
@@ -878,6 +1495,17 @@
             "userId": "00000000-0000-4000-8000-000000000001",
             "status": "approved",
             "attendance": "verified",
+            "checkInMethod": "gps",
+            "isHost": false,
+            "team": null
+          },
+          {
+            "gameId": "00000000-0000-4000-8000-0000000a0002",
+            "userId": "00000000-0000-4000-8000-000000000001",
+            "status": "approved",
+            "attendance": "verified",
+            "checkInMethod": "gps",
+            "isHost": false,
             "team": null
           },
           {
@@ -885,6 +1513,17 @@
             "userId": "00000000-0000-4000-8000-000000000002",
             "status": "approved",
             "attendance": "verified",
+            "checkInMethod": "gps",
+            "isHost": false,
+            "team": null
+          },
+          {
+            "gameId": "00000000-0000-4000-8000-0000000a0002",
+            "userId": "00000000-0000-4000-8000-000000000002",
+            "status": "approved",
+            "attendance": "verified",
+            "checkInMethod": "gps",
+            "isHost": false,
             "team": null
           },
           {
@@ -892,6 +1531,17 @@
             "userId": "00000000-0000-4000-8000-000000000003",
             "status": "approved",
             "attendance": "verified",
+            "checkInMethod": "gps",
+            "isHost": false,
+            "team": null
+          },
+          {
+            "gameId": "00000000-0000-4000-8000-0000000a0002",
+            "userId": "00000000-0000-4000-8000-000000000003",
+            "status": "approved",
+            "attendance": "verified",
+            "checkInMethod": "gps",
+            "isHost": false,
             "team": null
           },
           {
@@ -899,6 +1549,17 @@
             "userId": "00000000-0000-4000-8000-000000000004",
             "status": "approved",
             "attendance": "verified",
+            "checkInMethod": "gps",
+            "isHost": false,
+            "team": null
+          },
+          {
+            "gameId": "00000000-0000-4000-8000-0000000a0002",
+            "userId": "00000000-0000-4000-8000-000000000004",
+            "status": "approved",
+            "attendance": "verified",
+            "checkInMethod": "gps",
+            "isHost": false,
             "team": null
           }
         ]
@@ -976,6 +1637,17 @@
             "userId": "00000000-0000-4000-8000-000000000001",
             "status": "approved",
             "attendance": "verified",
+            "checkInMethod": "gps",
+            "isHost": false,
+            "team": null
+          },
+          {
+            "gameId": "00000000-0000-4000-8000-0000000a0002",
+            "userId": "00000000-0000-4000-8000-000000000001",
+            "status": "approved",
+            "attendance": "verified",
+            "checkInMethod": "gps",
+            "isHost": false,
             "team": null
           },
           {
@@ -983,6 +1655,17 @@
             "userId": "00000000-0000-4000-8000-000000000002",
             "status": "approved",
             "attendance": "verified",
+            "checkInMethod": "gps",
+            "isHost": false,
+            "team": null
+          },
+          {
+            "gameId": "00000000-0000-4000-8000-0000000a0002",
+            "userId": "00000000-0000-4000-8000-000000000002",
+            "status": "approved",
+            "attendance": "verified",
+            "checkInMethod": "gps",
+            "isHost": false,
             "team": null
           },
           {
@@ -990,6 +1673,17 @@
             "userId": "00000000-0000-4000-8000-000000000003",
             "status": "approved",
             "attendance": "verified",
+            "checkInMethod": "gps",
+            "isHost": false,
+            "team": null
+          },
+          {
+            "gameId": "00000000-0000-4000-8000-0000000a0002",
+            "userId": "00000000-0000-4000-8000-000000000003",
+            "status": "approved",
+            "attendance": "verified",
+            "checkInMethod": "gps",
+            "isHost": false,
             "team": null
           },
           {
@@ -997,6 +1691,17 @@
             "userId": "00000000-0000-4000-8000-000000000004",
             "status": "approved",
             "attendance": "verified",
+            "checkInMethod": "gps",
+            "isHost": false,
+            "team": null
+          },
+          {
+            "gameId": "00000000-0000-4000-8000-0000000a0002",
+            "userId": "00000000-0000-4000-8000-000000000004",
+            "status": "approved",
+            "attendance": "verified",
+            "checkInMethod": "gps",
+            "isHost": false,
             "team": null
           }
         ]
@@ -1036,7 +1741,7 @@
           "reporterId": "00000000-0000-4000-8000-000000000003",
           "targetUserId": "00000000-0000-4000-8000-000000000001",
           "category": "harassment",
-          "gameId": "00000000-0000-4000-8000-0000000a0001",
+          "gameId": "00000000-0000-4000-8000-0000000a0002",
           "messageId": null,
           "note": null,
           "createdAt": "2026-03-01T08:00:00.000Z"
@@ -1079,6 +1784,17 @@
             "userId": "00000000-0000-4000-8000-000000000001",
             "status": "approved",
             "attendance": "verified",
+            "checkInMethod": "gps",
+            "isHost": false,
+            "team": null
+          },
+          {
+            "gameId": "00000000-0000-4000-8000-0000000a0002",
+            "userId": "00000000-0000-4000-8000-000000000001",
+            "status": "approved",
+            "attendance": "verified",
+            "checkInMethod": "gps",
+            "isHost": false,
             "team": null
           },
           {
@@ -1086,6 +1802,17 @@
             "userId": "00000000-0000-4000-8000-000000000002",
             "status": "approved",
             "attendance": "verified",
+            "checkInMethod": "gps",
+            "isHost": false,
+            "team": null
+          },
+          {
+            "gameId": "00000000-0000-4000-8000-0000000a0002",
+            "userId": "00000000-0000-4000-8000-000000000002",
+            "status": "approved",
+            "attendance": "verified",
+            "checkInMethod": "gps",
+            "isHost": false,
             "team": null
           },
           {
@@ -1093,6 +1820,17 @@
             "userId": "00000000-0000-4000-8000-000000000003",
             "status": "approved",
             "attendance": "verified",
+            "checkInMethod": "gps",
+            "isHost": false,
+            "team": null
+          },
+          {
+            "gameId": "00000000-0000-4000-8000-0000000a0002",
+            "userId": "00000000-0000-4000-8000-000000000003",
+            "status": "approved",
+            "attendance": "verified",
+            "checkInMethod": "gps",
+            "isHost": false,
             "team": null
           },
           {
@@ -1100,6 +1838,17 @@
             "userId": "00000000-0000-4000-8000-000000000004",
             "status": "approved",
             "attendance": "verified",
+            "checkInMethod": "gps",
+            "isHost": false,
+            "team": null
+          },
+          {
+            "gameId": "00000000-0000-4000-8000-0000000a0002",
+            "userId": "00000000-0000-4000-8000-000000000004",
+            "status": "approved",
+            "attendance": "verified",
+            "checkInMethod": "gps",
+            "isHost": false,
             "team": null
           }
         ],

@@ -153,17 +153,36 @@ describe('QR tokens', () => {
 
   it('matches the documented wire format (HMAC over `${gameId}|${step}`, 128-bit)', () => {
     const t = generateQrToken(secret, gameId, now);
-    const step = Math.floor(now / 30_000);
+    const step = Math.floor(now / 20_000);
     expect(t.step).toBe(step);
     expect(t.token).toBe(`${step}.${createHmac('sha256', secret).update(`${gameId}|${step}`).digest('hex').slice(0, 32)}`);
-    expect(t.expiresAt).toBe(new Date((step + 1) * 30_000).toISOString());
+    // Accepted through the end of step + 1 (past-only drift of one 20 s step).
+    expect(t.expiresAt).toBe(new Date((step + 2) * 20_000).toISOString());
     expect(qrStep(now)).toBe(step);
   });
 
-  it('accepts current ±1 step only', () => {
+  it('SECURITY: accepts the current and the previous step only — never a future step', () => {
     const t = generateQrToken(secret, gameId, now);
-    for (const d of [-1, 0, 1]) expect(verifyQr(t.token, secret, gameId, now + d * 30_000).outcome).toBe('verified');
-    for (const d of [-2, 2, 6]) expect(verifyQr(t.token, secret, gameId, now + d * 30_000)).toMatchObject({ reason: 'expired_qr' });
+    for (const d of [0, 1]) expect(verifyQr(t.token, secret, gameId, now + d * 20_000).outcome).toBe('verified');
+    expect(verifyQr(t.token, secret, gameId, now - 20_000)).toMatchObject({ reason: 'invalid_qr' });
+    for (const d of [2, 6]) expect(verifyQr(t.token, secret, gameId, now + d * 20_000)).toMatchObject({ reason: 'expired_qr' });
+    // A screenshot dies exactly at expiresAt.
+    expect(verifyQr(t.token, secret, gameId, Date.parse(t.expiresAt) - 1).outcome).toBe('verified');
+    expect(verifyQr(t.token, secret, gameId, Date.parse(t.expiresAt)).outcome).toBe('rejected');
+    const cfg = resolveTrustConfig({ qrAllowedDriftSteps: 0 });
+    expect(verifyQr(generateQrToken(secret, gameId, now, cfg).token, secret, gameId, now + 20_000, cfg)).toMatchObject({ reason: 'expired_qr' });
+  });
+
+  it('SECURITY: the host cannot QR-verify themself', () => {
+    const t = generateQrToken(secret, gameId, now);
+    expect(verifyQr(t.token, secret, gameId, now, undefined, undefined, { userId: 'h', hostId: 'h' })).toEqual({
+      outcome: 'rejected',
+      method: 'qr',
+      reason: 'not_host',
+      fallbacks: ['gps', 'peer'],
+      signals: [],
+    });
+    expect(verifyQr(t.token, secret, gameId, now, undefined, undefined, { userId: 'p', hostId: 'h' }).outcome).toBe('verified');
   });
 
   it('rejects forged, malformed and other-game tokens', () => {
@@ -227,15 +246,20 @@ describe('verifyPeer', () => {
   });
   const base = {
     targetUserId: 't',
-    participants: [P('t', null, 'unknown'), P('a', 'gps'), P('b', 'qr'), P('c', 'peer'), P('d', 'host'), P('e', 'gps', 'unknown')],
+    participants: [P('t', null, 'unknown'), P('a', 'gps'), P('b', 'gps'), P('c', 'peer'), P('d', 'host'), P('e', 'gps', 'unknown'), P('q', 'qr')],
     confirmations: [] as { confirmerId: string; targetId: string }[],
     blocks: [] as { blockerId: string; blockedId: string }[],
   };
   const now = Date.parse('2026-03-01T18:30:00.000Z');
 
-  it('verifies with two GPS/QR-verified confirmers', () => {
+  it('verifies with two GPS-verified confirmers', () => {
     const r = verifyPeer({ ...base, confirmations: [{ confirmerId: 'a', targetId: 't' }, { confirmerId: 'b', targetId: 't' }] }, now);
     expect(r).toEqual({ confirmations: 2, verdict: { outcome: 'verified', method: 'peer', distanceM: null, signals: [] } });
+  });
+
+  it('SECURITY: QR-verified attendees are not anchors (breaks the relayed-QR → peer chain)', () => {
+    const r = verifyPeer({ ...base, confirmations: [{ confirmerId: 'a', targetId: 't' }, { confirmerId: 'q', targetId: 't' }] }, now);
+    expect(r).toMatchObject({ confirmations: 1, verdict: { outcome: 'rejected', reason: 'insufficient_peers' } });
   });
 
   it('ignores self, unverified, host-marked and duplicate confirmations', () => {

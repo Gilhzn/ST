@@ -7,10 +7,11 @@
       "gameId": "00000000-0000-4000-8000-0000000a0001"
     },
     "now": "2026-03-01T18:00:10.000Z",
+    "description": "expiresAt = end of the last step that still accepts the token (current + 1 past-only drift step)",
     "expected": {
-      "token": "59079600.d1b2642a5017e9780937afb2d024c3cd",
-      "step": 59079600,
-      "expiresAt": "2026-03-01T18:00:30.000Z"
+      "token": "88619400.d5655cabd6e1c96923d1d43b2a0e3b85",
+      "step": 88619400,
+      "expiresAt": "2026-03-01T18:00:40.000Z"
     }
   }
 ]

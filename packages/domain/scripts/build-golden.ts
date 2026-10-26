@@ -864,10 +864,13 @@ function add(c: GoldenCase): void {
     createdAt: iso(T - hoursAgo * H),
     ...extra,
   });
-  const att = (n: number, extra: Record<string, Json> = {}) => ({ gameId: G(1), userId: U(n), status: 'approved', attendance: 'verified', team: null, ...extra });
-  const reports = [rep(1, 2, 20), rep(2, 3, 10), rep(3, 4, 1)];
+  /** A participation in G(1) and G(2): GPS-verified, not the host (overridable). */
+  const att = (n: number, extra: Record<string, Json> = {}) =>
+    [G(1), G(2)].map((gameId) => ({ gameId, userId: U(n), status: 'approved', attendance: 'verified', checkInMethod: 'gps', isHost: false, team: null, ...extra }));
+  // Reports span two games: all reports from one game are review-only (single_game).
+  const reports = [rep(1, 2, 20), rep(2, 3, 10, { gameId: G(2) }), rep(3, 4, 1)];
   const profiles = [prof(2, 30), prof(3, 60), prof(4, 90)];
-  const attendance = [att(1), att(2), att(3), att(4)];
+  const attendance = [...att(1), ...att(2), ...att(3), ...att(4)];
   const reportIds = reports.map((r) => r.id);
   const key = `toxicity_reports:${SUBJECT}:${reportIds[0]}`;
   const evidence = (o: { independent: number; collusion: boolean; reasons: string; excluded?: number; reporters?: number }) => ({
@@ -956,22 +959,37 @@ function add(c: GoldenCase): void {
     tags: ['boundary'],
   });
   add({
-    name: 'reports.rival-team-brigading.review-only',
+    name: 'reports.all-from-one-game.review-only',
     kind,
-    input: {
-      reports,
-      reporterProfiles: profiles,
-      context: { attendance: [att(1, { team: 0 }), att(2, { team: 1 }), att(3, { team: 1 }), att(4, { team: 1 })] },
-    },
+    description: 'Security fix: one game\'s players (e.g. a rival team) cannot restrict alone',
+    input: { reports: reports.map((r) => ({ ...r, gameId: G(1) })), reporterProfiles: profiles, context: { attendance } },
     now: iso(T),
-    expected: { outcome: 'review_only', qualifyingReporterIds: [U(2), U(3), U(4)], effects: [collusionReview('rival_team', 3)] },
-    tags: ['prd-v5:TRUST-042'],
+    expected: { outcome: 'review_only', qualifyingReporterIds: [U(2), U(3), U(4)], effects: [collusionReview('single_game', 3)] },
+    tags: ['security', 'prd-v5:TRUST-042'],
+  });
+  const viaQr = [...att(1), ...att(2, { checkInMethod: 'qr' }), ...att(3, { checkInMethod: 'host' }), ...att(4, { checkInMethod: 'qr' })];
+  add({
+    name: 'reports.no-gps-verified-reporter.review-only',
+    kind,
+    description: 'Security fix: at least one counted reporter must be GPS-verified at the game and not its host',
+    input: { reports, reporterProfiles: profiles, context: { attendance: viaQr } },
+    now: iso(T),
+    expected: { outcome: 'review_only', qualifyingReporterIds: [U(2), U(3), U(4)], effects: [collusionReview('no_gps_anchor', 3)] },
+    tags: ['security'],
+  });
+  add({
+    name: 'reports.only-gps-reporter-is-host.review-only',
+    kind,
+    input: { reports, reporterProfiles: profiles, context: { attendance: [...att(1), ...att(2, { isHost: true }), ...att(3, { checkInMethod: 'qr' }), ...att(4, { checkInMethod: 'qr' })] } },
+    now: iso(T),
+    expected: { outcome: 'review_only', qualifyingReporterIds: [U(2), U(3), U(4)], effects: [collusionReview('no_gps_anchor', 3)] },
+    tags: ['security'],
   });
   add({
     name: 'reports.reporter-not-checked-in-at-game.does-not-count',
     kind,
     description: 'PRD v5 TRUST-041: reporters count only if checked in at the same game as the subject',
-    input: { reports, reporterProfiles: profiles, context: { attendance: [att(1), att(2), att(3), att(4, { attendance: 'no_show_unverified' })] } },
+    input: { reports, reporterProfiles: profiles, context: { attendance: [...att(1), ...att(2), ...att(3), ...att(4, { attendance: 'no_show_unverified', checkInMethod: null })] } },
     now: iso(T),
     expected: { outcome: 'none', qualifyingReporterIds: [U(2), U(3)], effects: [] },
     tags: ['prd-v5:TRUST-041'],
@@ -1054,11 +1072,19 @@ function add(c: GoldenCase): void {
     note: null,
     createdAt: iso(T - (10 - n) * H),
   });
+  const vprof = (n: number, createdDaysAgo = 30, extra: Record<string, Json> = {}) => ({
+    id: U(n),
+    createdAt: iso(T - createdDaysAgo * D),
+    reliabilityStatus: 'green',
+    reportsLast7d: 0,
+    ...extra,
+  });
+  const vprofiles = [vprof(2), vprof(3), vprof(4), vprof(0xff)];
   const venue = (reports: Json[], extra: Record<string, Json> = {}) => ({ venueId: VENUE, status: 'active', createdBy: HOST, lastReviewedAt: null, reports, ...extra });
   add({
     name: 'venue.3-distinct-reporters.auto-hide',
     kind,
-    input: { venue: venue([vr(1, 2), vr(2, 3, 'closed'), vr(3, 4)]) },
+    input: { reporterProfiles: vprofiles, venue: venue([vr(1, 2), vr(2, 3, 'closed'), vr(3, 4)]) },
     now: iso(T),
     expected: {
       hide: true,
@@ -1078,15 +1104,41 @@ function add(c: GoldenCase): void {
     },
     tags: ['boundary'],
   });
-  add({ name: 'venue.2-reporters.stays-active', kind, input: { venue: venue([vr(1, 2), vr(2, 3)]) }, now: iso(T), expected: { hide: false, effects: [] }, tags: ['boundary'] });
-  add({ name: 'venue.same-reporter-twice.not-distinct', kind, input: { venue: venue([vr(1, 2), vr(2, 3), vr(3, 3)]) }, now: iso(T), expected: { hide: false, effects: [] } });
-  add({ name: 'venue.creator-report-excluded', kind, input: { venue: venue([vr(1, 2), vr(2, 3), vr(3, 0xff)]) }, now: iso(T), expected: { hide: false, effects: [] } });
+  add({ name: 'venue.2-reporters.stays-active', kind, input: { reporterProfiles: vprofiles, venue: venue([vr(1, 2), vr(2, 3)]) }, now: iso(T), expected: { hide: false, effects: [] }, tags: ['boundary'] });
+  add({ name: 'venue.same-reporter-twice.not-distinct', kind, input: { reporterProfiles: vprofiles, venue: venue([vr(1, 2), vr(2, 3), vr(3, 3)]) }, now: iso(T), expected: { hide: false, effects: [] } });
+  add({ name: 'venue.creator-report-excluded', kind, input: { reporterProfiles: vprofiles, venue: venue([vr(1, 2), vr(2, 3), vr(3, 0xff)]) }, now: iso(T), expected: { hide: false, effects: [] } });
   add({
     name: 'venue.reports-before-last-review-consumed',
     kind,
-    input: { venue: venue([vr(1, 2), vr(2, 3), vr(3, 4)], { lastReviewedAt: iso(T - 7.5 * H) }) },
+    input: { reporterProfiles: vprofiles, venue: venue([vr(1, 2), vr(2, 3), vr(3, 4)], { lastReviewedAt: iso(T - 7.5 * H) }) },
     now: iso(T),
     expected: { hide: false, effects: [] },
+  });
+  const three = venue([vr(1, 2), vr(2, 3), vr(3, 4)]);
+  add({
+    name: 'venue.reporter-account-too-new.stays-active',
+    kind,
+    description: 'Security fix: venue reporters must qualify like user reporters (account ≥ 7 days old at report time)',
+    input: { reporterProfiles: [vprof(2), vprof(3), vprof(4, 7)], venue: three },
+    now: iso(T),
+    expected: { hide: false, effects: [] },
+    tags: ['security', 'boundary'],
+  });
+  add({
+    name: 'venue.red-reporter.stays-active',
+    kind,
+    input: { reporterProfiles: [vprof(2), vprof(3), vprof(4, 30, { reliabilityStatus: 'red' })], venue: three },
+    now: iso(T),
+    expected: { hide: false, effects: [] },
+    tags: ['security'],
+  });
+  add({
+    name: 'venue.unknown-reporter-profile.stays-active',
+    kind,
+    input: { reporterProfiles: [vprof(2), vprof(3)], venue: three },
+    now: iso(T),
+    expected: { hide: false, effects: [] },
+    tags: ['security'],
   });
 }
 
@@ -1120,12 +1172,103 @@ function add(c: GoldenCase): void {
         now: T,
         subjectUserId: HOST,
         sanctionId: sid(key),
-        evidence: { reason: 'low_host_rating', ratingCount: 5, averageRating: 2 },
+        evidence: { reason: 'low_host_rating', ratingCount: 5, averageRating: 2, lateGameCancellations: 0 },
       }),
     ],
   }, ['boundary']);
   run('host.avg-2.2-over-5.none', [2, 2, 2, 3, 2], { outcome: 'none', reasonCode: null, effects: [] }, ['boundary']);
   run('host.avg-1.0-over-4.none', [1, 1, 1, 1], { outcome: 'none', reasonCode: null, effects: [] }, ['boundary']);
+}
+
+// ---------------------------------------------------------------- trust.hostGameCancelled
+
+{
+  const kind = 'trust.hostGameCancelled';
+  const now = T - 90 * 60_000;
+  const game = (n: number) => ({ id: G(n), hostId: HOST, startsAt: iso(T) });
+  const hostCard = (n: number, issuedAt: number, minutesBeforeStart: number): NewSanctionJ =>
+    sanction({
+      kind: 'yellow_card',
+      userId: HOST,
+      reasonCode: 'late_cancel',
+      params: { role: 'host', windowHours: 2, minutesBeforeStart, disputeHours: 48 },
+      now: issuedAt,
+      durationMs: 30 * D,
+      disputeMs: 48 * H,
+      gameId: G(n),
+      dedupeKey: `host_late_cancel:${G(n)}:${HOST}`,
+    });
+  const row = (c: NewSanctionJ): Json => ({ ...c, id: sid(c.dedupeKey as string), status: 'active', appealPath: 'dispute', overturnedAt: null, createdAt: c.startsAt as string });
+  add({
+    name: 'host-cancel.90min-before.host-yellow',
+    kind,
+    description: 'Security fix (GAME-047): a host cancelling their own game < 2h before start gets a disputable late_cancel card',
+    input: { state: { userId: HOST }, game: game(1), cancelledAt: iso(now) },
+    now: iso(now),
+    expected: { effects: issue(hostCard(1, now, 90)) },
+    tags: ['security', 'prd-v5:GAME-047'],
+  });
+  add({
+    name: 'host-cancel.exactly-2h-before.no-card',
+    kind,
+    input: { state: { userId: HOST }, game: game(1), cancelledAt: iso(T - 2 * H) },
+    now: iso(T - 2 * H),
+    expected: { effects: [] },
+    tags: ['boundary'],
+  });
+  const prior = hostCard(2, now - 10 * D, 30);
+  const second = hostCard(1, now, 90);
+  const key = `host_late_cancellations:${HOST}:${sid(second.dedupeKey as string)}`;
+  add({
+    name: 'host-cancel.second-in-30d.host-suspension',
+    kind,
+    description: 'TRUST-051(c): 2 late game cancellations in 30 days → host suspension + review, caused by the cards',
+    input: { state: { userId: HOST, sanctions: [row(prior)] }, game: game(1), cancelledAt: iso(now) },
+    now: iso(now),
+    expected: {
+      effects: [
+        ...issue(second),
+        ...issue(
+          sanction({
+            kind: 'host_suspension',
+            userId: HOST,
+            reasonCode: 'late_cancel',
+            params: { cancellations: 2, windowDays: 30, days: 14 },
+            now,
+            durationMs: 14 * D,
+            causedBy: [sid(prior.dedupeKey as string), sid(second.dedupeKey as string)],
+            dedupeKey: key,
+          }),
+        ),
+        review({
+          kind: 'host_reliability',
+          priority: 'normal',
+          dedupeKey: key,
+          now,
+          subjectUserId: HOST,
+          sanctionId: sid(key),
+          evidence: { reason: 'late_cancel', ratingCount: 0, averageRating: null, lateGameCancellations: 2 },
+        }),
+      ],
+    },
+    tags: ['security', 'prd-v5:TRUST-051'],
+  });
+  add({
+    name: 'host-cancel.previous-over-30d-ago.card-only',
+    kind,
+    input: { state: { userId: HOST, sanctions: [row(hostCard(2, now - 30 * D, 30))] }, game: game(1), cancelledAt: iso(now) },
+    now: iso(now),
+    expected: { effects: issue(hostCard(1, now, 90)) },
+    tags: ['boundary'],
+  });
+  add({
+    name: 'host-cancel.already-carded.idempotent',
+    kind,
+    input: { state: { userId: HOST, sanctions: [row(hostCard(1, now, 90))] }, game: game(1), cancelledAt: iso(now) },
+    now: iso(now),
+    expected: { effects: [] },
+    tags: ['idempotency'],
+  });
 }
 
 // ---------------------------------------------------------------- trust.reliability
@@ -1266,20 +1409,46 @@ function add(c: GoldenCase): void {
   const secret = 'golden-qr-secret';
   const gameId = G(1);
   const now = Date.parse('2026-03-01T18:00:10.000Z');
-  const step = Math.floor(now / 30_000);
+  const stepMs = 20_000; // qrStepSeconds = 20
+  const step = Math.floor(now / stepMs);
   const token = (s: number) => `${s}.${createHmac('sha256', secret).update(`${gameId}|${s}`).digest('hex').slice(0, 32)}`;
   add({
     name: 'qr.token.wire-format',
     kind: 'checkin.qrToken',
     input: { qrSecret: secret, gameId },
     now: iso(now),
-    expected: { token: token(step), step, expiresAt: iso((step + 1) * 30_000) },
+    description: 'expiresAt = end of the last step that still accepts the token (current + 1 past-only drift step)',
+    expected: { token: token(step), step, expiresAt: iso((step + 2) * stepMs) },
   });
   const verified = { outcome: 'verified', method: 'qr', distanceM: null, signals: [] };
   const rejected = (reason: string) => ({ outcome: 'rejected', method: 'qr', reason, fallbacks: ['qr', 'peer', 'host'], signals: [] });
-  for (const [d, exp] of [[-1, verified], [0, verified], [1, verified], [-2, rejected('expired_qr')], [2, rejected('expired_qr')]] as const) {
-    add({ name: `qr.step-drift-${d < 0 ? 'minus' : 'plus'}-${Math.abs(d)}`, kind: 'checkin.verifyQr', input: { token: token(step + d), qrSecret: secret, gameId }, now: iso(now), expected: exp, tags: ['boundary'] });
+  // Past-only drift: the token of the current or the previous step is accepted; a future step never is.
+  for (const [d, exp] of [[-1, verified], [0, verified], [1, rejected('invalid_qr')], [-2, rejected('expired_qr')], [2, rejected('invalid_qr')]] as const) {
+    add({
+      name: `qr.step-drift-${d < 0 ? 'minus' : 'plus'}-${Math.abs(d)}`,
+      kind: 'checkin.verifyQr',
+      input: { token: token(step + d), qrSecret: secret, gameId },
+      now: iso(now),
+      expected: exp,
+      tags: ['boundary', 'security'],
+    });
   }
+  add({
+    name: 'qr.host-scans-own-code.not-host',
+    kind: 'checkin.verifyQr',
+    description: 'Security fix: the host displays the code and cannot QR-verify themself',
+    input: { token: token(step), qrSecret: secret, gameId, scanner: { userId: HOST, hostId: HOST } },
+    now: iso(now),
+    expected: { outcome: 'rejected', method: 'qr', reason: 'not_host', fallbacks: ['gps', 'peer'], signals: [] },
+    tags: ['security'],
+  });
+  add({
+    name: 'qr.player-scan.verified',
+    kind: 'checkin.verifyQr',
+    input: { token: token(step), qrSecret: secret, gameId, scanner: { userId: SUBJECT, hostId: HOST } },
+    now: iso(now),
+    expected: verified,
+  });
   add({ name: 'qr.wrong-secret.invalid', kind: 'checkin.verifyQr', input: { token: token(step), qrSecret: 'rotated', gameId }, now: iso(now), expected: rejected('invalid_qr') });
 }
 
@@ -1288,14 +1457,14 @@ function add(c: GoldenCase): void {
 {
   const kind = 'checkin.verifyPeer';
   const P = (n: number, method: string | null, attendance = 'verified') => ({ userId: U(n), status: 'approved', attendance, checkInMethod: method });
-  const participants = [P(1, null, 'unknown'), P(2, 'gps'), P(3, 'qr'), P(4, 'peer')];
+  const participants = [P(1, null, 'unknown'), P(2, 'gps'), P(3, 'gps'), P(4, 'peer'), P(5, 'qr')];
   const c = (from: number, to: number) => ({ confirmerId: U(from), targetId: U(to) });
   const rej = (reason: string, confirmations: number) => ({
     confirmations,
     verdict: { outcome: 'rejected', method: 'peer', reason, fallbacks: ['qr', 'host'], signals: [] },
   });
   add({
-    name: 'peer.two-gps-qr-confirmers.verified',
+    name: 'peer.two-gps-confirmers.verified',
     kind,
     input: { targetUserId: SUBJECT, participants, confirmations: [c(2, 1), c(3, 1)], blocks: [] },
     now: iso(T),
@@ -1303,6 +1472,15 @@ function add(c: GoldenCase): void {
   });
   add({ name: 'peer.one-confirmer.insufficient', kind, input: { targetUserId: SUBJECT, participants, confirmations: [c(2, 1)], blocks: [] }, now: iso(T), expected: rej('insufficient_peers', 1), tags: ['boundary'] });
   add({ name: 'peer.reciprocal-only', kind, input: { targetUserId: SUBJECT, participants, confirmations: [c(2, 1), c(4, 1), c(1, 4)], blocks: [] }, now: iso(T), expected: rej('reciprocal_only', 1) });
+  add({
+    name: 'peer.qr-verified-confirmer-not-anchor',
+    kind,
+    description: 'Security fix: only GPS-verified attendees anchor peer check-ins (a QR can be relayed off-site)',
+    input: { targetUserId: SUBJECT, participants, confirmations: [c(2, 1), c(5, 1)], blocks: [] },
+    now: iso(T),
+    expected: rej('insufficient_peers', 1),
+    tags: ['security'],
+  });
   add({
     name: 'peer.blocked-pair-excluded',
     kind,

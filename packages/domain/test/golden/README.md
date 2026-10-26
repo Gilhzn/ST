@@ -45,7 +45,7 @@ The pgcrypto version is in `src/crypto/uuid.ts`. Fixture rows in `input.state.sa
 
 ### QR token wire format
 
-`token = step + "." + left(hex(HMAC_SHA256(key = utf8(qrSecret), msg = utf8(gameId + "|" + step))), 32)`, `step = floor(epoch_ms / 1000 / qrStepSeconds)`; valid for `|step − current| ≤ qrAllowedDriftSteps`.
+`token = step + "." + left(hex(HMAC_SHA256(key = utf8(qrSecret), msg = utf8(gameId + "|" + step))), 32)`, `step = floor(epoch_ms / 1000 / qrStepSeconds)` (20 s). **Past-only drift:** valid for `current − qrAllowedDriftSteps ≤ step ≤ current`; a future step is `invalid_qr`, an older one `expired_qr`. `QrToken.expiresAt = (step + 1 + qrAllowedDriftSteps) · qrStepSeconds`. If `input.scanner` is given and `scanner.userId = scanner.hostId` → `not_host` (fallbacks `gps`, `peer`), checked first.
 
 ## Kinds
 
@@ -53,15 +53,16 @@ The pgcrypto version is in `src/crypto/uuid.ts`. Fixture rows in `input.state.sa
 |---|---|---|---|---|
 | `trust.applyEvent` | `{ state: Partial<TrustState> & { userId }, event: DomainTrustEvent }` | `{ effects: Effect[] }` | `applyTrustEvent` | `cancel_participation`, `process_no_shows`, escalation trigger, `expire_sanctions`, `settle_deposits`, `file_appeal`, `moderator_decide`, `apply_effects` |
 | `trust.processNoShows` | `FinalizeAttendanceInput` (`game`, `participants`, `refills?`, `minPlayers?`) | `{ finalized, gameHappened, effects, events }` | `processNoShows` | `process_no_shows` |
-| `trust.evaluateReports` | `{ reports, reporterProfiles, context: { attendance?, sanctions?, overturns? } }` | `{ outcome, qualifyingReporterIds, effects }` | `evaluateReports` | `report_user` |
-| `trust.venueReports` | `{ venue: VenueTrustRecord }` | `{ hide, effects }` | `evaluateVenueReports` | `report_venue` |
+| `trust.evaluateReports` | `{ reports, reporterProfiles, context: { attendance?, sanctions?, overturns? } }` — attendance rows carry `checkInMethod` and `isHost`; review-only reasons in order: `creation_window`, `single_game` (all counted reports name one game), `no_gps_anchor` (no counted reporter GPS-verified there and not its host), `overturn_protection` | `{ outcome, qualifyingReporterIds, effects }` | `evaluateReports` | `report_user` |
+| `trust.venueReports` | `{ venue: VenueTrustRecord, reporterProfiles }` (reporter counts only if known, not `red`, account ≥ `minReporterAccountAgeDays` old at report time) | `{ hide, effects }` | `evaluateVenueReports` | `report_venue` |
 | `trust.hostReliability` | `HostReliabilityInput` | `{ outcome, reasonCode, effects }` | `evaluateHostReliability` | `host_ratings` insert trigger |
 | `trust.reliability` | `{ participations, sanctions }` | `ReliabilitySnapshot` | `computeReliability` | reliability recompute trigger |
 | `games.windows` | `{ game: { startsAt, endsAt } }` | `{ checkInOpensAt, resultWindowClosesAt, chatExpiresAt, checkInOpen, canSubmitResult, chatOpen }` | `games/windows.ts` | `game_results` CHECK, `chat_messages.expires_at`, check-in guards |
 | `games.waitlist` | `WaitlistInput` (`game`, `participants`, `offers?`, `regularIds?`) | `WaitlistPlan` | `promoteFromWaitlist` | waitlist promotion in `cancel_participation` / `decide_join` |
 | `checkin.qrToken` | `{ qrSecret, gameId }` | `QrToken` | `generateQrToken` | `rotate_qr` / current token |
-| `checkin.verifyQr` | `{ token, qrSecret, gameId, window? }` | `CheckInVerdict` | `verifyQr` | (Edge `checkin-verify`) |
-| `checkin.verifyPeer` | `PeerCheckInInput` | `PeerConfirmResult` | `verifyPeer` | `peer_confirm` |
+| `checkin.verifyQr` | `{ token, qrSecret, gameId, window?, scanner?: { userId, hostId } }` | `CheckInVerdict` | `verifyQr` | (Edge `checkin-verify`) |
+| `checkin.verifyPeer` | `PeerCheckInInput` (only `checkInMethod = 'gps'` confirmers anchor) | `PeerConfirmResult` | `verifyPeer` | `peer_confirm` |
+| `trust.hostGameCancelled` | `{ state: Partial<TrustState> & { userId: hostId }, game: { id, hostId, startsAt }, cancelledAt }` | `{ effects }` | `applyHostGameCancellation` | game cancellation by host (`cancel_game`) |
 
 `TrustState` lists default to empty: `sanctions`, `appeals`, `chatBlocks`, `reports`, `reporterProfiles`, `attendance`, `hostRatings`, `reviewItems`, `venues`, `overturns`, `depositSettlements`, `pendingLateCancels` (see `src/trust/engine.ts`).
 
@@ -70,3 +71,7 @@ The pgcrypto version is in `src/crypto/uuid.ts`. Fixture rows in `input.state.sa
 ## Coverage of required scenarios
 
 late cancel (boundaries, refill, config) · no-show + 48 h dispute · deposits captured only after the dispute window · escalation 2 / 3 / 4 (dispute-window and disputed cards excluded, no re-trigger) · dispute auto-void after 7 days (and the 3-per-90-days limit) · moderator overturn cascade and permanent ban · chat blocks · report evaluation (qualified, 48 h creation window collusion, rival team, co-attendance, account age, red/spam, 14-day window, overturn protection) · venue auto-hide at 3 distinct reporters · host reliability · reliability % · result window and chat TTL boundaries · waitlist standard / short / flash fill / regulars · QR wire format and ±1 step · peer verification.
+
+### Host late game cancellation
+
+A host cancelling their own game `< lateCancelWindowHours` before start gets a disputable yellow card: `reasonCode = late_cancel`, `statementParams.role = 'host'`, `dedupeKey = host_late_cancel:<gameId>:<hostId>`. It never settles a deposit. Two such cards (not overturned) issued in the last 30 days, after the latest `late_cancel` host suspension, trigger `host_suspension` (`reasonCode late_cancel`, `causedBy` = the cards, `dedupeKey = host_late_cancellations:<hostId>:<newest card id>`) + `host_reliability` review. Host reliability review `evidence` now also carries `lateGameCancellations`.

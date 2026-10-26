@@ -1,0 +1,380 @@
+[
+  {
+    "name": "host-cancel.90min-before.host-yellow",
+    "kind": "trust.hostGameCancelled",
+    "description": "Security fix (GAME-047): a host cancelling their own game < 2h before start gets a disputable late_cancel card",
+    "input": {
+      "state": {
+        "userId": "00000000-0000-4000-8000-0000000000ff"
+      },
+      "game": {
+        "id": "00000000-0000-4000-8000-0000000a0001",
+        "hostId": "00000000-0000-4000-8000-0000000000ff",
+        "startsAt": "2026-03-01T18:00:00.000Z"
+      },
+      "cancelledAt": "2026-03-01T16:30:00.000Z"
+    },
+    "now": "2026-03-01T16:30:00.000Z",
+    "expected": {
+      "effects": [
+        {
+          "type": "IssueSanction",
+          "sanction": {
+            "kind": "yellow_card",
+            "userId": "00000000-0000-4000-8000-0000000000ff",
+            "reasonCode": "late_cancel",
+            "statementKey": "sanctions.reason.late_cancel",
+            "statementParams": {
+              "role": "host",
+              "windowHours": 2,
+              "minutesBeforeStart": 90,
+              "disputeHours": 48,
+              "appealPath": "dispute"
+            },
+            "startsAt": "2026-03-01T16:30:00.000Z",
+            "expiresAt": "2026-03-31T16:30:00.000Z",
+            "disputeUntil": "2026-03-03T16:30:00.000Z",
+            "gameId": "00000000-0000-4000-8000-0000000a0001",
+            "causedBy": [],
+            "dedupeKey": "host_late_cancel:00000000-0000-4000-8000-0000000a0001:00000000-0000-4000-8000-0000000000ff",
+            "decidedBy": "system"
+          }
+        },
+        {
+          "type": "Notify",
+          "userId": "00000000-0000-4000-8000-0000000000ff",
+          "kind": "sanction_issued",
+          "params": {
+            "sanctionKind": "yellow_card",
+            "reasonCode": "late_cancel",
+            "statementKey": "sanctions.reason.late_cancel",
+            "expiresAt": "2026-03-31T16:30:00.000Z",
+            "disputeUntil": "2026-03-03T16:30:00.000Z",
+            "appealPath": "dispute"
+          },
+          "gameId": "00000000-0000-4000-8000-0000000a0001",
+          "sanctionDedupeKey": "host_late_cancel:00000000-0000-4000-8000-0000000a0001:00000000-0000-4000-8000-0000000000ff"
+        }
+      ]
+    },
+    "tags": [
+      "security",
+      "prd-v5:GAME-047"
+    ]
+  },
+  {
+    "name": "host-cancel.exactly-2h-before.no-card",
+    "kind": "trust.hostGameCancelled",
+    "input": {
+      "state": {
+        "userId": "00000000-0000-4000-8000-0000000000ff"
+      },
+      "game": {
+        "id": "00000000-0000-4000-8000-0000000a0001",
+        "hostId": "00000000-0000-4000-8000-0000000000ff",
+        "startsAt": "2026-03-01T18:00:00.000Z"
+      },
+      "cancelledAt": "2026-03-01T16:00:00.000Z"
+    },
+    "now": "2026-03-01T16:00:00.000Z",
+    "expected": {
+      "effects": []
+    },
+    "tags": [
+      "boundary"
+    ]
+  },
+  {
+    "name": "host-cancel.second-in-30d.host-suspension",
+    "kind": "trust.hostGameCancelled",
+    "description": "TRUST-051(c): 2 late game cancellations in 30 days → host suspension + review, caused by the cards",
+    "input": {
+      "state": {
+        "userId": "00000000-0000-4000-8000-0000000000ff",
+        "sanctions": [
+          {
+            "kind": "yellow_card",
+            "userId": "00000000-0000-4000-8000-0000000000ff",
+            "reasonCode": "late_cancel",
+            "statementKey": "sanctions.reason.late_cancel",
+            "statementParams": {
+              "role": "host",
+              "windowHours": 2,
+              "minutesBeforeStart": 30,
+              "disputeHours": 48,
+              "appealPath": "dispute"
+            },
+            "startsAt": "2026-02-19T16:30:00.000Z",
+            "expiresAt": "2026-03-21T16:30:00.000Z",
+            "disputeUntil": "2026-02-21T16:30:00.000Z",
+            "gameId": "00000000-0000-4000-8000-0000000a0002",
+            "causedBy": [],
+            "dedupeKey": "host_late_cancel:00000000-0000-4000-8000-0000000a0002:00000000-0000-4000-8000-0000000000ff",
+            "decidedBy": "system",
+            "id": "93846cc9-1db8-8099-9a0c-9f665da56ecd",
+            "status": "active",
+            "appealPath": "dispute",
+            "overturnedAt": null,
+            "createdAt": "2026-02-19T16:30:00.000Z"
+          }
+        ]
+      },
+      "game": {
+        "id": "00000000-0000-4000-8000-0000000a0001",
+        "hostId": "00000000-0000-4000-8000-0000000000ff",
+        "startsAt": "2026-03-01T18:00:00.000Z"
+      },
+      "cancelledAt": "2026-03-01T16:30:00.000Z"
+    },
+    "now": "2026-03-01T16:30:00.000Z",
+    "expected": {
+      "effects": [
+        {
+          "type": "IssueSanction",
+          "sanction": {
+            "kind": "yellow_card",
+            "userId": "00000000-0000-4000-8000-0000000000ff",
+            "reasonCode": "late_cancel",
+            "statementKey": "sanctions.reason.late_cancel",
+            "statementParams": {
+              "role": "host",
+              "windowHours": 2,
+              "minutesBeforeStart": 90,
+              "disputeHours": 48,
+              "appealPath": "dispute"
+            },
+            "startsAt": "2026-03-01T16:30:00.000Z",
+            "expiresAt": "2026-03-31T16:30:00.000Z",
+            "disputeUntil": "2026-03-03T16:30:00.000Z",
+            "gameId": "00000000-0000-4000-8000-0000000a0001",
+            "causedBy": [],
+            "dedupeKey": "host_late_cancel:00000000-0000-4000-8000-0000000a0001:00000000-0000-4000-8000-0000000000ff",
+            "decidedBy": "system"
+          }
+        },
+        {
+          "type": "Notify",
+          "userId": "00000000-0000-4000-8000-0000000000ff",
+          "kind": "sanction_issued",
+          "params": {
+            "sanctionKind": "yellow_card",
+            "reasonCode": "late_cancel",
+            "statementKey": "sanctions.reason.late_cancel",
+            "expiresAt": "2026-03-31T16:30:00.000Z",
+            "disputeUntil": "2026-03-03T16:30:00.000Z",
+            "appealPath": "dispute"
+          },
+          "gameId": "00000000-0000-4000-8000-0000000a0001",
+          "sanctionDedupeKey": "host_late_cancel:00000000-0000-4000-8000-0000000a0001:00000000-0000-4000-8000-0000000000ff"
+        },
+        {
+          "type": "IssueSanction",
+          "sanction": {
+            "kind": "host_suspension",
+            "userId": "00000000-0000-4000-8000-0000000000ff",
+            "reasonCode": "late_cancel",
+            "statementKey": "sanctions.reason.late_cancel",
+            "statementParams": {
+              "cancellations": 2,
+              "windowDays": 30,
+              "days": 14,
+              "appealPath": "appeal"
+            },
+            "startsAt": "2026-03-01T16:30:00.000Z",
+            "expiresAt": "2026-03-15T16:30:00.000Z",
+            "disputeUntil": null,
+            "gameId": null,
+            "causedBy": [
+              "93846cc9-1db8-8099-9a0c-9f665da56ecd",
+              "bc27a6fe-df82-8404-9dea-b9b96f0f31dd"
+            ],
+            "dedupeKey": "host_late_cancellations:00000000-0000-4000-8000-0000000000ff:bc27a6fe-df82-8404-9dea-b9b96f0f31dd",
+            "decidedBy": "system"
+          }
+        },
+        {
+          "type": "SuspendHost",
+          "userId": "00000000-0000-4000-8000-0000000000ff",
+          "until": "2026-03-15T16:30:00.000Z"
+        },
+        {
+          "type": "Notify",
+          "userId": "00000000-0000-4000-8000-0000000000ff",
+          "kind": "sanction_issued",
+          "params": {
+            "sanctionKind": "host_suspension",
+            "reasonCode": "late_cancel",
+            "statementKey": "sanctions.reason.late_cancel",
+            "expiresAt": "2026-03-15T16:30:00.000Z",
+            "disputeUntil": "",
+            "appealPath": "appeal"
+          },
+          "gameId": null,
+          "sanctionDedupeKey": "host_late_cancellations:00000000-0000-4000-8000-0000000000ff:bc27a6fe-df82-8404-9dea-b9b96f0f31dd"
+        },
+        {
+          "type": "EnqueueReview",
+          "item": {
+            "kind": "host_reliability",
+            "priority": "normal",
+            "subjectUserId": "00000000-0000-4000-8000-0000000000ff",
+            "venueId": null,
+            "gameId": null,
+            "sanctionId": "c3852153-31cc-8c75-9f04-92af38f411de",
+            "appealId": null,
+            "reportIds": [],
+            "evidence": {
+              "reason": "late_cancel",
+              "ratingCount": 0,
+              "averageRating": null,
+              "lateGameCancellations": 2
+            },
+            "dueBy": "2026-03-03T16:30:00.000Z",
+            "dedupeKey": "host_late_cancellations:00000000-0000-4000-8000-0000000000ff:bc27a6fe-df82-8404-9dea-b9b96f0f31dd"
+          }
+        }
+      ]
+    },
+    "tags": [
+      "security",
+      "prd-v5:TRUST-051"
+    ]
+  },
+  {
+    "name": "host-cancel.previous-over-30d-ago.card-only",
+    "kind": "trust.hostGameCancelled",
+    "input": {
+      "state": {
+        "userId": "00000000-0000-4000-8000-0000000000ff",
+        "sanctions": [
+          {
+            "kind": "yellow_card",
+            "userId": "00000000-0000-4000-8000-0000000000ff",
+            "reasonCode": "late_cancel",
+            "statementKey": "sanctions.reason.late_cancel",
+            "statementParams": {
+              "role": "host",
+              "windowHours": 2,
+              "minutesBeforeStart": 30,
+              "disputeHours": 48,
+              "appealPath": "dispute"
+            },
+            "startsAt": "2026-01-30T16:30:00.000Z",
+            "expiresAt": "2026-03-01T16:30:00.000Z",
+            "disputeUntil": "2026-02-01T16:30:00.000Z",
+            "gameId": "00000000-0000-4000-8000-0000000a0002",
+            "causedBy": [],
+            "dedupeKey": "host_late_cancel:00000000-0000-4000-8000-0000000a0002:00000000-0000-4000-8000-0000000000ff",
+            "decidedBy": "system",
+            "id": "93846cc9-1db8-8099-9a0c-9f665da56ecd",
+            "status": "active",
+            "appealPath": "dispute",
+            "overturnedAt": null,
+            "createdAt": "2026-01-30T16:30:00.000Z"
+          }
+        ]
+      },
+      "game": {
+        "id": "00000000-0000-4000-8000-0000000a0001",
+        "hostId": "00000000-0000-4000-8000-0000000000ff",
+        "startsAt": "2026-03-01T18:00:00.000Z"
+      },
+      "cancelledAt": "2026-03-01T16:30:00.000Z"
+    },
+    "now": "2026-03-01T16:30:00.000Z",
+    "expected": {
+      "effects": [
+        {
+          "type": "IssueSanction",
+          "sanction": {
+            "kind": "yellow_card",
+            "userId": "00000000-0000-4000-8000-0000000000ff",
+            "reasonCode": "late_cancel",
+            "statementKey": "sanctions.reason.late_cancel",
+            "statementParams": {
+              "role": "host",
+              "windowHours": 2,
+              "minutesBeforeStart": 90,
+              "disputeHours": 48,
+              "appealPath": "dispute"
+            },
+            "startsAt": "2026-03-01T16:30:00.000Z",
+            "expiresAt": "2026-03-31T16:30:00.000Z",
+            "disputeUntil": "2026-03-03T16:30:00.000Z",
+            "gameId": "00000000-0000-4000-8000-0000000a0001",
+            "causedBy": [],
+            "dedupeKey": "host_late_cancel:00000000-0000-4000-8000-0000000a0001:00000000-0000-4000-8000-0000000000ff",
+            "decidedBy": "system"
+          }
+        },
+        {
+          "type": "Notify",
+          "userId": "00000000-0000-4000-8000-0000000000ff",
+          "kind": "sanction_issued",
+          "params": {
+            "sanctionKind": "yellow_card",
+            "reasonCode": "late_cancel",
+            "statementKey": "sanctions.reason.late_cancel",
+            "expiresAt": "2026-03-31T16:30:00.000Z",
+            "disputeUntil": "2026-03-03T16:30:00.000Z",
+            "appealPath": "dispute"
+          },
+          "gameId": "00000000-0000-4000-8000-0000000a0001",
+          "sanctionDedupeKey": "host_late_cancel:00000000-0000-4000-8000-0000000a0001:00000000-0000-4000-8000-0000000000ff"
+        }
+      ]
+    },
+    "tags": [
+      "boundary"
+    ]
+  },
+  {
+    "name": "host-cancel.already-carded.idempotent",
+    "kind": "trust.hostGameCancelled",
+    "input": {
+      "state": {
+        "userId": "00000000-0000-4000-8000-0000000000ff",
+        "sanctions": [
+          {
+            "kind": "yellow_card",
+            "userId": "00000000-0000-4000-8000-0000000000ff",
+            "reasonCode": "late_cancel",
+            "statementKey": "sanctions.reason.late_cancel",
+            "statementParams": {
+              "role": "host",
+              "windowHours": 2,
+              "minutesBeforeStart": 90,
+              "disputeHours": 48,
+              "appealPath": "dispute"
+            },
+            "startsAt": "2026-03-01T16:30:00.000Z",
+            "expiresAt": "2026-03-31T16:30:00.000Z",
+            "disputeUntil": "2026-03-03T16:30:00.000Z",
+            "gameId": "00000000-0000-4000-8000-0000000a0001",
+            "causedBy": [],
+            "dedupeKey": "host_late_cancel:00000000-0000-4000-8000-0000000a0001:00000000-0000-4000-8000-0000000000ff",
+            "decidedBy": "system",
+            "id": "bc27a6fe-df82-8404-9dea-b9b96f0f31dd",
+            "status": "active",
+            "appealPath": "dispute",
+            "overturnedAt": null,
+            "createdAt": "2026-03-01T16:30:00.000Z"
+          }
+        ]
+      },
+      "game": {
+        "id": "00000000-0000-4000-8000-0000000a0001",
+        "hostId": "00000000-0000-4000-8000-0000000000ff",
+        "startsAt": "2026-03-01T18:00:00.000Z"
+      },
+      "cancelledAt": "2026-03-01T16:30:00.000Z"
+    },
+    "now": "2026-03-01T16:30:00.000Z",
+    "expected": {
+      "effects": []
+    },
+    "tags": [
+      "idempotency"
+    ]
+  }
+]

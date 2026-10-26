@@ -245,8 +245,10 @@ describe('moderator decisions', () => {
 
 describe('reports, venue reports, ratings and chat via the engine', () => {
   const profiles = [U2, U3, U4].map((id, i) => ({ id, createdAt: iso(T0 - (30 + i * 30) * DAY_MS), reliabilityStatus: 'green' as const, reportsLast7d: 0 }));
-  const attendance = [U1, U2, U3, U4].map((userId) => ({ gameId: G1, userId, status: 'approved' as const, attendance: 'verified' as const, team: null }));
-  const rep = (i: number, reporterId: string) => ({ id: `r${i}`, reporterId, targetUserId: U1, category: 'harassment' as const, gameId: G1, messageId: null, note: null, createdAt: iso(T0 - (5 - i) * HOUR_MS) });
+  const attendance = [U1, U2, U3, U4].flatMap((userId) =>
+    [G1, G2].map((gameId) => ({ gameId, userId, status: 'approved' as const, attendance: 'verified' as const, checkInMethod: 'gps' as const, team: null })),
+  );
+  const rep = (i: number, reporterId: string) => ({ id: `r${i}`, reporterId, targetUserId: U1, category: 'harassment' as const, gameId: i === 2 ? G2 : G1, messageId: null, note: null, createdAt: iso(T0 - (5 - i) * HOUR_MS) });
 
   it('the third qualifying report restricts; replays are no-ops', () => {
     let s = createTrustState(U1, { reporterProfiles: profiles, attendance });
@@ -267,7 +269,8 @@ describe('reports, venue reports, ratings and chat via the engine', () => {
 
   it('venue reports through the engine', () => {
     const venue = { venueId: 'v1', status: 'active' as const, createdBy: HOST, lastReviewedAt: null, reports: [] };
-    let s = createTrustState(HOST, { venues: [venue] });
+    const reporterProfiles = [U1, U2, U3].map((id) => ({ id, createdAt: iso(T0 - 30 * DAY_MS), reliabilityStatus: 'green' as const, reportsLast7d: 0 }));
+    let s = createTrustState(HOST, { venues: [venue], reporterProfiles });
     for (const [i, r] of [U1, U2, U3].entries()) {
       const out = run(s, { type: 'VenueReported', report: { id: `v${i}`, venueId: 'v1', reporterId: r, reason: 'no_venue_here', note: null, createdAt: iso(T0 - HOUR_MS) } });
       s = out.state;

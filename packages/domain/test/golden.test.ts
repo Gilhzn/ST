@@ -7,6 +7,7 @@ import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { describe, expect, it } from 'vitest';
 import {
+  applyHostGameCancellation,
   applyTrustEvent,
   canSubmitResult,
   chatExpiresAt,
@@ -57,7 +58,7 @@ const RUNNERS: Record<string, Runner> = {
     return { outcome: r.outcome, qualifyingReporterIds: r.qualifyingReporterIds, effects: r.effects };
   },
   'trust.venueReports': (i: any, c, now) => {
-    const r = evaluateVenueReports(i.venue, now, c);
+    const r = evaluateVenueReports(i.venue, i.reporterProfiles, now, c);
     return { hide: r.hide, effects: r.effects };
   },
   'trust.hostReliability': (i: any, c, now) => {
@@ -75,7 +76,10 @@ const RUNNERS: Record<string, Runner> = {
   }),
   'games.waitlist': (i: any, c, now) => promoteFromWaitlist(i, now, c),
   'checkin.qrToken': (i: any, c, now) => generateQrToken(i.qrSecret, i.gameId, now, c),
-  'checkin.verifyQr': (i: any, c, now) => verifyQr(i.token, i.qrSecret, i.gameId, now, c, i.window),
+  'checkin.verifyQr': (i: any, c, now) => verifyQr(i.token, i.qrSecret, i.gameId, now, c, i.window, i.scanner),
+  'trust.hostGameCancelled': (i: any, c, now) => ({
+    effects: applyHostGameCancellation(createTrustState(i.state.userId, i.state), { game: i.game, cancelledAt: i.cancelledAt }, c, now).effects,
+  }),
   'checkin.verifyPeer': (i: any, c, now) => verifyPeer(i, now, c),
 };
 /* eslint-enable @typescript-eslint/no-explicit-any */

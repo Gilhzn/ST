@@ -34,7 +34,13 @@ import { evaluateChatBlocks, type ChatBlockRecord } from './chat';
 import { AUTO_VOID_LOOKBACK_DAYS } from './constants';
 import { evaluateEscalation } from './escalation';
 import type { DomainTrustEvent } from './events';
-import { evaluateHostReliability, type HostRatingRecord } from './host';
+import {
+  evaluateHostGameCancellation,
+  evaluateHostReliability,
+  isHostLateCancelCard,
+  type HostGameCancellationInput,
+  type HostRatingRecord,
+} from './host';
 import { evaluateReports, type GameAttendanceRecord, type OverturnRecord, type ReporterProfile } from './reports';
 import {
   buildModeratorPermanentBan,
@@ -193,6 +199,11 @@ function assertSubject(state: TrustState, userId: UserId, what: string): void {
 
 const DEPOSIT_REASONS = new Set(['no_show', 'late_cancel']);
 
+/** A player's no-show / late-cancel card tied to a game deposit (never the host's own card). */
+function isDepositCard(s: Sanction): boolean {
+  return s.kind === 'yellow_card' && DEPOSIT_REASONS.has(s.reasonCode) && s.gameId !== null && !isHostLateCancelCard(s);
+}
+
 /** Issues a yellow card (escalation happens later, once the card is settled). */
 function issueYellowCard(
   ctx: Ctx,
@@ -251,7 +262,7 @@ function overturnCascade(ctx: Ctx, rootId: SanctionId, at: string): SanctionId[]
   const kinds = [...new Set(touched.filter((s) => s.kind !== 'yellow_card').map((s) => s.kind))];
   reproject(ctx, kinds);
   for (const s of touched) {
-    if (s.kind !== 'yellow_card' || !DEPOSIT_REASONS.has(s.reasonCode) || s.gameId === null) continue;
+    if (!isDepositCard(s) || s.gameId === null) continue;
     if (s.reasonCode === 'no_show') {
       ctx.emit([{ type: 'SetAttendance', gameId: s.gameId, userId: s.userId, attendance: 'excused' }]);
     }
@@ -316,7 +327,7 @@ function onTick(ctx: Ctx): void {
   runEscalation(ctx);
   // 4. TRUST-061(4): capture deposits only after the dispute window closed without a dispute.
   for (const s of ctx.st.sanctions) {
-    if (s.kind !== 'yellow_card' || !DEPOSIT_REASONS.has(s.reasonCode) || s.status !== 'active') continue;
+    if (!isDepositCard(s) || s.status !== 'active') continue;
     if (s.disputeUntil === null || now <= toEpochMs(s.disputeUntil) || ctx.lastSettlement(s.gameId ?? '') !== undefined) continue;
     settle(ctx, s.gameId, 'forfeit');
   }
@@ -367,7 +378,7 @@ function onModeratorDecided(ctx: Ctx, e: Extract<DomainTrustEvent, { type: 'Mode
     if (sanction.status === 'active' || sanction.status === 'disputed') {
       ctx.emit([{ type: 'SetSanctionStatus', sanctionId: sanction.id, status: 'upheld' }]);
     }
-    if (sanction.kind === 'yellow_card' && DEPOSIT_REASONS.has(sanction.reasonCode) && ctx.lastSettlement(sanction.gameId ?? '') === undefined) {
+    if (isDepositCard(sanction) && ctx.lastSettlement(sanction.gameId ?? '') === undefined) {
       settle(ctx, sanction.gameId, 'forfeit');
     }
     ctx.emit([decisionNotice(ctx, sanction, 'uphold', item.appealId)]);
@@ -520,6 +531,29 @@ export function applyTrustEvent(
     case 'Tick':
       onTick(ctx);
       break;
+  }
+  return ctx.result();
+}
+
+/**
+ * GAME-047 / TRUST-051(c): the host cancelled their own game. A late cancel
+ * (< `lateCancelWindowHours` before start) issues the host a disputable
+ * `late_cancel` card, then host reliability is re-evaluated (2 in 30 days →
+ * host suspension + review). `state` is the host's. Idempotent.
+ * TODO(contract): becomes a `TrustEvent` (`GameCancelledByHost`) in the next contract version.
+ */
+export function applyHostGameCancellation(
+  state: TrustState,
+  input: HostGameCancellationInput,
+  config: TrustConfig = DEFAULT_TRUST_CONFIG,
+  now: EpochMs,
+): TrustResult {
+  assertSubject(state, input.game.hostId, 'game cancellation');
+  const ctx = new Ctx(state, config, now);
+  const { late, effects } = evaluateHostGameCancellation(input, now, config);
+  if (late) {
+    ctx.emit(effects);
+    runHostReliability(ctx);
   }
   return ctx.result();
 }
