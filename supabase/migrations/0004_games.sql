@@ -312,5 +312,5 @@ create view public.participant_views with (security_barrier = true) as
       or (public.st_am_approved(gp.game_id)
           and gp.status in ('approved', 'waitlisted')
           and not public.st_my_blocked(gp.user_id)
-          and not public.st_is_hidden_user(gp.user_id))
+          and not public.st_hidden_from_me(gp.user_id))
     );

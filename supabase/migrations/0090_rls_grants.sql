@@ -64,7 +64,7 @@ create policy profile_private_update_own on public.profile_private for update to
 
 grant select, insert, update, delete on public.user_sports to authenticated;
 create policy user_sports_read on public.user_sports for select to authenticated
-  using (user_id = auth.uid() or (not public.st_my_blocked(user_id) and not public.st_is_hidden_user(user_id)));
+  using (user_id = auth.uid() or (not public.st_my_blocked(user_id) and not public.st_hidden_from_me(user_id)));
 create policy user_sports_insert_own on public.user_sports for insert to authenticated with check (user_id = auth.uid());
 create policy user_sports_update_own on public.user_sports for update to authenticated
   using (user_id = auth.uid()) with check (user_id = auth.uid());
@@ -118,7 +118,7 @@ create policy game_participants_read on public.game_participants for select to a
     or public.st_am_moderator()
     or (public.st_am_host(game_id) and (payment_ready or status <> 'requested'))
     or (public.st_am_approved(game_id) and status in ('approved', 'waitlisted')
-        and not public.st_my_blocked(user_id) and not public.st_is_hidden_user(user_id)));
+        and not public.st_my_blocked(user_id) and not public.st_hidden_from_me(user_id)));
 grant select on public.participant_views to authenticated;
 
 grant select on public.waitlist_offers to authenticated;
@@ -178,7 +178,10 @@ grant select on public.message_translations to authenticated;
 create policy message_translations_read on public.message_translations for select to authenticated
   using (exists (select 1 from public.chat_messages m where m.id = message_id));
 
--- moderation_retained: no client access at all (service role / moderator tooling only).
+-- moderation_retained, sanction_phone_hmac: no client access at all (service role only).
+
+grant select on public.deposit_tiers to authenticated;
+create policy deposit_tiers_read on public.deposit_tiers for select to authenticated using (true);
 
 -- ---------------------------------------------------------------------------
 -- Notifications and payments
@@ -197,7 +200,7 @@ create policy payments_read_own on public.payments for select to authenticated u
 -- ---------------------------------------------------------------------------
 -- Policy/view helpers (caller-relative only).
 grant execute on function
-  public.st_now(), public.st_am_moderator(), public.st_my_blocked(uuid), public.st_is_hidden_user(uuid),
+  public.st_now(), public.st_am_moderator(), public.st_my_blocked(uuid), public.st_hidden_from_me(uuid),
   public.st_my_game_visible(uuid), public.st_my_exact(uuid), public.st_am_host(uuid), public.st_am_approved(uuid),
   public.st_my_chat(uuid)
   to authenticated;

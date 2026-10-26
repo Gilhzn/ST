@@ -200,6 +200,36 @@ create table public.review_queue (
 create index review_queue_open_idx on public.review_queue (status, priority, due_by);
 
 -- ---------------------------------------------------------------------------
+-- sanction_phone_hmac (security H5): ban-evasion check across account deletion. Keyed HMAC of the
+-- E.164 phone of a deleted account with restrictions still in force; kept only until they expire.
+-- Service role only (no client grants).
+-- ---------------------------------------------------------------------------
+create table public.sanction_phone_hmac (
+  hmac text primary key check (hmac ~ '^[0-9a-f]{64}$'),
+  sanction_ids uuid[] not null,
+  until timestamptz not null,
+  created_at timestamptz not null default now()
+);
+
+-- HMAC-SHA256(key, utf8(phone)), key from Vault secret `st_phone_hmac_key`, else the
+-- `st.phone_hmac_key` setting (tests). Null when no key is configured.
+create function public.st_phone_hmac(p_phone text) returns text
+language plpgsql stable security definer set search_path = ''
+as $$
+declare k text;
+begin
+  if p_phone is null or p_phone = '' then return null; end if;
+  begin
+    execute 'select decrypted_secret from vault.decrypted_secrets where name = ''st_phone_hmac_key''' into k;
+  exception when others then
+    k := null;
+  end;
+  k := coalesce(nullif(k, ''), nullif(current_setting('st.phone_hmac_key', true), ''));
+  if k is null then return null; end if;
+  return encode(extensions.hmac(convert_to(p_phone, 'UTF8'), convert_to(k, 'UTF8'), 'sha256'), 'hex');
+end $$;
+
+-- ---------------------------------------------------------------------------
 -- audit_log (append-only)
 -- ---------------------------------------------------------------------------
 create table public.audit_log (

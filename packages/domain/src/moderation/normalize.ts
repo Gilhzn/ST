@@ -1,12 +1,62 @@
 /**
  * Text normalisation for blocklist matching. Applied identically to the text
  * and to every list term, so evasions fold onto the same canonical form:
- * NFKC (full-width → ASCII, compatibility forms) → lower case → leetspeak map →
+ * NFKC (full-width → ASCII, compatibility forms) → lower case → confusables
+ * (Cyrillic/Greek look-alikes → Latin) → leetspeak map →
  * strip Latin diacritics, Hebrew niqqud/cantillation, Arabic tashkeel and
  * tatweel → hiragana folded to katakana → punctuation inside tokens removed →
  * runs of a repeated character collapsed to one.
  * Avoids Unicode property escapes (`\p{…}`) so it runs on every JS engine we ship to.
  */
+
+/**
+ * Unicode confusables (UTS #39 style, lower-case forms): Cyrillic and Greek
+ * letters that render like Latin ones, folded to Latin so `іdіоt` (Cyrillic
+ * і/о) or `ΙDΙΟΤ` (Greek) match `idiot`. Lower-case forms of upper-case
+ * look-alikes are included (`В` → `в` → `b`, `Н` → `н` → `h`). Applied to text and
+ * list terms alike, so native Cyrillic/Greek terms still match themselves.
+ */
+export const CONFUSABLES_MAP: Readonly<Record<string, string>> = {
+  // Cyrillic
+  а: 'a',
+  в: 'b',
+  е: 'e',
+  ё: 'e',
+  һ: 'h',
+  н: 'h',
+  і: 'i',
+  ї: 'i',
+  ј: 'j',
+  к: 'k',
+  ӏ: 'l',
+  м: 'm',
+  о: 'o',
+  р: 'p',
+  ԛ: 'q',
+  ѕ: 's',
+  с: 'c',
+  т: 't',
+  у: 'y',
+  ԝ: 'w',
+  х: 'x',
+  ԁ: 'd',
+  // Greek
+  α: 'a',
+  β: 'b',
+  ε: 'e',
+  η: 'n',
+  ι: 'i',
+  κ: 'k',
+  μ: 'm',
+  ν: 'v',
+  ο: 'o',
+  ρ: 'p',
+  τ: 't',
+  υ: 'u',
+  χ: 'x',
+  ζ: 'z',
+  ω: 'w',
+};
 
 /** Leetspeak / symbol substitutions applied after lower-casing. */
 export const LEET_MAP: Readonly<Record<string, string>> = {
@@ -92,9 +142,13 @@ function normalizeToken(token: string): string {
  * The matcher tries both.
  */
 export function normalizeTokens(text: string, leet = true): string[] {
-  const lowered = nfkc(text, 'NFKC').toLowerCase();
+  // Decompose first so accented look-alikes (`ό`) fold too: base letter is folded, the mark is stripped later.
+  const lowered = nfkc(nfkc(text, 'NFKC').toLowerCase(), 'NFD');
   let mapped = '';
-  for (const ch of lowered) mapped += leet ? (LEET_MAP[ch] ?? ch) : ch;
+  for (const ch of lowered) {
+    const folded = CONFUSABLES_MAP[ch] ?? ch;
+    mapped += leet ? (LEET_MAP[folded] ?? folded) : folded;
+  }
   const tokens: string[] = [];
   let cur = '';
   for (const ch of mapped) {

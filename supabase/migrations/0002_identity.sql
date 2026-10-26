@@ -68,11 +68,33 @@ create table public.profile_private (
   birth_year int not null check (birth_year between 1900 and 2100),
   birth_month int not null check (birth_month between 1 and 12),
   gender public.gender not null default 'undisclosed',
+  -- Security H4 / compliance §9: gender (women-only eligibility) changes at most once per 90 days;
+  -- the clock starts at onboarding.
+  gender_changed_at timestamptz,
   created_at timestamptz not null default now(),
   updated_at timestamptz not null default now()
 );
 create trigger profile_private_touch before update on public.profile_private
   for each row execute function public.st_touch_updated_at();
+
+create function public.st_profile_private_gender() returns trigger
+language plpgsql set search_path = ''
+as $$
+begin
+  if tg_op = 'INSERT' then
+    new.gender_changed_at := coalesce(new.gender_changed_at, public.st_now());
+  elsif new.gender is distinct from old.gender then
+    -- Clients (a JWT subject) are limited; support (service role / superuser) may override.
+    if auth.uid() is not null
+       and coalesce(old.gender_changed_at, old.created_at) > public.st_now() - interval '90 days' then
+      perform public.st_raise('validation', 'gender can change once per 90 days');
+    end if;
+    new.gender_changed_at := public.st_now();
+  end if;
+  return new;
+end $$;
+create trigger profile_private_gender before insert or update on public.profile_private
+  for each row execute function public.st_profile_private_gender();
 
 -- ---------------------------------------------------------------------------
 -- user_sports
@@ -181,6 +203,11 @@ as $$ select public.st_is_moderator(auth.uid()) $$;
 create function public.st_my_blocked(p_other uuid) returns boolean
 language sql stable security definer set search_path = ''
 as $$ select public.st_is_blocked(p_other, auth.uid()) $$;
+
+-- Caller-relative form of st_is_hidden_user for policies (security L1): never reports the caller.
+create function public.st_hidden_from_me(p_uid uuid) returns boolean
+language sql stable security definer set search_path = ''
+as $$ select auth.uid() is not null and p_uid <> auth.uid() and public.st_is_hidden_user(p_uid) $$;
 
 -- Public card of a user (DSA-safe: no private columns). Definer view with explicit row filters:
 -- hides deleted, blocked-pair and (to others) visibility-restricted users.

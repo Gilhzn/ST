@@ -32,3 +32,8 @@ export const SEVERE_REPORT_SLA_HOURS = 1;
  * recurring games get a schema (deferred).
  */
 export const REGULARS_PRIORITY_HOURS = 24;
+
+/** TRUST-051(c): this many late game cancellations by a host within the window suspend hosting. */
+export const HOST_LATE_CANCELS_FOR_SUSPENSION = 2;
+/** TRUST-051(c): window for counting a host's late game cancellations. */
+export const HOST_LATE_CANCEL_WINDOW_DAYS = 30;

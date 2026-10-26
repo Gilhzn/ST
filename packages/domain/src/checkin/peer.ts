@@ -3,7 +3,9 @@
  * `peerMinConfirmations` *qualifying* attendees confirm them. A confirmation
  * from C for target T qualifies when:
  * - C ≠ T and C is an approved participant with attendance `verified`
- *   **by GPS or QR** (independent evidence of presence);
+ *   **by GPS** (the only anchor: a QR code can be relayed off-site, so
+ *   QR-verified attendees must not vouch for others — that would chain a
+ *   relayed screenshot into peer check-ins);
  * - C and T have not blocked each other (either direction);
  * - it is among C's first {@link PEER_MAX_CONFIRMATIONS_PER_CONFIRMER}
  *   confirmations in this game (list order = chronological order).
@@ -75,7 +77,7 @@ export function qualifyingPeerConfirmers(input: PeerCheckInInput): {
   for (const c of [...confirmers].sort()) {
     const p = byId.get(c);
     if (c === t || !p || p.status !== 'approved' || p.attendance !== 'verified') continue;
-    if (p.checkInMethod === 'gps' || p.checkInMethod === 'qr') {
+    if (p.checkInMethod === 'gps') {
       if (blocked.has(c)) excludedBlocked.push(c);
       else qualifying.push(c);
     } else if (p.checkInMethod === 'peer' && targetConfirmed.has(c) && !blocked.has(c)) {

@@ -14,6 +14,30 @@ create table public.notifications (
 );
 create index notifications_user_idx on public.notifications (user_id, created_at desc);
 
+-- Security M4 / TRUST-060: deposits are chosen from fixed per-currency tiers (≈ $2 / $5 / $10 / $20).
+create table public.deposit_tiers (
+  currency text not null check (currency ~ '^[A-Z]{3}$'),
+  amount_minor int not null check (amount_minor > 0),
+  primary key (currency, amount_minor)
+);
+insert into public.deposit_tiers (currency, amount_minor)
+select t.currency, unnest(t.amounts)
+from (values
+  ('USD', array[200, 500, 1000, 2000]),
+  ('EUR', array[200, 300, 500, 1000, 2000]),
+  ('GBP', array[200, 400, 800, 1600]),
+  ('CHF', array[200, 500, 1000, 2000]),
+  ('ILS', array[1000, 2000, 3000, 5000, 7500]),
+  ('BRL', array[1000, 2500, 5000, 10000]),
+  ('INR', array[20000, 40000, 80000, 160000]),
+  ('JPY', array[300, 800, 1500, 3000]),
+  ('CNY', array[1500, 3500, 7000, 14000]),
+  ('RUB', array[20000, 50000, 100000, 200000]),
+  ('CAD', array[300, 700, 1400, 2800]),
+  ('AUD', array[300, 800, 1500, 3000]),
+  ('MXN', array[4000, 10000, 20000, 40000])
+) as t(currency, amounts);
+
 create table public.payments (
   id uuid primary key default gen_random_uuid(),
   user_id uuid not null references public.profiles (id),

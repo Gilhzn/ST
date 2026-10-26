@@ -1160,7 +1160,7 @@ export const DEFAULT_TRUST_CONFIG: Readonly<TrustConfig> = Object.freeze({
   gpsMaxSpeedKmh: 250,
   checkInOpensMinutesBeforeStart: 30,
 
-  qrStepSeconds: 30,
+  qrStepSeconds: 20,
   qrAllowedDriftSteps: 1,
   peerMinConfirmations: 2,
 

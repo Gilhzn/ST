@@ -62,11 +62,16 @@ create type public.deposit_state as enum ('setup', 'held', 'released', 'forfeite
 -- Helpers
 -- ---------------------------------------------------------------------------
 
--- Single source of "now" for every time-dependent rule. Tests set the transaction-local GUC
--- `st.now`; production leaves it unset and gets now().
+-- Single source of "now" for every time-dependent rule. Tests set the transaction-local GUCs
+-- `st.test_mode = 'on'` and `st.now`; `st.now` is ignored unless test mode is on (security L2), so
+-- production always gets now().
 create function public.st_now() returns timestamptz
 language sql stable parallel safe set search_path = ''
-as $$ select coalesce(nullif(current_setting('st.now', true), '')::timestamptz, now()) $$;
+as $$
+  select case when current_setting('st.test_mode', true) = 'on'
+              then coalesce(nullif(current_setting('st.now', true), '')::timestamptz, now())
+              else now() end
+$$;
 
 -- Raise a client-facing error. The message is `ST:<ErrorCode>` (types.ts ErrorCode); adapters map it.
 create function public.st_raise(p_code text, p_detail text default null) returns void

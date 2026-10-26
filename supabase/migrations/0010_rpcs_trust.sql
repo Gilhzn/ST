@@ -287,6 +287,27 @@ begin
                                     last_seen_at = excluded.last_seen_at;
 end $$;
 
+create function public.st_record_phone_hmac(p_uid uuid) returns void
+language plpgsql security definer set search_path = ''
+as $$
+declare
+  t timestamptz := public.st_now();
+  h text;
+  ids uuid[];
+  until timestamptz;
+begin
+  select public.st_phone_hmac(pp.phone) into h from public.profile_private pp where pp.user_id = p_uid;
+  if h is null then return; end if;
+  select array_agg(s.id order by s.id), max(coalesce(s.expires_at, 'infinity'::timestamptz)) into ids, until
+  from public.sanctions s
+  where s.user_id = p_uid and s.kind <> 'yellow_card' and public.st_sanction_in_force(s, t);
+  if ids is null then return; end if;
+  insert into public.sanction_phone_hmac as x (hmac, sanction_ids, until, created_at) values (h, ids, until, t)
+  on conflict (hmac) do update
+    set sanction_ids = array(select distinct unnest(x.sanction_ids || excluded.sanction_ids)),
+        until = greatest(x.until, excluded.until);
+end $$;
+
 -- ---------------------------------------------------------------------------
 -- Account deletion (Apple 5.1.1(v), Google Play; compliance §8). Idempotent.
 -- Personal data erased; profile becomes a pseudonymous tombstone so sanctions, reports, audit
@@ -330,6 +351,9 @@ begin
 
   -- Reported messages are already in moderation_retained; everything else is removed now.
   delete from public.chat_messages m where m.sender_id = uid;
+  -- Security H5: deletion is always allowed (GDPR Art. 17), but restrictions in force follow the
+  -- phone number (keyed HMAC, no plaintext) until they expire.
+  perform public.st_record_phone_hmac(uid);
   delete from public.profile_private x where x.user_id = uid;
   delete from public.push_tokens x where x.user_id = uid;
   delete from public.user_sports x where x.user_id = uid;

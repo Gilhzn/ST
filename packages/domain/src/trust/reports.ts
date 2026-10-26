@@ -19,9 +19,12 @@
  * - (a) the reporters are not *independent*: their account creation times can be
  *   covered by fewer than `toxicityReporters` windows of `collusionCreationWindowHours`
  *   (so two accounts created within 48 h count once);
- * - (c) every counted report is from one game and all reporters were on the same team,
- *   which is not the target's team (a rival team brigading).
- * Both tests are monotone: removing a reporter never increases severity.
+ * - `single_game`: every counted report names the same game (one game's players —
+ *   e.g. a rival team — cannot restrict alone; AC-TRUST-043 needs ≥ 2 games);
+ * - `no_gps_anchor`: no counted reporter was **GPS**-verified at the reported game
+ *   while not being its host (QR can be relayed and the host can self-mark peers,
+ *   so neither proves independent physical presence).
+ * All tests are monotone: removing a reporter never increases severity.
  * Overturn protection (TRUST-048): if a toxicity restriction of the target was
  * overturned within `config.postOverturnProtectionDays`, the outcome is review only.
  * Otherwise → `visibility_restriction` for `visibilityRestrictionHours` +
@@ -33,6 +36,7 @@
 import {
   DEFAULT_TRUST_CONFIG,
   type AttendanceStatus,
+  type CheckInMethod,
   type Effect,
   type EpochMs,
   type GameId,
@@ -70,13 +74,17 @@ export interface ReporterProfile {
   reportsUpheld?: number;
 }
 
-/** One participation, used for the co-attendance and team checks. */
+/** One participation, used for the co-attendance and GPS-anchor checks. */
 export interface GameAttendanceRecord {
   gameId: GameId;
   userId: UserId;
   status: ParticipantStatus;
   attendance: AttendanceStatus;
-  team: TeamIndex | null;
+  /** How attendance was verified (`Participant.checkInMethod`); only `gps` anchors a report. */
+  checkInMethod?: CheckInMethod | null;
+  /** True for the game's host (a host is never an anchor). */
+  isHost?: boolean;
+  team?: TeamIndex | null;
 }
 
 /** When a sanction was overturned (from `ModeratorDecided.at` / the review item). */
@@ -103,7 +111,7 @@ export type ReporterExclusion =
   | 'account_too_new'
   | 'not_co_attendee';
 
-export type CollusionReason = 'creation_window' | 'rival_team' | 'overturn_protection';
+export type CollusionReason = 'creation_window' | 'single_game' | 'no_gps_anchor' | 'overturn_protection';
 
 export interface ReportEvaluation {
   /** `restrict` = restriction issued; `review_only` = collusion/protection; `none` below threshold. */
@@ -248,17 +256,12 @@ export function evaluateReports(
   }
 
   if (result.independentReporters < config.toxicityReporters) result.reviewReasons.push('creation_window');
-  const games = new Set(counted.map((r) => r.gameId));
-  const onlyGame = counted[0]?.gameId ?? null;
-  if (games.size === 1 && onlyGame !== null) {
-    const teamOf = (u: UserId) => attendance.get(`${onlyGame}|${u}`)?.team ?? null;
-    const teams = new Set(result.qualifyingReporterIds.map(teamOf));
-    const [team] = [...teams];
-    const targetTeam = teamOf(target);
-    if (teams.size === 1 && team !== null && team !== undefined && targetTeam !== null && targetTeam !== team) {
-      result.reviewReasons.push('rival_team');
-    }
-  }
+  if (new Set(counted.map((r) => r.gameId)).size === 1) result.reviewReasons.push('single_game');
+  const anchored = counted.some((r) => {
+    const a = attendance.get(`${r.gameId}|${r.reporterId}`);
+    return a?.checkInMethod === 'gps' && a.isHost !== true;
+  });
+  if (!anchored) result.reviewReasons.push('no_gps_anchor');
   const protectedSince = now - config.postOverturnProtectionDays * DAY_MS;
   const restrictionIds = new Set(toxicity.map((s) => s.id));
   if ((context.overturns ?? []).some((o) => restrictionIds.has(o.sanctionId) && toEpochMs(o.at) > protectedSince)) {

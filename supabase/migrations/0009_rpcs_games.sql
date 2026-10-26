@@ -92,7 +92,43 @@ begin
   values (uid, case when au.phone is null or au.phone = '' then null
                     when left(au.phone, 1) = '+' then au.phone else '+' || au.phone end,
           p_birth_year, p_birth_month, coalesce(p_gender, 'undisclosed'));
+  perform public.st_reissue_evaded_sanctions(uid);
+  select * into p from public.profiles x where x.id = uid;
   return p;
+end $$;
+
+-- Security H5: a phone that belonged to a deleted account with restrictions in force gets the
+-- remaining periods re-issued (same kind, reason and expiry; caused_by = the original), with notices.
+create function public.st_reissue_evaded_sanctions(p_uid uuid) returns int
+language plpgsql security definer set search_path = ''
+as $$
+declare
+  t timestamptz := public.st_now();
+  h text;
+  row public.sanction_phone_hmac;
+  s public.sanctions;
+  n int := 0;
+begin
+  select public.st_phone_hmac(pp.phone) into h from public.profile_private pp where pp.user_id = p_uid;
+  if h is null then return 0; end if;
+  select * into row from public.sanction_phone_hmac x where x.hmac = h and x.until > t;
+  if row.hmac is null then return 0; end if;
+  for s in select * from public.sanctions x
+           where x.id = any (row.sanction_ids) and public.st_sanction_in_force(x, t) and x.kind <> 'yellow_card'
+           order by x.starts_at, x.id
+  loop
+    perform public.st_apply_effects(public.dm_issue_effects(jsonb_build_object(
+      'kind', s.kind, 'userId', p_uid, 'reasonCode', s.reason_code, 'statementKey', s.statement_key,
+      'statementParams', s.statement_params || jsonb_build_object('reissued', 1),
+      'startsAt', public.dm_iso(t), 'expiresAt', public.dm_iso(s.expires_at), 'disputeUntil', null,
+      'gameId', null, 'causedBy', jsonb_build_array(s.id), 'dedupeKey', 'reissued:' || s.id::text || ':' || p_uid::text,
+      'decidedBy', s.decided_by)));
+    n := n + 1;
+  end loop;
+  if n > 0 then
+    perform public.st_audit('sanction.reissued_after_reregistration', p_uid, jsonb_build_object('count', n), null);
+  end if;
+  return n;
 end $$;
 
 -- ---------------------------------------------------------------------------
@@ -279,6 +315,16 @@ begin
   if coalesce(p_deposit_minor, 0) < 0 or p_currency is null or p_currency !~ '^[A-Z]{3}$' then
     perform public.st_raise('validation', 'deposit');
   end if;
+  -- Security M4: deposits only from the fixed per-currency tiers (TRUST-060).
+  if coalesce(p_deposit_minor, 0) > 0 and not exists (
+       select 1 from public.deposit_tiers d where d.currency = p_currency and d.amount_minor = p_deposit_minor) then
+    perform public.st_raise('validation', 'deposit tier');
+  end if;
+  -- Security H4: a women-only game needs a female host.
+  if coalesce(p_women_only, false) and not exists (
+       select 1 from public.profile_private pp where pp.user_id = me.id and pp.gender = 'female') then
+    perform public.st_raise('women_only');
+  end if;
   if p_title is null or char_length(btrim(p_title)) not between 1 and 80 then
     perform public.st_raise('validation', 'title');
   end if;
@@ -286,9 +332,12 @@ begin
   insert into public.games (host_id, sport, title, notes, visibility, venue_id, geog, approx_geog, hide_exact_location,
                             capacity, starts_at, ends_at, deposit_minor, currency, deposit_forfeit_to, women_only,
                             team_count, min_players, created_at)
-  values (me.id, p_sport, btrim(p_title), p_notes, p_visibility, p_venue_id, pos, pos, coalesce(p_hide_exact_location, false),
+  values (me.id, p_sport, btrim(p_title), p_notes, p_visibility, p_venue_id, pos, pos,
+          -- Security H4: hidden by default for women-only and private games.
+          coalesce(p_hide_exact_location, coalesce(p_women_only, false) or p_visibility = 'private'),
           p_capacity, p_starts_at, p_ends_at, coalesce(p_deposit_minor, 0), p_currency,
-          coalesce(p_deposit_forfeit_to, 'pot'), coalesce(p_women_only, false), p_team_count, p_min_players, t)
+          -- Security M4: forfeits go to the community pot in the MVP (host payouts are deferred).
+          'pot', coalesce(p_women_only, false), p_team_count, p_min_players, t)
   returning id into g_id;
   -- The host is an approved participant and counts toward capacity.
   insert into public.game_participants (game_id, user_id, status, requested_at, decided_at)
@@ -312,6 +361,15 @@ begin
   if g.host_id <> uid then perform public.st_raise('forbidden'); end if;
   if g.status <> 'scheduled' or g.ends_at <= t then perform public.st_raise('game_not_open'); end if;
   update public.games x set status = 'cancelled', cancelled_at = t where x.id = g.id;
+  -- Security M6 / GAME-047: a host cancelling < lateCancelWindowHours before start gets a disputable
+  -- late_cancel card, and host reliability is re-evaluated (TRUST-051(c)).
+  if g.starts_at - t < (public.st_config()).late_cancel_window_hours * interval '1 hour' then
+    perform public.st_apply_effects(public.dm_yellow_card(uid, 'late_cancel', g.id,
+      jsonb_build_object('windowHours', (public.st_config()).late_cancel_window_hours,
+                         'minutesBeforeStart', greatest(0, round(extract(epoch from g.starts_at - t) / 60))::int,
+                         'hostCancelled', 1), t, public.st_config()));
+    perform public.st_evaluate_host(uid);
+  end if;
   for p in select gp.user_id from public.game_participants gp
            where gp.game_id = g.id and gp.user_id <> g.host_id and gp.status in ('requested', 'approved', 'waitlisted')
   loop
@@ -562,6 +620,8 @@ begin
   if existing.game_id is not null then
     if existing.status in ('requested', 'approved', 'waitlisted') then perform public.st_raise('conflict'); end if;
     if existing.status in ('rejected', 'removed') then perform public.st_raise('forbidden'); end if;
+    -- Security H1: re-requesting would erase a pending late cancel (and its card at finalisation).
+    if existing.status = 'cancelled' and existing.late_cancel then perform public.st_raise('conflict', 'late cancel pending'); end if;
   end if;
 
   ready := g.deposit_minor = 0;
@@ -645,6 +705,8 @@ begin
   select * into g from public.games x where x.id = p_game_id for update;
   if g.id is null then perform public.st_raise('not_found'); end if;
   if g.host_id <> uid then perform public.st_raise('forbidden'); end if;
+  -- Security L5: no removals once the game started (would dodge attendance / deposits).
+  if g.status <> 'scheduled' or t >= g.starts_at then perform public.st_raise('game_not_open'); end if;
   if p_user_id = g.host_id then perform public.st_raise('validation', 'host cannot be removed'); end if;
   select * into pt from public.game_participants gp where gp.game_id = g.id and gp.user_id = p_user_id for update;
   if pt.game_id is null then perform public.st_raise('not_found'); end if;
@@ -683,7 +745,8 @@ begin
   if g.status <> 'scheduled' or g.ends_at <= t then perform public.st_raise('game_not_open'); end if;
 
   -- isLateCancel(): strictly less than the window before start (or after the start).
-  late := pt.status = 'approved' and g.starts_at - t < cfg.late_cancel_window_hours * interval '1 hour';
+  -- A pending late cancel is never cleared by re-joining and cancelling again (security H1).
+  late := pt.late_cancel or (pt.status = 'approved' and g.starts_at - t < cfg.late_cancel_window_hours * interval '1 hour');
   update public.game_participants gp
      set status = 'cancelled', cancelled_at = t, late_cancel = late, late_cancel_refilled = false, team = null,
          waitlisted_at = null
@@ -737,7 +800,8 @@ declare
 begin
   select * into g from public.games x where x.id = p_game_id;
   if g.id is null or not public.st_can_see_game(g.id, uid) then perform public.st_raise('not_found'); end if;
-  if not public.st_is_approved(g.id, uid) then perform public.st_raise('forbidden'); end if;
+  -- Security M1: only the host records the result.
+  if g.host_id <> uid then perform public.st_raise('forbidden'); end if;
   if g.status = 'cancelled' then perform public.st_raise('game_not_open'); end if;
   if t < g.ends_at or t > g.ends_at + cfg.result_window_hours * interval '1 hour' then
     perform public.st_raise('outside_window');
@@ -822,10 +886,15 @@ end $$;
 create function public.rotate_qr(p_game_id uuid) returns jsonb
 language plpgsql security definer set search_path = ''
 as $$
-declare uid uuid := public.st_uid();
+declare
+  uid uuid := public.st_uid();
+  g public.games;
 begin
-  if not exists (select 1 from public.games g where g.id = p_game_id) then perform public.st_raise('not_found'); end if;
-  if not public.st_is_host(p_game_id, uid) then perform public.st_raise('forbidden'); end if;
+  select * into g from public.games x where x.id = p_game_id for update;
+  if g.id is null then perform public.st_raise('not_found'); end if;
+  if g.host_id <> uid then perform public.st_raise('forbidden'); end if;
+  -- Security L5: only while the game can still be checked into.
+  if g.status <> 'scheduled' or public.st_now() >= g.ends_at then perform public.st_raise('game_not_open'); end if;
   update public.games g set qr_secret = encode(extensions.gen_random_bytes(32), 'hex') where g.id = p_game_id;
   return public.get_qr_token(p_game_id);
 end $$;
@@ -920,6 +989,10 @@ begin
     return public.st_record_checkin(g.id, p_target_user_id, public.st_verdict_verified('host'), uid);
   end if;
 
+  -- Security H2: the host displays the QR and cannot attest their own presence with it.
+  if g.host_id = uid then
+    return public.st_verdict_rejected('qr', 'not_host', '{}');
+  end if;
   v := public.dm_verify_qr(p_token, g.qr_secret, g.id, t, cfg,
                            jsonb_build_object('startsAt', public.dm_iso(g.starts_at), 'endsAt', public.dm_iso(g.ends_at)));
   if v ->> 'outcome' <> 'verified' then

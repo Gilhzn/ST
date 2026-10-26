@@ -389,6 +389,8 @@ begin
     where r.created_at <= t - cfg.user_report_retention_days * interval '1 day' and r.reporter_id is not null
     returning 1)
   select count(*) into n_rep from u;
+  -- Ban-evasion phone HMACs (security H5): only while the restrictions they carry are in force.
+  delete from public.sanction_phone_hmac x where x.until <= t;
   -- Audit log: 2 years.
   with d as (delete from public.audit_log a where a.at <= t - cfg.audit_log_retention_days * interval '1 day' returning 1)
   select count(*) into n_aud from d;

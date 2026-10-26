@@ -475,7 +475,7 @@ export function applyTrustEvent(
       const reports = venue.reports.some((r) => r.id === event.report.id) ? venue.reports : [...venue.reports, event.report];
       const updated = { ...venue, reports };
       st.venues = st.venues.map((v) => (v.venueId === venue.venueId ? updated : v));
-      ctx.emit(evaluateVenueReports(updated, now, config).effects);
+      ctx.emit(evaluateVenueReports(updated, st.reporterProfiles, now, config).effects);
       break;
     }
     case 'HostRated': {

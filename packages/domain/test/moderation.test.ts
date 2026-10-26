@@ -17,7 +17,7 @@ describe('normalizeForMatch', () => {
     expect(normalizeForMatch('אִידְיוֹט')).toBe('אידיוט');
     expect(normalizeForMatch('غَبِيّ')).toBe('غبي');
     expect(normalizeForMatch('غـــبي')).toBe('غبي');
-    expect(normalizeForMatch('ёлка')).toBe('елка');
+    expect(normalizeForMatch('ёлка')).toBe('eлka');
     expect(normalizeForMatch('ばか')).toBe('バカ');
     expect(normalizeForMatch('  a​b  c ')).toBe('ab c');
     expect(normalizeForMatch('1d10t')).toBe('idiot');
