@@ -1,4 +1,4 @@
--- 0006_chat.sql
+-- 0007_chat.sql
 -- Ephemeral game chat (written only by the send-message Edge Function via service role),
 -- moderation retention (90 days) and cached translations.
 

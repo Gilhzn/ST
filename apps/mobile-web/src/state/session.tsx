@@ -58,8 +58,12 @@ export function SessionProvider({ children }: { children: ReactNode }) {
     let alive = true;
     port
       .currentUser()
-      .then((u) => alive && load(u))
-      .catch(() => alive && setUser(null));
+      .then((u) => {
+        if (alive) void load(u);
+      })
+      .catch(() => {
+        if (alive) setUser(null);
+      });
     const off = port.onAuthStateChange((u) => {
       if (alive) void load(u);
     });

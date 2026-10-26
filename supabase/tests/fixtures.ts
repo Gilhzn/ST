@@ -126,7 +126,7 @@ export async function addParticipant(
   gameId: string,
   userId: string,
   status = "approved",
-  extra: { attendance?: string; team?: number | null; waitlistedAt?: Date } = {},
+  extra: { attendance?: string; team?: number | null; waitlistedAt?: Date; method?: string } = {},
 ): Promise<void> {
   const verified = extra.attendance === "verified";
   await db.query(
@@ -141,7 +141,7 @@ export async function addParticipant(
       extra.team ?? null,
       iso(at(-6 * DAY)),
       status === "waitlisted" ? iso(extra.waitlistedAt ?? at(-5 * DAY)) : null,
-      verified ? "qr" : null,
+      verified ? (extra.method ?? "qr") : null,
       verified ? iso(at(0)) : null,
     ],
   );

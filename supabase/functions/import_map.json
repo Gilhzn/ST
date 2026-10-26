@@ -1,0 +1,32 @@
+{
+  "imports": {
+    "@st/domain": "./_shared/domain.mjs",
+    "@st/payments": "./_shared/payments.mjs",
+    "#fn/checkin-verify/handler": "./checkin-verify/handler.ts",
+    "#fn/create-deposit/handler": "./create-deposit/handler.ts",
+    "#fn/delete-account/handler": "./delete-account/handler.ts",
+    "#fn/moderation-recheck/handler": "./moderation-recheck/handler.ts",
+    "#fn/payments-webhook/handler": "./payments-webhook/handler.ts",
+    "#fn/push-dispatch/handler": "./push-dispatch/handler.ts",
+    "#fn/send-message/handler": "./send-message/handler.ts",
+    "#fn/settle-deposits/handler": "./settle-deposits/handler.ts",
+    "#fn/translate-message/handler": "./translate-message/handler.ts",
+    "#fn/trust-evaluate/handler": "./trust-evaluate/handler.ts",
+    "#shared/anthropic": "./_shared/anthropic.ts",
+    "#shared/auth": "./_shared/auth.ts",
+    "#shared/config": "./_shared/config.ts",
+    "#shared/deposit": "./_shared/deposit.ts",
+    "#shared/http": "./_shared/http.ts",
+    "#shared/i18n": "./_shared/i18n.ts",
+    "#shared/log": "./_shared/log.ts",
+    "#shared/moderation": "./_shared/moderation.ts",
+    "#shared/push": "./_shared/push.ts",
+    "#shared/rows": "./_shared/rows.ts",
+    "#shared/runtime": "./_shared/runtime.ts",
+    "#shared/store": "./_shared/store.ts",
+    "#shared/supabase": "./_shared/supabase.ts",
+    "#shared/text": "./_shared/text.ts",
+    "#shared/translate": "./_shared/translate.ts",
+    "#shared/validate": "./_shared/validate.ts"
+  }
+}

@@ -89,7 +89,6 @@ export default function OtpScreen() {
           maxLength={6}
           autoFocus
           error={fieldError}
-          style={{ letterSpacing: 8, fontVariant: ['tabular-nums'] } as never}
         />
         {verify.error && !fieldError ? <InlineError error={verify.error} /> : null}
         <Button

@@ -9,7 +9,15 @@
     "userInterfaceStyle": "automatic",
     "ios": {
       "icon": "./assets/expo.icon",
-      "bundleIdentifier": "com.sporttalent.app"
+      "bundleIdentifier": "com.sporttalent.app",
+      "supportsTablet": true,
+      "infoPlist": {
+        "NSLocationWhenInUseUsageDescription": "Sport Talent uses your location to show games and courts near you and to confirm your check-in when you arrive at a game. You can always search by city instead.",
+        "NSLocationAlwaysAndWhenInUseUsageDescription": "Optional: allow 'Always' so Sport Talent can remind you to check in when you get near a game you joined. We only watch the area around your upcoming games (up to 3) and never track your route. You can check in manually without this.",
+        "NSCameraUsageDescription": "Sport Talent uses the camera to scan the host's check-in QR code at the game.",
+        "CFBundleAllowMixedLocalizations": true,
+        "ITSAppUsesNonExemptEncryption": false
+      }
     },
     "android": {
       "adaptiveIcon": {
@@ -19,22 +27,76 @@
         "monochromeImage": "./assets/images/android-icon-monochrome.png"
       },
       "predictiveBackGestureEnabled": false,
-      "package": "com.sporttalent.app"
+      "package": "com.sporttalent.app",
+      "permissions": [
+        "android.permission.ACCESS_COARSE_LOCATION",
+        "android.permission.ACCESS_FINE_LOCATION",
+        "android.permission.CAMERA",
+        "android.permission.POST_NOTIFICATIONS"
+      ],
+      "blockedPermissions": [
+        "android.permission.ACCESS_BACKGROUND_LOCATION",
+        "android.permission.FOREGROUND_SERVICE_LOCATION",
+        "android.permission.READ_CONTACTS",
+        "android.permission.RECORD_AUDIO"
+      ]
     },
     "web": {
       "output": "single",
-      "favicon": "./assets/images/favicon.png"
+      "favicon": "./assets/images/favicon.png",
+      "bundler": "metro",
+      "name": "Sport Talent",
+      "themeColor": "#4B2FE0"
     },
     "plugins": [
       "expo-router",
       [
         "expo-splash-screen",
         {
-          "backgroundColor": "#208AEF",
+          "backgroundColor": "#0A0B12",
           "image": "./assets/images/splash-icon.png",
           "imageWidth": 76
         }
-      ]
+      ],
+      [
+        "expo-location",
+        {
+          "locationWhenInUsePermission": "Sport Talent uses your location to show games and courts near you and to confirm your check-in when you arrive at a game. You can always search by city instead.",
+          "locationAlwaysAndWhenInUsePermission": "Optional: allow 'Always' so Sport Talent can remind you to check in when you get near a game you joined. We only watch the area around your upcoming games (up to 3) and never track your route. You can check in manually without this.",
+          "locationAlwaysPermission": "Optional: allow 'Always' so Sport Talent can remind you to check in when you get near a game you joined. We only watch the area around your upcoming games (up to 3) and never track your route. You can check in manually without this.",
+          "isIosBackgroundLocationEnabled": false,
+          "isAndroidBackgroundLocationEnabled": false,
+          "isAndroidForegroundServiceEnabled": false,
+          "isAndroidMotionActivityEnabled": false,
+          "motionUsagePermission": false
+        }
+      ],
+      [
+        "expo-camera",
+        {
+          "cameraPermission": "Sport Talent uses the camera to scan the host's check-in QR code at the game.",
+          "microphonePermission": false,
+          "recordAudioAndroid": false
+        }
+      ],
+      [
+        "expo-notifications",
+        {
+          "color": "#4B2FE0"
+        }
+      ],
+      [
+        "expo-localization",
+        {
+          "supportsRTL": true
+        }
+      ],
+      [
+        "expo-font",
+        {}
+      ],
+      "expo-secure-store",
+      "@maplibre/maplibre-react-native"
     ],
     "experiments": {
       "typedRoutes": true,

@@ -1,7 +1,7 @@
--- 0008_rpcs_games.sql
+-- 0009_rpcs_games.sql
 -- Client RPCs for profiles, venues, map queries, games, joining and check-in.
 -- Every function: SECURITY DEFINER, `set search_path = ''`, fully-qualified names, checks
--- auth.uid(), raises `ST:<ErrorCode>` (types.ts). EXECUTE grants are in 0011_rls_grants.sql.
+-- auth.uid(), raises `ST:<ErrorCode>` (types.ts). EXECUTE grants are in 0090_rls_grants.sql.
 
 -- ---------------------------------------------------------------------------
 -- Shared guards
@@ -172,8 +172,9 @@ begin
   return r;
 end $$;
 
--- Waze-style report. Unique per reporter; the Nth distinct report (venueReportsToHide) since the
--- last moderator review hides the venue pending review and queues it.
+-- Waze-style report, unique per reporter (already_reported). Evaluated by the domain mirror
+-- dm_venue_reports(): venueReportsToHide distinct reporters (creator excluded) since the last
+-- moderator review → hidden_pending_review + review + notice to the creator.
 create function public.report_venue(
   p_venue_id uuid, p_reason public.venue_report_reason, p_note text default null)
 returns public.venue_reports
@@ -182,11 +183,9 @@ as $$
 declare
   me public.profiles := public.st_active_profile();
   t timestamptz := public.st_now();
-  cfg public.trust_config := public.st_config();
   v public.venues;
   r public.venue_reports;
-  since timestamptz;
-  n int;
+  res jsonb;
 begin
   select * into v from public.venues x where x.id = p_venue_id for update;
   if v.id is null or v.status = 'removed' then
@@ -200,24 +199,23 @@ begin
   insert into public.venue_reports (venue_id, reporter_id, reason, note, created_at)
   values (p_venue_id, me.id, p_reason, p_note, t)
   returning * into r;
-
-  select max(q.resolved_at) into since from public.review_queue q
-  where q.venue_id = p_venue_id and q.kind = 'venue_reports' and q.status = 'resolved';
-  select count(distinct x.reporter_id) into n from public.venue_reports x
-  where x.venue_id = p_venue_id and x.created_at > coalesce(since, '-infinity'::timestamptz);
-
-  if v.status = 'active' and n >= cfg.venue_reports_to_hide then
-    update public.venues x set status = 'hidden_pending_review' where x.id = p_venue_id;
-    perform public.st_enqueue_review('venue_reports', 'venue_reports:' || p_venue_id::text || ':' || r.id::text,
-      v.created_by, 'normal', jsonb_build_object('reports', n), '{}', p_venue_id, null, null, null);
-    if v.created_by is not null then
-      perform public.st_notify(v.created_by, 'venue_hidden', jsonb_build_object('venueName', v.name), null, null,
-                               'venue_hidden:' || r.id::text);
-    end if;
-    perform public.st_audit('venue.auto_hidden', v.created_by, jsonb_build_object('venueId', p_venue_id, 'reports', n));
-  end if;
+  res := public.dm_venue_reports(public.st_venue_trust_json(v.id), t, public.st_config());
+  perform public.st_apply_effects(res -> 'effects');
   return r;
 end $$;
+
+-- VenueTrustRecord JSON for a venue (trust/venues.ts).
+create function public.st_venue_trust_json(p_venue_id uuid) returns jsonb
+language sql stable security definer set search_path = ''
+as $$
+  select jsonb_build_object('venueId', v.id, 'status', v.status, 'createdBy', v.created_by,
+                            'lastReviewedAt', public.dm_iso(v.last_reviewed_at),
+                            'reports', (select coalesce(jsonb_agg(jsonb_build_object(
+                                          'id', r.id, 'venueId', r.venue_id, 'reporterId', r.reporter_id, 'reason', r.reason,
+                                          'note', r.note, 'createdAt', public.dm_iso(r.created_at)) order by r.created_at, r.id), '[]'::jsonb)
+                                        from public.venue_reports r where r.venue_id = v.id))
+  from public.venues v where v.id = p_venue_id
+$$;
 
 -- ---------------------------------------------------------------------------
 -- Games: create / cancel / map
@@ -411,54 +409,57 @@ begin
   return r;
 end $$;
 
--- Waitlist offers (GAME-045). When spots free up: more than waitlistLongThresholdHours before
--- start the next players in FIFO order get an offer valid waitlistConfirmLongMinutes; closer to
--- start waitlistConfirmShortMinutes; within waitlistFlashFillHours every waitlisted player gets a
--- flash offer and the first to accept wins (accept_waitlist_offer). Unanswered non-flash offers
--- expire in expire_waitlist_offers() and pass to the next in line. Returns offers made.
+-- Waitlist offers (GAME-045) via the domain mirror dm_waitlist(): > 6 h before start the next player
+-- gets 120 min, 6 h–1 h 20 min, < 1 h flash fill (everyone, first to accept wins), none after start.
+-- Records offers in waitlist_offers and sends the Notify effects. Returns the number of new offers.
 create function public.st_promote_waitlist(p_game_id uuid) returns int
 language plpgsql security definer set search_path = ''
 as $$
 declare
   t timestamptz := public.st_now();
-  cfg public.trust_config := public.st_config();
   g public.games;
-  free int;
-  flash boolean;
-  win interval;
-  w record;
-  n int := 0;
+  plan jsonb;
+  o jsonb;
 begin
   select * into g from public.games x where x.id = p_game_id for update;
-  if g.id is null or g.status <> 'scheduled' or g.ends_at <= t then return 0; end if;
-  select g.capacity
-         - count(*) filter (where gp.status = 'approved')
-         - count(*) filter (where gp.status = 'waitlisted' and gp.offer_expires_at > t and not gp.offer_is_flash)
-    into free
-  from public.game_participants gp where gp.game_id = g.id;
-  if free <= 0 then return 0; end if;
-  flash := t >= g.starts_at - cfg.waitlist_flash_fill_hours * interval '1 hour';
-  win := case when g.starts_at - t > cfg.waitlist_long_threshold_hours * interval '1 hour'
-              then cfg.waitlist_confirm_long_minutes * interval '1 minute'
-              else cfg.waitlist_confirm_short_minutes * interval '1 minute' end;
-  for w in select gp.user_id from public.game_participants gp
-           where gp.game_id = g.id and gp.status = 'waitlisted'
-             and (gp.offer_expires_at is null or gp.offer_expires_at <= t)
-           order by gp.waitlisted_at, gp.user_id
-           limit case when flash then null else free end
-  loop
-    update public.game_participants gp
-       set offer_expires_at = case when flash then g.ends_at else least(t + win, g.ends_at) end,
-           offer_is_flash = flash
-    where gp.game_id = g.id and gp.user_id = w.user_id;
-    perform public.st_notify(w.user_id, 'waitlist_promoted',
-      jsonb_build_object('gameTitle', g.title, 'flash', flash,
-                         'offerExpiresAt', public.st_iso(case when flash then g.ends_at else least(t + win, g.ends_at) end)),
-      g.id, null, 'offer:' || g.id::text || ':' || w.user_id::text || ':' || extract(epoch from t)::text);
-    n := n + 1;
+  if g.id is null then return 0; end if;
+  plan := public.dm_waitlist(jsonb_build_object(
+      'game', jsonb_build_object('id', g.id, 'capacity', g.capacity, 'status', g.status, 'startsAt', public.dm_iso(g.starts_at)),
+      'participants', (select coalesce(jsonb_agg(jsonb_build_object(
+                          'userId', pv.user_id, 'status', pv.status, 'waitlistRank', pv.rank,
+                          'requestedAt', public.dm_iso(pv.requested_at))), '[]'::jsonb)
+                       from (select gp.*, case when gp.status = 'waitlisted' then
+                               row_number() over (partition by gp.status = 'waitlisted' order by gp.waitlisted_at, gp.user_id) end as rank
+                             from public.game_participants gp where gp.game_id = g.id) pv),
+      'offers', (select coalesce(jsonb_agg(jsonb_build_object('userId', o.user_id, 'offeredAt', public.dm_iso(o.offered_at),
+                                                              'acceptBy', public.dm_iso(o.accept_by), 'mode', o.mode)
+                                           order by o.offered_at), '[]'::jsonb)
+                 from public.waitlist_offers o where o.game_id = g.id)),
+    t, public.st_config());
+  if (plan ->> 'freeSpots')::int = 0 then
+    delete from public.waitlist_offers o where o.game_id = g.id; -- the round ends when the game is full
+  end if;
+  for o in select x from jsonb_array_elements(plan -> 'offers') x loop
+    insert into public.waitlist_offers (game_id, user_id, offered_at, accept_by, mode)
+    values (g.id, (o ->> 'userId')::uuid, public.dm_ts(o ->> 'offeredAt'), public.dm_ts(o ->> 'acceptBy'), o ->> 'mode')
+    on conflict (game_id, user_id) do update set offered_at = excluded.offered_at, accept_by = excluded.accept_by, mode = excluded.mode;
   end loop;
-  return n;
+  perform public.st_apply_effects(plan -> 'effects');
+  return jsonb_array_length(plan -> 'offers');
 end $$;
+
+-- Offers are dropped once the player leaves the waitlist (approved, cancelled, removed…).
+create function public.st_participants_offer_cleanup() returns trigger
+language plpgsql security definer set search_path = ''
+as $$
+begin
+  if old.status = 'waitlisted' and new.status <> 'waitlisted' then
+    delete from public.waitlist_offers o where o.game_id = new.game_id and o.user_id = new.user_id;
+  end if;
+  return null;
+end $$;
+create trigger game_participants_offer_cleanup after update of status on public.game_participants
+  for each row execute function public.st_participants_offer_cleanup();
 
 -- The earliest late canceller whose spot has not been taken yet (TRUST-021 refill linkage).
 create function public.st_next_refill_target(p_game_id uuid) returns uuid
@@ -471,8 +472,9 @@ as $$
   limit 1
 $$;
 
--- Accept a waitlist offer. Transactional lock on the game row: with flash fill the first to accept
--- wins and the others get ST:game_full (they stay on the waitlist).
+-- Accept a waitlist offer (games/waitlist.ts acceptWaitlistOffer). Transactional lock on the game
+-- row: with flash fill the first to accept wins. Errors: game_not_open (not scheduled / started),
+-- not_found (no offer), outside_window (offer expired), game_full (spot taken).
 create function public.accept_waitlist_offer(p_game_id uuid) returns public.participant_views
 language plpgsql security definer set search_path = ''
 as $$
@@ -481,36 +483,32 @@ declare
   t timestamptz := public.st_now();
   g public.games;
   pt public.game_participants;
-  n_appr int;
+  offer public.waitlist_offers;
+  spots int;
   w record;
 begin
   select * into g from public.games x where x.id = p_game_id for update;
   if g.id is null then perform public.st_raise('not_found'); end if;
-  select * into pt from public.game_participants gp where gp.game_id = g.id and gp.user_id = uid for update;
-  if pt.game_id is null or pt.status <> 'waitlisted' or pt.offer_expires_at is null or pt.offer_expires_at <= t then
-    perform public.st_raise('conflict', 'no active offer');
-  end if;
-  if g.status <> 'scheduled' or g.ends_at <= t then perform public.st_raise('game_not_open'); end if;
-  select count(*) into n_appr from public.game_participants gp where gp.game_id = g.id and gp.status = 'approved';
-  if n_appr >= g.capacity then
-    update public.game_participants gp set offer_expires_at = null, offer_is_flash = false
-    where gp.game_id = g.id and gp.user_id = uid;
-    perform public.st_raise('game_full');
-  end if;
-  update public.game_participants gp
-     set status = 'approved', decided_at = t, waitlisted_at = null, offer_expires_at = null, offer_is_flash = false,
-         replaces_user_id = public.st_next_refill_target(g.id)
-  where gp.game_id = g.id and gp.user_id = uid;
-  if n_appr + 1 >= g.capacity then
-    -- Spot taken: withdraw outstanding flash offers ("you are still on the list").
-    for w in update public.game_participants gp set offer_expires_at = null, offer_is_flash = false
-             where gp.game_id = g.id and gp.status = 'waitlisted' and gp.offer_expires_at is not null
-             returning gp.user_id
-    loop
-      perform public.st_notify(w.user_id, 'join_waitlisted', jsonb_build_object('gameTitle', g.title, 'spotTaken', true),
-                               g.id, null, 'spot_taken:' || g.id::text || ':' || w.user_id::text || ':' || extract(epoch from t)::text);
+  if g.status <> 'scheduled' or t >= g.starts_at then perform public.st_raise('game_not_open'); end if;
+  select * into pt from public.game_participants gp where gp.game_id = g.id and gp.user_id = uid and gp.status = 'waitlisted' for update;
+  select * into offer from public.waitlist_offers o where o.game_id = g.id and o.user_id = uid;
+  if pt.game_id is null or offer.game_id is null then perform public.st_raise('not_found', 'no offer'); end if;
+  if offer.accept_by < t then perform public.st_raise('outside_window', 'offer expired'); end if;
+  select greatest(0, g.capacity - count(*)) into spots from public.game_participants gp where gp.game_id = g.id and gp.status = 'approved';
+  if spots = 0 then perform public.st_raise('game_full'); end if;
+  if spots = 1 then
+    -- "Spot taken, you are still on the list" to other players holding active offers.
+    for w in select o.user_id from public.waitlist_offers o
+             join public.game_participants gp on gp.game_id = o.game_id and gp.user_id = o.user_id and gp.status = 'waitlisted'
+             where o.game_id = g.id and o.user_id <> uid and o.accept_by >= t order by o.user_id loop
+      perform public.st_apply_effects(jsonb_build_array(
+        public.dm_notify(w.user_id, 'join_waitlisted', jsonb_build_object('spotTaken', 1), g.id, null)));
     end loop;
   end if;
+  perform public.st_apply_effects(jsonb_build_array(
+    jsonb_build_object('type', 'PromoteWaitlist', 'gameId', g.id, 'userId', uid),
+    public.dm_notify(uid, 'waitlist_promoted', jsonb_build_object('mode', offer.mode), g.id, null)));
+  if spots = 1 then delete from public.waitlist_offers o where o.game_id = g.id; end if;
   return public.st_participant_view(g.id, uid);
 end $$;
 
@@ -570,7 +568,9 @@ begin
     values (me.id, g.id, 'deposit', g.deposit_minor, g.currency, 'requires_payment_method', 'setup',
             'deposit:' || g.id::text || ':' || me.id::text || ':setup')
     on conflict (idempotency_key) do nothing;
-    select pm.status = 'succeeded' and pm.deposit_state = 'setup' into ready
+    select (pm.step = 'setup' and pm.status = 'succeeded')
+           or (pm.step = 'charge' and pm.deposit_state = 'held')
+           or (pm.step = 'hold' and pm.deposit_state = 'held') into ready
     from public.payments pm where pm.idempotency_key = 'deposit:' || g.id::text || ':' || me.id::text || ':setup';
     ready := coalesce(ready, false);
   end if;
@@ -613,14 +613,9 @@ begin
   if p_decision = 'reject' then
     new_status := 'rejected';
   else
-    select count(*) into n_appr from public.game_participants gp
-    where gp.game_id = g.id
-      and (gp.status = 'approved' or (gp.status = 'waitlisted' and gp.offer_expires_at > t and not gp.offer_is_flash));
-    -- Approving when full (or when free spots are already offered to the waitlist) waitlists.
-    new_status := case when n_appr < g.capacity
-                        and not exists (select 1 from public.game_participants w where w.game_id = g.id and w.status = 'waitlisted'
-                                          and w.offer_expires_at > t)
-                       then 'approved' else 'waitlisted' end;
+    -- decideJoinOutcome(): approved while there is room, else waitlisted.
+    select count(*) into n_appr from public.game_participants gp where gp.game_id = g.id and gp.status = 'approved';
+    new_status := case when n_appr < g.capacity then 'approved' else 'waitlisted' end;
   end if;
   update public.game_participants gp set status = new_status, decided_at = t,
          waitlisted_at = case when new_status = 'waitlisted' then t end,
@@ -632,9 +627,6 @@ begin
                     else 'join_rejected'::public.notification_kind end,
     jsonb_build_object('gameTitle', g.title), g.id, null,
     'decide:' || g.id::text || ':' || p_user_id::text || ':' || extract(epoch from t)::text);
-  if new_status = 'waitlisted' then
-    perform public.st_promote_waitlist(g.id);
-  end if;
   return public.st_participant_view(g.id, p_user_id);
 end $$;
 
@@ -656,7 +648,7 @@ begin
   if pt.game_id is null then perform public.st_raise('not_found'); end if;
   if pt.status not in ('requested', 'approved', 'waitlisted') then perform public.st_raise('conflict'); end if;
   update public.game_participants gp
-     set status = 'removed', decided_at = t, waitlisted_at = null, team = null, offer_expires_at = null, offer_is_flash = false
+     set status = 'removed', decided_at = t, waitlisted_at = null, team = null
   where gp.game_id = g.id and gp.user_id = p_user_id;
   perform public.st_notify(p_user_id, 'participant_removed', jsonb_build_object('gameTitle', g.title), g.id, null,
                            'removed:' || g.id::text || ':' || p_user_id::text);
@@ -664,10 +656,11 @@ begin
   return public.st_participant_view(g.id, p_user_id);
 end $$;
 
--- Withdraw. A cancel by an approved player within lateCancelWindowHours of start is a late cancel:
--- a provisional yellow card (statement key sanctions.reason.late_cancel), disputable for
--- disputeWindowHours. It is voided at closure (process_no_shows) if the spot was refilled and the
--- replacement checked in (TRUST-021). The deposit is not released for an unrefilled late cancel.
+-- Withdraw. Within lateCancelWindowHours of start an approved player's cancel is a *late cancel*;
+-- its yellow card is decided at attendance finalisation (process_no_shows, endsAt + 2h), so a spot
+-- refilled from the waitlist (replacement checked in) never yields a card (TRUST-021). The deposit
+-- of an early cancel is released (settle_deposits); a late cancel's waits for finalisation.
+-- Returns {participant, sanction: null}.
 create function public.cancel_participation(p_game_id uuid) returns jsonb
 language plpgsql security definer set search_path = ''
 as $$
@@ -678,7 +671,6 @@ declare
   g public.games;
   pt public.game_participants;
   late boolean;
-  s public.sanctions;
 begin
   select * into g from public.games x where x.id = p_game_id for update;
   if g.id is null then perform public.st_raise('not_found'); end if;
@@ -688,23 +680,17 @@ begin
   if pt.status not in ('requested', 'approved', 'waitlisted') then perform public.st_raise('conflict'); end if;
   if g.status <> 'scheduled' or g.ends_at <= t then perform public.st_raise('game_not_open'); end if;
 
-  late := pt.status = 'approved' and t > g.starts_at - cfg.late_cancel_window_hours * interval '1 hour';
+  -- isLateCancel(): strictly less than the window before start (or after the start).
+  late := pt.status = 'approved' and g.starts_at - t < cfg.late_cancel_window_hours * interval '1 hour';
   update public.game_participants gp
      set status = 'cancelled', cancelled_at = t, late_cancel = late, late_cancel_refilled = false, team = null,
-         waitlisted_at = null, offer_expires_at = null, offer_is_flash = false
+         waitlisted_at = null
   where gp.game_id = g.id and gp.user_id = uid;
-
-  if late then
-    s := public.st_issue_sanction(uid, 'yellow_card', 'late_cancel',
-           jsonb_build_object('gameTitle', g.title, 'hours', cfg.late_cancel_window_hours),
-           cfg.yellow_card_lifetime_days * interval '1 day', cfg.dispute_window_hours * interval '1 hour',
-           g.id, '{}', 'late_cancel:' || g.id::text || ':' || uid::text);
+  if pt.status = 'approved' then
+    perform public.st_promote_waitlist(g.id);
   end if;
-  perform public.st_promote_waitlist(g.id);
   perform public.st_recompute_reliability(uid);
-  return jsonb_build_object(
-    'participant', to_jsonb(public.st_participant_view(g.id, uid)),
-    'sanction', case when s.id is null then null else to_jsonb(s) end);
+  return jsonb_build_object('participant', to_jsonb(public.st_participant_view(g.id, uid)), 'sanction', null);
 end $$;
 
 -- Host saves team assignments {userId: teamIndex}; approved players not listed become unassigned.
@@ -793,84 +779,42 @@ begin
   perform public.st_evaluate_host(g.host_id);
 end $$;
 
+-- Host reliability via the domain mirror dm_host_reliability(): confirmed fake venue, or average
+-- ≤ hostLowRatingMax over ≥ hostLowRatingMinCount ratings in hostRatingLookbackDays → temporary
+-- host_suspension + review (never permanent).
 create function public.st_evaluate_host(p_host uuid) returns void
 language plpgsql security definer set search_path = ''
 as $$
-declare
-  cfg public.trust_config := public.st_config();
-  t timestamptz := public.st_now();
-  n int;
-  avg_stars numeric;
-  s public.sanctions;
 begin
-  select count(*), avg(hr.stars) into n, avg_stars from public.host_ratings hr
-  where hr.host_id = p_host and hr.created_at > t - cfg.host_rating_lookback_days * interval '1 day';
-  if n >= cfg.host_low_rating_min_count and avg_stars <= cfg.host_low_rating_max
-     and not exists (select 1 from public.sanctions x where x.user_id = p_host and x.kind = 'host_suspension'
-                     and public.st_sanction_in_force(x, t)) then
-    s := public.st_issue_sanction(p_host, 'host_suspension', 'low_host_rating',
-           jsonb_build_object('average', round(avg_stars, 2), 'ratings', n, 'days', cfg.host_suspension_days),
-           cfg.host_suspension_days * interval '1 day', null, null, '{}',
-           'low_host_rating:' || p_host::text || ':' || n::text);
-    perform public.st_enqueue_review('host_reliability', 'host_reliability:' || s.dedupe_key, p_host, 'normal',
-      jsonb_build_object('average', round(avg_stars, 2), 'ratings', n), '{}', null, null, s.id, null);
-  end if;
+  perform public.st_apply_effects(public.dm_host_reliability(jsonb_build_object(
+      'hostId', p_host,
+      'ratings', (select coalesce(jsonb_agg(jsonb_build_object('hostId', hr.host_id, 'gameId', hr.game_id, 'raterId', hr.rater_id,
+                                                               'stars', hr.stars, 'at', public.dm_iso(hr.created_at))), '[]'::jsonb)
+                  from public.host_ratings hr where hr.host_id = p_host),
+      'confirmedFakeVenueIds', (select coalesce(jsonb_agg(v.id), '[]'::jsonb) from public.venues v
+                                where v.created_by = p_host and v.status = 'removed'
+                                  and public.dm_is_confirmed_fake(public.st_venue_trust_json(v.id))),
+      'sanctions', public.st_user_sanctions_json(p_host)),
+    public.st_now(), public.st_config()) -> 'effects');
 end $$;
 
 -- ---------------------------------------------------------------------------
 -- Check-in: QR (HMAC-SHA256 over `${gameId}|${step}` keyed with games.qr_secret), host, peer
 -- ---------------------------------------------------------------------------
 
-create function public.st_qr_hmac(p_secret bytea, p_game_id uuid, p_step bigint) returns text
-language sql immutable set search_path = ''
-as $$ select encode(extensions.hmac(convert_to(p_game_id::text || '|' || p_step::text, 'UTF8'), p_secret, 'sha256'), 'hex') $$;
-
-create function public.st_qr_step(p_t timestamptz, p_step_seconds int) returns bigint
-language sql immutable set search_path = ''
-as $$ select floor(extract(epoch from p_t) / p_step_seconds)::bigint $$;
-
--- 'ok' | 'invalid_qr' | 'expired_qr'. Accepts the current step ± qrAllowedDriftSteps; a token
--- valid for a step up to 20 steps away is reported as expired (useful UX), anything else invalid.
-create function public.st_verify_qr_token(p_secret bytea, p_game_id uuid, p_token text, p_now timestamptz,
-                                          p_cfg public.trust_config)
-returns text
-language plpgsql stable set search_path = ''
-as $$
-declare
-  cur bigint := public.st_qr_step(p_now, p_cfg.qr_step_seconds);
-  tok text := lower(btrim(coalesce(p_token, '')));
-  d int;
-begin
-  if tok !~ '^[0-9a-f]{64}$' then return 'invalid_qr'; end if;
-  for d in -p_cfg.qr_allowed_drift_steps .. p_cfg.qr_allowed_drift_steps loop
-    if public.st_qr_hmac(p_secret, p_game_id, cur + d) = tok then return 'ok'; end if;
-  end loop;
-  for d in -20 .. 20 loop
-    if abs(d) > p_cfg.qr_allowed_drift_steps and public.st_qr_hmac(p_secret, p_game_id, cur + d) = tok then
-      return 'expired_qr';
-    end if;
-  end loop;
-  return 'invalid_qr';
-end $$;
-
+-- Host only. Current rotating token (checkin/qr.ts wire format, dm_qr_token).
 create function public.get_qr_token(p_game_id uuid) returns jsonb
 language plpgsql stable security definer set search_path = ''
 as $$
 declare
   uid uuid := public.st_uid();
-  cfg public.trust_config := public.st_config();
   g public.games;
-  step bigint;
 begin
   select * into g from public.games x where x.id = p_game_id;
   if g.id is null then perform public.st_raise('not_found'); end if;
   if g.host_id <> uid then perform public.st_raise('forbidden'); end if;
   if g.qr_secret is null then perform public.st_raise('game_not_open', 'qr secret purged'); end if;
-  step := public.st_qr_step(public.st_now(), cfg.qr_step_seconds);
-  return jsonb_build_object(
-    'token', public.st_qr_hmac(g.qr_secret, g.id, step),
-    'step', step,
-    'expiresAt', public.st_iso(to_timestamp((step + 1) * cfg.qr_step_seconds)));
+  return public.dm_qr_token(g.qr_secret, g.id, public.st_now(), public.st_config());
 end $$;
 
 create function public.rotate_qr(p_game_id uuid) returns jsonb
@@ -880,7 +824,7 @@ declare uid uuid := public.st_uid();
 begin
   if not exists (select 1 from public.games g where g.id = p_game_id) then perform public.st_raise('not_found'); end if;
   if not public.st_is_host(p_game_id, uid) then perform public.st_raise('forbidden'); end if;
-  update public.games g set qr_secret = extensions.gen_random_bytes(32) where g.id = p_game_id;
+  update public.games g set qr_secret = encode(extensions.gen_random_bytes(32), 'hex') where g.id = p_game_id;
   return public.get_qr_token(p_game_id);
 end $$;
 
@@ -902,8 +846,9 @@ as $$
                             'signals', to_jsonb(coalesce(p_signals, '{}')))
 $$;
 
--- Record a verdict for (game, user): log the attempt and mark attendance on success. Enforces
--- participant / already-checked-in / window rules regardless of the caller's verdict.
+-- Record a verdict for (game, user): log the attempt and mark attendance on success. Re-checks, in
+-- the domain order: outside_window (check-in window; the host may mark until endsAt +
+-- finalizeAfterEndHours), not_participant, already_checked_in.
 create function public.st_record_checkin(p_game_id uuid, p_user_id uuid, p_verdict jsonb, p_submitted_by uuid)
 returns jsonb
 language plpgsql security definer set search_path = ''
@@ -915,16 +860,18 @@ declare
   pt public.game_participants;
   m public.checkin_method := (p_verdict ->> 'method')::public.checkin_method;
   verdict jsonb := p_verdict;
+  closes timestamptz;
   sigs public.spoof_signal[];
 begin
   select * into g from public.games x where x.id = p_game_id;
   select * into pt from public.game_participants gp where gp.game_id = p_game_id and gp.user_id = p_user_id for update;
-  if pt.game_id is null or pt.status <> 'approved' then
+  closes := g.ends_at + case when m = 'host' then cfg.finalize_after_end_hours * interval '1 hour' else interval '0' end;
+  if g.status = 'cancelled' or t < g.starts_at - cfg.check_in_opens_minutes_before_start * interval '1 minute' or t > closes then
+    verdict := public.st_verdict_rejected(m, 'outside_window', '{}');
+  elsif pt.game_id is null or pt.status <> 'approved' then
     verdict := public.st_verdict_rejected(m, 'not_participant', '{}');
   elsif pt.attendance = 'verified' then
     verdict := public.st_verdict_rejected(m, 'already_checked_in', '{}');
-  elsif g.status <> 'scheduled' or t < g.starts_at - cfg.check_in_opens_minutes_before_start * interval '1 minute' or t > g.ends_at then
-    verdict := public.st_verdict_rejected(m, 'outside_window', '{}');
   end if;
   select coalesce(array_agg(x::public.spoof_signal), '{}') into sigs
   from jsonb_array_elements_text(coalesce(p_verdict -> 'signals', '[]'::jsonb)) x;
@@ -942,6 +889,7 @@ end $$;
 
 -- Client check-in for QR and host methods (GPS goes through the checkin-verify Edge Function,
 -- which records via record_checkin_verdict). Rejections are returned, never thrown.
+-- QR: dm_verify_qr (window, then token); host: checkin/host.ts verifyHost order.
 create function public.submit_checkin(p_game_id uuid, p_method public.checkin_method, p_token text default null,
                                       p_target_user_id uuid default null)
 returns jsonb
@@ -952,8 +900,7 @@ declare
   t timestamptz := public.st_now();
   cfg public.trust_config := public.st_config();
   g public.games;
-  target uuid;
-  qr text;
+  v jsonb;
 begin
   if p_method not in ('qr', 'host') then
     perform public.st_raise('validation', 'use checkin-verify for gps and peer_confirm for peer');
@@ -965,24 +912,22 @@ begin
        and c.outcome = 'rejected' and c.created_at > t - interval '10 minutes'), 20);
 
   if p_method = 'host' then
-    if g.host_id <> uid then
-      return public.st_verdict_rejected('host', 'not_host', array['qr', 'peer']);
+    if g.host_id <> uid or p_target_user_id is null or p_target_user_id = uid then
+      return public.st_verdict_rejected('host', 'not_host', '{}');
     end if;
-    target := p_target_user_id;
-    if target is null or target = g.host_id then perform public.st_raise('validation', 'target'); end if;
-    return public.st_record_checkin(g.id, target, public.st_verdict_verified('host'), uid);
+    return public.st_record_checkin(g.id, p_target_user_id, public.st_verdict_verified('host'), uid);
   end if;
 
-  -- QR: verify before recording so a bad token does not reveal participant state.
-  qr := public.st_verify_qr_token(g.qr_secret, g.id, p_token, t, cfg);
-  if qr <> 'ok' then
+  v := public.dm_verify_qr(p_token, g.qr_secret, g.id, t, cfg,
+                           jsonb_build_object('startsAt', public.dm_iso(g.starts_at), 'endsAt', public.dm_iso(g.ends_at)));
+  if v ->> 'outcome' <> 'verified' then
     if exists (select 1 from public.game_participants gp where gp.game_id = g.id and gp.user_id = uid) then
       insert into public.checkins (game_id, user_id, method, outcome, reason, submitted_by, created_at)
-      values (g.id, uid, 'qr', 'rejected', qr::public.checkin_reject_reason, uid, t);
+      values (g.id, uid, 'qr', 'rejected', (v ->> 'reason')::public.checkin_reject_reason, uid, t);
     end if;
-    return public.st_verdict_rejected('qr', qr::public.checkin_reject_reason, array['host', 'peer']);
+    return v;
   end if;
-  return public.st_record_checkin(g.id, uid, public.st_verdict_verified('qr'), uid);
+  return public.st_record_checkin(g.id, uid, v, uid);
 end $$;
 
 -- Service role (checkin-verify Edge Function): record a GPS/QR/host verdict computed by the domain.
@@ -999,9 +944,10 @@ begin
   return public.st_record_checkin(p_game_id, p_user_id, p_verdict, null);
 end $$;
 
--- A verified attendee vouches for a target. Target becomes verified with ≥ peerMinConfirmations
--- qualifying confirmers (verified, not in a blocked pair with the target), unless all of them are
--- reciprocal (the target also confirmed them).
+-- A verified attendee vouches for a target. The confirmation is stored and the target is evaluated
+-- by the domain mirror dm_verify_peer(): ≥ peerMinConfirmations confirmers verified by GPS/QR, not
+-- in a blocked pair, max 6 confirmations per confirmer; peer-verified reciprocal pairs →
+-- reciprocal_only. On success the target is verified with method 'peer'.
 create function public.peer_confirm(p_game_id uuid, p_target_user_id uuid) returns jsonb
 language plpgsql security definer set search_path = ''
 as $$
@@ -1010,10 +956,7 @@ declare
   t timestamptz := public.st_now();
   cfg public.trust_config := public.st_config();
   g public.games;
-  tgt public.game_participants;
-  q int;
-  q_nonrecip int;
-  verdict jsonb;
+  res jsonb;
 begin
   select * into g from public.games x where x.id = p_game_id;
   if g.id is null or not public.st_can_see_game(g.id, uid) then perform public.st_raise('not_found'); end if;
@@ -1022,37 +965,24 @@ begin
                    and gp.status = 'approved' and gp.attendance = 'verified') then
     perform public.st_raise('forbidden', 'confirmer must be a verified attendee');
   end if;
-  if g.status <> 'scheduled' or t < g.starts_at - cfg.check_in_opens_minutes_before_start * interval '1 minute' or t > g.ends_at then
-    perform public.st_raise('outside_window');
+  if public.dm_check_in_open(g.starts_at, g.ends_at, t, cfg) and g.status = 'scheduled' then
+    insert into public.peer_confirmations (game_id, confirmer_id, target_id, created_at)
+    values (g.id, uid, p_target_user_id, t) on conflict do nothing;
   end if;
-  select * into tgt from public.game_participants gp where gp.game_id = g.id and gp.user_id = p_target_user_id;
-  if tgt.game_id is null or tgt.status <> 'approved' then
-    return jsonb_build_object('confirmations', 0, 'verdict', public.st_verdict_rejected('peer', 'not_participant', '{}'));
+  res := public.dm_verify_peer(jsonb_build_object(
+      'targetUserId', p_target_user_id,
+      'participants', (select coalesce(jsonb_agg(jsonb_build_object('userId', gp.user_id, 'status', gp.status,
+                                       'attendance', gp.attendance, 'checkInMethod', gp.check_in_method)), '[]'::jsonb)
+                       from public.game_participants gp where gp.game_id = g.id),
+      'confirmations', (select coalesce(jsonb_agg(jsonb_build_object('confirmerId', pc.confirmer_id, 'targetId', pc.target_id)
+                                                  order by pc.created_at, pc.confirmer_id, pc.target_id), '[]'::jsonb)
+                        from public.peer_confirmations pc where pc.game_id = g.id),
+      'blocks', (select coalesce(jsonb_agg(jsonb_build_object('blockerId', b.blocker_id, 'blockedId', b.blocked_id)), '[]'::jsonb)
+                 from public.blocks b where b.blocker_id = p_target_user_id or b.blocked_id = p_target_user_id),
+      'window', jsonb_build_object('startsAt', public.dm_iso(g.starts_at), 'endsAt', public.dm_iso(g.ends_at))),
+    t, cfg);
+  if res #>> '{verdict,outcome}' = 'verified' then
+    res := jsonb_set(res, '{verdict}', public.st_record_checkin(g.id, p_target_user_id, res -> 'verdict', uid));
   end if;
-  if public.st_is_blocked(uid, p_target_user_id) then
-    return jsonb_build_object('confirmations', 0, 'verdict', public.st_verdict_rejected('peer', 'blocked_pair', array['qr', 'host']));
-  end if;
-  insert into public.peer_confirmations (game_id, confirmer_id, target_id, created_at)
-  values (g.id, uid, p_target_user_id, t) on conflict do nothing;
-
-  select count(*), count(*) filter (where not exists (
-           select 1 from public.peer_confirmations back
-           where back.game_id = pc.game_id and back.confirmer_id = pc.target_id and back.target_id = pc.confirmer_id))
-    into q, q_nonrecip
-  from public.peer_confirmations pc
-  join public.game_participants cp on cp.game_id = pc.game_id and cp.user_id = pc.confirmer_id
-  where pc.game_id = g.id and pc.target_id = p_target_user_id
-    and cp.status = 'approved' and cp.attendance = 'verified'
-    and not public.st_is_blocked(pc.confirmer_id, pc.target_id);
-
-  if tgt.attendance = 'verified' then
-    verdict := public.st_verdict_verified(coalesce(tgt.check_in_method, 'peer'));
-  elsif q < cfg.peer_min_confirmations then
-    verdict := public.st_verdict_rejected('peer', 'insufficient_peers', array['qr', 'host']);
-  elsif q_nonrecip = 0 then
-    verdict := public.st_verdict_rejected('peer', 'reciprocal_only', array['qr', 'host']);
-  else
-    verdict := public.st_record_checkin(g.id, p_target_user_id, public.st_verdict_verified('peer'), uid);
-  end if;
-  return jsonb_build_object('confirmations', q, 'verdict', verdict);
+  return res;
 end $$;

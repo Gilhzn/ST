@@ -1,4 +1,4 @@
--- 0011_rls_grants.sql
+-- 0090_rls_grants.sql (runs after every schema/function migration; keep it last before 9000_cron)
 -- Row level security on every table (deny by default), least-privilege table/column grants and
 -- function EXECUTE grants. Supabase grants ALL to anon/authenticated by default and relies on RLS;
 -- we additionally revoke everything and grant back only what clients need, so trust columns,
@@ -120,6 +120,10 @@ create policy game_participants_read on public.game_participants for select to a
     or (public.st_am_approved(game_id) and status in ('approved', 'waitlisted')
         and not public.st_my_blocked(user_id) and not public.st_is_hidden_user(user_id)));
 grant select on public.participant_views to authenticated;
+
+grant select on public.waitlist_offers to authenticated;
+create policy waitlist_offers_read on public.waitlist_offers for select to authenticated
+  using (user_id = auth.uid() or public.st_am_host(game_id));
 
 grant select on public.game_invite_access to authenticated;
 create policy game_invite_access_read_own on public.game_invite_access for select to authenticated using (user_id = auth.uid());

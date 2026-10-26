@@ -1,99 +1,46 @@
--- 0009_rpcs_trust.sql
+-- 0010_rpcs_trust.sql
 -- Client RPCs for reports, blocks, appeals, moderation, push tokens and account deletion.
 
 -- ---------------------------------------------------------------------------
 -- Toxicity reports → visibility restriction (TRUST-041/042/043/048)
 -- ---------------------------------------------------------------------------
 
--- Evaluate reports against p_target after p_trigger_report was filed.
--- Qualifying report: within toxicityWindowDays and after the last report-based restriction; the
--- reporter's account is ≥ minReporterAccountAgeDays old, not red, not banned/deleted, has report
--- accuracy ≥ reporterMinAccuracy once reporterAccuracyMinReports reports were decided, and was a
--- verified attendee of the reported game (or a member of its chat when reporting a message) in
--- which the subject was an approved participant. One report per distinct reporter.
--- ≥ toxicityReporters qualifying reporters →
---   collusion suspected (any two reporter accounts created within collusionCreationWindowHours, or
---   all reporters from one team of one game opposing the subject) → review only;
---   subject protected (a report-based restriction overturned within postOverturnProtectionDays)
---   → review only;
---   otherwise → visibility_restriction for visibilityRestrictionHours + high-priority review +
---   notification with the statement of reasons (st_issue_sanction).
-create function public.st_evaluate_toxicity(p_target uuid, p_trigger_report uuid) returns text
+-- Evaluate reports about p_target with the domain mirror dm_evaluate_reports() (trust/reports.ts)
+-- and apply its effects. Inputs are built from rows: the target's reports, the reporters' profiles
+-- (account age, status, reports in the last 7 days, resolved/upheld counts), attendance in the
+-- reported games, the target's sanctions and their overturn times. Returns the outcome.
+create function public.st_evaluate_toxicity(p_target uuid) returns text
 language plpgsql security definer set search_path = ''
 as $$
 declare
-  cfg public.trust_config := public.st_config();
   t timestamptz := public.st_now();
-  since timestamptz;
-  n int;
-  ids uuid[];
-  min_gap interval;
-  n_games int;
-  one_team boolean;
-  protected boolean;
-  s public.sanctions;
-  ev jsonb;
+  res jsonb;
 begin
-  select max(s2.created_at) into since from public.sanctions s2
-  where s2.user_id = p_target and s2.kind = 'visibility_restriction' and s2.reason_code = 'toxicity_reports';
-  since := greatest(t - cfg.toxicity_window_days * interval '1 day', coalesce(since, '-infinity'::timestamptz));
-
-  with reps as (
-    select distinct on (r.reporter_id) r.id as report_id, r.reporter_id, r.game_id, p.created_at as acct,
-           rp.team as rteam, sp.team as steam
-    from public.user_reports r
-    join public.profiles p on p.id = r.reporter_id
-    join public.game_participants rp on rp.game_id = r.game_id and rp.user_id = r.reporter_id
-    join public.game_participants sp on sp.game_id = r.game_id and sp.user_id = r.target_user_id
-    where r.target_user_id = p_target
-      and r.created_at > since and r.created_at <= t
-      and p.deleted_at is null and not p.permanently_banned and p.reliability_status <> 'red'
-      and p.created_at <= t - cfg.min_reporter_account_age_days * interval '1 day'
-      and rp.status = 'approved' and (rp.attendance = 'verified' or r.message_id is not null)
-      and sp.status = 'approved'
-      and (select count(*) filter (where x.outcome is not null) < cfg.reporter_accuracy_min_reports
-               or count(*) filter (where x.outcome = 'founded')::numeric
-                  / nullif(count(*) filter (where x.outcome is not null), 0) >= cfg.reporter_min_accuracy
-           from public.user_reports x where x.reporter_id = r.reporter_id)
-    order by r.reporter_id, r.created_at
-  )
-  select count(*), array_agg(reps.report_id order by reps.report_id), count(distinct reps.game_id),
-         count(distinct reps.rteam) = 1 and bool_and(reps.rteam is not null and reps.rteam is distinct from reps.steam),
-         (select min(b.acct - a2.acct) from reps a2 join reps b on b.reporter_id <> a2.reporter_id and b.acct >= a2.acct)
-    into n, ids, n_games, one_team, min_gap
-  from reps;
-  if n < cfg.toxicity_reporters then
-    return 'below_threshold';
-  end if;
-
-  protected := exists (select 1 from public.sanctions s2
-                       where s2.user_id = p_target and s2.kind = 'visibility_restriction' and s2.status = 'overturned'
-                         and s2.reason_code = 'toxicity_reports'
-                         and s2.updated_at > t - cfg.post_overturn_protection_days * interval '1 day');
-  ev := jsonb_build_object('reporters', n, 'games', n_games, 'protected', protected,
-                           'minAccountGapHours', round(extract(epoch from min_gap) / 3600.0, 2));
-
-  if min_gap <= cfg.collusion_creation_window_hours * interval '1 hour' or (n_games = 1 and one_team) then
-    perform public.st_enqueue_review('collusion_suspected', 'collusion_suspected:' || p_target::text || ':' || p_trigger_report::text,
-      p_target, 'normal', ev || jsonb_build_object('collusionSuspected', true), ids, null, null, null, null);
-    return 'collusion_suspected';
-  end if;
-  if protected then
-    perform public.st_enqueue_review('toxicity_reports', 'toxicity_reports:' || p_target::text || ':' || p_trigger_report::text,
-      p_target, 'normal', ev, ids, null, null, null, null);
-    return 'protected';
-  end if;
-  if exists (select 1 from public.sanctions s2 where s2.user_id = p_target and s2.kind = 'visibility_restriction'
-             and public.st_sanction_in_force(s2, t)) then
-    return 'already_restricted';
-  end if;
-  s := public.st_issue_sanction(p_target, 'visibility_restriction', 'toxicity_reports',
-         jsonb_build_object('reporters', n, 'hours', cfg.visibility_restriction_hours, 'automated', true),
-         cfg.visibility_restriction_hours * interval '1 hour', null, null, '{}',
-         'toxicity_reports:' || p_target::text || ':' || p_trigger_report::text);
-  perform public.st_enqueue_review('toxicity_reports', 'toxicity_reports:' || p_target::text || ':' || p_trigger_report::text,
-    p_target, 'high', ev, ids, null, null, s.id, null);
-  return 'restricted';
+  res := public.dm_evaluate_reports(
+    (select coalesce(jsonb_agg(jsonb_build_object(
+              'id', r.id, 'reporterId', r.reporter_id, 'targetUserId', r.target_user_id, 'category', r.category,
+              'gameId', r.game_id, 'messageId', r.message_id, 'note', null, 'createdAt', public.dm_iso(r.created_at))), '[]'::jsonb)
+     from public.user_reports r where r.target_user_id = p_target and r.reporter_id is not null),
+    (select coalesce(jsonb_agg(jsonb_build_object(
+              'id', p.id, 'createdAt', public.dm_iso(p.created_at), 'reliabilityStatus', p.reliability_status,
+              'reportsLast7d', (select count(*) from public.user_reports x where x.reporter_id = p.id and x.created_at > t - interval '7 days'
+                                  and x.created_at <= t),
+              'reportsResolved', (select count(*) from public.user_reports x where x.reporter_id = p.id and x.outcome is not null),
+              'reportsUpheld', (select count(*) from public.user_reports x where x.reporter_id = p.id and x.outcome = 'founded'))), '[]'::jsonb)
+     from public.profiles p
+     where p.deleted_at is null and not p.permanently_banned
+       and p.id in (select r.reporter_id from public.user_reports r where r.target_user_id = p_target)),
+    t, public.st_config(),
+    jsonb_build_object(
+      'attendance', (select coalesce(jsonb_agg(jsonb_build_object('gameId', gp.game_id, 'userId', gp.user_id, 'status', gp.status,
+                                                                  'attendance', gp.attendance, 'team', gp.team)), '[]'::jsonb)
+                     from public.game_participants gp
+                     where gp.game_id in (select r.game_id from public.user_reports r where r.target_user_id = p_target)),
+      'sanctions', public.st_user_sanctions_json(p_target),
+      'overturns', (select coalesce(jsonb_agg(jsonb_build_object('sanctionId', s.id, 'at', public.dm_iso(s.overturned_at))), '[]'::jsonb)
+                    from public.sanctions s where s.user_id = p_target and s.overturned_at is not null)));
+  perform public.st_apply_effects(res -> 'effects');
+  return res ->> 'outcome';
 end $$;
 
 create function public.report_user(
@@ -140,7 +87,7 @@ begin
     values (m.id, m.game_id, m.sender_id, m.body, 'reported', r.id, t, t + cfg.moderation_retention_days * interval '1 day')
     on conflict (message_id, reason) where message_id is not null do nothing;
   end if;
-  perform public.st_evaluate_toxicity(p_target_user_id, r.id);
+  perform public.st_evaluate_toxicity(p_target_user_id);
   return r;
 end $$;
 
@@ -165,20 +112,17 @@ begin
   delete from public.blocks b where b.blocker_id = public.st_uid() and b.blocked_id = p_user_id;
 end $$;
 
--- ---------------------------------------------------------------------------
--- Appeals (TRUST-022/023, DSA Art. 20: internal complaints for 6 months)
--- ---------------------------------------------------------------------------
+-- Dispute (status active and within disputeUntil → the sanction becomes disputed) or appeal (later;
+-- DSA Art. 20, within 6 months). A human decides; an undecided dispute is auto-voided after
+-- disputeAutoVoidDays for the user's first disputeAutoVoidMaxPer90Days disputes (TRUST-023).
 create function public.file_appeal(p_sanction_id uuid, p_text text) returns public.appeals
 language plpgsql security definer set search_path = ''
 as $$
 declare
   uid uuid := public.st_uid();
   t timestamptz := public.st_now();
-  cfg public.trust_config := public.st_config();
   s public.sanctions;
   a public.appeals;
-  disp boolean;
-  prior int;
 begin
   select * into s from public.sanctions x where x.id = p_sanction_id and x.user_id = uid for update;
   if s.id is null then perform public.st_raise('not_found'); end if;
@@ -188,20 +132,46 @@ begin
     perform public.st_raise('conflict', 'appeal open');
   end if;
   if p_text is null or char_length(btrim(p_text)) not between 1 and 2000 then perform public.st_raise('validation', 'text'); end if;
-  disp := s.dispute_until is not null and t <= s.dispute_until;
-  select count(*) into prior from public.appeals x where x.user_id = uid and x.created_at > t - interval '90 days';
-  insert into public.appeals (sanction_id, user_id, text, is_dispute, auto_void_eligible, created_at)
-  values (s.id, uid, btrim(p_text), disp,
-          disp and s.kind = 'yellow_card' and prior < cfg.dispute_auto_void_max_per_90_days, t)
+  insert into public.appeals (sanction_id, user_id, text, is_dispute, created_at)
+  values (s.id, uid, btrim(p_text), s.status = 'active' and s.dispute_until is not null and t <= s.dispute_until, t)
   returning * into a;
-  if disp and s.status = 'active' then
-    update public.sanctions x set status = 'disputed' where x.id = s.id;
-  end if;
-  perform public.st_enqueue_review(case when disp then 'sanction_dispute'::public.review_kind else 'appeal'::public.review_kind end,
-    'appeal:' || a.id::text, uid, 'normal', jsonb_build_object('sanctionKind', s.kind, 'reasonCode', s.reason_code),
-    '{}', null, s.game_id, s.id, a.id);
-  perform public.st_audit('appeal.filed', uid, jsonb_build_object('appealId', a.id, 'sanctionId', s.id, 'isDispute', disp));
+  perform public.st_on_appeal_filed(a.id);
+  select * into a from public.appeals x where x.id = a.id;
   return a;
+end $$;
+
+-- AppealFiled handling (engine): a dispute (canDispute) moves the sanction to disputed; a review item
+-- is enqueued (sanction_dispute normal / appeal low); auto-void eligibility is recorded.
+create function public.st_on_appeal_filed(p_appeal_id uuid) returns void
+language plpgsql security definer set search_path = ''
+as $$
+declare
+  t timestamptz := public.st_now();
+  cfg public.trust_config := public.st_config();
+  a public.appeals;
+  s public.sanctions;
+  disp boolean;
+  prior int;
+begin
+  select * into a from public.appeals x where x.id = p_appeal_id for update;
+  select * into s from public.sanctions x where x.id = a.sanction_id for update;
+  if a.id is null or s.id is null or a.status <> 'open' then return; end if;
+  disp := a.is_dispute and s.status = 'active' and s.dispute_until is not null and t <= s.dispute_until;
+  select count(*) into prior from public.appeals x
+  where x.user_id = a.user_id and x.is_dispute and x.id <> a.id
+    and x.created_at > a.created_at - interval '90 days' and x.created_at <= a.created_at;
+  update public.appeals x set is_dispute = disp,
+         auto_void_eligible = disp and prior + 1 <= cfg.dispute_auto_void_max_per_90_days
+  where x.id = a.id;
+  if disp then
+    perform public.st_apply_effects(jsonb_build_array(
+      jsonb_build_object('type', 'SetSanctionStatus', 'sanctionId', s.id, 'status', 'disputed')));
+  end if;
+  perform public.st_apply_effects(jsonb_build_array(public.dm_enqueue(public.dm_review_item(
+    case when disp then 'sanction_dispute' else 'appeal' end, case when disp then 'normal' else 'low' end,
+    case when disp then 'sanction_dispute:' else 'appeal:' end || a.id::text, a.user_id, null, s.game_id, s.id, a.id,
+    '[]'::jsonb, jsonb_build_object('sanctionKind', s.kind, 'reasonCode', s.reason_code), t))));
+  perform public.st_audit('appeal.filed', a.user_id, jsonb_build_object('appealId', a.id, 'sanctionId', s.id, 'isDispute', disp));
 end $$;
 
 -- ---------------------------------------------------------------------------
@@ -211,6 +181,13 @@ create function public.st_set_report_outcome(p_report_ids uuid[], p_outcome text
 language sql security definer set search_path = ''
 as $$ update public.user_reports r set outcome = p_outcome where r.id = any (coalesce(p_report_ids, '{}')) $$;
 
+-- Human decision on a review item (engine onModeratorDecided). Moderators/admins only (app_roles).
+--  permanent_ban          → moderator permanent ban of the subject (the only path to one);
+--  venue items            → remove_venue (+ host reliability when confirmed fake) / restore_venue|dismiss;
+--  collusion_suspected    → uphold issues a moderator visibility restriction;
+--  sanction items         → overturn|lift_restriction cascades via caused_by; uphold (or dismiss of an
+--                           appeal/dispute) upholds and re-runs escalation.
+-- Every decision is audited; reporter accuracy is updated (founded / unfounded).
 create function public.moderator_decide(p_item_id uuid, p_decision public.moderator_decision, p_note text default null)
 returns public.review_queue
 language plpgsql security definer set search_path = ''
@@ -223,9 +200,8 @@ declare
   s public.sanctions;
   a public.appeals;
   v public.venues;
-  lift_kind public.sanction_kind;
-  x record;
-  hs public.sanctions;
+  upheld boolean := false;
+  overturned boolean := false;
 begin
   if not public.st_is_moderator(uid) then perform public.st_raise('forbidden'); end if;
   select * into it from public.review_queue q where q.id = p_item_id for update;
@@ -234,74 +210,66 @@ begin
   if it.sanction_id is not null then select * into s from public.sanctions q where q.id = it.sanction_id for update; end if;
   if it.appeal_id is not null then select * into a from public.appeals q where q.id = it.appeal_id for update; end if;
 
-  if p_decision = 'dismiss' then
-    if it.kind in ('sanction_dispute', 'appeal') then
-      perform public.st_raise('validation', 'appeals must be upheld or overturned');
+  if p_decision = 'permanent_ban' then
+    if it.subject_user_id is null then perform public.st_raise('validation', 'no subject'); end if;
+    perform public.st_apply_effects(public.dm_issue_effects(public.dm_moderator_permanent_ban(
+      it.subject_user_id, 'permanent_ban:' || it.id::text, t,
+      case when it.sanction_id is null then '[]'::jsonb else jsonb_build_array(it.sanction_id) end)));
+    perform public.st_set_report_outcome(it.report_ids, 'founded');
+  elsif it.kind = 'venue_reports' and it.venue_id is not null then
+    select * into v from public.venues q where q.id = it.venue_id for update;
+    if p_decision = 'remove_venue' then
+      update public.venues q set status = 'removed' where q.id = v.id;
+      if v.created_by is not null then perform public.st_evaluate_host(v.created_by); end if;
+    elsif p_decision in ('restore_venue', 'dismiss') then
+      update public.venues q set status = 'active', last_reviewed_at = t where q.id = v.id;
+    else
+      perform public.st_raise('validation', 'decision does not apply to venue reports');
     end if;
+  elsif it.kind = 'collusion_suspected' and p_decision = 'uphold' and it.subject_user_id is not null then
+    perform public.st_apply_effects(public.dm_issue_effects(public.dm_system_sanction(
+      'visibility_restriction', it.subject_user_id, 'toxicity_reports',
+      jsonb_build_object('hours', cfg.visibility_restriction_hours, 'reporters', cardinality(it.report_ids)),
+      cfg.visibility_restriction_hours * 3600000, null, null, '[]'::jsonb, 'moderator_restriction:' || it.id::text, t,
+      'moderator')));
+    perform public.st_set_report_outcome(it.report_ids, 'founded');
+  elsif s.id is not null and p_decision in ('overturn', 'lift_restriction') then
+    perform public.st_overturn_sanction(s.id);
+    overturned := true;
     perform public.st_set_report_outcome(it.report_ids, 'unfounded');
-  elsif p_decision = 'uphold' then
-    if s.id is null then perform public.st_raise('validation', 'no sanction'); end if;
+    perform public.st_apply_effects(jsonb_build_array(public.dm_notify(s.user_id,
+      case when it.appeal_id is not null then 'appeal_decided' else 'sanction_decided' end,
+      jsonb_build_object('decision', 'overturn', 'sanctionKind', s.kind, 'reasonCode', s.reason_code, 'statementKey', s.statement_key),
+      s.game_id, s.dedupe_key)));
+  elsif s.id is not null and (p_decision = 'uphold' or (p_decision = 'dismiss' and it.kind in ('sanction_dispute', 'appeal'))) then
     if s.status in ('active', 'disputed') then
       update public.sanctions q set status = 'upheld' where q.id = s.id;
     end if;
+    upheld := true;
     perform public.st_set_report_outcome(it.report_ids, 'founded');
-    if s.kind = 'yellow_card' then perform public.st_escalate(s.id); end if;
-    perform public.st_notify(s.user_id, 'sanction_decided', jsonb_build_object('decision', 'uphold', 'kind', s.kind),
-                             s.game_id, s.id, 'decided:' || it.id::text);
-  elsif p_decision = 'overturn' then
-    if s.id is null then perform public.st_raise('validation', 'no sanction'); end if;
-    perform public.st_overturn_sanction(s.id);
+    perform public.st_apply_effects(jsonb_build_array(public.dm_notify(s.user_id,
+      case when it.appeal_id is not null then 'appeal_decided' else 'sanction_decided' end,
+      jsonb_build_object('decision', 'uphold', 'sanctionKind', s.kind, 'reasonCode', s.reason_code, 'statementKey', s.statement_key),
+      s.game_id, s.dedupe_key)));
+    perform public.st_run_escalation(s.user_id);
+  elsif p_decision = 'dismiss' then
     perform public.st_set_report_outcome(it.report_ids, 'unfounded');
-  elsif p_decision = 'lift_restriction' then
-    lift_kind := case it.kind when 'toxicity_reports' then 'visibility_restriction'::public.sanction_kind
-                              when 'collusion_suspected' then 'visibility_restriction'::public.sanction_kind
-                              when 'host_reliability' then 'host_suspension'::public.sanction_kind
-                              when 'permanent_ban_candidate' then 'join_ban'::public.sanction_kind end;
-    if lift_kind is null or it.subject_user_id is null then perform public.st_raise('validation', 'nothing to lift'); end if;
-    for x in select q.id from public.sanctions q where q.user_id = it.subject_user_id and q.kind = lift_kind
-             and public.st_sanction_in_force(q, t) loop
-      perform public.st_overturn_sanction(x.id);
-    end loop;
-    perform public.st_set_report_outcome(it.report_ids, 'unfounded');
-  elsif p_decision = 'permanent_ban' then
-    if it.subject_user_id is null then perform public.st_raise('validation', 'no subject'); end if;
-    perform public.st_issue_sanction(it.subject_user_id, 'permanent_ban', 'moderator_decision',
-      jsonb_build_object('reviewItemId', it.id), null, null, it.game_id,
-      case when it.sanction_id is null then '{}'::uuid[] else array[it.sanction_id] end,
-      'permanent_ban:' || it.id::text, 'moderator');
-    perform public.st_set_report_outcome(it.report_ids, 'founded');
-  elsif p_decision in ('remove_venue', 'restore_venue') then
-    if it.venue_id is null then perform public.st_raise('validation', 'no venue'); end if;
-    select * into v from public.venues q where q.id = it.venue_id for update;
-    update public.venues q set status = case when p_decision = 'remove_venue' then 'removed'::public.venue_status
-                                             else 'active'::public.venue_status end
-    where q.id = v.id;
-    if p_decision = 'remove_venue' and v.created_by is not null then
-      -- Confirmed fake venue → temporary host suspension + review (TRUST-051a).
-      hs := public.st_issue_sanction(v.created_by, 'host_suspension', 'fake_venue',
-              jsonb_build_object('venueName', v.name, 'days', cfg.host_suspension_days),
-              cfg.host_suspension_days * interval '1 day', null, null, '{}', 'fake_venue:' || v.id::text);
-      perform public.st_enqueue_review('host_reliability', 'host_reliability:' || hs.dedupe_key, v.created_by, 'normal',
-        jsonb_build_object('venueId', v.id::text), '{}', v.id, null, hs.id, null);
-    end if;
+  else
+    perform public.st_raise('validation', 'decision does not apply to this item');
   end if;
 
   if a.id is not null and a.status = 'open' then
     update public.appeals q set
-      status = case p_decision when 'overturn' then 'overturned'::public.appeal_status
-                               when 'lift_restriction' then 'overturned'::public.appeal_status
-                               else 'upheld'::public.appeal_status end,
+      status = case when overturned then 'overturned'::public.appeal_status else 'upheld'::public.appeal_status end,
       decided_by = uid, decision_note = p_note, decided_at = t
     where q.id = a.id;
-    perform public.st_notify(a.user_id, 'appeal_decided', jsonb_build_object('decision', p_decision),
-                             s.game_id, s.id, 'appeal_decided:' || a.id::text);
   end if;
   update public.review_queue q set status = 'resolved', resolution = p_decision, resolved_by = uid, resolved_at = t,
                                    decision_note = p_note
   where q.id = it.id
   returning * into it;
-  perform public.st_audit('moderator.decide', it.subject_user_id,
-    jsonb_build_object('itemId', it.id, 'kind', it.kind, 'decision', p_decision, 'sanctionId', it.sanction_id), uid);
+  perform public.st_audit('moderator.decision', it.subject_user_id,
+    jsonb_build_object('itemId', it.id, 'kind', it.kind, 'decision', p_decision, 'moderatorId', uid, 'note', p_note), uid);
   return it;
 end $$;
 
@@ -350,7 +318,7 @@ begin
            where gp.user_id = uid and gp.status in ('requested', 'approved', 'waitlisted')
              and g.status = 'scheduled' and g.ends_at > t loop
     update public.game_participants gp set status = 'cancelled', cancelled_at = t, late_cancel = false,
-           waitlisted_at = null, offer_expires_at = null, offer_is_flash = false, team = null
+           waitlisted_at = null, team = null
     where gp.game_id = r.game_id and gp.user_id = uid;
     if r.status = 'approved' then perform public.st_promote_waitlist(r.game_id); end if;
   end loop;

@@ -11,10 +11,11 @@
 import { StError } from '@st/domain';
 
 /** U+061C ALM, U+200E/F LRM/RLM, U+202A–U+202E embeddings/overrides, U+2066–U+2069 isolates. */
-export const BIDI_CONTROLS = /[؜‎‏‪-‮⁦-⁩]/g;
+export const BIDI_CONTROLS = /[\u061C\u200E\u200F\u202A-\u202E\u2066-\u2069]/g;
 /** Invisible characters with no legitimate chat use: ZWSP, word joiner, BOM, invisible operators, soft hyphen. */
-const INVISIBLES = /[­​⁠-⁤﻿]/g;
+const INVISIBLES = /[\u00AD\u200B\u2060-\u2064\uFEFF]/g;
 /** C0/C1 controls except TAB and LF. */
+// eslint-disable-next-line no-control-regex -- stripping control characters is the point
 const CONTROLS = /[\u0000-\u0008\u000B-\u001F\u007F-\u009F]/g;
 
 export const MAX_MESSAGE_CHARS = 1000;

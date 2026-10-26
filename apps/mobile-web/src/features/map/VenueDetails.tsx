@@ -4,7 +4,8 @@
  * "No venue here? Report it." flow (one report per person).
  */
 import { DEFAULT_TRUST_CONFIG, isStError, type NearbyGame, type NearbyVenue, type VenueReportReason } from '@st/domain';
-import { BidiText, Button, Chip, Divider, Row, SportDot, Stack, Text } from '@st/ui';
+import { BidiText, Button, Divider, Row, SportDot, Stack, Text } from '@st/ui';
+import { ChoiceChip } from '@/components/ChoiceChip';
 import { router } from 'expo-router';
 import { useState } from 'react';
 import { Linking, Platform } from 'react-native';
@@ -133,7 +134,7 @@ export function VenueDetails({
           <Text variant="bodyStrong">{t('games:venue.report.title')}</Text>
           <Row gap="sm" wrap accessibilityRole="radiogroup">
             {REASONS.map((r) => (
-              <Chip
+              <ChoiceChip
                 key={r}
                 testID={`map.venue.report.reason.${r}`}
                 label={t(`games:venue.report.reason.${r}`)}

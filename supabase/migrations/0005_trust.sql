@@ -113,9 +113,8 @@ create table public.sanctions (
   -- refilled) or 'dispute_timeout' (TRUST-023, undecided dispute auto-overturned). Status is then
   -- 'overturned' (types.ts SanctionStatus has no separate 'voided_refilled').
   void_reason text check (void_reason is null or void_reason in ('refilled', 'dispute_timeout')),
-  -- Set once a yellow card has been evaluated by the escalation ladder (after its dispute window
-  -- closed undisputed, or when upheld).
-  escalated_at timestamptz,
+  -- When the sanction was overturned (TRUST-048 protection window).
+  overturned_at timestamptz,
   created_at timestamptz not null default now(),
   updated_at timestamptz not null default now(),
   -- Compliance (GDPR 22(3), DSA 17): only a human may issue an indefinite measure.
@@ -254,75 +253,30 @@ begin
   where p.id = p_uid;
 end $$;
 
--- Pure reliability formula (mirror of the domain function; used by golden parity tests).
--- Returns the ReliabilitySnapshot shape in camelCase.
-create function public.st_reliability_snapshot(
-  p_verified int, p_no_show int, p_late_cancel int, p_has_active_card boolean, p_has_join_ban boolean,
-  p_cfg public.trust_config, p_now timestamptz)
-returns jsonb
-language plpgsql immutable set search_path = ''
-as $$
-declare
-  commitments int := p_verified + p_no_show + p_late_cancel;
-  weighted numeric := p_verified + p_no_show + p_late_cancel * p_cfg.reliability_late_cancel_weight;
-  score numeric;
-  st public.reliability_status;
-begin
-  score := (p_verified + p_cfg.reliability_prior) / (weighted + p_cfg.reliability_prior);
-  if p_has_join_ban then
-    st := 'red';
-  elsif commitments < p_cfg.reliability_min_games then
-    st := 'new';
-  elsif score < p_cfg.reliability_red_below then
-    st := 'red';
-  elsif not p_has_active_card and score >= p_cfg.reliability_green_min then
-    st := 'green';
-  else
-    st := 'yellow';
-  end if;
-  return jsonb_build_object(
-    'score', case when commitments < p_cfg.reliability_min_games then null else round(score, 5) end,
-    'status', st,
-    'verifiedCount', p_verified,
-    'commitmentCount', commitments,
-    'lateCancelCount', p_late_cancel,
-    'noShowCount', p_no_show,
-    'computedAt', to_char(p_now at time zone 'UTC', 'YYYY-MM-DD"T"HH24:MI:SS.MS"Z"'));
-end $$;
-
+-- Reliability snapshot from the user's participations and sanctions via the domain mirror
+-- dm_reliability() (0006), stored on profiles.
 create function public.st_recompute_reliability(p_uid uuid) returns jsonb
 language plpgsql security definer set search_path = ''
 as $$
 declare
-  cfg public.trust_config := public.st_config();
   t timestamptz := public.st_now();
-  since timestamptz;
-  v_verified int; v_no_show int; v_late int; v_card boolean; v_ban boolean;
   snap jsonb;
 begin
-  since := t - cfg.reliability_window_days * interval '1 day';
-  select count(*) filter (where gp.attendance = 'verified'),
-         count(*) filter (where gp.attendance = 'no_show_unverified')
-    into v_verified, v_no_show
-  from public.game_participants gp join public.games g on g.id = gp.game_id
-  where gp.user_id = p_uid and gp.status = 'approved' and g.status <> 'cancelled'
-    and g.ends_at <= t and g.ends_at > since;
-  select count(*) into v_late from public.game_participants gp
-  where gp.user_id = p_uid and gp.late_cancel and not gp.late_cancel_refilled
-    and gp.cancelled_at > since and gp.cancelled_at <= t;
-  select exists (select 1 from public.sanctions s
-                 where s.user_id = p_uid and s.kind = 'yellow_card' and public.st_sanction_in_force(s, t)),
-         exists (select 1 from public.sanctions s
-                 where s.user_id = p_uid and s.kind in ('join_ban', 'permanent_ban') and public.st_sanction_in_force(s, t))
-    into v_card, v_ban;
-  snap := public.st_reliability_snapshot(v_verified, v_no_show, v_late, v_card, v_ban, cfg, t);
+  snap := public.dm_reliability(
+    (select coalesce(jsonb_agg(jsonb_build_object(
+              'gameId', gp.game_id, 'status', gp.status, 'attendance', gp.attendance, 'lateCancel', gp.late_cancel,
+              'cancelledAt', public.dm_iso(gp.cancelled_at), 'endsAt', public.dm_iso(g.ends_at),
+              'lateCancelRefilled', gp.late_cancel_refilled, 'gameHappened', g.happened)), '[]'::jsonb)
+     from public.game_participants gp join public.games g on g.id = gp.game_id
+     where gp.user_id = p_uid and g.status <> 'cancelled'),
+    public.st_user_sanctions_json(p_uid), t, public.st_config());
   update public.profiles p set
     reliability_score = (snap ->> 'score')::numeric,
     reliability_status = (snap ->> 'status')::public.reliability_status,
-    reliability_verified_count = v_verified,
+    reliability_verified_count = (snap ->> 'verifiedCount')::int,
     reliability_commitment_count = (snap ->> 'commitmentCount')::int,
-    reliability_late_cancel_count = v_late,
-    reliability_no_show_count = v_no_show,
+    reliability_late_cancel_count = (snap ->> 'lateCancelCount')::int,
+    reliability_no_show_count = (snap ->> 'noShowCount')::int,
     reliability_computed_at = t
   where p.id = p_uid;
   return snap;
@@ -355,8 +309,9 @@ begin
                                    report_ids, evidence, due_by, dedupe_key, created_at)
   values (p_kind, p_priority, p_subject, p_venue, p_game, p_sanction, p_appeal, coalesce(p_report_ids, '{}'),
           coalesce(p_evidence, '{}'::jsonb),
-          public.st_now() + case p_priority when 'high' then interval '24 hours' when 'normal' then interval '72 hours'
-                                            else interval '7 days' end,
+          -- REVIEW_SLA_HOURS (trust/sanctions.ts): high 24, normal 48, low 72.
+          public.st_now() + case p_priority when 'high' then interval '24 hours' when 'normal' then interval '48 hours'
+                                            else interval '72 hours' end,
           p_dedupe, public.st_now())
   on conflict (dedupe_key) do nothing
   returning id into v_id;
@@ -366,8 +321,9 @@ begin
   return v_id;
 end $$;
 
--- Issue a sanction idempotently (dedupe key), project it onto profiles, notify the user with the
--- statement of reasons and recompute reliability. Escalation runs in the sanctions trigger.
+-- Issue a sanction through the domain builders (dm_system_sanction / dm_moderator_permanent_ban →
+-- dm_issue_effects → st_apply_effects): IssueSanction (id derived from the dedupe key, idempotent),
+-- projection and the Notify carrying the statement of reasons. Returns the row.
 create function public.st_issue_sanction(
   p_user uuid, p_kind public.sanction_kind, p_reason public.sanction_reason_code, p_params jsonb,
   p_duration interval, p_dispute interval, p_game uuid, p_caused_by uuid[], p_dedupe text,
@@ -377,30 +333,19 @@ language plpgsql security definer set search_path = ''
 as $$
 declare
   t timestamptz := public.st_now();
+  sj jsonb;
   s public.sanctions;
 begin
-  insert into public.sanctions (user_id, kind, reason_code, statement_key, statement_params, starts_at, expires_at,
-                                dispute_until, decided_by, game_id, caused_by, dedupe_key, created_at)
-  values (p_user, p_kind, p_reason, 'sanctions.reason.' || p_reason::text, coalesce(p_params, '{}'::jsonb), t,
-          case when p_duration is null then null else t + p_duration end,
-          case when p_dispute is null then null else t + p_dispute end,
-          p_decided_by, p_game, coalesce(p_caused_by, '{}'), p_dedupe, t)
-  on conflict (dedupe_key) do nothing
-  returning * into s;
-  if s.id is null then
-    select * into s from public.sanctions x where x.dedupe_key = p_dedupe;
-    return s;
+  if p_kind = 'permanent_ban' then
+    if p_decided_by <> 'moderator' then perform public.st_raise('forbidden', 'permanent_ban is moderator-only'); end if;
+    sj := public.dm_moderator_permanent_ban(p_user, p_dedupe, t, to_jsonb(coalesce(p_caused_by, '{}')));
+  else
+    sj := public.dm_system_sanction(p_kind::text, p_user, p_reason::text, p_params,
+            extract(epoch from p_duration) * 1000, extract(epoch from p_dispute) * 1000, p_game,
+            to_jsonb(coalesce(p_caused_by, '{}')), p_dedupe, t, p_decided_by::text);
   end if;
-  perform public.st_notify(
-    p_user,
-    case p_kind when 'visibility_restriction' then 'visibility_restricted'::public.notification_kind
-                when 'chat_mute' then 'chat_muted'::public.notification_kind
-                else 'sanction_issued'::public.notification_kind end,
-    jsonb_build_object('kind', p_kind, 'reasonCode', p_reason, 'statementKey', s.statement_key,
-                       'expiresAt', coalesce(to_char(s.expires_at at time zone 'UTC', 'YYYY-MM-DD"T"HH24:MI:SS.MS"Z"'), '')),
-    p_game, s.id, 'sanction:' || s.id::text);
-  perform public.st_audit('sanction.issued', p_user,
-    jsonb_build_object('sanctionId', s.id, 'kind', p_kind, 'reasonCode', p_reason, 'dedupeKey', p_dedupe));
+  perform public.st_apply_effects(public.dm_issue_effects(sj));
+  select * into s from public.sanctions x where x.dedupe_key = p_dedupe;
   return s;
 end $$;
 
@@ -425,8 +370,7 @@ begin
   where p.id = new.user_id;
   -- TRUST-025: a join ban withdraws open join requests and waitlist places (approved stay).
   if new.kind in ('join_ban', 'permanent_ban') then
-    update public.game_participants gp set status = 'cancelled', cancelled_at = t, offer_expires_at = null,
-           waitlisted_at = null
+    update public.game_participants gp set status = 'cancelled', cancelled_at = t, waitlisted_at = null
     from public.games g
     where g.id = gp.game_id and gp.user_id = new.user_id and gp.status in ('requested', 'waitlisted')
       and g.status = 'scheduled' and g.starts_at > t;
@@ -435,62 +379,46 @@ begin
   return null;
 end $$;
 
--- Escalation ladder (TRUST-025), evaluated when a yellow card matures: its dispute window closed
--- without a dispute, or a moderator upheld it. Disputed cards do not count until decided (TRUST-022).
--- 2 counted cards → join_ban short; 3 → join_ban long; ≥ reviewAtCards → join_ban long + review
--- (permanent ban only by a human). Idempotent via dedupe keys derived from the maturing card.
-create function public.st_escalate(p_card_id uuid) returns void
+-- Escalation ladder (TRUST-022/025) via the domain mirror dm_escalation(): evaluated on Tick
+-- (expire_sanctions) and on a moderator uphold, never at issuance. Idempotent (dedupe keys derive
+-- from the newest uncovered settled card).
+create function public.st_run_escalation(p_uid uuid) returns void
 language plpgsql security definer set search_path = ''
 as $$
-declare
-  cfg public.trust_config := public.st_config();
-  t timestamptz := public.st_now();
-  c public.sanctions;
-  n int;
-  cards uuid[];
 begin
-  update public.sanctions s set escalated_at = t
-  where s.id = p_card_id and s.kind = 'yellow_card' and s.escalated_at is null
-    and (s.status = 'upheld' or (s.status = 'active' and (s.dispute_until is null or s.dispute_until <= t)))
-    and public.st_sanction_in_force(s, t)
-  returning * into c;
-  if c.id is null then return; end if;
-
-  select count(*), array_agg(s.id order by s.created_at, s.id) into n, cards
-  from public.sanctions s
-  where s.user_id = c.user_id and s.kind = 'yellow_card' and public.st_sanction_in_force(s, t)
-    and s.escalated_at is not null  -- matured cards processed so far (incl. this one), in order
-    and s.status in ('active', 'upheld');
-
-  if n >= cfg.join_ban_long_at_cards then
-    perform public.st_issue_sanction(c.user_id, 'join_ban', 'escalation_three_cards',
-      jsonb_build_object('cards', n, 'days', cfg.join_ban_long_days),
-      cfg.join_ban_long_days * interval '1 day', null, c.game_id, cards,
-      'escalation_three_cards:' || c.dedupe_key);
-  elsif n >= cfg.join_ban_short_at_cards then
-    perform public.st_issue_sanction(c.user_id, 'join_ban', 'escalation_two_cards',
-      jsonb_build_object('cards', n, 'days', cfg.join_ban_short_days),
-      cfg.join_ban_short_days * interval '1 day', null, c.game_id, cards,
-      'escalation_two_cards:' || c.dedupe_key);
-  end if;
-  if n >= cfg.review_at_cards then
-    -- Never an automatic permanent ban: a human decides (GDPR 22(3)).
-    perform public.st_enqueue_review('permanent_ban_candidate', 'permanent_ban_candidate:' || c.dedupe_key,
-      c.user_id, 'high', jsonb_build_object('activeCards', n), '{}', null, c.game_id, c.id, null);
-  end if;
+  perform public.st_apply_effects(
+    public.dm_escalation(public.st_user_sanctions_json(p_uid), public.st_now(), public.st_config()) -> 'effects');
 end $$;
 
 create trigger sanctions_after_insert after insert on public.sanctions
   for each row execute function public.st_sanctions_after_insert();
 
--- Overturn a sanction and, recursively, every sanction listing it in caused_by. Recomputes
--- projections and reliability; excuses a no-show. Returns the number of sanctions overturned.
+-- Deterministic ids (packages/domain crypto/uuid.ts): sanction.id = stableUuid('sanction:' || dedupeKey),
+-- review.id = stableUuid('review:' || dedupeKey), so effects can reference rows before insertion.
+create function public.st_derive_id() returns trigger
+language plpgsql set search_path = ''
+as $$
+begin
+  new.id := case tg_table_name when 'sanctions' then public.dm_sanction_id(new.dedupe_key)
+                               else public.dm_review_id(new.dedupe_key) end;
+  return new;
+end $$;
+create trigger sanctions_derive_id before insert on public.sanctions
+  for each row execute function public.st_derive_id();
+create trigger review_queue_derive_id before insert on public.review_queue
+  for each row execute function public.st_derive_id();
+
+-- Overturn a sanction and, recursively, every sanction listing it in caused_by (engine
+-- overturnCascade). Recomputes projections and reliability; a no-show becomes excused; deposits are
+-- released by settle_deposits(). Returns the number of sanctions overturned.
 create function public.st_overturn_sanction(p_id uuid, p_void_reason text default null) returns int
 language plpgsql security definer set search_path = ''
 as $$
 declare
+  t timestamptz := public.st_now();
   ids uuid[];
   r record;
+  n int := 0;
 begin
   with recursive chain(id) as (
     select p_id
@@ -499,30 +427,21 @@ begin
   )
   select array_agg(id) into ids from chain;
 
-  for r in update public.sanctions s set status = 'overturned',
+  for r in update public.sanctions s set status = 'overturned', overturned_at = t,
                   void_reason = case when s.id = p_id then p_void_reason else s.void_reason end
            where s.id = any (ids) and s.status <> 'overturned'
-           returning s.id, s.user_id, s.kind, s.reason_code, s.game_id
+           returning s.id, s.user_id, s.kind, s.reason_code, s.game_id, s.statement_key
   loop
+    n := n + 1;
     if r.reason_code = 'no_show' and r.game_id is not null then
-      update public.game_participants gp set attendance = 'excused'
-      where gp.game_id = r.game_id and gp.user_id = r.user_id and gp.attendance = 'no_show_unverified';
-    elsif r.reason_code = 'late_cancel' and r.game_id is not null then
-      update public.game_participants gp
-         set late_cancel_refilled = gp.late_cancel_refilled or p_void_reason = 'refilled',
-             late_cancel = gp.late_cancel and p_void_reason is not distinct from 'refilled'
-      where gp.game_id = r.game_id and gp.user_id = r.user_id and gp.late_cancel;
+      update public.game_participants gp set attendance = 'excused', check_in_method = null, checked_in_at = null
+      where gp.game_id = r.game_id and gp.user_id = r.user_id and gp.attendance in ('no_show_unverified', 'unknown');
     end if;
-    perform public.st_notify(r.user_id, 'sanction_decided',
-      jsonb_build_object('decision', case when r.id = p_id and p_void_reason = 'refilled' then 'voided_refilled'
-                                          when r.id = p_id and p_void_reason = 'dispute_timeout' then 'auto_overturned'
-                                          else 'overturn' end,
-                         'kind', r.kind), r.game_id, r.id, 'overturned:' || r.id::text);
   end loop;
 
   for r in select distinct s.user_id from public.sanctions s where s.id = any (ids) loop
     perform public.st_recompute_projections(r.user_id);
     perform public.st_recompute_reliability(r.user_id);
   end loop;
-  return coalesce(cardinality(ids), 0);
+  return n;
 end $$;

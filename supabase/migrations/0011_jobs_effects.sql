@@ -1,4 +1,4 @@
--- 0010_jobs_effects.sql
+-- 0011_jobs_effects.sql
 -- Scheduled job functions (idempotent, advisory-locked), deposit due-lists, retention purges and
 -- the service-role-only apply_effects(jsonb) used by Edge Functions to apply domain Effect[].
 
@@ -35,12 +35,14 @@ end $$;
 -- Game closure: no-shows and refilled late cancels (TRUST-020/021)
 -- ---------------------------------------------------------------------------
 
--- Runs for scheduled games whose ends_at + finalizeAfterEndHours has passed:
---  * approved non-host players with attendance 'unknown' → 'no_show_unverified' + yellow card
---    (reason no_show, disputable for disputeWindowHours);
---  * a late canceller whose spot was taken by a replacement who checked in → provisional card
---    voided (overturned, void_reason 'refilled'), late cancel not counted;
---  * game → completed. Returns the number of no-show cards issued.
+-- Attendance finalisation (TRUST-010/011/020/021) via dm_process_no_shows() + the engine's
+-- finalisation handlers (dm_finalization_effects), for scheduled games whose
+-- ends_at + finalizeAfterEndHours has passed:
+--  * game happened (≥ 2 verified) → unknown approved non-host players become no-shows with a
+--    disputable yellow card; verified/excused → deposit release; each late cancel → yellow card,
+--    unless the spot was refilled before the start by a replacement who checked in (release);
+--  * game did not happen → no cards, undetermined attendance excused, deposits released, host review;
+--  * game → completed (happened recorded). Returns the number of yellow cards issued.
 create function public.process_no_shows() returns int
 language plpgsql security definer set search_path = ''
 as $$
@@ -48,9 +50,11 @@ declare
   cfg public.trust_config := public.st_config();
   t timestamptz := public.st_now();
   g record;
-  p record;
-  card public.sanctions;
+  res jsonb;
+  ev jsonb;
+  fx jsonb;
   n int := 0;
+  p record;
 begin
   if not pg_catalog.pg_try_advisory_xact_lock(pg_catalog.hashtext('st:process_no_shows')) then return 0; end if;
   for g in select x.* from public.games x
@@ -58,33 +62,23 @@ begin
            order by x.ends_at
            for update skip locked
   loop
-    for p in select gp.user_id from public.game_participants gp
-             where gp.game_id = g.id and gp.status = 'approved' and gp.attendance = 'unknown' and gp.user_id <> g.host_id
-    loop
-      update public.game_participants gp set attendance = 'no_show_unverified'
-      where gp.game_id = g.id and gp.user_id = p.user_id;
-      perform public.st_issue_sanction(p.user_id, 'yellow_card', 'no_show', jsonb_build_object('gameTitle', g.title),
-        cfg.yellow_card_lifetime_days * interval '1 day', cfg.dispute_window_hours * interval '1 hour',
-        g.id, '{}', 'no_show:' || g.id::text || ':' || p.user_id::text);
-      n := n + 1;
+    res := public.dm_process_no_shows(jsonb_build_object(
+        'game', jsonb_build_object('id', g.id, 'hostId', g.host_id, 'startsAt', public.dm_iso(g.starts_at),
+                                   'endsAt', public.dm_iso(g.ends_at), 'status', g.status),
+        'participants', (select coalesce(jsonb_agg(jsonb_build_object('userId', gp.user_id, 'status', gp.status,
+                                   'attendance', gp.attendance, 'lateCancel', gp.late_cancel,
+                                   'cancelledAt', public.dm_iso(gp.cancelled_at))), '[]'::jsonb)
+                         from public.game_participants gp where gp.game_id = g.id),
+        'refills', (select coalesce(jsonb_agg(jsonb_build_object('cancelledUserId', gp.replaces_user_id,
+                                   'replacementUserId', gp.user_id, 'promotedAt', public.dm_iso(gp.decided_at))), '[]'::jsonb)
+                    from public.game_participants gp where gp.game_id = g.id and gp.replaces_user_id is not null)),
+      t, cfg);
+    if not (res ->> 'finalized')::boolean then continue; end if;
+    perform public.st_apply_effects(res -> 'effects');
+    for ev in select x from jsonb_array_elements(res -> 'events') x loop
+      n := n + public.st_apply_finalization_event(ev);
     end loop;
-
-    for p in select c.user_id from public.game_participants c
-             where c.game_id = g.id and c.status = 'cancelled' and c.late_cancel and not c.late_cancel_refilled
-               and exists (select 1 from public.game_participants r
-                           where r.game_id = g.id and r.replaces_user_id = c.user_id
-                             and r.status = 'approved' and r.attendance = 'verified')
-    loop
-      select * into card from public.sanctions s
-      where s.dedupe_key = 'late_cancel:' || g.id::text || ':' || p.user_id::text and s.status <> 'overturned';
-      if card.id is not null then
-        perform public.st_overturn_sanction(card.id, 'refilled');
-      else
-        update public.game_participants gp set late_cancel_refilled = true where gp.game_id = g.id and gp.user_id = p.user_id;
-      end if;
-    end loop;
-
-    update public.games x set status = 'completed' where x.id = g.id;
+    update public.games x set status = 'completed', happened = (res ->> 'gameHappened')::boolean where x.id = g.id;
     for p in select gp.user_id from public.game_participants gp
              where gp.game_id = g.id and (gp.status = 'approved' or gp.late_cancel) loop
       perform public.st_recompute_reliability(p.user_id);
@@ -93,11 +87,27 @@ begin
   return n;
 end $$;
 
+-- Applies one finalisation event (AttendanceFinalized / LateCancelFinalized) with the engine handler
+-- dm_finalization_effects(). Idempotent (dedupe keys). Returns the number of cards in the effects.
+create function public.st_apply_finalization_event(p_event jsonb) returns int
+language plpgsql security definer set search_path = ''
+as $$
+declare fx jsonb := public.dm_finalization_effects(p_event, public.st_now(), public.st_config());
+begin
+  if p_event ->> 'type' = 'LateCancelFinalized' and (p_event ->> 'refilled')::boolean then
+    update public.game_participants gp set late_cancel_refilled = true
+    where gp.game_id = (p_event ->> 'gameId')::uuid and gp.user_id = (p_event ->> 'userId')::uuid;
+  end if;
+  perform public.st_apply_effects(fx);
+  return (select count(*) from jsonb_array_elements(fx) e where e ->> 'type' = 'IssueSanction');
+end $$;
+
 -- ---------------------------------------------------------------------------
 -- Sanction lifecycle: auto-overturn stale disputes, escalate matured cards, expire
 -- ---------------------------------------------------------------------------
 
--- TRUST-023: an eligible dispute undecided after disputeAutoVoidDays is overturned by the system.
+-- TRUST-023: a disputed card whose dispute stayed undecided for disputeAutoVoidDays is overturned by
+-- the system (only the user's first disputeAutoVoidMaxPer90Days disputes are eligible).
 create function public.auto_overturn_stale_disputes() returns int
 language plpgsql security definer set search_path = ''
 as $$
@@ -107,46 +117,56 @@ declare
   a record;
   n int := 0;
 begin
-  for a in select x.* from public.appeals x
-           where x.status = 'open' and x.auto_void_eligible
-             and x.created_at <= t - cfg.dispute_auto_void_days * interval '1 day'
-           for update skip locked
+  for a in select x.*, s.kind, s.reason_code, s.statement_key, s.game_id, s.dedupe_key
+           from public.appeals x join public.sanctions s on s.id = x.sanction_id
+           where x.status = 'open' and x.is_dispute and s.status = 'disputed'
+             and x.created_at + cfg.dispute_auto_void_days * interval '1 day' <= t
+             -- only the user's first N disputes within 90 days (this one included) auto-void
+             and (select count(*) from public.appeals d
+                  where d.user_id = x.user_id and d.is_dispute and d.created_at <= x.created_at
+                    and d.created_at > x.created_at - interval '90 days') <= cfg.dispute_auto_void_max_per_90_days
+           order by x.created_at, x.id
+           for update of x skip locked
   loop
     perform public.st_overturn_sanction(a.sanction_id, 'dispute_timeout');
-    update public.appeals x set status = 'overturned', decided_at = t, decision_note = 'auto_overturned_no_decision'
-    where x.id = a.id;
-    update public.review_queue q set status = 'resolved', resolution = 'overturn', resolved_at = t,
-                                     decision_note = 'auto_overturned_no_decision'
+    update public.appeals x set status = 'overturned', decided_at = t, decision_note = 'auto_void' where x.id = a.id;
+    update public.review_queue q set status = 'resolved', resolution = 'overturn', resolved_at = t, decision_note = 'auto_void'
     where q.appeal_id = a.id and q.status <> 'resolved';
-    perform public.st_notify(a.user_id, 'appeal_decided', jsonb_build_object('decision', 'auto_overturned'),
-                             null, a.sanction_id, 'appeal_decided:' || a.id::text);
-    perform public.st_audit('appeal.auto_overturned', a.user_id, jsonb_build_object('appealId', a.id), null);
+    perform public.st_apply_effects(jsonb_build_array(
+      public.dm_notify(a.user_id, 'appeal_decided',
+        jsonb_build_object('decision', 'auto_void', 'sanctionKind', a.kind, 'reasonCode', a.reason_code, 'statementKey', a.statement_key),
+        a.game_id, a.dedupe_key),
+      jsonb_build_object('type', 'Audit', 'action', 'sanction.auto_voided', 'subjectUserId', a.user_id,
+        'data', jsonb_build_object('sanctionId', a.sanction_id, 'appealId', a.id, 'days', cfg.dispute_auto_void_days))));
     n := n + 1;
   end loop;
   return n;
 end $$;
 
--- Escalation ladder for every yellow card whose dispute window closed without a dispute.
+-- Escalation for every user with a settled, uncovered yellow card (dispute window closed undisputed).
 create function public.escalate_matured_cards() returns int
 language plpgsql security definer set search_path = ''
 as $$
 declare
   t timestamptz := public.st_now();
-  c record;
+  u record;
   n int := 0;
 begin
-  for c in select s.id from public.sanctions s
-           where s.kind = 'yellow_card' and s.status = 'active' and s.escalated_at is null
-             and s.dispute_until <= t and s.expires_at > t
-           order by s.created_at, s.id
+  for u in select distinct s.user_id from public.sanctions s
+           where s.kind = 'yellow_card' and public.st_sanction_in_force(s, t)
+             and (s.status = 'upheld' or (s.status = 'active' and s.dispute_until < t))
+             and not exists (select 1 from public.sanctions e
+                             where e.user_id = s.user_id and e.reason_code in ('escalation_two_cards', 'escalation_three_cards')
+                               and s.id = any (e.caused_by))
   loop
-    perform public.st_escalate(c.id);
+    perform public.st_run_escalation(u.user_id);
     n := n + 1;
   end loop;
   return n;
 end $$;
 
--- Expire sanctions past expires_at; also runs the two functions above. Returns the number expired.
+-- Tick: auto-void stale disputes, expire active/upheld sanctions past expires_at (disputed ones wait
+-- for a decision), run escalation, refresh projections. Returns the number expired.
 create function public.expire_sanctions() returns int
 language plpgsql security definer set search_path = ''
 as $$
@@ -158,13 +178,13 @@ declare
 begin
   if not pg_catalog.pg_try_advisory_xact_lock(pg_catalog.hashtext('st:expire_sanctions')) then return 0; end if;
   perform public.auto_overturn_stale_disputes();
-  perform public.escalate_matured_cards();
   with ex as (
     update public.sanctions s set status = 'expired'
-    where s.status in ('active', 'disputed', 'upheld') and s.expires_at is not null and s.expires_at <= t
+    where s.status in ('active', 'upheld') and s.expires_at is not null and s.expires_at <= t
     returning s.user_id
   )
   select count(*), coalesce(array_agg(distinct ex.user_id), '{}') into n, uids from ex;
+  perform public.escalate_matured_cards();
   for u in select p.id from public.profiles p
            where p.id = any (uids)
               or p.join_banned_until <= t or p.chat_muted_until <= t or p.visibility_restricted_until <= t
@@ -180,8 +200,9 @@ end $$;
 -- Waitlist offers
 -- ---------------------------------------------------------------------------
 
--- Expired (non-flash) offers go to the back of the line and the next players get offers; games
--- entering the flash-fill window with free spots get flash offers. Returns new offers made.
+-- Offer pass for every scheduled game with a waitlist: unanswered offers have expired (they stay in
+-- the round, so the next player is offered), games entering the flash-fill window get flash offers.
+-- Returns the number of new offers.
 create function public.expire_waitlist_offers() returns int
 language plpgsql security definer set search_path = ''
 as $$
@@ -191,10 +212,8 @@ declare
   n int := 0;
 begin
   if not pg_catalog.pg_try_advisory_xact_lock(pg_catalog.hashtext('st:expire_waitlist_offers')) then return 0; end if;
-  update public.game_participants gp set offer_expires_at = null, offer_is_flash = false, waitlisted_at = t
-  where gp.status = 'waitlisted' and gp.offer_expires_at <= t;
   for g in select distinct x.id from public.games x join public.game_participants gp on gp.game_id = x.id
-           where x.status = 'scheduled' and x.ends_at > t and gp.status = 'waitlisted' loop
+           where x.status = 'scheduled' and x.starts_at > t and gp.status = 'waitlisted' loop
     n := n + public.st_promote_waitlist(g.id);
   end loop;
   return n;
@@ -242,18 +261,21 @@ as $$
   select x.id, x.user_id, x.game_id, x.outcome
   from (
     select pm.id, pm.user_id, pm.game_id,
-           case
-             when g.status = 'cancelled' or gp.game_id is null
-               or gp.status in ('rejected', 'removed')
-               or (gp.status in ('requested', 'waitlisted') and g.starts_at <= public.st_now())
-               or (gp.status = 'cancelled' and (not gp.late_cancel or gp.late_cancel_refilled))
-               or gp.attendance in ('verified', 'excused')
-               or c.status = 'overturned'
-               then 'release'
-             when g.status = 'completed' and c.id is not null
-               and (c.status = 'upheld' or (c.status in ('active', 'expired') and c.dispute_until <= public.st_now()))
-               then 'forfeit'
-           end as outcome
+           coalesce(pm.settlement_requested,
+             case
+               when g.status = 'cancelled' or gp.game_id is null
+                 or gp.status in ('rejected', 'removed')
+                 or (gp.status in ('requested', 'waitlisted') and g.starts_at <= public.st_now())
+                 or (gp.status = 'cancelled' and (not gp.late_cancel or gp.late_cancel_refilled))
+                 or gp.attendance in ('verified', 'excused')
+                 or g.happened = false
+                 or c.status = 'overturned'
+                 then 'release'
+               -- TRUST-061(4): capture only after the card's dispute window closed without a dispute.
+               when g.status = 'completed' and c.id is not null
+                 and (c.status = 'upheld' or (c.status in ('active', 'expired') and c.dispute_until < public.st_now()))
+                 then 'forfeit'
+             end) as outcome
     from public.payments pm
     join public.games g on g.id = pm.game_id
     left join public.game_participants gp on gp.game_id = pm.game_id and gp.user_id = pm.user_id
@@ -262,7 +284,7 @@ as $$
       where s.user_id = pm.user_id and s.game_id = pm.game_id and s.reason_code in ('no_show', 'late_cancel')
       order by s.created_at desc limit 1
     ) c on true
-    where pm.deposit_state in ('setup', 'held') and pm.settlement_requested is null
+    where pm.deposit_state in ('setup', 'held') and pm.settlement_dispatched_at is null
   ) x
   where x.outcome is not null
 $$;
@@ -274,7 +296,9 @@ declare r record; n int := 0;
 begin
   if not pg_catalog.pg_try_advisory_xact_lock(pg_catalog.hashtext('st:settle_deposits')) then return 0; end if;
   for r in select * from public.due_deposit_settlements() loop
-    update public.payments pm set settlement_requested = r.outcome, settlement_requested_at = public.st_now()
+    update public.payments pm set settlement_requested = r.outcome,
+           settlement_requested_at = coalesce(pm.settlement_requested_at, public.st_now()),
+           settlement_dispatched_at = public.st_now()
     where pm.id = r.payment_id;
     perform public.st_dispatch('payments-settle', to_jsonb(r));
     n := n + 1;
@@ -394,7 +418,8 @@ create function public.st_ts(p jsonb) returns timestamptz
 language sql immutable set search_path = ''
 as $$ select case when p is null or jsonb_typeof(p) = 'null' then null else (p #>> '{}')::timestamptz end $$;
 
-create function public.apply_effects(p_effects jsonb) returns jsonb
+-- Internal applier (definer; not granted to clients). RPCs and jobs apply mirror effects with it.
+create function public.st_apply_effects(p_effects jsonb) returns jsonb
 language plpgsql security definer set search_path = ''
 as $$
 declare
@@ -408,6 +433,8 @@ declare
   k text;
   x record;
   m public.checkin_method;
+  dup_keys text[] := '{}';
+  inserted int;
 begin
   if p_effects is null or jsonb_typeof(p_effects) <> 'array' then perform public.st_raise('validation', 'effects must be an array'); end if;
   for e in select value from jsonb_array_elements(p_effects) loop
@@ -415,9 +442,6 @@ begin
     uid := nullif(e ->> 'userId', '')::uuid;
     if ty = 'IssueSanction' then
       s := e -> 'sanction';
-      if s ->> 'kind' = 'permanent_ban' then
-        perform public.st_raise('forbidden', 'permanent_ban is moderator-only (moderator_decide)');
-      end if;
       insert into public.sanctions (user_id, kind, reason_code, statement_key, statement_params, starts_at, expires_at,
                                     dispute_until, decided_by, game_id, caused_by, dedupe_key, created_at)
       values ((s ->> 'userId')::uuid, (s ->> 'kind')::public.sanction_kind, (s ->> 'reasonCode')::public.sanction_reason_code,
@@ -428,19 +452,19 @@ begin
               coalesce((select array_agg(c::uuid) from jsonb_array_elements_text(coalesce(s -> 'causedBy', '[]'::jsonb)) c), '{}'),
               s ->> 'dedupeKey', public.st_now())
       on conflict (dedupe_key) do nothing;
+      get diagnostics inserted = row_count;
+      -- Like the engine: a duplicate sanction's notice is not sent again.
+      if inserted = 0 then dup_keys := dup_keys || (s ->> 'dedupeKey'); end if;
     elsif ty = 'SetSanctionStatus' then
       sid := (e ->> 'sanctionId')::uuid;
-      if e ->> 'status' = 'overturned' then
-        perform public.st_overturn_sanction(sid);
-      else
-        update public.sanctions q set status = (e ->> 'status')::public.sanction_status
-        where q.id = sid and q.status <> 'overturned' and q.status::text <> e ->> 'status'
-        returning q.user_id into uid;
-        if uid is not null then
-          perform public.st_recompute_projections(uid);
-          perform public.st_recompute_reliability(uid);
-          if e ->> 'status' = 'upheld' then perform public.st_escalate(sid); end if;
-        end if;
+      -- The engine emits the whole overturn cascade explicitly, so this is a plain status change.
+      update public.sanctions q set status = (e ->> 'status')::public.sanction_status,
+             overturned_at = case when e ->> 'status' = 'overturned' then public.st_now() else q.overturned_at end
+      where q.id = sid and q.status <> 'overturned' and q.status::text <> e ->> 'status'
+      returning q.user_id into uid;
+      if uid is not null then
+        perform public.st_recompute_projections(uid);
+        perform public.st_recompute_reliability(uid);
       end if;
     elsif ty = 'EnqueueReview' then
       i := e -> 'item';
@@ -453,6 +477,8 @@ begin
               coalesce(i -> 'evidence', '{}'::jsonb), coalesce(public.st_ts(i -> 'dueBy'), public.st_now() + interval '72 hours'),
               i ->> 'dedupeKey', public.st_now())
       on conflict (dedupe_key) do nothing;
+    elsif ty = 'Notify' and e ->> 'sanctionDedupeKey' = any (dup_keys) then
+      null;
     elsif ty = 'Notify' then
       select q.id into sid from public.sanctions q where q.dedupe_key = e ->> 'sanctionDedupeKey';
       perform public.st_notify(uid, (e ->> 'kind')::public.notification_kind, coalesce(e -> 'params', '{}'::jsonb),
@@ -476,13 +502,14 @@ begin
         host_suspended_until = case when ty = 'SuspendHost' then greatest(p.host_suspended_until, public.st_ts(e -> 'until')) else p.host_suspended_until end
       where p.id = uid;
     elsif ty = 'LiftRestrictions' then
-      for x in select q.id from public.sanctions q
-               where q.user_id = uid and public.st_sanction_in_force(q)
-                 and q.kind::text in (select jsonb_array_elements_text(coalesce(e -> 'kinds', '[]'::jsonb)))
-      loop
-        perform public.st_overturn_sanction(x.id);
-      end loop;
-      perform public.st_recompute_projections(uid);
+      -- Clears the projections; the engine re-projects remaining in-force sanctions right after.
+      update public.profiles p set
+        join_banned_until = case when e -> 'kinds' ? 'join_ban' then null else p.join_banned_until end,
+        chat_muted_until = case when e -> 'kinds' ? 'chat_mute' then null else p.chat_muted_until end,
+        visibility_restricted_until = case when e -> 'kinds' ? 'visibility_restriction' then null else p.visibility_restricted_until end,
+        host_suspended_until = case when e -> 'kinds' ? 'host_suspension' then null else p.host_suspended_until end,
+        permanently_banned = case when e -> 'kinds' ? 'permanent_ban' then false else p.permanently_banned end
+      where p.id = uid;
     elsif ty = 'SetVenueStatus' then
       update public.venues v set status = (e ->> 'status')::public.venue_status where v.id = (e ->> 'venueId')::uuid;
     elsif ty = 'SetAttendance' then
@@ -502,8 +529,8 @@ begin
       perform public.st_recompute_reliability(uid);
     elsif ty = 'PromoteWaitlist' then
       update public.game_participants gp
-         set status = 'approved', decided_at = public.st_now(), waitlisted_at = null, offer_expires_at = null,
-             offer_is_flash = false, replaces_user_id = public.st_next_refill_target(gp.game_id)
+         set status = 'approved', decided_at = public.st_now(), waitlisted_at = null,
+             replaces_user_id = public.st_next_refill_target(gp.game_id)
       where gp.game_id = (e ->> 'gameId')::uuid and gp.user_id = uid and gp.status = 'waitlisted'
         and (select count(*) from public.game_participants a where a.game_id = gp.game_id and a.status = 'approved')
             < (select g.capacity from public.games g where g.id = gp.game_id);
@@ -520,4 +547,18 @@ begin
     n := n + 1;
   end loop;
   return jsonb_build_object('applied', n);
+end $$;
+
+-- Service-role entry point for Edge Functions (Effect[] from @st/domain). Refuses permanent bans:
+-- those are issued only by a human through moderator_decide.
+create function public.apply_effects(p_effects jsonb) returns jsonb
+language plpgsql security definer set search_path = ''
+as $$
+begin
+  if p_effects is null or jsonb_typeof(p_effects) <> 'array' then perform public.st_raise('validation', 'effects must be an array'); end if;
+  if exists (select 1 from jsonb_array_elements(p_effects) e
+             where e ->> 'type' = 'IssueSanction' and e #>> '{sanction,kind}' = 'permanent_ban') then
+    perform public.st_raise('forbidden', 'permanent_ban is moderator-only (moderator_decide)');
+  end if;
+  return public.st_apply_effects(p_effects);
 end $$;

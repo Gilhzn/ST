@@ -4,7 +4,7 @@
  * "lane line" when starting within 2 h or live. One focus stop with a summary label.
  */
 import type { GameSummary, PublicProfile } from '@st/domain';
-import { BidiText, Card, isolate, radius, Row, spacing, SportDot, Stack, Text, useTheme } from '@st/ui';
+import { BidiText, Card, isolate, radius, Row, SportDot, Stack, Text, useTheme } from '@st/ui';
 import { View } from 'react-native';
 
 import { useT } from '@/i18n';
@@ -64,8 +64,8 @@ export function GameCard({
   ].filter((x): x is string => !!x), locale);
 
   return (
+    <View testID={testID}>
     <Card
-      testID={testID}
       onPress={onPress}
       accentEdge={live || soon}
       accessibilityLabel={summary}
@@ -116,5 +116,6 @@ export function GameCard({
         </Row>
       </Stack>
     </Card>
+    </View>
   );
 }

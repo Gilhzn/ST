@@ -4,6 +4,7 @@
  * working by city search.
  */
 import { Button, Card, Row, Stack, Text } from '@st/ui';
+import { View } from 'react-native';
 
 import { Icon } from '@/components/Icon';
 import { useT } from '@/i18n';
@@ -11,7 +12,8 @@ import { useT } from '@/i18n';
 export function LocationDisclosure({ onAllow, onDismiss, busy }: { onAllow: () => void; onDismiss: () => void; busy?: boolean }) {
   const { t } = useT();
   return (
-    <Card elevation={3} testID="map.location.disclosure" accessibilityRole="summary">
+    <View testID="map.location.disclosure">
+    <Card elevation={3} accessibilityRole="summary">
       <Stack gap="md">
         <Row gap="sm" align="center">
           <Icon name="crosshairs-gps" color="primary" />
@@ -28,5 +30,6 @@ export function LocationDisclosure({ onAllow, onDismiss, busy }: { onAllow: () =
         </Row>
       </Stack>
     </Card>
+    </View>
   );
 }

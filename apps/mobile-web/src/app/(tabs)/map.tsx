@@ -272,14 +272,15 @@ export default function MapScreen() {
       miles={miles}
       selectedId={selection?.kind === 'game' ? selection.id : null}
       empty={
+        <View testID="map.empty">
         <EmptyState
-          testID="map.empty"
           title={t('map:empty.title', { distance: formatKm(radiusKm, locale, miles), sports: sportNames })}
           actionLabel={nextRadius ? t('map:empty.widen', { distance: formatKm(nextRadius, locale, miles) }) : undefined}
           onAction={nextRadius ? () => changeRadius(nextRadius) : undefined}
           secondaryLabel={t('map:empty.create')}
           onSecondary={() => router.push('/game/create')}
         />
+        </View>
       }
       onSelectVenue={(v) => setSelection({ kind: 'venue', id: v.id })}
     />

@@ -28,7 +28,7 @@ const TABS: TabDef[] = [
   { name: 'profile', href: '/profile', icon: 'account-circle-outline', iconActive: 'account-circle' },
 ];
 
-function TabButton({ def, vertical, isFocused, ...props }: TabTriggerSlotProps & { def: TabDef; vertical: boolean }) {
+function TabButton({ def, vertical, isFocused, ref: _ref, ...props }: TabTriggerSlotProps & { def: TabDef; vertical: boolean }) {
   const { t } = useT();
   const { colors } = useTheme();
   const label = t(`common:nav.${def.name}`);
@@ -39,6 +39,7 @@ function TabButton({ def, vertical, isFocused, ...props }: TabTriggerSlotProps &
       accessibilityRole="tab"
       accessibilityLabel={label}
       accessibilityState={{ selected: !!isFocused }}
+      aria-selected={!!isFocused}
       style={({ pressed }) => ({
         flex: vertical ? undefined : 1,
         minHeight: vertical ? 64 : 56,
@@ -113,28 +114,29 @@ export function AppTabs() {
   if (hasRail) {
     return (
       <Tabs style={{ flex: 1, flexDirection: 'row' }}>
-        <View
+        {/* TabList must be a direct child of Tabs (triggers are parsed from it); non-trigger children render as-is. */}
+        <TabList
           testID="nav.rail"
-          accessibilityRole="navigation"
+          accessibilityRole="tablist"
           style={{
             width: sizing.railWidth,
+            flexDirection: 'column',
+            justifyContent: 'flex-start',
             paddingTop: insets.top + spacing.md,
             paddingBottom: insets.bottom + spacing.md,
             backgroundColor: c.surface,
             borderEndWidth: 1,
             borderEndColor: c.border,
             alignItems: 'center',
-            gap: spacing.sm,
+            gap: spacing.xs,
             zIndex: zIndex.sticky,
           }}
         >
           <RailAction testID="nav.rail.create" icon="plus" label={t('map:createGame.fab')} accent onPress={() => router.push('/game/create')} />
-          <TabList style={{ flexDirection: 'column', gap: spacing.xs }} accessibilityRole="tablist">
-            {triggers}
-          </TabList>
+          {triggers}
           <View style={{ flex: 1 }} />
           <RailAction testID="nav.rail.settings" icon="cog-outline" label={t('common:nav.settings')} onPress={() => router.push('/settings')} />
-        </View>
+        </TabList>
         <TabSlot style={{ flex: 1 }} />
       </Tabs>
     );

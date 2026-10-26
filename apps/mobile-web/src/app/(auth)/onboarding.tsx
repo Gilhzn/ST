@@ -9,9 +9,11 @@ import {
   type Stars,
   type UserSportInput,
 } from '@st/domain';
-import { BidiText, Button, Card, Chip, Row, Stack, Text, TextField } from '@st/ui';
+import { BidiText, Button, Card, Row, Stack, Text, TextField } from '@st/ui';
+import { ChoiceChip } from '@/components/ChoiceChip';
 import { router } from 'expo-router';
 import { useEffect, useState } from 'react';
+import { View } from 'react-native';
 
 import { SportIcon } from '@/components/Icon';
 import { Screen } from '@/components/Screen';
@@ -138,7 +140,7 @@ export default function OnboardingScreen() {
           </Text>
           <Row gap="sm" wrap accessibilityRole="radiogroup">
             {GENDERS.map((g) => (
-              <Chip
+              <ChoiceChip
                 key={g}
                 testID={`auth.onboarding.gender.${g}`}
                 label={t(`auth:profileSetup.gender.${g}`)}
@@ -157,7 +159,7 @@ export default function OnboardingScreen() {
           </Text>
           <Row gap="sm" wrap>
             {SPORT_IDS.map((s) => (
-              <Chip
+              <ChoiceChip
                 key={s}
                 testID={`auth.onboarding.sport.${s}`}
                 sport={s}
@@ -173,7 +175,8 @@ export default function OnboardingScreen() {
           const d = sports[s] as SportDraft;
           const positions = SPORT_POSITIONS[s] as readonly PositionId[];
           return (
-            <Card key={s} outlined testID={`auth.onboarding.sportCard.${s}`}>
+            <View key={s} testID={`auth.onboarding.sportCard.${s}`}>
+            <Card outlined>
               <Stack gap="md">
                 <Row gap="sm">
                   <SportIcon sport={s} />
@@ -184,7 +187,7 @@ export default function OnboardingScreen() {
                     <Text variant="label">{t('auth:profileSetup.positionsLabel')}</Text>
                     <Row gap="sm" wrap>
                       {positions.map((p) => (
-                        <Chip
+                        <ChoiceChip
                           key={p}
                           testID={`auth.onboarding.position.${s}.${p}`}
                           label={t(`common:positions.${p}`)}
@@ -199,7 +202,7 @@ export default function OnboardingScreen() {
                   <Text variant="label">{t('auth:profileSetup.skillLabel')}</Text>
                   <Row gap="sm" wrap accessibilityRole="radiogroup">
                     {SKILLS.map((n) => (
-                      <Chip
+                      <ChoiceChip
                         key={n}
                         testID={`auth.onboarding.skill.${s}.${n}`}
                         label={t(`auth:profileSetup.skill.${n}`)}
@@ -212,6 +215,7 @@ export default function OnboardingScreen() {
                 </Stack>
               </Stack>
             </Card>
+            </View>
           );
         })}
 

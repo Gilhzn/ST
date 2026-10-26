@@ -1,4 +1,4 @@
--- 0007_payments_notifications.sql
+-- 0008_payments_notifications.sql
 -- In-app notifications (the record; push is best effort) and deposit payment records.
 
 create table public.notifications (
@@ -28,6 +28,8 @@ create table public.payments (
   -- Requested settlement (set by jobs/apply_effects; payments-webhook confirms the final state).
   settlement_requested text check (settlement_requested is null or settlement_requested in ('release', 'forfeit')),
   settlement_requested_at timestamptz,
+  -- When settle_deposits() handed the settlement to the payments-settle Edge Function.
+  settlement_dispatched_at timestamptz,
   -- Last time place_deposit_holds() dispatched a hold request (re-dispatched after 15 minutes).
   hold_requested_at timestamptz,
   -- Provider flow step (packages/payments): SetupIntent, manual-capture hold, or charge-and-refund
@@ -65,14 +67,17 @@ create table public.payment_events (
 );
 create index payment_events_payment_idx on public.payment_events (payment_id);
 
--- When the deposit payment method is saved (setup succeeded), the join request becomes visible
--- to the host and the host is notified.
+-- When the deposit is secured (setup succeeded, or charged for charge-and-refund methods), the join
+-- request becomes visible to the host and the host is notified.
 create function public.st_payments_after_update() returns trigger
 language plpgsql security definer set search_path = ''
 as $$
 declare g public.games;
 begin
-  if new.deposit_state = 'setup' and new.status = 'succeeded' and old.status is distinct from 'succeeded' then
+  -- Card/wallet flow: SetupIntent succeeded. Charge-and-refund methods (iDEAL, Pix, BLIK…, TRUST-062):
+  -- the webhook moves status='succeeded' and deposit_state='held' together.
+  if (new.step = 'setup' and new.status = 'succeeded' and old.status is distinct from 'succeeded')
+     or (new.step = 'charge' and new.deposit_state = 'held' and old.deposit_state is distinct from 'held') then
     update public.game_participants gp set payment_ready = true
     where gp.game_id = new.game_id and gp.user_id = new.user_id and not gp.payment_ready;
     if found then

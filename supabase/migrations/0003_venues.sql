@@ -12,6 +12,8 @@ create table public.venues (
   rating_avg numeric(4, 3),
   rating_count int not null default 0,
   created_by uuid references public.profiles (id) on delete set null,
+  -- When a moderator last restored/dismissed a review of this venue; earlier reports are consumed.
+  last_reviewed_at timestamptz,
   created_at timestamptz not null default now(),
   updated_at timestamptz not null default now()
 );

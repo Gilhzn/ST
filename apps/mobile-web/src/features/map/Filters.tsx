@@ -1,7 +1,8 @@
 /** Sport chips (max 3, checkbox semantics) and the radius segmented control (radio semantics). */
 import { MAX_SPORT_FILTERS, RADII_KM, SPORT_IDS, type RadiusKm, type SportId } from '@st/domain';
-import { Chip, spacing } from '@st/ui';
-import { ScrollView, View } from 'react-native';
+import { spacing } from '@st/ui';
+import { ChoiceChip } from '@/components/ChoiceChip';
+import { Pressable, ScrollView } from 'react-native';
 
 import { useT } from '@/i18n';
 import { formatKm } from '@/lib/format';
@@ -30,24 +31,19 @@ export function SportFilterBar({
         const on = selected.includes(s);
         const blocked = atLimit && !on;
         return (
-          <View key={s} style={{ opacity: blocked ? 0.75 : 1 }}>
-            <Chip
+          // A blocked chip is disabled; the wrapper catches the attempt to show the limit toast.
+          <Pressable key={s} accessible={false} focusable={false} disabled={!blocked} onPress={onLimit} testID={`map.filter.sport.${s}.wrap`}>
+            <ChoiceChip
+              disabled={blocked}
               testID={`map.filter.sport.${s}`}
               sport={s}
               label={t(`common:sports.${s}`)}
               selected={on}
               accessibilityHint={blocked ? hint : undefined}
-              accessibilityState={{ checked: on, disabled: blocked }}
-              onToggle={(next) => {
-                if (next && blocked) {
-                  onLimit();
-                  return;
-                }
-                onChange(next ? [...selected, s] : selected.filter((x) => x !== s));
-              }}
+              onToggle={(next) => onChange(next ? [...selected, s] : selected.filter((x) => x !== s))}
               style={blocked ? { borderStyle: 'dashed' } : undefined}
             />
-          </View>
+          </Pressable>
         );
       })}
     </ScrollView>
@@ -68,7 +64,7 @@ export function RadiusSelector({ value, onChange, miles }: { value: RadiusKm; on
       {RADII_KM.map((r) => {
         const distance = formatKm(r, locale, miles);
         return (
-          <Chip
+          <ChoiceChip
             key={r}
             testID={`map.filter.radius.${r}`}
             label={distance}

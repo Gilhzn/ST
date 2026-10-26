@@ -88,7 +88,7 @@ describe("(b) RLS under SET LOCAL ROLE", () => {
         body text not null
       );
       alter table public.spike_notes enable row level security;
-      -- DB migrations revoke Supabase's broad default grants (0011_rls_grants.sql), so grant explicitly.
+      -- DB migrations revoke Supabase's broad default grants (0090_rls_grants.sql), so grant explicitly.
       grant select, insert, update, delete on public.spike_notes to anon, authenticated;
       create policy spike_notes_select on public.spike_notes for select to authenticated using (owner = auth.uid());
       create policy spike_notes_insert on public.spike_notes for insert to authenticated with check (owner = auth.uid());
@@ -207,7 +207,7 @@ describe("(c) SECURITY DEFINER vs INVOKER", () => {
           insert into public.spike_trust (user_id, cards) values (target, 1)
             on conflict (user_id) do update set cards = public.spike_trust.cards + 1;
         end $$;
-      -- Migrations revoke default grants (0011_rls_grants.sql): grant what the spike relies on.
+      -- Migrations revoke default grants (0090_rls_grants.sql): grant what the spike relies on.
       grant select, update on public.spike_trust to authenticated;
       grant execute on function public.spike_count_all_definer(), public.spike_count_all_invoker(),
         public.spike_issue_card(uuid) to authenticated;

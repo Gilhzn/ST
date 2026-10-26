@@ -26,8 +26,11 @@ create table public.games (
   team_count int not null default 2 check (team_count between 1 and 16),
   -- Purged (null) qrSecretRetentionHours after ends_at (compliance retention table).
   invite_token text unique default encode(extensions.gen_random_bytes(18), 'hex'),
-  -- HMAC key for rotating QR tokens. No client grant on this column, ever (not even the host).
-  qr_secret bytea default extensions.gen_random_bytes(32),
+  -- HMAC key (used as utf8 text, domain wire format) for rotating QR tokens. No client grant on
+  -- this column, ever (not even the host).
+  qr_secret text default encode(extensions.gen_random_bytes(32), 'hex'),
+  -- TRUST-011: set at attendance finalisation (≥ 2 verified players); null until then.
+  happened boolean,
   cancelled_at timestamptz,
   created_at timestamptz not null default now(),
   updated_at timestamptz not null default now(),
@@ -70,11 +73,9 @@ create table public.game_participants (
   -- TRUST-021: the late-cancelled spot was refilled and the replacement checked in → card voided,
   -- late cancel not counted in reliability.
   late_cancel_refilled boolean not null default false,
-  -- The late canceller whose spot this participant took (set on approval/offer acceptance).
+  -- The late canceller whose spot this participant took (set on approval/offer acceptance; the
+  -- refill time is decided_at).
   replaces_user_id uuid,
-  -- GAME-045: a waitlist offer the player must accept before this time (flash fill: all waitlisted).
-  offer_expires_at timestamptz,
-  offer_is_flash boolean not null default false,
   -- False while a required deposit payment method is not yet saved (request hidden from host).
   payment_ready boolean not null default true,
   check_in_method public.checkin_method,
@@ -84,11 +85,21 @@ create table public.game_participants (
   waitlisted_at timestamptz,
   cancelled_at timestamptz,
   primary key (game_id, user_id),
-  check ((attendance = 'verified') = (check_in_method is not null and checked_in_at is not null)),
-  check (offer_expires_at is null or status = 'waitlisted')
+  check ((attendance = 'verified') = (check_in_method is not null and checked_in_at is not null))
 );
 create index game_participants_user_idx on public.game_participants (user_id);
 create index game_participants_waitlist_idx on public.game_participants (game_id, waitlisted_at) where status = 'waitlisted';
+
+-- GAME-045 waitlist offers of the current round (games/waitlist.ts WaitlistOffer). A player offered
+-- once is not offered again in the round (unless flash fill); the round ends when the game is full.
+create table public.waitlist_offers (
+  game_id uuid not null references public.games (id) on delete cascade,
+  user_id uuid not null references public.profiles (id) on delete cascade,
+  offered_at timestamptz not null,
+  accept_by timestamptz not null,
+  mode text not null check (mode in ('standard', 'short', 'flash')),
+  primary key (game_id, user_id)
+);
 
 -- Private-game visibility granted by opening an invite link (resolve_invite).
 create table public.game_invite_access (
@@ -273,8 +284,12 @@ create view public.participant_views with (security_barrier = true) as
          end as waitlist_rank,
          gp.late_cancel,
          gp.late_cancel_refilled,
-         gp.offer_expires_at,
-         gp.offer_is_flash,
+         (select o.accept_by from public.waitlist_offers o
+           where o.game_id = gp.game_id and o.user_id = gp.user_id and gp.status = 'waitlisted'
+             and o.accept_by > public.st_now()) as offer_accept_by,
+         (select o.mode from public.waitlist_offers o
+           where o.game_id = gp.game_id and o.user_id = gp.user_id and gp.status = 'waitlisted'
+             and o.accept_by > public.st_now()) as offer_mode,
          gp.payment_ready,
          gp.check_in_method,
          gp.checked_in_at,
