@@ -2,7 +2,7 @@
 
 **Scope:** supabase migrations (RLS, RPCs, jobs), Edge Functions, `packages/domain` trust engine, `packages/payments`, and the app's SupabaseAdapter.
 **Method:** code review plus proof-of-concept tests in the pglite harness. Findings marked PROVEN were exploited by a PoC test; the rest were found by reading the code.
-**Status:** every finding is assigned to its owner for the fix round. Each fix ships with a regression test in `supabase/tests/security_regressions.test.ts` or the domain or function test suites.
+**Status: ALL FINDINGS FIXED** (fix round complete). Regression tests: `supabase/tests/security_regressions.test.ts` (18), `packages/domain/test/security.test.ts`, and the Edge Function handler tests. **Deployment prerequisite:** create the Vault secret `st_phone_hmac_key` (without it the H5 ban-evasion check is silently off) and disable public Realtime channels (H6).
 
 | ID | Sev | Finding | Proof | Owner | Fix |
 |---|---|---|---|---|---|
