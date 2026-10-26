@@ -1,0 +1,117 @@
+{
+  "app": {
+    "name": "Sport Talent",
+    "tagline": "Find a game. Show up. Play."
+  },
+  "actions": {
+    "continue": "Continue",
+    "back": "Back",
+    "next": "Next",
+    "done": "Done",
+    "cancel": "Cancel",
+    "close": "Close",
+    "save": "Save",
+    "edit": "Edit",
+    "delete": "Delete",
+    "retry": "Retry",
+    "confirm": "Confirm",
+    "share": "Share",
+    "copy": "Copy",
+    "search": "Search",
+    "clear": "Clear",
+    "apply": "Apply",
+    "skip": "Skip",
+    "notNow": "Not now",
+    "learnMore": "Learn more",
+    "viewAll": "View all",
+    "dismiss": "Dismiss",
+    "undo": "Undo",
+    "report": "Report",
+    "block": "Block",
+    "unblock": "Unblock",
+    "openSettings": "Open settings",
+    "send": "Send",
+    "gotIt": "Got it"
+  },
+  "status": {
+    "loading": "Loading…",
+    "saving": "Saving…",
+    "offlineBanner": "You’re offline. Showing saved info.",
+    "offlineHint": "Connect to the internet to do this.",
+    "savedAgo": "Saved {minutes, plural, one {# minute} other {# minutes}} ago",
+    "savedJustNow": "Saved just now"
+  },
+  "errorState": {
+    "title": "Couldn’t load this",
+    "body": "Check your connection and try again."
+  },
+  "a11y": {
+    "back": "Go back",
+    "close": "Close",
+    "moreOptions": "More options"
+  },
+  "validation": {
+    "required": "This field is required.",
+    "tooShort": "Enter at least {min, plural, one {# character} other {# characters}}.",
+    "tooLong": "Use {max, plural, one {# character} other {# characters}} or fewer."
+  },
+  "players": {
+    "count": "{count, plural, one {# player} other {# players}}",
+    "spotsLeft": "{count, plural, =0 {Full} one {# spot left} other {# spots left}}"
+  },
+  "sports": {
+    "football": "Football",
+    "basketball": "Basketball",
+    "tennis": "Tennis",
+    "padel": "Padel",
+    "running": "Running",
+    "volleyball": "Volleyball"
+  },
+  "positions": {
+    "goalkeeper": "Goalkeeper",
+    "defender": "Defender",
+    "midfielder": "Midfielder",
+    "forward": "Forward",
+    "point_guard": "Point guard",
+    "shooting_guard": "Shooting guard",
+    "small_forward": "Small forward",
+    "power_forward": "Power forward",
+    "center": "Center",
+    "left_side": "Left side",
+    "right_side": "Right side",
+    "setter": "Setter",
+    "outside_hitter": "Outside hitter",
+    "opposite": "Opposite",
+    "middle_blocker": "Middle blocker",
+    "libero": "Libero"
+  },
+  "positionsShort": {
+    "goalkeeper": "GK",
+    "defender": "DEF",
+    "midfielder": "MID",
+    "forward": "FWD",
+    "point_guard": "PG",
+    "shooting_guard": "SG",
+    "small_forward": "SF",
+    "power_forward": "PF",
+    "center": "C",
+    "left_side": "L",
+    "right_side": "R",
+    "setter": "S",
+    "outside_hitter": "OH",
+    "opposite": "OPP",
+    "middle_blocker": "MB",
+    "libero": "LIB"
+  },
+  "reliability": {
+    "status": {
+      "green": "Reliable",
+      "yellow": "Caution",
+      "red": "Restricted",
+      "new": "New player"
+    },
+    "withPercent": "{status} · {percent}",
+    "a11y": "Reliability: {status}, {percent}",
+    "a11yNew": "Reliability: New player"
+  }
+}

@@ -1,0 +1,94 @@
+{
+  "title": "Game chat",
+  "infoChip": "Messages disappear {hours, plural, one {# hour} other {# hours}} after the game",
+  "infoDetail": "Chats close when the game ends. Messages are deleted {hours, plural, one {# hour} other {# hours}} later, except reported messages, which we keep for {days, plural, one {# day} other {# days}} so we can review them.",
+  "empty": "Say hi to your teammates. Messages disappear {hours, plural, one {# hour} other {# hours}} after the game.",
+  "expired": "This chat has ended.",
+  "composer": {
+    "placeholder": "Message",
+    "send": "Send message"
+  },
+  "message": {
+    "reply": "Reply",
+    "copy": "Copy",
+    "translate": "Translate",
+    "report": "Report message",
+    "block": "Block {name}",
+    "moreOptions": "Message options",
+    "checking": "Checking…",
+    "notSent": "Not sent. Tap to retry",
+    "queued": "Waiting to send"
+  },
+  "translate": {
+    "translatedFrom": "Translated from {language}",
+    "showOriginal": "Show original",
+    "showTranslation": "Show translation",
+    "autoTranslate": "Auto-translate this chat",
+    "failed": "Couldn’t translate this message. Try again."
+  },
+  "moderation": {
+    "nudge": {
+      "title": "This might come across as hurtful.",
+      "body": "Consider rewording it so everyone feels welcome.",
+      "edit": "Edit message",
+      "sendAnyway": "Send anyway",
+      "harassment": "This might come across as hurtful or targeted at someone. Consider rewording it.",
+      "hate": "This might come across as hurtful to a group of people. Consider rewording it.",
+      "threat": "This might come across as a threat. Consider rewording it.",
+      "violence": "This mentions violence. Consider rewording it.",
+      "sexual": "This might not suit a sports chat. Consider rewording it.",
+      "sexual_minors": "This message can’t be sent. Please reword it.",
+      "self_harm": "If you’re struggling, you aren’t alone. Consider talking to someone you trust or a local helpline.",
+      "profanity": "This includes strong language that others may not like. Consider rewording it.",
+      "spam": "This looks like spam or an advert. Consider rewording it.",
+      "personal_data": "This seems to include personal details such as a phone number or address. Share them only with people you trust.",
+      "other": "This might not fit our community rules. Consider rewording it."
+    },
+    "block": {
+      "title": "This message breaks our community rules. Edit it to send.",
+      "rulesLink": "Community rules",
+      "oneMoreWarning": "One more and chat will be paused for {hours, plural, one {# hour} other {# hours}}.",
+      "harassment": "This message breaks our community rules (harassment). Edit it to send.",
+      "hate": "This message breaks our community rules (hate). Edit it to send.",
+      "threat": "This message breaks our community rules (threats). Edit it to send.",
+      "violence": "This message breaks our community rules (violence). Edit it to send.",
+      "sexual": "This message breaks our community rules (sexual content). Edit it to send.",
+      "sexual_minors": "This message breaks our community rules and can’t be sent.",
+      "self_harm": "This message can’t be sent. If you’re struggling, please talk to someone you trust or a local helpline.",
+      "profanity": "This message breaks our community rules (abusive language). Edit it to send.",
+      "spam": "This message breaks our community rules (spam). Edit it to send.",
+      "personal_data": "This message includes personal details that can’t be shared in chat. Edit it to send.",
+      "other": "This message breaks our community rules. Edit it to send."
+    },
+    "muted": "Chat paused until {time}",
+    "mutedWhy": "Why?"
+  },
+  "report": {
+    "title": "Report message",
+    "reasonsTitle": "What’s the problem?",
+    "category": {
+      "harassment": "Harassment",
+      "violence": "Violence or threats",
+      "unsportsmanlike": "Unsportsmanlike behavior",
+      "spam": "Spam",
+      "other": "Something else"
+    },
+    "detailsLabel": "Add details (optional)",
+    "submit": "Send report",
+    "thanks": "Thanks. We’ll review this. The message is kept for {days, plural, one {# day} other {# days}} for review.",
+    "blockOffer": "Also block {name}?"
+  },
+  "block": {
+    "title": "Block {name}?",
+    "body": "You won’t see their messages, and they won’t see yours.",
+    "confirm": "Block {name}",
+    "done": "{name} is blocked."
+  },
+  "inbox": {
+    "title": "Inbox",
+    "tabChats": "Chats",
+    "tabNotifications": "Notifications",
+    "empty": "No messages yet. Join a game to start chatting.",
+    "pinned": "Pinned until you read it"
+  }
+}

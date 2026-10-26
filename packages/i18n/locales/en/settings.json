@@ -1,0 +1,96 @@
+{
+  "title": "Settings",
+  "section": {
+    "account": "Account",
+    "language": "Language",
+    "theme": "Theme",
+    "notifications": "Notifications",
+    "privacy": "Privacy and safety",
+    "legal": "Legal",
+    "about": "About"
+  },
+  "account": {
+    "phone": "Phone number",
+    "linkedLogins": "Linked sign-ins",
+    "signOut": "Sign out",
+    "signOutConfirm": "Sign out of Sport Talent on this device?"
+  },
+  "language": {
+    "title": "Language",
+    "useDevice": "Use device language",
+    "deviceNow": "Device language: {language}",
+    "current": "Current language",
+    "restart": {
+      "title": "Restart to switch to {language}?",
+      "body": "The app needs to restart to change the reading direction. We’ll save your drafts first.",
+      "restartNow": "Restart now",
+      "later": "Later",
+      "pending": "The new language will be used after you restart."
+    }
+  },
+  "theme": {
+    "title": "Theme",
+    "system": "System",
+    "light": "Light",
+    "dark": "Dark",
+    "preview": "Preview"
+  },
+  "notifications": {
+    "title": "Notifications",
+    "joinRequests": "Join requests",
+    "approvals": "Approvals",
+    "waitlist": "Waitlist spots",
+    "reminders": "Game reminders",
+    "chat": "Chat messages",
+    "safety": "Account and safety",
+    "safetyLocked": "Always on. We’re required to tell you about account decisions.",
+    "osOff": "Notifications are off in your device settings.",
+    "osOffAction": "Open device settings"
+  },
+  "privacy": {
+    "title": "Privacy and safety",
+    "profileVisibility": "Who can see my profile",
+    "visibilityEveryone": "Everyone",
+    "visibilityParticipants": "Players in my games",
+    "showReliability": "Show my reliability",
+    "showReliabilityHelp": "Hosts always see your reliability when you ask to join their game.",
+    "location": {
+      "title": "Location",
+      "precise": "Precise location",
+      "approximate": "Approximate location",
+      "preciseHelp": "Used only while the app is open, to check you in and to show games near you."
+    },
+    "background": {
+      "title": "Check in automatically",
+      "help": "Lets Sport Talent use your location in the background to notice when you arrive at a game you joined. It only looks near the venue, around game time."
+    },
+    "blocked": {
+      "title": "Blocked players",
+      "empty": "You haven’t blocked anyone.",
+      "unblockConfirm": "Unblock {name}?"
+    },
+    "data": {
+      "download": "Download my data",
+      "help": "Ask for a copy of your data. We’ll let you know when it’s ready."
+    }
+  },
+  "delete": {
+    "title": "Delete account",
+    "dangerZone": "Danger zone",
+    "intro": "Deleting your account is permanent. You can’t undo it.",
+    "deletedTitle": "What we delete",
+    "deleted": "Your profile, photo, phone number, chat messages and the games you haven’t played yet.",
+    "keptTitle": "What we keep",
+    "kept": "Records of warnings and bans are kept in a form that doesn’t identify you, so the rules stay fair for everyone. We keep them only as long as the law allows.",
+    "confirmTyped": "Type {word} to confirm.",
+    "confirmOtp": "Or confirm with a code we text to {phone}.",
+    "button": "Delete my account",
+    "deleting": "Deleting your account…",
+    "done": "Your account has been deleted.",
+    "webLink": "You can also delete your account on the web: {url}"
+  },
+  "about": {
+    "version": "Version {version}",
+    "diagnosticsOn": "Diagnostics turned on."
+  }
+}

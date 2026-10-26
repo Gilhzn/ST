@@ -1,0 +1,157 @@
+{
+  "reliability": {
+    "title": "Reliability",
+    "basedOn": "Based on your last {days, plural, one {# day} other {# days}}: {games, plural, one {# game} other {# games}}, {checkIns, plural, one {# check-in} other {# check-ins}}, {lateCancels, plural, one {# late cancel} other {# late cancels}}.",
+    "newPlayer": "New player · play {games, plural, one {# game} other {# games}} to get a reliability score.",
+    "meter": {
+      "restrictedBelow": "Restricted below {percent}",
+      "reliableFrom": "Reliable from {percent}",
+      "a11y": "Your reliability is {percent}. Restricted below {red}, reliable from {green}."
+    },
+    "yellowCards": "{count, plural, one {# yellow card · expires {date}} other {# yellow cards · the first expires {date}}}",
+    "howItWorks": "How this works",
+    "how": {
+      "title": "How reliability works",
+      "body": "Your score shows how often you turn up for games you’ve joined over the last {days, plural, one {# day} other {# days}}. Checking in counts in your favor. A no-show counts against you, and a late cancel counts as half a no-show. We show a score once you’ve played {games, plural, one {# game} other {# games}}.",
+      "green": "Reliable: {percent} or higher, with no active yellow card.",
+      "yellow": "Caution: below the reliable level, or you have an active yellow card.",
+      "red": "Restricted: below {percent}, or joining games is paused.",
+      "new": "New player: not enough games yet for a score."
+    }
+  },
+  "sanctions": {
+    "title": "Account status",
+    "kind": {
+      "yellow_card": {
+        "name": "Yellow card",
+        "effect": "This is a warning. It doesn’t limit what you can do.",
+        "stillAllowed": "You can keep joining, hosting and chatting."
+      },
+      "join_ban": {
+        "name": "Joining paused",
+        "effect": "You can’t request to join games.",
+        "stillAllowed": "You can still chat in games you’re in."
+      },
+      "chat_mute": {
+        "name": "Chat paused",
+        "effect": "You can’t send messages in game chats. You can still read them.",
+        "stillAllowed": "You can still join and play games."
+      },
+      "visibility_restriction": {
+        "name": "Reduced visibility",
+        "effect": "Your profile is less visible to other players.",
+        "stillAllowed": "You can still join games and chat."
+      },
+      "host_suspension": {
+        "name": "Hosting paused",
+        "effect": "You can’t create new games.",
+        "stillAllowed": "You can still join games as a player."
+      },
+      "permanent_ban": {
+        "name": "Account closed",
+        "effect": "You can’t use Sport Talent with this account.",
+        "stillAllowed": "You can appeal this decision."
+      }
+    },
+    "status": {
+      "active": "In force",
+      "disputed": "Dispute filed. Still in force until decided.",
+      "upheld": "Decision confirmed",
+      "overturned": "Decision reversed",
+      "expired": "Ended"
+    },
+    "since": "Since {date}",
+    "until": "Ends on {date}",
+    "endsIn": "Ends in {duration}",
+    "ended": "This ended on {date}.",
+    "noEndDate": "This decision has no end date. A moderator made it.",
+    "statement": {
+      "title": "Why this happened",
+      "ruleLabel": "Rule",
+      "automated": "This was decided automatically based on check-in records. A person will review it if you appeal.",
+      "human": "A moderator made this decision.",
+      "askPerson": "You can ask for a person to review any decision.",
+      "affectsTitle": "What this affects",
+      "stillAllowedTitle": "What you can still do"
+    },
+    "rule": {
+      "late_cancel": "Late cancel rule",
+      "no_show": "Attendance rule",
+      "chat_blocks": "Chat rules",
+      "escalation_two_cards": "Repeated warnings rule",
+      "escalation_three_cards": "Repeated warnings rule",
+      "toxicity_reports": "Respect and safety rule",
+      "fake_venue": "Venue accuracy rule",
+      "low_host_rating": "Host quality rule",
+      "moderator_decision": "Moderator review"
+    },
+    "reason": {
+      "late_cancel": "On {date}, you cancelled {gameTitle} less than {hours, plural, one {# hour} other {# hours}} before it started. Under our late cancel rule, this earns a yellow card.",
+      "no_show": "You didn’t check in to {gameTitle} on {date}, and it counts as a no-show. Under our attendance rule, a no-show earns a yellow card.",
+      "chat_blocks": "{count, plural, one {# of your messages was} other {# of your messages were}} blocked in game chats within {days, plural, one {# day} other {# days}} because they broke our community rules. Under our chat rules, repeated blocked messages earn a yellow card and a short chat pause.",
+      "escalation_two_cards": "You have {cards, plural, one {# active yellow card} other {# active yellow cards}} from the last {days, plural, one {# day} other {# days}}. Under our repeated warnings rule, this pauses your ability to request to join games for a set time.",
+      "escalation_three_cards": "You have {cards, plural, one {# active yellow card} other {# active yellow cards}} from the last {days, plural, one {# day} other {# days}}. Under our repeated warnings rule, this pauses your ability to request to join games for a longer time.",
+      "toxicity_reports": "{reporters, plural, one {# player} other {# players}} reported your behavior in the last {days, plural, one {# day} other {# days}}, and our checks found the reports credible. Under our respect and safety rule, your profile is shown less to other players for a short time.",
+      "fake_venue": "Other players reported the venue “{venueName}” that you added, and we couldn’t confirm it’s a real place to play. Under our venue accuracy rule, adding places that don’t exist can lead to a restriction.",
+      "low_host_rating": "Your last {count, plural, one {# rating} other {# ratings}} as a host averaged {average} out of 5, which is below the level we need for hosting. Under our host quality rule, hosting is paused while we review your account.",
+      "moderator_decision": "A moderator reviewed your account and made this decision. Their note: {reason}"
+    },
+    "fix": {
+      "title": "How to get back on track",
+      "late_cancel": "Next time, cancel more than {hours, plural, one {# hour} other {# hours}} before a game starts. Your reliability recovers as you show up to games.",
+      "no_show": "Check in to your next games. If you can’t make one, cancel in the app as early as you can. Your reliability recovers as you show up.",
+      "chat_blocks": "Reword messages that break the rules, and read the community rules if you’re unsure. Chat opens again when the pause ends.",
+      "escalation_two_cards": "When the pause ends, show up to your next {games, plural, one {# game} other {# games}} to get back to green. Yellow cards expire on their own after {days, plural, one {# day} other {# days}}.",
+      "escalation_three_cards": "When the pause ends, show up to your next {games, plural, one {# game} other {# games}} to get back to green. Yellow cards expire on their own after {days, plural, one {# day} other {# days}}.",
+      "toxicity_reports": "Keep chats and games friendly. The reduced visibility ends by itself, and you don’t need to do anything.",
+      "fake_venue": "Only add places where people can really play. If we got this wrong, appeal and tell us how to find the venue.",
+      "low_host_rating": "Read the feedback on your host ratings. You can host again when the review ends.",
+      "moderator_decision": "Read the note above. If you disagree, you can appeal.",
+      "expiresOn": "This yellow card expires on {date}.",
+      "communityRules": "Community rules"
+    },
+    "dispute": {
+      "cta": "Dispute this card",
+      "window": "You can dispute this card until {date}.",
+      "windowClosed": "The dispute window has closed, but you can still appeal."
+    },
+    "appeal": {
+      "cta": "Appeal this decision",
+      "title": "Tell us what happened",
+      "reasonLabel": "Reason",
+      "reason": {
+        "was_present": "I was at the game",
+        "cancelled_in_time": "I cancelled in time",
+        "technical_problem": "GPS or the app didn’t work",
+        "not_my_message": "I didn’t write that",
+        "disagree": "I don’t think I broke the rule",
+        "other": "Something else"
+      },
+      "messageLabel": "What happened?",
+      "messageHint": "Please write at least {min, plural, one {# character} other {# characters}}.",
+      "counter": "{count} / {max}",
+      "evidenceLabel": "Add a screenshot (optional)",
+      "contactLanguage": "Language for our reply",
+      "submit": "Send appeal",
+      "received": "Appeal received. A person will review it, usually within {hours, plural, one {# hour} other {# hours}}. We’ll notify you.",
+      "draftSaved": "Draft saved. We’ll keep it until you’re back online.",
+      "timeline": {
+        "received": "Received",
+        "inReview": "In review",
+        "decided": "Decided"
+      },
+      "outcome": {
+        "upheld": "The decision stands.",
+        "overturned": "The decision was reversed."
+      },
+      "reviewerNote": "Reviewer’s note"
+    }
+  },
+  "hostRestriction": {
+    "title": "You can’t host right now",
+    "body": "Hosting is paused on your account until {date}.",
+    "gamesStay": "Games you already host stay active.",
+    "gamesCancelled": "Games you host that haven’t started were cancelled, and the players were told.",
+    "seeDetails": "See why"
+  }
+}

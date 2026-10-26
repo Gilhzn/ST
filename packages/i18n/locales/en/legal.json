@@ -1,0 +1,82 @@
+{
+  "title": "Legal",
+  "lastUpdated": "Last updated {date}",
+  "placeholderNotice": "This is a draft. Our legal team will review the final text before launch.",
+  "privacy": {
+    "title": "Privacy Policy",
+    "intro": "This page explains what information Sport Talent collects, why we collect it and the choices you have. The full policy will be published here before launch.",
+    "collect": {
+      "title": "What we collect",
+      "body": "Your phone number, birth month and year, display name, the games you join, check-in results and chat messages. Precise location is used only while the app is open."
+    },
+    "use": {
+      "title": "How we use it",
+      "body": "To show games near you, to confirm attendance, to keep the community safe and to send you notifications you ask for."
+    },
+    "share": {
+      "title": "Who we share it with",
+      "body": "Other players see your display name and reliability. Service providers process data for us under contract. We don’t sell your personal data."
+    },
+    "retention": {
+      "title": "How long we keep it",
+      "body": "Chat messages are deleted soon after a game ends. Reported messages are kept for a limited time for review. You can delete your account at any time."
+    },
+    "rights": {
+      "title": "Your rights",
+      "body": "You can access, correct, download or delete your data, and you can object to some uses. Contact us to use these rights."
+    },
+    "age": {
+      "title": "Age limit",
+      "body": "Sport Talent is for people aged 16 and older."
+    }
+  },
+  "terms": {
+    "title": "Terms of Service",
+    "intro": "These terms explain how you can use Sport Talent. The full terms will be published here before launch.",
+    "account": {
+      "title": "Your account",
+      "body": "You must be 16 or older. Keep your sign-in details safe and give us accurate information."
+    },
+    "conduct": {
+      "title": "Fair play and conduct",
+      "body": "Treat other players with respect. Show up for games you join, or cancel in good time. Don’t post anything unlawful, hateful or threatening."
+    },
+    "games": {
+      "title": "Games and venues",
+      "body": "Games are organized by players, not by Sport Talent. You are responsible for your own safety and for following the rules of each venue."
+    },
+    "deposits": {
+      "title": "Deposits",
+      "body": "A host may ask for a refundable deposit. It is released after you check in and may be kept if you don’t show up and don’t cancel in time."
+    },
+    "sanctions": {
+      "title": "Warnings and restrictions",
+      "body": "We may warn or restrict accounts that break these terms. We explain every decision and you can appeal."
+    },
+    "changes": {
+      "title": "Changes to these terms",
+      "body": "We may update these terms. We’ll tell you about important changes."
+    }
+  },
+  "communityRules": {
+    "title": "Community rules",
+    "intro": "Sport Talent works when everyone feels welcome. These rules apply to chats, profiles and games.",
+    "respect": "Be respectful. No harassment, hate or threats.",
+    "safety": "Keep it safe. No violence, and no sharing other people’s personal details.",
+    "honesty": "Be honest. Use your real details, and add only real venues.",
+    "reliability": "Show up, or cancel in good time.",
+    "content": "No spam, adverts or sexual content."
+  },
+  "contact": {
+    "title": "Contact us",
+    "body": "Questions, feedback or a request about your data? Get in touch and we’ll reply as soon as we can.",
+    "emailLabel": "Email",
+    "email": "support@sporttalent.example",
+    "addressLabel": "Company address",
+    "address": "[Company address to be added]"
+  },
+  "reportContent": {
+    "title": "Report illegal content",
+    "body": "If you see content that you believe is illegal, tell us what and where, and we’ll review it."
+  }
+}

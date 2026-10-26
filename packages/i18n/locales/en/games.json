@@ -1,0 +1,283 @@
+{
+  "venue": {
+    "sportsHere": "Sports here",
+    "directions": "Directions",
+    "overflow": "More options",
+    "rating": {
+      "summary": "{rating} · {count, plural, one {# rating} other {# ratings}}",
+      "none": "No ratings yet",
+      "scoreOf5": "{score} out of 5",
+      "title": "Ratings"
+    },
+    "attribute": {
+      "surface": "Surface",
+      "lighting": "Lighting",
+      "goals_nets": "Goals and nets",
+      "hoops": "Hoops",
+      "nets": "Nets",
+      "walls": "Walls",
+      "water_access": "Water access",
+      "net": "Net"
+    },
+    "attributeValue": {
+      "natural_grass": "Natural grass",
+      "artificial_turf": "Artificial turf",
+      "hard": "Hard court",
+      "indoor": "Indoor",
+      "outdoor_hard": "Outdoor hard court",
+      "indoor_wood": "Indoor wood",
+      "rubber": "Rubber",
+      "clay": "Clay",
+      "grass": "Grass",
+      "carpet": "Carpet",
+      "glass": "Glass",
+      "masonry": "Masonry",
+      "track": "Track",
+      "road": "Road",
+      "trail": "Trail",
+      "mixed": "Mixed",
+      "sand": "Sand"
+    },
+    "upcoming": "Upcoming games here",
+    "noUpcoming": "No games here yet.",
+    "startGame": "Start a game here",
+    "underReview": "This venue is under review.",
+    "rate": {
+      "cta": "Rate this venue",
+      "onlyAfterPlaying": "You can rate a venue after you’ve played there.",
+      "title": "Rate {venue}",
+      "overall": "Overall",
+      "optionalHint": "Skip anything you’re not sure about.",
+      "submit": "Send rating",
+      "thanks": "Thanks for rating this venue."
+    },
+    "report": {
+      "cta": "No venue here? Report it.",
+      "title": "What’s wrong with this venue?",
+      "reason": {
+        "no_venue_here": "There’s no venue here",
+        "wrong_location": "The location is wrong",
+        "closed": "It’s closed",
+        "duplicate": "It’s listed twice",
+        "unsafe": "It’s unsafe",
+        "other": "Something else"
+      },
+      "submit": "Send report",
+      "thanks": "Thanks. We’ll check it. A venue is hidden while we review it once {count, plural, one {# person has} other {# people have}} reported it.",
+      "done": "You reported this"
+    }
+  },
+  "wizard": {
+    "title": "Create game",
+    "stepOf": "Step {current} of {total}",
+    "stepName": {
+      "sport": "Sport",
+      "where": "Where",
+      "when": "When",
+      "who": "Who",
+      "deposit": "Deposit"
+    },
+    "sport": {
+      "title": "Which sport?",
+      "gameTitleLabel": "Game title",
+      "gameTitleHint": "Optional. For example, “Sunday kickabout”.",
+      "formatTitle": "Format",
+      "formatVs": "{a} vs {b}",
+      "singles": "Singles",
+      "doubles": "Doubles",
+      "teamCount": "Number of teams"
+    },
+    "where": {
+      "title": "Where will you play?",
+      "search": "Search for a venue or address",
+      "pickOnMap": "Pick on the map",
+      "dropPin": "Drop a pin",
+      "venueNameLabel": "Venue name",
+      "venueNameHint": "Name the place so players can find it.",
+      "hideExactLabel": "Hide exact location until I approve players",
+      "hideExactHelp": "Players see the area first. You share the exact spot after you approve them."
+    },
+    "when": {
+      "title": "When?",
+      "date": "Date",
+      "start": "Start time",
+      "duration": "Duration",
+      "repeatWeekly": "Repeat weekly",
+      "comingSoon": "Coming soon"
+    },
+    "who": {
+      "title": "Who can join?",
+      "capacity": "Players",
+      "capacityRange": "{min} to {max} players",
+      "visibility": "Visibility",
+      "public": "Public",
+      "publicHelp": "Anyone nearby can find this game.",
+      "private": "Private",
+      "privateHelp": "Only people with your invite link can see this game.",
+      "womenOnly": "Women only",
+      "womenOnlyHelp": "Only women can join this game.",
+      "minReliability": "Minimum reliability",
+      "minAny": "Anyone",
+      "minCaution": "Caution or better",
+      "minReliable": "Reliable only",
+      "approval": "Joining",
+      "approvalAuto": "Approve players automatically",
+      "approvalManual": "I approve each player"
+    },
+    "deposit": {
+      "title": "Deposit (optional)",
+      "toggle": "Ask for a deposit",
+      "amount": "Deposit amount",
+      "explain": "Players place a refundable hold of {amount}. It’s released after check-in and kept if they don’t show.",
+      "currencyNote": "The currency follows the venue’s country."
+    },
+    "review": {
+      "title": "Review your game",
+      "edit": "Edit",
+      "publish": "Publish game",
+      "publishing": "Publishing…",
+      "offlineHint": "Publish when you’re back online."
+    },
+    "published": {
+      "title": "Your game is live",
+      "shareTitle": "Share your game",
+      "whatsapp": "Share on WhatsApp",
+      "copyLink": "Copy link",
+      "linkCopied": "Link copied.",
+      "showQr": "Show QR code"
+    },
+    "discard": {
+      "title": "Discard draft?",
+      "body": "You’ll lose what you’ve entered so far.",
+      "keep": "Keep editing",
+      "discard": "Discard draft",
+      "saved": "Draft saved on this device."
+    },
+    "validation": {
+      "sportRequired": "Choose a sport.",
+      "venueRequired": "Choose a venue or drop a pin.",
+      "startInPast": "Pick a start time in the future.",
+      "capacityRange": "Choose between {min} and {max} players.",
+      "depositRange": "Enter an amount between {min} and {max}."
+    },
+    "hostSuspended": {
+      "title": "You can’t host right now",
+      "body": "Hosting is paused on your account. See why and when it ends.",
+      "action": "See details"
+    }
+  },
+  "details": {
+    "hiddenLocation": "Exact spot shared after the host approves you",
+    "host": {
+      "hostedBy": "Hosted by {name}",
+      "verified": "Verified host"
+    },
+    "facts": {
+      "players": "{joined} of {capacity} players",
+      "waitlist": "{count, plural, one {# player on the waitlist} other {# players on the waitlist}}",
+      "deposit": "{amount} deposit",
+      "womenOnly": "Women only",
+      "private": "Private game",
+      "format": "Format: {format}"
+    },
+    "sections": {
+      "players": "Players",
+      "requests": "Requests",
+      "waitlist": "Waitlist"
+    },
+    "noPlayersYet": "No players yet. Be the first to join.",
+    "action": {
+      "join": "Join game",
+      "request": "Request to join",
+      "joinWaitlist": "Join waitlist · #{position}",
+      "cancelRequest": "Cancel request",
+      "waitingForHost": "Waiting for host",
+      "checkIn": "Check in",
+      "checkInOpens": "Check-in opens {time}",
+      "chat": "Chat",
+      "directions": "Directions",
+      "cantMakeIt": "Can’t make it",
+      "leaveWaitlist": "Leave waitlist",
+      "waitlistPosition": "You’re #{position} on the waitlist."
+    },
+    "outcome": {
+      "joined": "You’re in. See you there.",
+      "requestSent": "Request sent. The host will reply soon.",
+      "waitlisted": "You’re on the waitlist. We’ll tell you if a spot opens."
+    },
+    "cancel": {
+      "title": "Cancel your spot?",
+      "lateWarning": "Cancelling less than {hours, plural, one {# hour} other {# hours}} before the start counts as a late cancel and gives you a yellow card.",
+      "freeUntil": "You can cancel without penalty until {time}.",
+      "confirm": "Cancel my spot",
+      "keep": "Keep my spot"
+    },
+    "deposit": {
+      "disclosure": "{amount} hold · released after check-in",
+      "sheetTitle": "Deposit hold",
+      "body": "We’ll place a hold of {amount} on your card on {time}. It’s released after you check in. If you don’t show up and don’t cancel in time, it’s kept.",
+      "continue": "Continue to payment",
+      "status": {
+        "held": "Held",
+        "released": "Released",
+        "forfeited": "Kept",
+        "failed": "Hold failed"
+      }
+    },
+    "host": {
+      "approve": "Approve",
+      "reject": "Reject",
+      "rejectReasonLabel": "Reason (optional)",
+      "rejectTemplate": {
+        "full": "The game is full.",
+        "level": "This game isn’t the right fit.",
+        "unknown": "I don’t know you yet. Please message the group first."
+      },
+      "pendingCount": "{count, plural, one {# request is} other {# requests are}} waiting for you",
+      "edit": "Edit game",
+      "cancelGame": "Cancel game",
+      "cancelReasonLabel": "Reason",
+      "cancelHelp": "Everyone who joined will be notified.",
+      "cancelConfirm": "Cancel this game",
+      "showQr": "Show check-in QR",
+      "teams": "Teams",
+      "enterResult": "Enter result"
+    },
+    "banner": {
+      "cancelled": "This game was cancelled. Reason: {reason}",
+      "cancelledNoReason": "This game was cancelled.",
+      "ended": "This game has ended.",
+      "rateHost": "Rate the host"
+    }
+  },
+  "invite": {
+    "title": "You’re invited",
+    "join": "Join",
+    "signUpToJoin": "Sign up to join",
+    "expired": "This invite has expired. Ask the host for a new link."
+  },
+  "teams": {
+    "title": "Teams",
+    "empty": "Teams appear once players check in.",
+    "teamName": "Team {letter}",
+    "balance": "Balanced · rating diff {diff}",
+    "coverage": "Position coverage: {summary}",
+    "reshuffle": "Shuffle again",
+    "movePlayer": "Move player",
+    "moveTo": "Move to {team}",
+    "lock": "Lock teams",
+    "locked": "Teams are locked. Players have been notified."
+  },
+  "result": {
+    "title": "Enter result",
+    "window": "You can enter the result for {duration}.",
+    "scoreFor": "Score for {team}",
+    "increase": "Add one to {team}",
+    "decrease": "Remove one from {team}",
+    "mvpLabel": "Most valuable player (optional)",
+    "didntPlay": "We didn’t play",
+    "submit": "Save result",
+    "saved": "Result saved. Players can dispute it for {hours, plural, one {# hour} other {# hours}}.",
+    "closed": "The result window closed at {time}."
+  }
+}

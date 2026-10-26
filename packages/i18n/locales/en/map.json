@@ -1,0 +1,68 @@
+{
+  "search": {
+    "label": "Search",
+    "placeholder": "City, venue or address"
+  },
+  "filters": {
+    "sports": "Sports",
+    "limitHint": "You can pick up to {max, plural, one {# sport} other {# sports}}. Unselect one to add another.",
+    "limitToast": "Unselect a sport to add another."
+  },
+  "radius": {
+    "label": "Search radius",
+    "auto": "Auto (GPS)",
+    "a11y": "Search radius: {distance}"
+  },
+  "sheet": {
+    "title": "{count, plural, =0 {No games nearby} one {# game nearby} other {# games nearby}}",
+    "sortLabel": "Sort by",
+    "sortSoonest": "Soonest",
+    "sortNearest": "Nearest",
+    "showList": "List",
+    "showMap": "Map"
+  },
+  "card": {
+    "distanceAway": "{distance} away",
+    "players": "{joined}/{capacity} players",
+    "startsSoon": "Starting soon",
+    "live": "Live now",
+    "badge": {
+      "deposit": "Deposit",
+      "womenOnly": "Women only",
+      "private": "Private",
+      "waitlist": "Waitlist",
+      "full": "Full"
+    }
+  },
+  "cluster": {
+    "a11y": "{count, plural, one {# game} other {# games}}: {sports}. Double-tap to zoom in."
+  },
+  "venues": {
+    "sectionTitle": "Venues without games",
+    "startOne": "Start a game",
+    "pinA11y": "{name}, venue"
+  },
+  "locate": {
+    "label": "Show my location"
+  },
+  "createGame": {
+    "fab": "Create game"
+  },
+  "empty": {
+    "title": "No games within {distance} for {sports}.",
+    "widen": "Widen to {distance}",
+    "create": "Create a game"
+  },
+  "locationDenied": {
+    "title": "Location is off",
+    "body": "Search for a city or address to find games near you.",
+    "search": "Search for a place"
+  },
+  "error": {
+    "title": "Couldn’t load games.",
+    "body": "Check your connection and try again."
+  },
+  "offline": {
+    "cachedNote": "Showing saved games."
+  }
+}

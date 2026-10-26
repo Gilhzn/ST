@@ -1,0 +1,58 @@
+{
+  "title": "Profile",
+  "edit": "Edit profile",
+  "homeCity": "Home: {city}",
+  "memberSince": "Member since {date}",
+  "sportsTitle": "Sports",
+  "stats": {
+    "title": "Stats",
+    "gamesPlayed": "Games played",
+    "gamesHosted": "Games hosted",
+    "checkInRate": "Check-in rate",
+    "favoriteVenue": "Favorite venue",
+    "none": "None yet"
+  },
+  "positions": {
+    "title": "Positions",
+    "primary": "Primary",
+    "secondary": "Secondary",
+    "none": "No positions set"
+  },
+  "history": {
+    "title": "History",
+    "empty": "No games yet. Join one to get started.",
+    "result": "Result: {score}",
+    "noResult": "No result"
+  },
+  "reliabilityCard": {
+    "a11y": "Reliability card"
+  },
+  "other": {
+    "report": "Report player",
+    "block": "Block player",
+    "overflow": "More options",
+    "blocked": "You blocked this player."
+  },
+  "report": {
+    "title": "Report {name}",
+    "category": {
+      "violence": "Violence or threats",
+      "unsportsmanlike": "Unsportsmanlike behavior",
+      "harassment": "Harassment",
+      "spam": "Spam",
+      "other": "Something else"
+    },
+    "noteLabel": "Add details (optional)",
+    "submit": "Send report",
+    "thanks": "Thanks. We’ll review this."
+  },
+  "editForm": {
+    "title": "Edit profile",
+    "displayNameLabel": "Display name",
+    "bioLabel": "About you",
+    "bioHint": "Optional. Say what you like to play.",
+    "changePhoto": "Change photo",
+    "removePhoto": "Remove photo",
+    "saved": "Profile saved."
+  }
+}

@@ -1,0 +1,87 @@
+{
+  "title": "Check in",
+  "opensAt": "Check-in opens {time}.",
+  "closed": "Check-in has closed for this game.",
+  "alreadyCheckedIn": "You’re already checked in.",
+  "gps": {
+    "title": "Checking your location",
+    "progress": "Checking your location… {done} of {total}",
+    "accuracy": "Accuracy: {accuracy}",
+    "retry": "Try again"
+  },
+  "success": {
+    "title": "You’re checked in",
+    "method": "{method, select, gps {Confirmed by GPS} qr {Confirmed by QR code} peer {Confirmed by teammates} host {Confirmed by the host} other {Confirmed}}"
+  },
+  "unconfirmed": {
+    "title": "We can’t confirm you’re at the venue yet",
+    "body": "Move into the open or try another way."
+  },
+  "reject": {
+    "not_participant": "You’re not on the player list for this game.",
+    "already_checked_in": "You’re already checked in.",
+    "outside_window": "Check-in isn’t open right now. It opens {minutes, plural, one {# minute} other {# minutes}} before the start.",
+    "insufficient_samples": "We need a few more location readings. Stay where you are and try again.",
+    "samples_too_close": "We need a little more time to check your location. Wait a few seconds and try again.",
+    "low_accuracy": "Your location isn’t precise enough yet. Move into the open or try another way.",
+    "too_far": "We can’t confirm you’re at the venue yet. Move closer or try another way.",
+    "spread_too_large": "Your location readings were too far apart. Stay in one spot and try again.",
+    "suspected_spoofing": "We can’t confirm your location this way. Try another way to check in.",
+    "invalid_qr": "That code didn’t work. Check it and try again.",
+    "expired_qr": "That code has expired. Ask the host for the current one.",
+    "not_host": "Only the host can do this.",
+    "insufficient_peers": "We need more teammates to confirm. Ask another player who is checked in.",
+    "reciprocal_only": "Teammates you confirmed can’t be the only ones to confirm you. Ask someone else.",
+    "blocked_pair": "We couldn’t use that confirmation. Ask a different player."
+  },
+  "other": {
+    "title": "Other ways to check in"
+  },
+  "qr": {
+    "scan": "Scan host QR code",
+    "hint": "Point your camera at the code on the host’s screen.",
+    "enterCode": "Enter code instead",
+    "codeLabel": "6-digit code",
+    "scanInstead": "Scan the QR code instead"
+  },
+  "peer": {
+    "ask": "Ask a teammate",
+    "hint": "We’ll ask players who are already checked in to confirm you’re here.",
+    "waiting": "Waiting for {needed, plural, one {# confirmation} other {# confirmations}} · {received} received",
+    "sent": "Request sent to your teammates."
+  },
+  "permission": {
+    "location": {
+      "title": "Location helps confirm you’re here",
+      "body": "We check your location a few times while you’re at the venue. We don’t follow you afterwards.",
+      "allow": "Allow location",
+      "denied": "Location is off. Scan the host’s QR code or ask a teammate instead."
+    },
+    "camera": {
+      "title": "Camera access",
+      "body": "We use the camera only to scan the host’s QR code.",
+      "allow": "Allow camera",
+      "denied": "Camera is off. Enter the 6-digit code instead."
+    },
+    "background": {
+      "title": "Check in automatically",
+      "body": "If you turn this on, Sport Talent uses your location in the background to notice when you arrive at a game you joined. It only looks for you near the venue, around the game time. You can turn it off at any time in Settings.",
+      "enable": "Turn on",
+      "decline": "No thanks"
+    }
+  },
+  "offline": {
+    "queued": "We’ll confirm when you’re back online."
+  },
+  "host": {
+    "title": "Check-in code",
+    "instruction": "Players scan this to check in. The code refreshes every {seconds, plural, one {# second} other {# seconds}}.",
+    "fallbackCode": "Or enter this code",
+    "counter": "{checkedIn} of {total} checked in",
+    "markManually": "Mark players manually",
+    "manualTitle": "Mark players",
+    "markPresent": "Mark {name} as here",
+    "present": "Here",
+    "notHere": "Not here"
+  }
+}
