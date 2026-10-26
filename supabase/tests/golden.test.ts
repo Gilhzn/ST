@@ -368,8 +368,32 @@ describe("golden: trust.applyEvent (DB-backed)", () => {
   }
 });
 
+describe("golden: trust.hostGameCancelled (DB-backed through cancel_game)", () => {
+  const list = cases.filter((c) => c.kind === "trust.hostGameCancelled");
+  for (const c of list) {
+    it(c.name, async () => {
+      const game = c.input.game;
+      await seedState({ ...c, input: { state: c.input.state, event: { type: "HostGameCancelled" } } });
+      const start = new Date(game.startsAt);
+      await db.query(
+        `insert into games (id, host_id, sport, title, geog, approx_geog, capacity, starts_at, ends_at)
+         values ($1, $2, 'football', 'golden', public.st_point(32, 34), public.st_point(32, 34), 10, $3, $4)
+         on conflict (id) do update set status = 'scheduled', happened = null, host_id = excluded.host_id, starts_at = excluded.starts_at,
+                                        ends_at = excluded.ends_at`,
+        [game.id, game.hostId, start.toISOString(), new Date(start.getTime() + 90 * 60_000).toISOString()]);
+      await db.query(`insert into game_participants (game_id, user_id, status) values ($1, $2, 'approved')
+                      on conflict (game_id, user_id) do update set status = 'approved', late_cancel = false, cancelled_at = null`,
+        [game.id, game.hostId]);
+      await db.query(`delete from payments where game_id = $1 and user_id = $2`, [game.id, game.hostId]); // hosts pay no deposit
+      const before = await snapshot(c.now);
+      await db.asUser(game.hostId, (tx) => tx.query(`select public.cancel_game($1)`, [game.id]), { now: c.input.cancelledAt });
+      await checkEffects(c, before);
+    });
+  }
+});
+
 describe("golden: kinds without a SQL runner", () => {
-  const known = new Set([...Object.keys(PURE), "trust.applyEvent"]);
+  const known = new Set([...Object.keys(PURE), "trust.applyEvent", "trust.hostGameCancelled"]);
   const unknown = [...new Set(cases.map((c) => c.kind))].filter((k) => !known.has(k));
   for (const k of unknown) it.skip(`${k} — no SQL counterpart registered yet`, () => undefined);
   it("every golden kind is either run or explicitly skipped", () => {

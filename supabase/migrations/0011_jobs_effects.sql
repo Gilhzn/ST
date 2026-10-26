@@ -283,6 +283,7 @@ as $$
     left join lateral (
       select s.* from public.sanctions s
       where s.user_id = pm.user_id and s.game_id = pm.game_id and s.reason_code in ('no_show', 'late_cancel')
+        and s.dedupe_key not like 'host\_late\_cancel:%' -- a host's own card never settles a deposit
       order by s.created_at desc limit 1
     ) c on true
     where pm.deposit_state in ('setup', 'held') and pm.settlement_dispatched_at is null

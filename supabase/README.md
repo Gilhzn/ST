@@ -17,7 +17,8 @@ snake_case). Rules mirror `@st/domain` and are pinned by the golden cases in `pa
 | `0008_payments_notifications.sql` | `notifications`, `payments`, `payment_customers`, `payment_events` |
 | `0009_rpcs_games.sql` / `0010_rpcs_trust.sql` | Client RPCs |
 | `0011_jobs_effects.sql` | Job functions, deposit due-lists, retention purges, `apply_effects` |
-| `0090_rls_grants.sql` | RLS on every table, policies, table/column/function grants (keep last before cron) |
+| `0090_rls_grants.sql` | RLS on every table, policies, table/column/function grants |
+| `0091_realtime.sql` | Realtime Authorization policy on `realtime.messages` (guarded: skipped where Realtime is absent) |
 | `9000_cron.sql` | `pg_cron` schedules, guarded (no-op where `pg_cron` is unavailable) |
 | `seed.sql` | Demo hosts, venues and upcoming games in Tel Aviv, London, Madrid, São Paulo, Tokyo, New York, Mumbai, Paris |
 | `config.toml` | CLI config: project `sport-talent`, phone OTP via Twilio (`env(...)` secrets) |
@@ -57,6 +58,37 @@ types, `set search_path = ''` in every function). Time: every rule reads `public
   stableUuid('review:'||dedupe_key)` (trigger), matching `@st/domain` so effects can reference rows before insert.
   Unique `dedupe_key` on both tables makes every path idempotent.
 
+## Security hardening (adversarial review round)
+
+- **Late cancels stick (H1).** A cancelled row with a pending late cancel cannot be re-opened by `request_join`
+  (`conflict`), and `cancel_participation` keeps `late_cancel` once set.
+- **Check-in (H2).** The host can never QR-verify themself (`not_host`). QR tokens rotate every 20 s and are accepted
+  for the current and the previous step only (future steps `invalid_qr`, older `expired_qr`), so a relayed screenshot
+  lives ≤ 40 s. Only **GPS-verified** attendees anchor peer check-ins (`peer_confirm` and `dm_verify_peer`).
+- **Report brigading (H3).** Reports all from one game → review only (`single_game`); at least one reporter must be
+  GPS-verified at the reported game and not its host (`no_gps_anchor`), else review only.
+- **Women-only (H4).** `profile_private.gender` can change once per 90 days (clock starts at onboarding; the service
+  role may override); women-only games need a female host; `hide_exact_location` defaults to true for women-only and
+  private games.
+- **Ban evasion (H5) — compliance note.** Account deletion is never blocked (GDPR Art. 17, Apple 5.1.1(v)). When a
+  deleted account still has restrictions in force (join ban, mute, restriction, host suspension, permanent ban), a
+  keyed **HMAC-SHA256 of the E.164 phone** (key: Vault secret `st_phone_hmac_key`; tests use the `st.phone_hmac_key`
+  setting) is stored in `sanction_phone_hmac` with the sanction ids and the latest expiry — no plaintext phone. It is
+  service-role only, used only to re-issue the remaining periods when the same phone registers again
+  (`create_profile`, with a notice and statement of reasons), and purged by `purge_retention` when the restrictions
+  expire. Lawful basis: legitimate interest in preventing abuse (GDPR Art. 6(1)(f)), data minimised to a keyed hash and
+  limited to the sanction period; documented in docs/compliance.md §4/§8 ("HMAC of the phone kept only while a
+  sanction record is retained"). Configure: `select vault.create_secret('<random 32+ bytes>', 'st_phone_hmac_key');`.
+- **Realtime (H6).** `realtime.messages` SELECT for authenticated users only on topic `game:<uuid>` when the caller is
+  an approved participant and the chat has not expired; **no INSERT policy**, so only the service role broadcasts.
+  In the dashboard, Realtime → Settings: **disable "Allow public access"** (private channels only).
+- **Results (M1)** are submitted by the host only. **Venue reports (M2)** count only qualified reporters (account
+  ≥ `min_reporter_account_age_days` when reporting, not red). **Deposits (M4)** must match `deposit_tiers`
+  (≈ $2/5/10/20 per currency) and always forfeit to the pot. **Host late game cancellation (M6)** issues the host a
+  disputable `late_cancel` card (`host_late_cancel:<game>:<host>`, never a deposit card); 2 in 30 days → host suspension.
+- **L1** clients get only caller-relative helpers (`st_hidden_from_me`). **L2** `st_now()` honours `st.now` only when
+  `st.test_mode = 'on'` (the harness sets both). **L5** no removals after the start; `rotate_qr` only until `ends_at`.
+
 ## RPC catalog (all SECURITY DEFINER, errors `ST:<ErrorCode>`)
 
 | RPC | Who | Notes |
@@ -72,11 +104,11 @@ types, `set search_path = ''` in every function). Time: every rule reads `public
 | `remove_participant(game, user)`, `save_teams(game, {user: team})` | host | removal frees the spot → waitlist offers |
 | `cancel_participation(game)` | participant | late cancel (< 2 h) is decided at finalisation; returns `{participant, sanction: null}` |
 | `accept_waitlist_offer(game)` | waitlisted | GAME-045 offers; flash fill < 1 h; `not_found`/`outside_window`/`game_full`/`game_not_open` |
-| `submit_result(game, scores[])` | approved | `ends_at … ends_at + 2h` (`outside_window`), one score per team |
+| `submit_result(game, scores[])` | host | `ends_at … ends_at + 2h` (`outside_window`), one score per team |
 | `rate_host(game, stars)` | verified attendee | within 48 h; low average → host suspension + review |
-| `get_qr_token(game)`, `rotate_qr(game)` | host | wire format `step.hex32` (domain) |
+| `get_qr_token(game)`, `rotate_qr(game)` | host | wire format `step.hex32`, 20 s steps, current + previous accepted |
 | `submit_checkin(game, 'qr'\|'host', token?, target?)` | participant / host | returns a `CheckInVerdict`; host marks others until `ends_at + 2h`, never self |
-| `peer_confirm(game, target)` | verified attendee | GPS/QR-verified confirmers, max 6 each, blocked pairs excluded, reciprocal-only rejected |
+| `peer_confirm(game, target)` | GPS-verified attendee | GPS-verified confirmers only, max 6 each, blocked pairs excluded, reciprocal-only rejected |
 | `report_user(target, category, game?, message?, note?)` | authenticated | rate limited; reported message copied to retention; evaluation below |
 | `block_user`, `unblock_user`, `register_push_token(token, platform)` | authenticated | |
 | `file_appeal(sanction, text)` | sanction owner | dispute inside `dispute_until` (→ `disputed`), else appeal (≤ 6 months, `dispute_window_closed`) |
@@ -125,6 +157,7 @@ npx tsc -p supabase/tsconfig.json
   `seed.test.ts`: every RPC rule and error code, waitlist offers / flash fill, late cancel + refill, no-show job,
   escalation ladder, appeals and auto-void, report evaluation incl. collusion, chat purge + retention, QR ±1 step
   (HMAC computed independently with `node:crypto`), approximate location, deposits, account deletion, retention.
+- `security_regressions.test.ts`: one test per adversarial finding (H1–H6, M1, M2, M4, M6, L1, L2, L5).
 - `golden.test.ts`: TS ≡ SQL parity over `packages/domain/test/golden/*.json`. Pure kinds run through the `dm_*`
   mirrors; `trust.applyEvent` seeds the state into tables, runs the real job/RPC and checks the database against
   the expected effects. `ChatMessageBlocked` cases are skipped (that rule runs only in `send-message`).
@@ -139,6 +172,9 @@ supabase secrets set SUPABASE_AUTH_SMS_TWILIO_ACCOUNT_SID=… SUPABASE_AUTH_SMS_
 #   alter database postgres set st.functions_url = 'https://<ref>.functions.supabase.co';
 #   select vault.create_secret('<service key>', 'st_functions_key');
 ```
+
+Realtime: disable public channel access (Realtime → Settings). Vault: create `st_phone_hmac_key` (H5) and, for job
+dispatch, `st_functions_key`.
 
 Enable `pg_cron` (and `pg_net`) in the dashboard before pushing so `9000_cron.sql` schedules the jobs; if it is
 pushed first, re-run its body after enabling. `supabase db reset` (local) also loads `seed.sql`; production never
