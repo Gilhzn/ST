@@ -30,7 +30,7 @@ import {
   type Venue,
 } from '@st/domain';
 
-import { approximateLocation, toIso } from './domain';
+import { approximateLocation, chatExpiresAt, promoteFromWaitlist, toIso } from './domain';
 import type { MockGame, MockState, MockUser } from './state';
 
 /** OTP accepted by the mock (docs/qa-strategy.md also lists 000000; both work). */
@@ -38,6 +38,8 @@ export const MOCK_OTP_CODES = ['123456', '000000'] as const;
 /** Returning demo user: already onboarded, hosts games in Tel Aviv, has a disputable yellow card. */
 export const DEMO_PHONE = '+972500000001';
 export const DEMO_USER_ID = 'u-dana';
+/** "Yossi Cohen", host of g-tlv-1 (starting soon, check-in open, players checked in). */
+export const SECOND_DEMO_PHONE = '+972500000002';
 
 /** Dizengoff Square, Tel Aviv: the e2e geolocation and the default map centre. */
 export const DEFAULT_CENTER: LatLng = { lat: 32.0779, lng: 34.7745 };
@@ -74,8 +76,10 @@ interface GameSpec {
   inviteToken?: string;
   /** Index into the city's people, or the demo user. */
   host: number | 'demo';
-  /** Demo user participation in this game (when not host). */
-  demo?: ParticipantStatus;
+  /** Demo user participation in this game (when not host): approved, or first on the waitlist. */
+  demo?: 'approved' | 'waitlisted';
+  /** Approved players already checked in (host first, demo user never). */
+  checkedIn?: number;
   teamCount?: number;
   status?: 'scheduled' | 'completed' | 'cancelled';
   notes?: string;
@@ -125,7 +129,7 @@ const CITIES: CitySpec[] = [
     ],
     games: [
       { n: 0, venue: 'yarkon', sport: 'football', title: 'Friday Morning Football', startH: -50, durH: 1.5, capacity: 10, approved: 10, host: 0, demo: 'approved', status: 'completed' },
-      { n: 1, venue: 'yarkon', sport: 'football', title: 'Sunset 5v5 at Yarkon', startH: 1, durH: 1.5, capacity: 10, approved: 6, host: 0, demo: 'approved' },
+      { n: 1, venue: 'yarkon', sport: 'football', title: 'Sunset 5v5 at Yarkon', startH: 1 / 3, durH: 1.5, capacity: 10, approved: 7, checkedIn: 4, host: 0, demo: 'approved' },
       { n: 2, venue: 'gordon', sport: 'volleyball', title: 'Beach Volley Open Play', startH: -0.5, durH: 1.5, capacity: 8, approved: 8, waitlist: 2, host: 1 },
       { n: 3, venue: 'meir', sport: 'basketball', title: 'Gan Meir Pickup 3x3', startH: 3, durH: 1.5, capacity: 9, approved: 4, depositMinor: 2000, host: 2 },
       { n: 4, venue: 'sportek', sport: 'padel', title: 'Women’s Padel Doubles', startH: 24, durH: 1.5, capacity: 4, approved: 2, womenOnly: true, hide: true, host: 3, teamCount: 2 },
@@ -133,6 +137,8 @@ const CITIES: CitySpec[] = [
       { n: 6, venue: 'jaffa', sport: 'football', title: 'Jaffa Port 7v7', startH: 26, durH: 1.5, capacity: 14, approved: 9, requested: 2, host: 'demo' },
       { n: 7, venue: 'tennis', sport: 'tennis', title: 'Singles Hit & Rally', startH: 5, durH: 1, capacity: 2, approved: 1, host: 4, teamCount: 2 },
       { n: 8, venue: 'rabin', sport: 'basketball', title: 'Rabin Square Run', startH: 50, durH: 2, capacity: 10, approved: 5, host: 6 },
+      { n: 9, venue: 'clore', sport: 'football', title: 'Lunchtime Futsal', startH: -1.5, durH: 1, capacity: 10, approved: 8, checkedIn: 8, host: 'demo' },
+      { n: 10, venue: 'gordon', sport: 'volleyball', title: 'Sunset Beach Volley', startH: 0.75, durH: 1.5, capacity: 8, approved: 7, demo: 'waitlisted', host: 1 },
     ],
   },
   {
@@ -376,6 +382,7 @@ export function buildSeed(now: EpochMs): MockState {
     payments: [],
     pushTokens: [],
     peerConfirmations: [],
+    offers: new Map(),
     inviteAccess: new Set(),
     seq: 0,
   };
@@ -414,7 +421,8 @@ export function buildSeed(now: EpochMs): MockState {
       const verified = Math.max(0, games - noShow - (personSeed % 5 === 0 ? 1 : 0));
       const user: MockUser = {
         id,
-        phone: null,
+        // The first Tel Aviv player can sign in too (demo host of g-tlv-1: QR, teams).
+        phone: city.key === 'tlv' && i === 0 ? SECOND_DEMO_PHONE : null,
         createdAt: at(-24 * (30 + ((personSeed * 5) % 400))),
         privateData: { birthYear: 1980 + (personSeed % 25), birthMonth: 1 + (personSeed % 12), gender },
         profile: {
@@ -485,8 +493,11 @@ export function buildSeed(now: EpochMs): MockState {
       state.games.set(id, game);
 
       const eligible = people.filter((p) => p.id !== hostId && (!game.womenOnly || p.privateData?.gender === 'female'));
+      let checkedIn = 0;
       const add = (userId: string, status: ParticipantStatus, rank: number | null, idx: number) => {
-        const verified = game.status === 'completed' && status === 'approved';
+        const verified =
+          status === 'approved' && (game.status === 'completed' || (userId !== DEMO_USER_ID && checkedIn < (g.checkedIn ?? 0)));
+        if (verified) checkedIn += 1;
         const p: Participant = {
           gameId: id,
           userId,
@@ -497,7 +508,7 @@ export function buildSeed(now: EpochMs): MockState {
           waitlistRank: rank,
           lateCancel: false,
           checkInMethod: verified ? 'gps' : null,
-          checkedInAt: verified ? toIso(Date.parse(startsAt) - 5 * 60 * 1000) : null,
+          checkedInAt: verified ? at(Math.min(g.startH, 0) - 5 / 60 + idx / 600) : null,
           requestedAt: at(g.startH - 48 + idx * 0.25),
           decidedAt: status === 'requested' ? null : at(g.startH - 40 + idx * 0.25),
           cancelledAt: null,
@@ -514,9 +525,11 @@ export function buildSeed(now: EpochMs): MockState {
         const u = take();
         if (u) add(u.id, 'approved', null, i + 2);
       }
+      const demoWaits = g.demo === 'waitlisted' && hostId !== DEMO_USER_ID;
+      if (demoWaits) add(DEMO_USER_ID, 'waitlisted', 1, 19);
       for (let i = 0; i < (g.waitlist ?? 0) && cursor < eligible.length; i++) {
         const u = take();
-        if (u) add(u.id, 'waitlisted', i + 1, 20 + i);
+        if (u) add(u.id, 'waitlisted', i + 1 + (demoWaits ? 1 : 0), 20 + i);
       }
       for (let i = 0; i < (g.requested ?? 0) && cursor < eligible.length; i++) {
         const u = take();
@@ -578,5 +591,37 @@ export function buildSeed(now: EpochMs): MockState {
       createdAt: at(-2),
     },
   );
+  // Open waitlist offers for games with a free spot (the server's offer job; flash fill < 1 h).
+  for (const game of state.games.values()) {
+    if (game.status !== 'scheduled') continue;
+    const participants = [...state.participants.values()].filter((p) => p.gameId === game.id);
+    const plan = promoteFromWaitlist({ game, participants }, now);
+    for (const offer of plan.offers) state.offers.set(`${game.id}|${offer.userId}`, offer);
+  }
+
+  // A lively, multilingual chat in the game starting soon (translate + moderation demos).
+  const chatGame = state.games.get('g-tlv-1');
+  if (chatGame) {
+    const lines: [string, string, string | null, number][] = [
+      ['u-tlv-0', 'Pitch 3 tonight, bring a dark and a light shirt.', 'en', -50],
+      ['u-tlv-1', 'אני מביאה כדור, נתראה ב-18:00!', 'he', -35],
+      ['u-tlv-2', 'سأتأخر خمس دقائق، احجزوا لي مكانًا', 'ar', -20],
+      [DEMO_USER_ID, 'Great, see you there!', 'en', -10],
+    ];
+    lines.forEach(([senderId, body, lang, minutes], i) => {
+      state.messages.push({
+        id: `m-seed-${i + 1}`,
+        gameId: chatGame.id,
+        senderId,
+        body,
+        lang,
+        clientMsgId: `seed-${i + 1}`,
+        moderation: 'allow',
+        retractedAt: null,
+        createdAt: toIso(base + minutes * 60 * 1000),
+        expiresAt: chatExpiresAt(chatGame),
+      });
+    });
+  }
   return state;
 }

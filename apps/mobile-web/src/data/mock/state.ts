@@ -23,6 +23,7 @@ import type {
   VenueId,
   VenueRating,
   VenueReport,
+  WaitlistOffer,
 } from '@st/domain';
 
 export interface MockUser {
@@ -63,6 +64,8 @@ export interface MockState {
   payments: Payment[];
   pushTokens: { userId: UserId; token: string; platform: PushPlatform }[];
   peerConfirmations: { gameId: GameId; confirmerId: UserId; targetId: UserId }[];
+  /** Waitlist offers (`waitlist_offers`), keyed `${gameId}|${userId}`. */
+  offers: Map<string, WaitlistOffer>;
   /** `${gameId}|${userId}` pairs that opened the invite link. */
   inviteAccess: Set<string>;
   /** Monotonic id counter. */
