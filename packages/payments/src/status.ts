@@ -115,3 +115,41 @@ export function applyPaymentEvent(row: PaymentRowState, event: PaymentEvent): Pa
   }
   return { step: row.step, status, depositState, changed: status !== row.status || depositState !== row.depositState, notes };
 }
+
+/** Provider object a ref points at (SetupIntent vs PaymentIntent), for events without our metadata. */
+export function stepOfRef(ref: string | null, mode: 'hold' | 'charge_refund'): PaymentRowState['step'] {
+  if (mode === 'charge_refund') return 'charge';
+  return ref === null || /^seti_/.test(ref) ? 'setup' : 'hold';
+}
+
+export interface ReconciledRow {
+  /** Row state to apply the event to. */
+  base: PaymentRowState;
+  /** The row should start tracking `event.ref` (the hold replaced the setup). */
+  adoptRef: boolean;
+  /** The event concerns an object the row no longer tracks: apply nothing. */
+  stale: boolean;
+}
+
+/**
+ * One deposit row tracks its SetupIntent first and then the hold PaymentIntent
+ * (`payments.step` setup → hold). A hold event may arrive before the hold job
+ * stored the new ref (webhooks race the API response), so a hold event for a
+ * setup row adopts its ref with a fresh status; late events of the superseded
+ * setup are stale.
+ */
+export function reconcileEventRow(
+  row: { providerRef: string | null; status: PaymentIntentStatus; depositState: DepositState; step: PaymentRowState['step'] },
+  event: PaymentEvent,
+): ReconciledRow {
+  const mode = row.step === 'charge' ? 'charge_refund' : 'hold';
+  const meta = event.metadata.step;
+  const eventStep: PaymentRowState['step'] = meta === 'setup' || meta === 'hold' || meta === 'charge' ? meta : stepOfRef(event.ref, mode);
+  const base: PaymentRowState = { status: row.status, depositState: row.depositState, step: row.step };
+  if (event.ref === null || event.ref === row.providerRef) return { base, adoptRef: false, stale: false };
+  if (row.step === 'setup' && eventStep === 'hold') {
+    return { base: { status: 'requires_payment_method', depositState: row.depositState, step: 'hold' }, adoptRef: true, stale: false };
+  }
+  if (row.providerRef === null && eventStep === row.step) return { base, adoptRef: true, stale: false };
+  return { base, adoptRef: false, stale: true };
+}

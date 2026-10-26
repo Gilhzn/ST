@@ -1,0 +1,68 @@
+{
+  "search": {
+    "label": "Buscar",
+    "placeholder": "Cidade, local ou endereço"
+  },
+  "filters": {
+    "sports": "Esportes",
+    "limitHint": "Você pode escolher até {max, plural, one {# esporte} many {# de esportes} other {# esportes}}. Desmarque um para adicionar outro.",
+    "limitToast": "Desmarque um esporte para adicionar outro."
+  },
+  "radius": {
+    "label": "Raio de busca",
+    "auto": "Automático (GPS)",
+    "a11y": "Raio de busca: {distance}"
+  },
+  "sheet": {
+    "title": "{count, plural, =0 {Nenhum jogo por perto} one {# jogo por perto} many {# de jogos por perto} other {# jogos por perto}}",
+    "sortLabel": "Ordenar por",
+    "sortSoonest": "Mais cedo",
+    "sortNearest": "Mais perto",
+    "showList": "Lista",
+    "showMap": "Mapa"
+  },
+  "card": {
+    "distanceAway": "A {distance}",
+    "players": "{joined}/{capacity} jogadores",
+    "startsSoon": "Começa em breve",
+    "live": "Ao vivo",
+    "badge": {
+      "deposit": "Depósito",
+      "womenOnly": "Só mulheres",
+      "private": "Privado",
+      "waitlist": "Lista de espera",
+      "full": "Lotado"
+    }
+  },
+  "cluster": {
+    "a11y": "{count, plural, one {# jogo} many {# de jogos} other {# jogos}}: {sports}. Toque duas vezes para ampliar."
+  },
+  "venues": {
+    "sectionTitle": "Locais sem jogos",
+    "startOne": "Criar um jogo",
+    "pinA11y": "{name}, local"
+  },
+  "locate": {
+    "label": "Mostrar minha localização"
+  },
+  "createGame": {
+    "fab": "Criar jogo"
+  },
+  "empty": {
+    "title": "Nenhum jogo de {sports} em até {distance}.",
+    "widen": "Ampliar para {distance}",
+    "create": "Criar um jogo"
+  },
+  "locationDenied": {
+    "title": "A localização está desativada",
+    "body": "Busque uma cidade ou endereço para encontrar jogos perto de você.",
+    "search": "Buscar um lugar"
+  },
+  "error": {
+    "title": "Não foi possível carregar os jogos.",
+    "body": "Verifique sua conexão e tente de novo."
+  },
+  "offline": {
+    "cachedNote": "Mostrando jogos salvos."
+  }
+}

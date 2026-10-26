@@ -30,6 +30,12 @@ create table public.payments (
   settlement_requested_at timestamptz,
   -- Last time place_deposit_holds() dispatched a hold request (re-dispatched after 15 minutes).
   hold_requested_at timestamptz,
+  -- Provider flow step (packages/payments): SetupIntent, manual-capture hold, or charge-and-refund
+  -- for methods without holds (TRUST-062).
+  step text not null default 'setup' check (step in ('setup', 'hold', 'charge')),
+  payment_method_id text,
+  -- When the deposit was secured (method saved / hold placed / charged).
+  secured_at timestamptz,
   idempotency_key text not null unique check (char_length(idempotency_key) between 1 and 255),
   created_at timestamptz not null default now(),
   updated_at timestamptz not null default now()
@@ -38,6 +44,26 @@ create index payments_user_game_idx on public.payments (user_id, game_id);
 create index payments_state_idx on public.payments (deposit_state, status);
 create trigger payments_touch before update on public.payments
   for each row execute function public.st_touch_updated_at();
+
+-- Provider customer per user (service role only: RLS on, no client grants).
+create table public.payment_customers (
+  user_id uuid not null references public.profiles (id),
+  provider public.payment_provider_id not null,
+  customer_id text not null check (char_length(customer_id) between 1 and 255),
+  created_at timestamptz not null default now(),
+  primary key (user_id, provider)
+);
+
+-- Webhook idempotency: payments-webhook inserts the provider event id with ON CONFLICT DO NOTHING
+-- (service role only).
+create table public.payment_events (
+  id text primary key check (char_length(id) between 1 and 255),
+  provider public.payment_provider_id,
+  type text,
+  payment_id uuid references public.payments (id) on delete set null,
+  received_at timestamptz not null default now()
+);
+create index payment_events_payment_idx on public.payment_events (payment_id);
 
 -- When the deposit payment method is saved (setup succeeded), the join request becomes visible
 -- to the host and the host is notified.

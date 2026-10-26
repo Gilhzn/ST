@@ -1,0 +1,58 @@
+{
+  "title": "プロフィール",
+  "edit": "プロフィールを編集",
+  "homeCity": "拠点：{city}",
+  "memberSince": "{date}から利用",
+  "sportsTitle": "種目",
+  "stats": {
+    "title": "実績",
+    "gamesPlayed": "参加した試合",
+    "gamesHosted": "主催した試合",
+    "checkInRate": "チェックイン率",
+    "favoriteVenue": "よく行く会場",
+    "none": "まだありません"
+  },
+  "positions": {
+    "title": "ポジション",
+    "primary": "メイン",
+    "secondary": "サブ",
+    "none": "ポジションは未設定です"
+  },
+  "history": {
+    "title": "履歴",
+    "empty": "まだ試合がありません。試合に参加して始めましょう。",
+    "result": "結果：{score}",
+    "noResult": "結果なし"
+  },
+  "reliabilityCard": {
+    "a11y": "信頼度カード"
+  },
+  "other": {
+    "report": "プレイヤーを通報",
+    "block": "プレイヤーをブロック",
+    "overflow": "その他のオプション",
+    "blocked": "このプレイヤーをブロックしました。"
+  },
+  "report": {
+    "title": "{name}を通報",
+    "category": {
+      "violence": "暴力・脅し",
+      "unsportsmanlike": "スポーツマンらしくない行為",
+      "harassment": "嫌がらせ",
+      "spam": "スパム",
+      "other": "その他"
+    },
+    "noteLabel": "詳細を追加（任意）",
+    "submit": "通報を送信",
+    "thanks": "ありがとうございます。確認します。"
+  },
+  "editForm": {
+    "title": "プロフィールを編集",
+    "displayNameLabel": "表示名",
+    "bioLabel": "自己紹介",
+    "bioHint": "任意。好きな種目などを書いてみましょう。",
+    "changePhoto": "写真を変更",
+    "removePhoto": "写真を削除",
+    "saved": "プロフィールを保存しました。"
+  }
+}

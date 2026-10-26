@@ -1,0 +1,157 @@
+{
+  "reliability": {
+    "title": "Fiabilité",
+    "basedOn": "Sur {days, plural, one {le dernier jour} many {les # derniers jours} other {les # derniers jours}} : {games, plural, one {# partie} many {# de parties} other {# parties}}, {checkIns, plural, one {# check-in} many {# de check-ins} other {# check-ins}}, {lateCancels, plural, one {# annulation tardive} many {# d’annulations tardives} other {# annulations tardives}}.",
+    "newPlayer": "Nouveau joueur · joue {games, plural, one {# partie} many {# de parties} other {# parties}} pour obtenir un score de fiabilité.",
+    "meter": {
+      "restrictedBelow": "Restreint en dessous de {percent}",
+      "reliableFrom": "Fiable à partir de {percent}",
+      "a11y": "Ta fiabilité est de {percent}. Restreint en dessous de {red}, fiable à partir de {green}."
+    },
+    "yellowCards": "{count, plural, one {# carton jaune · expire le {date}} many {# de cartons jaunes · le premier expire le {date}} other {# cartons jaunes · le premier expire le {date}}}",
+    "howItWorks": "Comment ça marche",
+    "how": {
+      "title": "Comment fonctionne la fiabilité",
+      "body": "Ton score montre à quelle fréquence tu viens aux parties que tu as rejointes au cours {days, plural, one {du dernier jour} many {des # derniers jours} other {des # derniers jours}}. Le check-in joue en ta faveur. Une absence joue contre toi, et une annulation tardive compte pour une demi-absence. Un score s’affiche une fois que tu as joué {games, plural, one {# partie} many {# de parties} other {# parties}}.",
+      "green": "Fiable : {percent} ou plus, sans carton jaune actif.",
+      "yellow": "Prudence : sous le niveau fiable, ou avec un carton jaune actif.",
+      "red": "Restreint : sous {percent}, ou participation aux parties suspendue.",
+      "new": "Nouveau joueur : pas encore assez de parties pour un score."
+    }
+  },
+  "sanctions": {
+    "title": "Statut du compte",
+    "kind": {
+      "yellow_card": {
+        "name": "Carton jaune",
+        "effect": "Il s’agit d’un avertissement. Il ne limite pas ce que tu peux faire.",
+        "stillAllowed": "Tu peux continuer à rejoindre des parties, à en organiser et à discuter."
+      },
+      "join_ban": {
+        "name": "Participation suspendue",
+        "effect": "Tu ne peux pas demander à rejoindre des parties.",
+        "stillAllowed": "Tu peux toujours discuter dans les parties où tu es inscrit."
+      },
+      "chat_mute": {
+        "name": "Discussion suspendue",
+        "effect": "Tu ne peux pas envoyer de messages dans les discussions des parties. Tu peux toujours les lire.",
+        "stillAllowed": "Tu peux toujours rejoindre des parties et jouer."
+      },
+      "visibility_restriction": {
+        "name": "Visibilité réduite",
+        "effect": "Ton profil est moins visible pour les autres joueurs.",
+        "stillAllowed": "Tu peux toujours rejoindre des parties et discuter."
+      },
+      "host_suspension": {
+        "name": "Organisation suspendue",
+        "effect": "Tu ne peux pas créer de nouvelles parties.",
+        "stillAllowed": "Tu peux toujours rejoindre des parties en tant que joueur."
+      },
+      "permanent_ban": {
+        "name": "Compte fermé",
+        "effect": "Tu ne peux pas utiliser Sport Talent avec ce compte.",
+        "stillAllowed": "Tu peux faire appel de cette décision."
+      }
+    },
+    "status": {
+      "active": "En vigueur",
+      "disputed": "Contestation déposée. Reste en vigueur jusqu’à la décision.",
+      "upheld": "Décision confirmée",
+      "overturned": "Décision annulée",
+      "expired": "Terminée"
+    },
+    "since": "Depuis le {date}",
+    "until": "Se termine le {date}",
+    "endsIn": "Se termine dans {duration}",
+    "ended": "Cela s’est terminé le {date}.",
+    "noEndDate": "Cette décision n’a pas de date de fin. Elle a été prise par un modérateur.",
+    "statement": {
+      "title": "Pourquoi cela s’est produit",
+      "ruleLabel": "Règle",
+      "automated": "Cette décision a été prise automatiquement à partir des enregistrements de check-in. Une personne l’examinera si tu fais appel.",
+      "human": "Un modérateur a pris cette décision.",
+      "askPerson": "Tu peux demander qu’une personne examine n’importe quelle décision.",
+      "affectsTitle": "Ce que cela change",
+      "stillAllowedTitle": "Ce que tu peux toujours faire"
+    },
+    "rule": {
+      "late_cancel": "Règle sur les annulations tardives",
+      "no_show": "Règle de présence",
+      "chat_blocks": "Règles de discussion",
+      "escalation_two_cards": "Règle sur les avertissements répétés",
+      "escalation_three_cards": "Règle sur les avertissements répétés",
+      "toxicity_reports": "Règle de respect et de sécurité",
+      "fake_venue": "Règle d’exactitude des lieux",
+      "low_host_rating": "Règle de qualité d’organisation",
+      "moderator_decision": "Examen par un modérateur"
+    },
+    "reason": {
+      "late_cancel": "Le {date}, tu as annulé « {gameTitle} » moins de {hours, plural, one {# heure} many {# d’heures} other {# heures}} avant le début. Selon la règle sur les annulations tardives, cela entraîne un carton jaune.",
+      "no_show": "Tu n’as pas fait ton check-in pour « {gameTitle} » le {date}, ce qui compte comme une absence. Selon la règle de présence, une absence entraîne un carton jaune.",
+      "chat_blocks": "{count, plural, one {# de tes messages a été bloqué} many {# de tes messages ont été bloqués} other {# de tes messages ont été bloqués}} dans des discussions de parties en {days, plural, one {# jour} many {# de jours} other {# jours}} car ils enfreignaient les règles de notre communauté. Selon les règles de discussion, des messages bloqués répétés entraînent un carton jaune et une courte suspension de la discussion.",
+      "escalation_two_cards": "Tu as {cards, plural, one {# carton jaune} many {# de cartons jaunes} other {# cartons jaunes}} actifs sur {days, plural, one {le dernier jour} many {les # derniers jours} other {les # derniers jours}}. Selon la règle sur les avertissements répétés, cela suspend pendant une durée définie ta possibilité de demander à rejoindre des parties.",
+      "escalation_three_cards": "Tu as {cards, plural, one {# carton jaune} many {# de cartons jaunes} other {# cartons jaunes}} actifs sur {days, plural, one {le dernier jour} many {les # derniers jours} other {les # derniers jours}}. Selon la règle sur les avertissements répétés, cela suspend pendant une durée plus longue ta possibilité de demander à rejoindre des parties.",
+      "toxicity_reports": "{reporters, plural, one {# joueur a signalé} many {# de joueurs ont signalé} other {# joueurs ont signalé}} ton comportement au cours {days, plural, one {du dernier jour} many {des # derniers jours} other {des # derniers jours}}, et nos vérifications ont jugé ces signalements crédibles. Selon la règle de respect et de sécurité, ton profil est moins montré aux autres joueurs pendant une courte durée.",
+      "fake_venue": "D’autres joueurs ont signalé le lieu « {venueName} » que tu as ajouté, et nous n’avons pas pu confirmer qu’il s’agit d’un vrai lieu de jeu. Selon la règle d’exactitude des lieux, ajouter des endroits qui n’existent pas peut entraîner une restriction.",
+      "low_host_rating": "{count, plural, one {Ta dernière note} many {Tes # dernières notes} other {Tes # dernières notes}} en tant qu’organisateur ont une moyenne de {average} sur 5, en dessous du niveau requis pour organiser. Selon la règle de qualité d’organisation, l’organisation est suspendue pendant que nous examinons ton compte.",
+      "moderator_decision": "Un modérateur a examiné ton compte et pris cette décision. Sa note : {reason}"
+    },
+    "fix": {
+      "title": "Comment revenir à la normale",
+      "late_cancel": "La prochaine fois, annule plus de {hours, plural, one {# heure} many {# d’heures} other {# heures}} avant le début de la partie. Ta fiabilité remonte à mesure que tu viens aux parties.",
+      "no_show": "Fais ton check-in aux prochaines parties. Si tu ne peux pas venir, annule dans l’appli le plus tôt possible. Ta fiabilité remonte à mesure que tu viens.",
+      "chat_blocks": "Reformule les messages qui enfreignent les règles, et lis les règles de la communauté en cas de doute. La discussion rouvrira à la fin de la suspension.",
+      "escalation_two_cards": "Quand la suspension prendra fin, viens à tes {games, plural, one {# partie} many {# de parties} other {# parties}} suivantes pour repasser au vert. Les cartons jaunes expirent d’eux-mêmes après {days, plural, one {# jour} many {# de jours} other {# jours}}.",
+      "escalation_three_cards": "Quand la suspension prendra fin, viens à tes {games, plural, one {# partie} many {# de parties} other {# parties}} suivantes pour repasser au vert. Les cartons jaunes expirent d’eux-mêmes après {days, plural, one {# jour} many {# de jours} other {# jours}}.",
+      "toxicity_reports": "Garde une ambiance amicale dans les discussions et les parties. La visibilité réduite prend fin d’elle-même, tu n’as rien à faire.",
+      "fake_venue": "Ajoute uniquement des endroits où l’on peut vraiment jouer. Si nous nous sommes trompés, fais appel et dis-nous comment trouver le lieu.",
+      "low_host_rating": "Lis les commentaires de tes notes d’organisateur. Tu pourras organiser de nouveau à la fin de l’examen.",
+      "moderator_decision": "Lis la note ci-dessus. Si tu n’es pas d’accord, tu peux faire appel.",
+      "expiresOn": "Ce carton jaune expire le {date}.",
+      "communityRules": "Règles de la communauté"
+    },
+    "dispute": {
+      "cta": "Contester ce carton",
+      "window": "Tu peux contester ce carton jusqu’au {date}.",
+      "windowClosed": "Le délai de contestation est terminé, mais tu peux toujours faire appel."
+    },
+    "appeal": {
+      "cta": "Faire appel de cette décision",
+      "title": "Raconte-nous ce qui s’est passé",
+      "reasonLabel": "Raison",
+      "reason": {
+        "was_present": "J’étais à la partie",
+        "cancelled_in_time": "J’ai annulé à temps",
+        "technical_problem": "Le GPS ou l’appli n’a pas fonctionné",
+        "not_my_message": "Ce n’est pas moi qui ai écrit cela",
+        "disagree": "Je ne pense pas avoir enfreint la règle",
+        "other": "Autre chose"
+      },
+      "messageLabel": "Que s’est-il passé ?",
+      "messageHint": "Écris au moins {min, plural, one {# caractère} many {# de caractères} other {# caractères}}.",
+      "counter": "{count} / {max}",
+      "evidenceLabel": "Ajoute une capture d’écran (facultatif)",
+      "contactLanguage": "Langue de notre réponse",
+      "submit": "Envoyer l’appel",
+      "received": "Appel reçu. Une personne l’examinera, généralement sous {hours, plural, one {# heure} many {# d’heures} other {# heures}}. Nous te préviendrons.",
+      "draftSaved": "Brouillon enregistré. Nous le garderons jusqu’à ce que tu sois de nouveau en ligne.",
+      "timeline": {
+        "received": "Reçu",
+        "inReview": "En cours d’examen",
+        "decided": "Décidé"
+      },
+      "outcome": {
+        "upheld": "La décision est maintenue.",
+        "overturned": "La décision a été annulée."
+      },
+      "reviewerNote": "Note de la personne en charge de l’examen"
+    }
+  },
+  "hostRestriction": {
+    "title": "Tu ne peux pas organiser de partie pour le moment",
+    "body": "L’organisation de parties est suspendue sur ton compte jusqu’au {date}.",
+    "gamesStay": "Les parties que tu organises déjà restent actives.",
+    "gamesCancelled": "Les parties que tu organisais et qui n’avaient pas commencé ont été annulées, et les joueurs ont été prévenus.",
+    "seeDetails": "Voir pourquoi"
+  }
+}

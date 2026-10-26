@@ -48,6 +48,14 @@ export interface SetupResult {
   paymentMethodId: string | null;
 }
 
+/** A SetupIntent as retrieved later (e.g. by the T−24h hold job). */
+export interface SetupInfo {
+  ref: string;
+  status: PaymentIntentStatus;
+  customerId: string | null;
+  paymentMethodId: string | null;
+}
+
 export interface DepositInput {
   customerId: string;
   amount: Money;
@@ -185,6 +193,8 @@ export interface PaymentProvider {
   releaseDeposit(input: ReleaseInput): Promise<ReleaseResult>;
   refund(input: RefundInput): Promise<RefundResult>;
   retrieveIntent(ref: string): Promise<IntentResult>;
+  /** Saved method and customer of a completed setup. */
+  retrieveSetup(ref: string): Promise<SetupInfo>;
   /** Detaches every saved method of the customer (account deletion). Returns how many were detached. */
   detachPaymentMethods(customerId: string): Promise<number>;
   /** Pro subscriptions (web) — later phase. */

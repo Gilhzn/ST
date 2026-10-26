@@ -1,0 +1,279 @@
+{
+  "venue": {
+    "sportsHere": "Sports disponibles ici",
+    "directions": "Itinéraire",
+    "overflow": "Plus d’options",
+    "rating": {
+      "summary": "{rating} · {count, plural, one {# avis} many {# d’avis} other {# avis}}",
+      "none": "Aucun avis pour l’instant",
+      "scoreOf5": "{score} sur 5",
+      "title": "Avis"
+    },
+    "attribute": {
+      "surface": "Surface",
+      "lighting": "Éclairage",
+      "goals_nets": "Buts et filets",
+      "hoops": "Paniers",
+      "nets": "Filets",
+      "walls": "Parois",
+      "water_access": "Accès à l’eau",
+      "net": "Filet"
+    },
+    "attributeValue": {
+      "natural_grass": "Gazon naturel",
+      "artificial_turf": "Gazon synthétique",
+      "hard": "Surface dure",
+      "indoor": "Couvert",
+      "outdoor_hard": "Surface dure extérieure",
+      "indoor_wood": "Parquet intérieur",
+      "rubber": "Caoutchouc",
+      "clay": "Terre battue",
+      "grass": "Gazon",
+      "carpet": "Moquette",
+      "glass": "Verre",
+      "masonry": "Maçonnerie",
+      "track": "Piste",
+      "road": "Route",
+      "trail": "Sentier",
+      "mixed": "Mixte",
+      "sand": "Sable"
+    },
+    "upcoming": "Prochaines parties ici",
+    "noUpcoming": "Aucune partie ici pour l’instant.",
+    "startGame": "Créer une partie ici",
+    "underReview": "Ce lieu est en cours de vérification.",
+    "rate": {
+      "cta": "Noter ce lieu",
+      "onlyAfterPlaying": "Tu peux noter un lieu après y avoir joué.",
+      "title": "Noter {venue}",
+      "overall": "Note globale",
+      "optionalHint": "Passe ce dont tu n’es pas sûr.",
+      "submit": "Envoyer la note",
+      "thanks": "Merci d’avoir noté ce lieu."
+    },
+    "report": {
+      "cta": "Pas de lieu ici ? Signale-le.",
+      "title": "Quel est le problème avec ce lieu ?",
+      "reason": {
+        "no_venue_here": "Il n’y a pas de lieu ici",
+        "wrong_location": "L’emplacement est incorrect",
+        "closed": "Il est fermé",
+        "duplicate": "Il apparaît en double",
+        "unsafe": "Il n’est pas sûr",
+        "other": "Autre chose"
+      },
+      "submit": "Envoyer le signalement",
+      "thanks": "Merci, nous allons vérifier. Un lieu est masqué pendant la vérification dès que {count, plural, one {# personne l’a signalé} many {# de personnes l’ont signalé} other {# personnes l’ont signalé}}.",
+      "done": "Tu as déjà signalé ce lieu"
+    }
+  },
+  "wizard": {
+    "title": "Créer une partie",
+    "stepOf": "Étape {current} sur {total}",
+    "stepName": {
+      "sport": "Sport",
+      "where": "Où",
+      "when": "Quand",
+      "who": "Qui",
+      "deposit": "Caution"
+    },
+    "sport": {
+      "title": "Quel sport ?",
+      "gameTitleLabel": "Titre de la partie",
+      "gameTitleHint": "Facultatif. Par exemple « Foot du dimanche ».",
+      "formatTitle": "Format",
+      "formatVs": "{a} contre {b}",
+      "singles": "Simple",
+      "doubles": "Double",
+      "teamCount": "Nombre d’équipes"
+    },
+    "where": {
+      "title": "Où vas-tu jouer ?",
+      "search": "Recherche un lieu ou une adresse",
+      "pickOnMap": "Choisir sur la carte",
+      "dropPin": "Placer une épingle",
+      "venueNameLabel": "Nom du lieu",
+      "venueNameHint": "Donne un nom à l’endroit pour que les joueurs le trouvent.",
+      "hideExactLabel": "Masquer l’emplacement exact tant que je n’ai pas validé les joueurs",
+      "hideExactHelp": "Les joueurs voient d’abord la zone. Tu partages l’endroit exact après les avoir validés."
+    },
+    "when": {
+      "title": "Quand ?",
+      "date": "Date",
+      "start": "Heure de début",
+      "duration": "Durée",
+      "repeatWeekly": "Répéter chaque semaine",
+      "comingSoon": "Bientôt disponible"
+    },
+    "who": {
+      "title": "Qui peut participer ?",
+      "capacity": "Joueurs",
+      "capacityRange": "De {min} à {max} joueurs",
+      "visibility": "Visibilité",
+      "public": "Publique",
+      "publicHelp": "Toute personne à proximité peut trouver cette partie.",
+      "private": "Privée",
+      "privateHelp": "Seules les personnes qui ont ton lien d’invitation peuvent voir cette partie.",
+      "womenOnly": "Femmes uniquement",
+      "womenOnlyHelp": "Seules les femmes peuvent rejoindre cette partie.",
+      "minReliability": "Fiabilité minimale",
+      "minAny": "Tout le monde",
+      "minCaution": "Prudence ou mieux",
+      "minReliable": "Fiables uniquement",
+      "approval": "Participation",
+      "approvalAuto": "Valider les joueurs automatiquement",
+      "approvalManual": "Je valide chaque joueur"
+    },
+    "deposit": {
+      "title": "Caution (facultatif)",
+      "toggle": "Demander une caution",
+      "amount": "Montant de la caution",
+      "explain": "Les joueurs bloquent {amount} sur leur carte, remboursables. Le blocage est levé après le check-in et conservé s’ils ne viennent pas.",
+      "currencyNote": "La devise dépend du pays du lieu."
+    },
+    "review": {
+      "title": "Vérifie ta partie",
+      "edit": "Modifier",
+      "publish": "Publier la partie",
+      "publishing": "Publication…",
+      "offlineHint": "Publie quand tu seras de nouveau en ligne."
+    },
+    "published": {
+      "title": "Ta partie est en ligne",
+      "shareTitle": "Partage ta partie",
+      "whatsapp": "Partager sur WhatsApp",
+      "copyLink": "Copier le lien",
+      "linkCopied": "Lien copié.",
+      "showQr": "Afficher le QR code"
+    },
+    "discard": {
+      "title": "Abandonner le brouillon ?",
+      "body": "Tu perdras ce que tu as saisi jusqu’ici.",
+      "keep": "Continuer la modification",
+      "discard": "Abandonner le brouillon",
+      "saved": "Brouillon enregistré sur cet appareil."
+    },
+    "validation": {
+      "sportRequired": "Choisis un sport.",
+      "venueRequired": "Choisis un lieu ou place une épingle.",
+      "startInPast": "Choisis une heure de début dans le futur.",
+      "capacityRange": "Choisis entre {min} et {max} joueurs.",
+      "depositRange": "Saisis un montant entre {min} et {max}."
+    },
+    "hostSuspended": {
+      "title": "Tu ne peux pas organiser de partie pour le moment",
+      "body": "L’organisation de parties est suspendue sur ton compte. Consulte la raison et la date de fin.",
+      "action": "Voir les détails"
+    }
+  },
+  "details": {
+    "hiddenLocation": "L’endroit exact est partagé une fois que l’organisateur t’a validé",
+    "host": {
+      "approve": "Valider",
+      "reject": "Refuser",
+      "rejectReasonLabel": "Raison (facultatif)",
+      "rejectTemplate": {
+        "full": "La partie est complète.",
+        "level": "Cette partie n’est pas vraiment adaptée.",
+        "unknown": "Je ne te connais pas encore. Écris d’abord au groupe."
+      },
+      "pendingCount": "{count, plural, one {# demande attend} many {# de demandes attendent} other {# demandes attendent}} ta réponse",
+      "edit": "Modifier la partie",
+      "cancelGame": "Annuler la partie",
+      "cancelReasonLabel": "Raison",
+      "cancelHelp": "Toutes les personnes inscrites seront prévenues.",
+      "cancelConfirm": "Annuler cette partie",
+      "showQr": "Afficher le QR de check-in",
+      "teams": "Équipes",
+      "enterResult": "Saisir le résultat"
+    },
+    "facts": {
+      "players": "{joined} joueurs sur {capacity}",
+      "waitlist": "{count, plural, one {# joueur en liste d’attente} many {# de joueurs en liste d’attente} other {# joueurs en liste d’attente}}",
+      "deposit": "Caution de {amount}",
+      "womenOnly": "Femmes uniquement",
+      "private": "Partie privée",
+      "format": "Format : {format}"
+    },
+    "sections": {
+      "players": "Joueurs",
+      "requests": "Demandes",
+      "waitlist": "Liste d’attente"
+    },
+    "noPlayersYet": "Aucun joueur pour l’instant. Sois le premier à participer.",
+    "action": {
+      "join": "Rejoindre la partie",
+      "request": "Demander à participer",
+      "joinWaitlist": "Rejoindre la liste d’attente · n° {position}",
+      "cancelRequest": "Annuler la demande",
+      "waitingForHost": "En attente de l’organisateur",
+      "checkIn": "Faire le check-in",
+      "checkInOpens": "Le check-in ouvre {time}",
+      "chat": "Discussion",
+      "directions": "Itinéraire",
+      "cantMakeIt": "Je ne peux pas venir",
+      "leaveWaitlist": "Quitter la liste d’attente",
+      "waitlistPosition": "Tu es n° {position} sur la liste d’attente."
+    },
+    "outcome": {
+      "joined": "C’est bon, ta place est réservée. À bientôt !",
+      "requestSent": "Demande envoyée. L’organisateur répondra bientôt.",
+      "waitlisted": "Tu es sur la liste d’attente. Nous te préviendrons si une place se libère."
+    },
+    "cancel": {
+      "title": "Annuler ta place ?",
+      "lateWarning": "Annuler moins de {hours, plural, one {# heure} many {# d’heures} other {# heures}} avant le début compte comme une annulation tardive et te vaut un carton jaune.",
+      "freeUntil": "Tu peux annuler sans pénalité jusqu’à {time}.",
+      "confirm": "Annuler ma place",
+      "keep": "Garder ma place"
+    },
+    "deposit": {
+      "disclosure": "Blocage de {amount} · levé après le check-in",
+      "sheetTitle": "Blocage de la caution",
+      "body": "Nous bloquerons {amount} sur ta carte le {time}. Le blocage est levé après ton check-in. Si tu ne viens pas et que tu n’annules pas à temps, la somme est conservée.",
+      "continue": "Passer au paiement",
+      "status": {
+        "held": "Bloquée",
+        "released": "Libérée",
+        "forfeited": "Conservée",
+        "failed": "Échec du blocage"
+      }
+    },
+    "banner": {
+      "cancelled": "Cette partie a été annulée. Raison : {reason}",
+      "cancelledNoReason": "Cette partie a été annulée.",
+      "ended": "Cette partie est terminée.",
+      "rateHost": "Noter l’organisateur"
+    }
+  },
+  "invite": {
+    "title": "Tu as reçu une invitation",
+    "join": "Rejoindre",
+    "signUpToJoin": "S’inscrire pour rejoindre",
+    "expired": "Cette invitation a expiré. Demande un nouveau lien à l’organisateur."
+  },
+  "teams": {
+    "title": "Équipes",
+    "empty": "Les équipes apparaissent dès que les joueurs font leur check-in.",
+    "teamName": "Équipe {letter}",
+    "balance": "Équilibré · écart de niveau {diff}",
+    "coverage": "Couverture des postes : {summary}",
+    "reshuffle": "Mélanger à nouveau",
+    "movePlayer": "Déplacer un joueur",
+    "moveTo": "Déplacer vers : {team}",
+    "lock": "Verrouiller les équipes",
+    "locked": "Les équipes sont verrouillées. Les joueurs ont été prévenus."
+  },
+  "result": {
+    "title": "Saisir le résultat",
+    "window": "Tu peux saisir le résultat pendant encore {duration}.",
+    "scoreFor": "Score : {team}",
+    "increase": "Ajouter un point à : {team}",
+    "decrease": "Retirer un point à : {team}",
+    "mvpLabel": "Meilleur joueur (facultatif)",
+    "didntPlay": "Nous n’avons pas joué",
+    "submit": "Enregistrer le résultat",
+    "saved": "Résultat enregistré. Les joueurs peuvent le contester pendant {hours, plural, one {# heure} many {# d’heures} other {# heures}}.",
+    "closed": "Le délai de saisie du résultat s’est terminé à {time}."
+  }
+}

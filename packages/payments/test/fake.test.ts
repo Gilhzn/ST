@@ -98,6 +98,13 @@ describe('FakeProvider', () => {
     await expect(other.parseWebhook(await p.signWebhook(event!, NOW))).rejects.toThrow(/invalid signature/);
   });
 
+  it('retrieves completed setups', async () => {
+    const p = new FakeProvider({ now: () => NOW });
+    const { customerId, setup } = await setupCustomer(p);
+    await expect(p.retrieveSetup(setup.ref)).resolves.toEqual({ ref: setup.ref, status: 'succeeded', customerId, paymentMethodId: 'pm_card_visa' });
+    await expect(p.retrieveSetup('nope')).rejects.toMatchObject({ code: 'not_found' });
+  });
+
   it('detaches payment methods', async () => {
     const p = new FakeProvider({ now: () => NOW });
     const { customerId } = await setupCustomer(p);

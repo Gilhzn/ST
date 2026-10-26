@@ -1,0 +1,157 @@
+{
+  "reliability": {
+    "title": "信頼度",
+    "basedOn": "直近{days, plural, other {#日}}の実績：{games, plural, other {#試合}}、{checkIns, plural, other {#回のチェックイン}}、{lateCancels, plural, other {#回の直前キャンセル}}。",
+    "newPlayer": "新規プレイヤー · {games, plural, other {#試合}}プレーすると信頼度スコアが表示されます。",
+    "meter": {
+      "restrictedBelow": "{percent}未満は制限中",
+      "reliableFrom": "{percent}以上で信頼できる",
+      "a11y": "あなたの信頼度は{percent}です。{red}未満は制限中、{green}以上で信頼できる状態です。"
+    },
+    "yellowCards": "{count, plural, other {イエローカード#枚 · 最も古いカードは{date}に失効}}",
+    "howItWorks": "仕組みを見る",
+    "how": {
+      "title": "信頼度の仕組み",
+      "body": "スコアは、直近{days, plural, other {#日}}に参加した試合へどのくらい出席したかを示します。チェックインはプラスに、無断欠席はマイナスに働き、直前キャンセルは無断欠席の半分として数えます。{games, plural, other {#試合}}プレーするとスコアが表示されます。",
+      "green": "信頼できる：{percent}以上で、有効なイエローカードがない状態。",
+      "yellow": "注意：信頼できる水準に届かない、または有効なイエローカードがある状態。",
+      "red": "制限中：{percent}未満、または試合への参加が一時停止されている状態。",
+      "new": "新規プレイヤー：スコアを出すための試合数がまだ足りません。"
+    }
+  },
+  "sanctions": {
+    "title": "アカウントの状態",
+    "kind": {
+      "yellow_card": {
+        "name": "イエローカード",
+        "effect": "これは警告です。できることは制限されません。",
+        "stillAllowed": "引き続き、試合への参加・主催・チャットができます。"
+      },
+      "join_ban": {
+        "name": "参加の一時停止",
+        "effect": "試合への参加をリクエストできません。",
+        "stillAllowed": "参加中の試合では、引き続きチャットできます。"
+      },
+      "chat_mute": {
+        "name": "チャットの一時停止",
+        "effect": "試合のチャットにメッセージを送れません。閲覧はできます。",
+        "stillAllowed": "引き続き、試合に参加してプレーできます。"
+      },
+      "visibility_restriction": {
+        "name": "表示の制限",
+        "effect": "あなたのプロフィールがほかのプレイヤーに表示されにくくなります。",
+        "stillAllowed": "引き続き、試合への参加とチャットができます。"
+      },
+      "host_suspension": {
+        "name": "主催の一時停止",
+        "effect": "新しい試合を作成できません。",
+        "stillAllowed": "引き続き、プレイヤーとして試合に参加できます。"
+      },
+      "permanent_ban": {
+        "name": "アカウント停止",
+        "effect": "このアカウントではSport Talentを利用できません。",
+        "stillAllowed": "この決定に対して異議を申し立てられます。"
+      }
+    },
+    "status": {
+      "active": "有効",
+      "disputed": "異議申し立て済み。判断が出るまで有効です。",
+      "upheld": "決定を維持",
+      "overturned": "決定を取り消し",
+      "expired": "終了"
+    },
+    "since": "{date}から",
+    "until": "{date}まで",
+    "endsIn": "あと{duration}で終了",
+    "ended": "{date}に終了しました。",
+    "noEndDate": "この決定に終了日はありません。モデレーターが決定しました。",
+    "statement": {
+      "title": "理由",
+      "ruleLabel": "ルール",
+      "automated": "これはチェックイン記録に基づいて自動的に決定されました。異議を申し立てると、担当者が確認します。",
+      "human": "この決定はモデレーターが行いました。",
+      "askPerson": "どの決定についても、担当者による確認を求められます。",
+      "affectsTitle": "影響すること",
+      "stillAllowedTitle": "引き続きできること"
+    },
+    "rule": {
+      "late_cancel": "直前キャンセルのルール",
+      "no_show": "出席のルール",
+      "chat_blocks": "チャットのルール",
+      "escalation_two_cards": "警告が重なった場合のルール",
+      "escalation_three_cards": "警告が重なった場合のルール",
+      "toxicity_reports": "尊重と安全のルール",
+      "fake_venue": "会場情報の正確性のルール",
+      "low_host_rating": "主催品質のルール",
+      "moderator_decision": "モデレーターによる確認"
+    },
+    "reason": {
+      "late_cancel": "{date}に、「{gameTitle}」の開始の{hours, plural, other {#時間}}未満前に参加を取り消しました。直前キャンセルのルールにより、イエローカードが付きます。",
+      "no_show": "{date}の「{gameTitle}」にチェックインがなく、無断欠席として扱われます。出席のルールにより、無断欠席にはイエローカードが付きます。",
+      "chat_blocks": "{days, plural, other {#日}}以内に、試合のチャットで{count, plural, other {#件のメッセージ}}がコミュニティルール違反のためブロックされました。チャットのルールにより、ブロックが重なるとイエローカードが付き、チャットが短時間停止されます。",
+      "escalation_two_cards": "直近{days, plural, other {#日}}に付いた有効なイエローカードが{cards, plural, other {#枚}}あります。警告が重なった場合のルールにより、一定期間、試合への参加リクエストができなくなります。",
+      "escalation_three_cards": "直近{days, plural, other {#日}}に付いた有効なイエローカードが{cards, plural, other {#枚}}あります。警告が重なった場合のルールにより、より長い期間、試合への参加リクエストができなくなります。",
+      "toxicity_reports": "直近{days, plural, other {#日}}に、{reporters, plural, other {#人のプレイヤー}}があなたの行動を通報し、確認の結果、信頼できる通報と判断しました。尊重と安全のルールにより、しばらくの間、あなたのプロフィールはほかのプレイヤーに表示されにくくなります。",
+      "fake_venue": "あなたが追加した会場「{venueName}」についてほかのプレイヤーから報告があり、実際にプレーできる場所であることを確認できませんでした。会場情報の正確性のルールにより、実在しない場所を追加すると制限の対象になることがあります。",
+      "low_host_rating": "主催者としての直近{count, plural, other {#件}}の評価が平均{average}（5点満点）で、主催に必要な水準を下回りました。主催品質のルールにより、アカウントを確認する間、主催は一時停止されます。",
+      "moderator_decision": "モデレーターがアカウントを確認し、この決定を行いました。コメント：{reason}"
+    },
+    "fix": {
+      "title": "元の状態に戻すには",
+      "late_cancel": "次回は、試合開始の{hours, plural, other {#時間}}より前に取り消してください。試合に出席するほど、信頼度は回復します。",
+      "no_show": "次の試合ではチェックインしてください。参加できないときは、できるだけ早くアプリで取り消してください。出席を重ねるほど、信頼度は回復します。",
+      "chat_blocks": "ルールに反するメッセージは書き直してください。迷ったときはコミュニティルールをご確認ください。停止期間が終わるとチャットは再開されます。",
+      "escalation_two_cards": "停止期間が終わったら、次の{games, plural, other {#試合}}に出席すると、緑の状態に戻れます。イエローカードは{days, plural, other {#日}}後に自然に失効します。",
+      "escalation_three_cards": "停止期間が終わったら、次の{games, plural, other {#試合}}に出席すると、緑の状態に戻れます。イエローカードは{days, plural, other {#日}}後に自然に失効します。",
+      "toxicity_reports": "チャットや試合では、引き続き気持ちよく過ごせるよう心がけてください。表示の制限は自動的に終了するので、特に操作は必要ありません。",
+      "fake_venue": "実際にプレーできる場所だけを追加してください。こちらの判断に誤りがあれば、異議を申し立てて、会場の探し方を教えてください。",
+      "low_host_rating": "主催者評価のフィードバックをご確認ください。確認が終わると、再び主催できます。",
+      "moderator_decision": "上記のコメントをご確認ください。ご不満がある場合は、異議を申し立てられます。",
+      "expiresOn": "このイエローカードは{date}に失効します。",
+      "communityRules": "コミュニティルール"
+    },
+    "dispute": {
+      "cta": "このカードに異議を申し立てる",
+      "window": "{date}まで、このカードに異議を申し立てられます。",
+      "windowClosed": "異議申し立ての期間は終了しましたが、引き続き不服申し立てができます。"
+    },
+    "appeal": {
+      "cta": "この決定に不服を申し立てる",
+      "title": "何があったか教えてください",
+      "reasonLabel": "理由",
+      "reason": {
+        "was_present": "試合に出席していた",
+        "cancelled_in_time": "期限内に取り消した",
+        "technical_problem": "GPSまたはアプリが正常に動かなかった",
+        "not_my_message": "自分が書いたものではない",
+        "disagree": "ルールに違反していないと思う",
+        "other": "その他"
+      },
+      "messageLabel": "何がありましたか？",
+      "messageHint": "{min, plural, other {#文字}}以上で入力してください。",
+      "counter": "{count} / {max}",
+      "evidenceLabel": "スクリーンショットを追加（任意）",
+      "contactLanguage": "返信の言語",
+      "submit": "申し立てを送信",
+      "received": "申し立てを受け付けました。担当者が確認します（通常は{hours, plural, other {#時間}}以内）。結果はお知らせします。",
+      "draftSaved": "下書きを保存しました。オンラインに戻るまで保管します。",
+      "timeline": {
+        "received": "受付済み",
+        "inReview": "確認中",
+        "decided": "判断済み"
+      },
+      "outcome": {
+        "upheld": "決定は維持されました。",
+        "overturned": "決定は取り消されました。"
+      },
+      "reviewerNote": "確認担当者のコメント"
+    }
+  },
+  "hostRestriction": {
+    "title": "現在は主催できません",
+    "body": "アカウントの主催機能は{date}まで一時停止されています。",
+    "gamesStay": "すでに主催している試合はそのまま有効です。",
+    "gamesCancelled": "まだ始まっていない主催中の試合は中止され、プレイヤーに通知されました。",
+    "seeDetails": "理由を見る"
+  }
+}

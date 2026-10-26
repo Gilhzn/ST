@@ -1,0 +1,279 @@
+{
+  "venue": {
+    "sportsHere": "ここでできる種目",
+    "directions": "経路",
+    "overflow": "その他のオプション",
+    "rating": {
+      "summary": "{rating} · {count, plural, other {#件の評価}}",
+      "none": "まだ評価がありません",
+      "scoreOf5": "5段階中{score}",
+      "title": "評価"
+    },
+    "attribute": {
+      "surface": "路面",
+      "lighting": "照明",
+      "goals_nets": "ゴールとネット",
+      "hoops": "リング",
+      "nets": "ネット",
+      "walls": "壁",
+      "water_access": "給水設備",
+      "net": "ネット"
+    },
+    "attributeValue": {
+      "natural_grass": "天然芝",
+      "artificial_turf": "人工芝",
+      "hard": "ハードコート",
+      "indoor": "屋内",
+      "outdoor_hard": "屋外ハードコート",
+      "indoor_wood": "屋内木床",
+      "rubber": "ゴム",
+      "clay": "クレー",
+      "grass": "芝",
+      "carpet": "カーペット",
+      "glass": "ガラス",
+      "masonry": "石造り",
+      "track": "トラック",
+      "road": "ロード",
+      "trail": "トレイル",
+      "mixed": "複合",
+      "sand": "砂"
+    },
+    "upcoming": "ここで開催予定の試合",
+    "noUpcoming": "ここではまだ試合がありません。",
+    "startGame": "ここで試合を開催",
+    "underReview": "この会場は確認中です。",
+    "rate": {
+      "cta": "この会場を評価",
+      "onlyAfterPlaying": "会場の評価は、そこでプレーしたあとにできます。",
+      "title": "{venue}を評価",
+      "overall": "総合評価",
+      "optionalHint": "わからない項目はスキップできます。",
+      "submit": "評価を送信",
+      "thanks": "会場の評価ありがとうございます。"
+    },
+    "report": {
+      "cta": "会場がない？ 報告する",
+      "title": "この会場にどんな問題がありますか？",
+      "reason": {
+        "no_venue_here": "ここに会場がない",
+        "wrong_location": "場所が違う",
+        "closed": "閉鎖されている",
+        "duplicate": "重複して登録されている",
+        "unsafe": "安全ではない",
+        "other": "その他"
+      },
+      "submit": "報告を送信",
+      "thanks": "ありがとうございます。確認します。{count, plural, other {#人}}から報告があった会場は、確認中は非表示になります。",
+      "done": "この会場はすでに報告済みです"
+    }
+  },
+  "wizard": {
+    "title": "試合を作成",
+    "stepOf": "ステップ{current}/{total}",
+    "stepName": {
+      "sport": "種目",
+      "where": "場所",
+      "when": "日時",
+      "who": "参加者",
+      "deposit": "デポジット"
+    },
+    "sport": {
+      "title": "どの種目ですか？",
+      "gameTitleLabel": "試合のタイトル",
+      "gameTitleHint": "任意。例：「日曜サッカー」",
+      "formatTitle": "形式",
+      "formatVs": "{a}対{b}",
+      "singles": "シングルス",
+      "doubles": "ダブルス",
+      "teamCount": "チーム数"
+    },
+    "where": {
+      "title": "どこでプレーしますか？",
+      "search": "会場または住所を検索",
+      "pickOnMap": "地図で選ぶ",
+      "dropPin": "ピンを置く",
+      "venueNameLabel": "会場名",
+      "venueNameHint": "プレイヤーが見つけやすいように、場所の名前を付けてください。",
+      "hideExactLabel": "参加を承認するまで正確な場所を非表示にする",
+      "hideExactHelp": "プレイヤーにはまずエリアだけが表示されます。承認した人にだけ正確な場所を共有します。"
+    },
+    "when": {
+      "title": "いつですか？",
+      "date": "日付",
+      "start": "開始時刻",
+      "duration": "所要時間",
+      "repeatWeekly": "毎週繰り返す",
+      "comingSoon": "近日公開"
+    },
+    "who": {
+      "title": "誰が参加できますか？",
+      "capacity": "人数",
+      "capacityRange": "{min}〜{max}人",
+      "visibility": "公開範囲",
+      "public": "公開",
+      "publicHelp": "近くにいる誰でもこの試合を見つけられます。",
+      "private": "非公開",
+      "privateHelp": "招待リンクを知っている人だけがこの試合を見られます。",
+      "womenOnly": "女性限定",
+      "womenOnlyHelp": "この試合には女性のみ参加できます。",
+      "minReliability": "最低信頼度",
+      "minAny": "指定なし",
+      "minCaution": "「注意」以上",
+      "minReliable": "信頼できる人のみ",
+      "approval": "参加方法",
+      "approvalAuto": "自動で承認する",
+      "approvalManual": "一人ずつ承認する"
+    },
+    "deposit": {
+      "title": "デポジット（任意）",
+      "toggle": "デポジットを求める",
+      "amount": "デポジット額",
+      "explain": "プレイヤーは{amount}の返金可能なデポジットを仮押さえします。チェックイン後に解除され、来なかった場合は返金されません。",
+      "currencyNote": "通貨は会場のある国・地域によって決まります。"
+    },
+    "review": {
+      "title": "内容を確認",
+      "edit": "編集",
+      "publish": "試合を公開",
+      "publishing": "公開中…",
+      "offlineHint": "オンラインに戻ってから公開してください。"
+    },
+    "published": {
+      "title": "試合を公開しました",
+      "shareTitle": "試合を共有",
+      "whatsapp": "WhatsAppで共有",
+      "copyLink": "リンクをコピー",
+      "linkCopied": "リンクをコピーしました。",
+      "showQr": "QRコードを表示"
+    },
+    "discard": {
+      "title": "下書きを破棄しますか？",
+      "body": "ここまでに入力した内容が失われます。",
+      "keep": "編集を続ける",
+      "discard": "下書きを破棄",
+      "saved": "下書きをこの端末に保存しました。"
+    },
+    "validation": {
+      "sportRequired": "種目を選んでください。",
+      "venueRequired": "会場を選ぶか、ピンを置いてください。",
+      "startInPast": "未来の開始時刻を選んでください。",
+      "capacityRange": "{min}〜{max}人の範囲で選んでください。",
+      "depositRange": "{min}〜{max}の金額を入力してください。"
+    },
+    "hostSuspended": {
+      "title": "現在は主催できません",
+      "body": "アカウントの主催機能が一時停止されています。理由と終了日をご確認ください。",
+      "action": "詳細を見る"
+    }
+  },
+  "details": {
+    "hiddenLocation": "正確な場所は、主催者が承認したあとに共有されます",
+    "host": {
+      "approve": "承認",
+      "reject": "却下",
+      "rejectReasonLabel": "理由（任意）",
+      "rejectTemplate": {
+        "full": "この試合は満員です。",
+        "level": "この試合には合わないようです。",
+        "unknown": "まだお互いを知らないため、先にグループへメッセージをお願いします。"
+      },
+      "pendingCount": "{count, plural, other {#件のリクエストが承認待ちです}}",
+      "edit": "試合を編集",
+      "cancelGame": "試合を中止",
+      "cancelReasonLabel": "理由",
+      "cancelHelp": "参加している全員に通知されます。",
+      "cancelConfirm": "この試合を中止する",
+      "showQr": "チェックインQRを表示",
+      "teams": "チーム",
+      "enterResult": "結果を入力"
+    },
+    "facts": {
+      "players": "{capacity}人中{joined}人",
+      "waitlist": "{count, plural, other {キャンセル待ち#人}}",
+      "deposit": "デポジット{amount}",
+      "womenOnly": "女性限定",
+      "private": "非公開の試合",
+      "format": "形式：{format}"
+    },
+    "sections": {
+      "players": "参加者",
+      "requests": "リクエスト",
+      "waitlist": "キャンセル待ち"
+    },
+    "noPlayersYet": "まだ参加者がいません。最初に参加しましょう。",
+    "action": {
+      "join": "試合に参加",
+      "request": "参加をリクエスト",
+      "joinWaitlist": "キャンセル待ちに登録 · {position}番目",
+      "cancelRequest": "リクエストを取り消す",
+      "waitingForHost": "主催者の承認待ち",
+      "checkIn": "チェックイン",
+      "checkInOpens": "チェックインは{time}に開始",
+      "chat": "チャット",
+      "directions": "経路",
+      "cantMakeIt": "参加できなくなった",
+      "leaveWaitlist": "キャンセル待ちをやめる",
+      "waitlistPosition": "キャンセル待ちの{position}番目です。"
+    },
+    "outcome": {
+      "joined": "参加が決まりました。当日お会いしましょう。",
+      "requestSent": "リクエストを送信しました。主催者からの返信をお待ちください。",
+      "waitlisted": "キャンセル待ちに登録しました。空きが出たらお知らせします。"
+    },
+    "cancel": {
+      "title": "参加を取り消しますか？",
+      "lateWarning": "開始の{hours, plural, other {#時間}}未満前に取り消すと直前キャンセルとなり、イエローカードが付きます。",
+      "freeUntil": "{time}までなら、ペナルティなしで取り消せます。",
+      "confirm": "参加を取り消す",
+      "keep": "参加を続ける"
+    },
+    "deposit": {
+      "disclosure": "{amount}を仮押さえ · チェックイン後に解除",
+      "sheetTitle": "デポジットの仮押さえ",
+      "body": "{time}に、カードで{amount}を仮押さえします。チェックインすると解除されます。来場せず、期限内に取り消さなかった場合は返金されません。",
+      "continue": "支払いに進む",
+      "status": {
+        "held": "仮押さえ中",
+        "released": "解除済み",
+        "forfeited": "没収",
+        "failed": "仮押さえに失敗"
+      }
+    },
+    "banner": {
+      "cancelled": "この試合は中止されました。理由：{reason}",
+      "cancelledNoReason": "この試合は中止されました。",
+      "ended": "この試合は終了しました。",
+      "rateHost": "主催者を評価"
+    }
+  },
+  "invite": {
+    "title": "招待が届いています",
+    "join": "参加する",
+    "signUpToJoin": "登録して参加",
+    "expired": "この招待は期限切れです。主催者に新しいリンクをお願いしてください。"
+  },
+  "teams": {
+    "title": "チーム",
+    "empty": "プレイヤーがチェックインすると、チームが表示されます。",
+    "teamName": "チーム{letter}",
+    "balance": "バランス良好 · レーティング差{diff}",
+    "coverage": "ポジションの充足：{summary}",
+    "reshuffle": "もう一度シャッフル",
+    "movePlayer": "プレイヤーを移動",
+    "moveTo": "{team}へ移動",
+    "lock": "チームを確定",
+    "locked": "チームを確定しました。プレイヤーに通知しました。"
+  },
+  "result": {
+    "title": "結果を入力",
+    "window": "あと{duration}、結果を入力できます。",
+    "scoreFor": "{team}の得点",
+    "increase": "{team}に1点追加",
+    "decrease": "{team}から1点減らす",
+    "mvpLabel": "MVP（任意）",
+    "didntPlay": "試合は行わなかった",
+    "submit": "結果を保存",
+    "saved": "結果を保存しました。プレイヤーは{hours, plural, other {#時間}}以内に異議を申し立てられます。",
+    "closed": "結果の入力期間は{time}に終了しました。"
+  }
+}

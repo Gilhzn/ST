@@ -14,7 +14,10 @@ function mockClient() {
       create: vi.fn(async () => ({ id: 'cus_1' })),
       listPaymentMethods: vi.fn(),
     },
-    setupIntents: { create: vi.fn(async () => ({ id: 'seti_1', status: 'requires_payment_method', client_secret: 'seti_1_secret', payment_method: null })) },
+    setupIntents: {
+      create: vi.fn(async () => ({ id: 'seti_1', status: 'requires_payment_method', client_secret: 'seti_1_secret', payment_method: null })),
+      retrieve: vi.fn(async () => ({ id: 'seti_1', status: 'succeeded', client_secret: null, payment_method: { id: 'pm_1' }, customer: 'cus_1' })),
+    },
     paymentIntents: {
       create: vi.fn(async () => pi()),
       capture: vi.fn(async () => pi({ status: 'succeeded', amount_received: 500 })),
@@ -115,6 +118,10 @@ describe('StripeProvider', () => {
     await expect(p.releaseDeposit({ ref: 'pi_1', idempotencyKey: 'rel' })).resolves.toMatchObject({ kind: 'noop' });
     client.paymentIntents.retrieve.mockResolvedValueOnce(pi({ status: 'processing' }));
     await expect(p.releaseDeposit({ ref: 'pi_1', idempotencyKey: 'rel' })).rejects.toMatchObject({ code: 'conflict' });
+  });
+
+  it('retrieves the saved method and customer of a setup', async () => {
+    await expect(new StripeProvider({ client: mockClient() }).retrieveSetup('seti_1')).resolves.toEqual({ ref: 'seti_1', status: 'succeeded', customerId: 'cus_1', paymentMethodId: 'pm_1' });
   });
 
   it('detaches every saved method', async () => {

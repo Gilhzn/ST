@@ -1,0 +1,68 @@
+{
+  "search": {
+    "label": "搜尋",
+    "placeholder": "城市、場地或地址"
+  },
+  "filters": {
+    "sports": "運動項目",
+    "limitHint": "最多可選擇{max, plural, other {# 項運動}}。取消其中一項後才能再選其他項目。",
+    "limitToast": "請先取消一項運動，再新增其他項目。"
+  },
+  "radius": {
+    "label": "搜尋範圍",
+    "auto": "自動（GPS）",
+    "a11y": "搜尋範圍：{distance}"
+  },
+  "sheet": {
+    "title": "{count, plural, =0 {附近沒有比賽} other {附近有 # 場比賽}}",
+    "sortLabel": "排序方式",
+    "sortSoonest": "最早開始",
+    "sortNearest": "距離最近",
+    "showList": "清單",
+    "showMap": "地圖"
+  },
+  "card": {
+    "distanceAway": "距離 {distance}",
+    "players": "{joined}/{capacity} 位球友",
+    "startsSoon": "即將開始",
+    "live": "進行中",
+    "badge": {
+      "deposit": "保證金",
+      "womenOnly": "僅限女性",
+      "private": "私人",
+      "waitlist": "候補",
+      "full": "已額滿"
+    }
+  },
+  "cluster": {
+    "a11y": "{count, plural, other {# 場比賽}}：{sports}。點兩下即可放大。"
+  },
+  "venues": {
+    "sectionTitle": "目前沒有比賽的場地",
+    "startOne": "發起比賽",
+    "pinA11y": "{name}，場地"
+  },
+  "locate": {
+    "label": "顯示我的位置"
+  },
+  "createGame": {
+    "fab": "建立比賽"
+  },
+  "empty": {
+    "title": "{distance}內沒有{sports}比賽。",
+    "widen": "擴大到 {distance}",
+    "create": "建立比賽"
+  },
+  "locationDenied": {
+    "title": "位置服務已關閉",
+    "body": "請搜尋城市或地址，尋找你附近的比賽。",
+    "search": "搜尋地點"
+  },
+  "error": {
+    "title": "無法載入比賽。",
+    "body": "請檢查網路連線後再試一次。"
+  },
+  "offline": {
+    "cachedNote": "正在顯示已儲存的比賽。"
+  }
+}

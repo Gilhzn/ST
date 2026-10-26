@@ -1,0 +1,94 @@
+{
+  "title": "比賽聊天室",
+  "infoChip": "訊息將在比賽結束{hours, plural, other {# 小時}}後消失",
+  "infoDetail": "比賽結束後聊天室會關閉。訊息會在{hours, plural, other {# 小時}}後刪除；被檢舉的訊息除外，我們會保留{days, plural, other {# 天}}以供審核。",
+  "empty": "和隊友打聲招呼吧。訊息將在比賽結束{hours, plural, other {# 小時}}後消失。",
+  "expired": "這個聊天室已結束。",
+  "composer": {
+    "placeholder": "輸入訊息",
+    "send": "傳送訊息"
+  },
+  "message": {
+    "reply": "回覆",
+    "copy": "複製",
+    "translate": "翻譯",
+    "report": "檢舉訊息",
+    "block": "封鎖{name}",
+    "moreOptions": "訊息選項",
+    "checking": "檢查中…",
+    "notSent": "尚未傳送，點一下重試",
+    "queued": "等待傳送"
+  },
+  "translate": {
+    "translatedFrom": "譯自{language}",
+    "showOriginal": "顯示原文",
+    "showTranslation": "顯示譯文",
+    "autoTranslate": "自動翻譯這個聊天室",
+    "failed": "無法翻譯這則訊息，請再試一次。"
+  },
+  "moderation": {
+    "nudge": {
+      "title": "這則訊息可能會讓人感到受傷。",
+      "body": "不妨換個說法，讓大家都覺得受歡迎。",
+      "edit": "修改訊息",
+      "sendAnyway": "仍然傳送",
+      "harassment": "這則訊息可能讓人感到受傷，或像是針對某個人。不妨換個說法。",
+      "hate": "這則訊息可能會冒犯某個群體。不妨換個說法。",
+      "threat": "這則訊息可能被理解為威脅。不妨換個說法。",
+      "violence": "這則訊息提到了暴力。不妨換個說法。",
+      "sexual": "這則訊息可能不適合運動聊天室。不妨換個說法。",
+      "sexual_minors": "這則訊息無法傳送，請修改後再試。",
+      "self_harm": "如果你正在經歷艱難的時刻，你並不孤單。可以和信任的人聊聊，或聯絡當地的求助專線。",
+      "profanity": "這則訊息包含較強烈的用語，可能讓其他人不舒服。不妨換個說法。",
+      "spam": "這則訊息看起來像垃圾訊息或廣告。不妨換個說法。",
+      "personal_data": "這則訊息似乎包含個人資料，例如電話號碼或地址。請只分享給你信任的人。",
+      "other": "這則訊息可能不符合我們的社群規範。不妨換個說法。"
+    },
+    "block": {
+      "title": "這則訊息違反了我們的社群規範。修改後才能傳送。",
+      "rulesLink": "社群規範",
+      "oneMoreWarning": "如果再發生一次，聊天室將暫停{hours, plural, other {# 小時}}。",
+      "harassment": "這則訊息違反了我們的社群規範（騷擾）。修改後才能傳送。",
+      "hate": "這則訊息違反了我們的社群規範（仇恨言論）。修改後才能傳送。",
+      "threat": "這則訊息違反了我們的社群規範（威脅）。修改後才能傳送。",
+      "violence": "這則訊息違反了我們的社群規範（暴力）。修改後才能傳送。",
+      "sexual": "這則訊息違反了我們的社群規範（色情內容）。修改後才能傳送。",
+      "sexual_minors": "這則訊息違反了我們的社群規範，無法傳送。",
+      "self_harm": "這則訊息無法傳送。如果你正在經歷艱難的時刻，請和信任的人聊聊，或聯絡當地的求助專線。",
+      "profanity": "這則訊息違反了我們的社群規範（辱罵性語言）。修改後才能傳送。",
+      "spam": "這則訊息違反了我們的社群規範（垃圾訊息）。修改後才能傳送。",
+      "personal_data": "這則訊息包含不能在聊天室中分享的個人資料。修改後才能傳送。",
+      "other": "這則訊息違反了我們的社群規範。修改後才能傳送。"
+    },
+    "muted": "聊天室已暫停，至 {time}",
+    "mutedWhy": "為什麼？"
+  },
+  "report": {
+    "title": "檢舉訊息",
+    "reasonsTitle": "發生了什麼問題？",
+    "category": {
+      "harassment": "騷擾",
+      "violence": "暴力或威脅",
+      "unsportsmanlike": "違反運動精神",
+      "spam": "垃圾訊息",
+      "other": "其他"
+    },
+    "detailsLabel": "補充說明（選填）",
+    "submit": "送出檢舉",
+    "thanks": "謝謝你，我們會進行審核。這則訊息會保留{days, plural, other {# 天}}以供審核。",
+    "blockOffer": "是否也要封鎖{name}？"
+  },
+  "block": {
+    "title": "要封鎖{name}嗎？",
+    "body": "你將看不到對方的訊息，對方也看不到你的訊息。",
+    "confirm": "封鎖{name}",
+    "done": "已封鎖{name}。"
+  },
+  "inbox": {
+    "title": "收件匣",
+    "tabChats": "聊天",
+    "tabNotifications": "通知",
+    "empty": "目前還沒有訊息。加入一場比賽，開始聊天吧。",
+    "pinned": "已置頂，閱讀後取消"
+  }
+}

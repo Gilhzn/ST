@@ -1,0 +1,70 @@
+{
+  "join_requested": {
+    "title": "新的加入申請",
+    "body": "{name}想加入「{gameTitle}」。請核准或拒絕這個申請。"
+  },
+  "join_approved": {
+    "title": "你已加入",
+    "body": "主辦人已核准你參加 {time}的「{gameTitle}」。"
+  },
+  "join_rejected": {
+    "title": "申請未通過",
+    "body": "主辦人未能接受你加入「{gameTitle}」的申請。地圖上還有其他比賽在等你。"
+  },
+  "join_waitlisted": {
+    "title": "你已進入候補名單",
+    "body": "「{gameTitle}」已額滿。你目前排在候補第 {position} 位，有空位時我們會通知你。"
+  },
+  "waitlist_promoted": {
+    "title": "有空位了",
+    "body": "你已加入 {time}的「{gameTitle}」。"
+  },
+  "participant_removed": {
+    "title": "你已被移出比賽",
+    "body": "主辦人已將你移出「{gameTitle}」。開啟比賽查看詳情。"
+  },
+  "game_cancelled": {
+    "title": "比賽已取消",
+    "body": "主辦人取消了 {time}的「{gameTitle}」。"
+  },
+  "game_reminder": {
+    "title": "比賽即將開始",
+    "body": "「{gameTitle}」將於 {time}開始。開賽前{minutes, plural, other {# 分鐘}}開放報到。"
+  },
+  "checkin_open": {
+    "title": "現在可以報到",
+    "body": "抵達後，請為「{gameTitle}」報到。"
+  },
+  "result_requested": {
+    "title": "比賽結果如何？",
+    "body": "請輸入「{gameTitle}」的比分，還剩{hours, plural, other {# 小時}}。"
+  },
+  "sanction_issued": {
+    "title": "你的帳號有新動態",
+    "body": "我們對你的帳號作出了一項決定。請開啟 App，查看發生了什麼事以及如何申訴。"
+  },
+  "sanction_decided": {
+    "title": "關於你帳號的決定",
+    "body": "審核員已複核你的帳號。請開啟 App，查看決定與原因。"
+  },
+  "appeal_decided": {
+    "title": "你的申訴已有結果",
+    "body": "{outcome, select, overturned {我們已撤銷原決定。請開啟 App 查看詳情。} upheld {原決定維持不變。請開啟 App 查看原因。} other {請開啟 App 查看決定。}}"
+  },
+  "visibility_restricted": {
+    "title": "你的個人檔案可見度降低",
+    "body": "未來{hours, plural, other {# 小時}}內，其他球友較難看到你的個人檔案。請開啟 App 查看原因。"
+  },
+  "chat_muted": {
+    "title": "聊天已暫停",
+    "body": "在 {time}之前你無法傳送訊息。請開啟 App 查看原因。"
+  },
+  "venue_hidden": {
+    "title": "有場地正在審核中",
+    "body": "在我們審核相關檢舉期間，{venueName}將被隱藏。"
+  },
+  "deposit_action_required": {
+    "title": "保證金需要你處理",
+    "body": "我們需要你確認「{gameTitle}」的 {amount} 保證金預先授權。請開啟 App 繼續。"
+  }
+}

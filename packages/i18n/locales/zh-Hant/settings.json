@@ -1,0 +1,96 @@
+{
+  "title": "設定",
+  "section": {
+    "account": "帳號",
+    "language": "語言",
+    "theme": "主題",
+    "notifications": "通知",
+    "privacy": "隱私與安全",
+    "legal": "法律資訊",
+    "about": "關於"
+  },
+  "account": {
+    "phone": "手機號碼",
+    "linkedLogins": "已連結的登入方式",
+    "signOut": "登出",
+    "signOutConfirm": "要在這部裝置上登出 Sport Talent 嗎？"
+  },
+  "language": {
+    "title": "語言",
+    "useDevice": "使用裝置語言",
+    "deviceNow": "裝置語言：{language}",
+    "current": "目前語言",
+    "restart": {
+      "title": "重新啟動後切換為{language}？",
+      "body": "App 需要重新啟動才能變更閱讀方向。重新啟動前我們會先儲存你的草稿。",
+      "restartNow": "立即重新啟動",
+      "later": "稍後",
+      "pending": "重新啟動後將使用新語言。"
+    }
+  },
+  "theme": {
+    "title": "主題",
+    "system": "跟隨系統",
+    "light": "淺色",
+    "dark": "深色",
+    "preview": "預覽"
+  },
+  "notifications": {
+    "title": "通知",
+    "joinRequests": "加入申請",
+    "approvals": "核准結果",
+    "waitlist": "候補名額",
+    "reminders": "比賽提醒",
+    "chat": "聊天訊息",
+    "safety": "帳號與安全",
+    "safetyLocked": "一律開啟。我們有義務將帳號相關的決定通知你。",
+    "osOff": "通知已在裝置設定中關閉。",
+    "osOffAction": "開啟裝置設定"
+  },
+  "privacy": {
+    "title": "隱私與安全",
+    "profileVisibility": "誰可以查看我的個人檔案",
+    "visibilityEveryone": "所有人",
+    "visibilityParticipants": "我所在比賽的球友",
+    "showReliability": "顯示我的可靠度",
+    "showReliabilityHelp": "當你申請加入主辦人的比賽時，主辦人一律可以看到你的可靠度。",
+    "location": {
+      "title": "位置",
+      "precise": "精確位置",
+      "approximate": "大約位置",
+      "preciseHelp": "僅在 App 開啟時使用，用於報到和顯示附近的比賽。"
+    },
+    "background": {
+      "title": "自動報到",
+      "help": "允許 Sport Talent 在背景使用你的位置，以便偵測你已抵達所加入的比賽現場。它只會在比賽時間前後、場地附近查看位置。"
+    },
+    "blocked": {
+      "title": "已封鎖的球友",
+      "empty": "你還沒有封鎖任何人。",
+      "unblockConfirm": "要解除封鎖{name}嗎？"
+    },
+    "data": {
+      "download": "下載我的資料",
+      "help": "申請取得你的資料副本，準備好後我們會通知你。"
+    }
+  },
+  "delete": {
+    "title": "刪除帳號",
+    "dangerZone": "危險區域",
+    "intro": "刪除帳號是永久性的，無法復原。",
+    "deletedTitle": "我們會刪除的內容",
+    "deleted": "你的個人檔案、相片、手機號碼、聊天訊息，以及你尚未參加的比賽。",
+    "keptTitle": "我們會保留的內容",
+    "kept": "警告與停權紀錄會以無法識別你身分的形式保留，以確保規則對所有人公平。保留期限不會超過法律允許的範圍。",
+    "confirmTyped": "請輸入 {word} 以確認。",
+    "confirmOtp": "或使用我們傳送到 {phone} 的驗證碼確認。",
+    "button": "刪除我的帳號",
+    "deleting": "正在刪除你的帳號…",
+    "done": "你的帳號已刪除。",
+    "webLink": "你也可以在網頁上刪除帳號：{url}"
+  },
+  "about": {
+    "version": "版本 {version}",
+    "diagnosticsOn": "已開啟診斷模式。"
+  }
+}

@@ -24,6 +24,7 @@ import {
   type RefundResult,
   type ReleaseInput,
   type ReleaseResult,
+  type SetupInfo,
   type SetupInput,
   type SetupResult,
   type WebhookInput,
@@ -106,6 +107,10 @@ export class LocalPspProvider implements PaymentProvider {
   async retrieveIntent(ref: string): Promise<IntentResult> {
     const p = await this.#client.getPayment(ref);
     return { ref: p.ref, status: p.status, clientSecret: null, amount: p.amount, amountReceived: p.amountReceived, failureCode: null };
+  }
+
+  retrieveSetup(_ref: string): Promise<SetupInfo> {
+    return Promise.reject(new UnsupportedOperationError('card tokenisation through the local PSP is not integrated yet'));
   }
 
   detachPaymentMethods(_customerId: string): Promise<number> {

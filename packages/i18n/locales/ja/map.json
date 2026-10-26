@@ -1,0 +1,68 @@
+{
+  "search": {
+    "label": "検索",
+    "placeholder": "都市、会場、住所"
+  },
+  "filters": {
+    "sports": "種目",
+    "limitHint": "選べるのは{max, plural, other {#種目}}までです。ほかの種目を追加するには、どれかの選択を外してください。",
+    "limitToast": "ほかの種目を追加するには、どれかの選択を外してください。"
+  },
+  "radius": {
+    "label": "検索範囲",
+    "auto": "自動（GPS）",
+    "a11y": "検索範囲：{distance}"
+  },
+  "sheet": {
+    "title": "{count, plural, =0 {近くに試合はありません} other {近くに#試合}}",
+    "sortLabel": "並べ替え",
+    "sortSoonest": "開始が早い順",
+    "sortNearest": "近い順",
+    "showList": "リスト",
+    "showMap": "地図"
+  },
+  "card": {
+    "distanceAway": "{distance}先",
+    "players": "{joined}/{capacity}人",
+    "startsSoon": "まもなく開始",
+    "live": "開催中",
+    "badge": {
+      "deposit": "デポジット",
+      "womenOnly": "女性限定",
+      "private": "非公開",
+      "waitlist": "キャンセル待ち",
+      "full": "満員"
+    }
+  },
+  "cluster": {
+    "a11y": "{count, plural, other {#試合}}：{sports}。ダブルタップで拡大します。"
+  },
+  "venues": {
+    "sectionTitle": "試合のない会場",
+    "startOne": "試合を開催",
+    "pinA11y": "{name}、会場"
+  },
+  "locate": {
+    "label": "現在地を表示"
+  },
+  "createGame": {
+    "fab": "試合を作成"
+  },
+  "empty": {
+    "title": "{distance}以内に{sports}の試合はありません。",
+    "widen": "{distance}に広げる",
+    "create": "試合を作成"
+  },
+  "locationDenied": {
+    "title": "位置情報がオフです",
+    "body": "都市名や住所を検索して、近くの試合を探してください。",
+    "search": "場所を検索"
+  },
+  "error": {
+    "title": "試合を読み込めませんでした。",
+    "body": "接続を確認して、もう一度お試しください。"
+  },
+  "offline": {
+    "cachedNote": "保存済みの試合を表示しています。"
+  }
+}

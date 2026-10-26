@@ -1,0 +1,117 @@
+{
+  "app": {
+    "name": "Sport Talent",
+    "tagline": "Trouve une partie. Viens. Joue."
+  },
+  "actions": {
+    "continue": "Continuer",
+    "back": "Retour",
+    "next": "Suivant",
+    "done": "Terminé",
+    "cancel": "Annuler",
+    "close": "Fermer",
+    "save": "Enregistrer",
+    "edit": "Modifier",
+    "delete": "Supprimer",
+    "retry": "Réessayer",
+    "confirm": "Confirmer",
+    "share": "Partager",
+    "copy": "Copier",
+    "search": "Rechercher",
+    "clear": "Effacer",
+    "apply": "Appliquer",
+    "skip": "Passer",
+    "notNow": "Pas maintenant",
+    "learnMore": "En savoir plus",
+    "viewAll": "Tout afficher",
+    "dismiss": "Ignorer",
+    "undo": "Annuler l’action",
+    "report": "Signaler",
+    "block": "Bloquer",
+    "unblock": "Débloquer",
+    "openSettings": "Ouvrir les réglages",
+    "send": "Envoyer",
+    "gotIt": "Compris"
+  },
+  "status": {
+    "loading": "Chargement…",
+    "saving": "Enregistrement…",
+    "offlineBanner": "Tu es hors connexion. Affichage des infos enregistrées.",
+    "offlineHint": "Connecte-toi à internet pour faire cela.",
+    "savedAgo": "Enregistré il y a {minutes, plural, one {# minute} many {# de minutes} other {# minutes}}",
+    "savedJustNow": "Enregistré à l’instant"
+  },
+  "errorState": {
+    "title": "Impossible de charger",
+    "body": "Vérifie ta connexion et réessaie."
+  },
+  "a11y": {
+    "back": "Retour",
+    "close": "Fermer",
+    "moreOptions": "Plus d’options"
+  },
+  "validation": {
+    "required": "Ce champ est obligatoire.",
+    "tooShort": "Saisis au moins {min, plural, one {# caractère} many {# de caractères} other {# caractères}}.",
+    "tooLong": "Utilise {max, plural, one {# caractère} many {# de caractères} other {# caractères}} au maximum."
+  },
+  "players": {
+    "count": "{count, plural, one {# joueur} many {# de joueurs} other {# joueurs}}",
+    "spotsLeft": "{count, plural, =0 {Complet} one {# place restante} many {# de places restantes} other {# places restantes}}"
+  },
+  "sports": {
+    "football": "Football",
+    "basketball": "Basket-ball",
+    "tennis": "Tennis",
+    "padel": "Padel",
+    "running": "Course à pied",
+    "volleyball": "Volley-ball"
+  },
+  "positions": {
+    "goalkeeper": "Gardien",
+    "defender": "Défenseur",
+    "midfielder": "Milieu",
+    "forward": "Attaquant",
+    "point_guard": "Meneur",
+    "shooting_guard": "Arrière",
+    "small_forward": "Ailier",
+    "power_forward": "Ailier fort",
+    "center": "Pivot",
+    "left_side": "Côté gauche",
+    "right_side": "Côté droit",
+    "setter": "Passeur",
+    "outside_hitter": "Réceptionneur-attaquant",
+    "opposite": "Pointu",
+    "middle_blocker": "Central",
+    "libero": "Libéro"
+  },
+  "positionsShort": {
+    "goalkeeper": "GB",
+    "defender": "DEF",
+    "midfielder": "MIL",
+    "forward": "ATT",
+    "point_guard": "M",
+    "shooting_guard": "AR",
+    "small_forward": "AIL",
+    "power_forward": "AF",
+    "center": "P",
+    "left_side": "G",
+    "right_side": "D",
+    "setter": "PAS",
+    "outside_hitter": "R4",
+    "opposite": "PTU",
+    "middle_blocker": "CEN",
+    "libero": "LIB"
+  },
+  "reliability": {
+    "status": {
+      "green": "Fiable",
+      "yellow": "Prudence",
+      "red": "Restreint",
+      "new": "Nouveau joueur"
+    },
+    "withPercent": "{status} · {percent}",
+    "a11y": "Fiabilité : {status}, {percent}",
+    "a11yNew": "Fiabilité : nouveau joueur"
+  }
+}

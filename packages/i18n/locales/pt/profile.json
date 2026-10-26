@@ -1,0 +1,58 @@
+{
+  "title": "Perfil",
+  "edit": "Editar perfil",
+  "homeCity": "Cidade: {city}",
+  "memberSince": "Membro desde {date}",
+  "sportsTitle": "Esportes",
+  "stats": {
+    "title": "Estatísticas",
+    "gamesPlayed": "Jogos disputados",
+    "gamesHosted": "Jogos organizados",
+    "checkInRate": "Taxa de check-in",
+    "favoriteVenue": "Local favorito",
+    "none": "Nenhum ainda"
+  },
+  "positions": {
+    "title": "Posições",
+    "primary": "Principal",
+    "secondary": "Secundária",
+    "none": "Nenhuma posição definida"
+  },
+  "history": {
+    "title": "Histórico",
+    "empty": "Ainda não há jogos. Entre em um para começar.",
+    "result": "Resultado: {score}",
+    "noResult": "Sem resultado"
+  },
+  "reliabilityCard": {
+    "a11y": "Cartão de confiabilidade"
+  },
+  "other": {
+    "report": "Denunciar jogador",
+    "block": "Bloquear jogador",
+    "overflow": "Mais opções",
+    "blocked": "Você bloqueou este jogador."
+  },
+  "report": {
+    "title": "Denunciar {name}",
+    "category": {
+      "violence": "Violência ou ameaças",
+      "unsportsmanlike": "Conduta antidesportiva",
+      "harassment": "Assédio",
+      "spam": "Spam",
+      "other": "Outro motivo"
+    },
+    "noteLabel": "Adicione detalhes (opcional)",
+    "submit": "Enviar denúncia",
+    "thanks": "Obrigado. Vamos analisar."
+  },
+  "editForm": {
+    "title": "Editar perfil",
+    "displayNameLabel": "Nome de exibição",
+    "bioLabel": "Sobre você",
+    "bioHint": "Opcional. Conte o que você gosta de jogar.",
+    "changePhoto": "Alterar foto",
+    "removePhoto": "Remover foto",
+    "saved": "Perfil salvo."
+  }
+}

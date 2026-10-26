@@ -1,0 +1,96 @@
+{
+  "title": "Ajustes",
+  "section": {
+    "account": "Conta",
+    "language": "Idioma",
+    "theme": "Tema",
+    "notifications": "Notificações",
+    "privacy": "Privacidade e segurança",
+    "legal": "Informações legais",
+    "about": "Sobre"
+  },
+  "account": {
+    "phone": "Número de telefone",
+    "linkedLogins": "Logins vinculados",
+    "signOut": "Sair",
+    "signOutConfirm": "Sair do Sport Talent neste dispositivo?"
+  },
+  "language": {
+    "title": "Idioma",
+    "useDevice": "Usar o idioma do dispositivo",
+    "deviceNow": "Idioma do dispositivo: {language}",
+    "current": "Idioma atual",
+    "restart": {
+      "title": "Reiniciar para mudar para {language}?",
+      "body": "O app precisa reiniciar para mudar o sentido da leitura. Antes, vamos salvar seus rascunhos.",
+      "restartNow": "Reiniciar agora",
+      "later": "Depois",
+      "pending": "O novo idioma será usado depois que você reiniciar."
+    }
+  },
+  "theme": {
+    "title": "Tema",
+    "system": "Sistema",
+    "light": "Claro",
+    "dark": "Escuro",
+    "preview": "Pré-visualização"
+  },
+  "notifications": {
+    "title": "Notificações",
+    "joinRequests": "Pedidos para entrar",
+    "approvals": "Aprovações",
+    "waitlist": "Vagas da lista de espera",
+    "reminders": "Lembretes de jogos",
+    "chat": "Mensagens do chat",
+    "safety": "Conta e segurança",
+    "safetyLocked": "Sempre ativadas. Somos obrigados a avisar você sobre decisões na sua conta.",
+    "osOff": "As notificações estão desativadas nos ajustes do seu dispositivo.",
+    "osOffAction": "Abrir ajustes do dispositivo"
+  },
+  "privacy": {
+    "title": "Privacidade e segurança",
+    "profileVisibility": "Quem pode ver meu perfil",
+    "visibilityEveryone": "Todos",
+    "visibilityParticipants": "Jogadores dos meus jogos",
+    "showReliability": "Mostrar minha confiabilidade",
+    "showReliabilityHelp": "Os organizadores sempre veem sua confiabilidade quando você pede para entrar no jogo deles.",
+    "location": {
+      "title": "Localização",
+      "precise": "Localização precisa",
+      "approximate": "Localização aproximada",
+      "preciseHelp": "Usada somente com o app aberto, para fazer seu check-in e mostrar jogos perto de você."
+    },
+    "background": {
+      "title": "Check-in automático",
+      "help": "Permite que o Sport Talent use sua localização em segundo plano para perceber quando você chega a um jogo em que entrou. Ele só procura perto do local, na hora do jogo."
+    },
+    "blocked": {
+      "title": "Jogadores bloqueados",
+      "empty": "Você não bloqueou ninguém.",
+      "unblockConfirm": "Desbloquear {name}?"
+    },
+    "data": {
+      "download": "Baixar meus dados",
+      "help": "Peça uma cópia dos seus dados. Avisaremos quando ela estiver pronta."
+    }
+  },
+  "delete": {
+    "title": "Excluir conta",
+    "dangerZone": "Zona de perigo",
+    "intro": "Excluir sua conta é permanente. Não dá para desfazer.",
+    "deletedTitle": "O que excluímos",
+    "deleted": "Seu perfil, sua foto, seu número de telefone, suas mensagens de chat e os jogos em que você ainda não jogou.",
+    "keptTitle": "O que mantemos",
+    "kept": "Mantemos registros de avisos e bloqueios de uma forma que não identifica você, para que as regras continuem justas para todos. Só os guardamos pelo tempo que a lei permitir.",
+    "confirmTyped": "Digite {word} para confirmar.",
+    "confirmOtp": "Ou confirme com um código que enviaremos por SMS para {phone}.",
+    "button": "Excluir minha conta",
+    "deleting": "Excluindo sua conta…",
+    "done": "Sua conta foi excluída.",
+    "webLink": "Você também pode excluir sua conta pela web: {url}"
+  },
+  "about": {
+    "version": "Versão {version}",
+    "diagnosticsOn": "Diagnóstico ativado."
+  }
+}

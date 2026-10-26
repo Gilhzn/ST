@@ -269,3 +269,17 @@ export function decideSettlement(input: SettlementInput): SettlementDecision {
 export function refundDueBy(checkedInAt: IsoDateTime): IsoDateTime {
   return iso(ms(checkedInAt) + HOUR_MS);
 }
+
+export type DepositStep = 'customer' | 'setup' | 'hold' | 'charge' | 'capture' | 'release' | 'refund';
+
+/** Parses a key built by {@link depositIdempotencyKey}; `null` for foreign keys. */
+export function parseDepositKey(key: string): { gameId: GameId; userId: UserId; step: DepositStep; attempt: number } | null {
+  const m = /^deposit:([^:]+):([^:]+):(customer|setup|hold|charge|capture|release|refund)(?::(\d{1,3}))?$/.exec(key);
+  if (!m) return null;
+  return { gameId: m[1] as string, userId: m[2] as string, step: m[3] as DepositStep, attempt: m[4] ? Number(m[4]) : 0 };
+}
+
+/** Mode of a payment row: rows created as charges are charge-and-refund, setup rows lead to holds. */
+export function modeOfPaymentKey(key: string): DepositMode {
+  return parseDepositKey(key)?.step === 'charge' ? 'charge_refund' : 'hold';
+}

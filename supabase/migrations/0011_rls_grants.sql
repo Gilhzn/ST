@@ -27,6 +27,9 @@ revoke execute on all functions in schema public from public, anon, authenticate
 -- Future objects created by migrations are not exposed until granted explicitly.
 alter default privileges in schema public revoke all on tables from anon, authenticated;
 alter default privileges in schema public revoke execute on functions from public, anon, authenticated;
+-- Per-schema defaults cannot remove PUBLIC's built-in EXECUTE; this global one does (for the
+-- migration role).
+alter default privileges revoke execute on functions from public;
 
 grant all on all tables in schema public to service_role;
 grant all on all sequences in schema public to service_role;
@@ -194,6 +197,8 @@ grant execute on function
   public.st_my_chat(uuid)
   to authenticated;
 grant execute on function public.st_now() to anon;
+-- Raising ST:<code> from invoker triggers on client-writable tables (e.g. user_sports validation).
+grant execute on function public.st_raise(text, text) to authenticated;
 
 -- Client RPCs (each checks auth.uid() itself).
 grant execute on function

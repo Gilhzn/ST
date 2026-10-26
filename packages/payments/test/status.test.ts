@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { advanceStatus, applyPaymentEvent, type PaymentRowState } from '../src/status';
+import { advanceStatus, applyPaymentEvent, reconcileEventRow, stepOfRef, type PaymentRowState } from '../src/status';
 import type { PaymentEvent } from '../src/port';
 
 const ev = (type: PaymentEvent['type'], patch: Partial<PaymentEvent> = {}): PaymentEvent => ({
@@ -62,5 +62,23 @@ describe('applyPaymentEvent', () => {
   it('setup success marks the setup row ready; disputes only add a note', () => {
     expect(applyPaymentEvent({ status: 'requires_payment_method', depositState: 'setup', step: 'setup' }, ev('setup_succeeded'))).toMatchObject({ status: 'succeeded', notes: ['setup_ready'] });
     expect(applyPaymentEvent({ status: 'succeeded', depositState: 'forfeited', step: 'hold' }, ev('dispute_opened'))).toMatchObject({ changed: false, notes: ['dispute_opened'] });
+  });
+});
+
+describe('reconcileEventRow', () => {
+  const setupRow = { providerRef: 'seti_1', status: 'succeeded' as const, depositState: 'setup' as const, step: 'setup' as const };
+  it('adopts the hold intent when its event arrives first', () => {
+    const r = reconcileEventRow(setupRow, ev('hold_authorized', { ref: 'pi_9', metadata: { step: 'hold' } }));
+    expect(r).toEqual({ base: { status: 'requires_payment_method', depositState: 'setup', step: 'hold' }, adoptRef: true, stale: false });
+    expect(applyPaymentEvent(r.base, ev('hold_authorized'))).toMatchObject({ status: 'requires_capture', depositState: 'held' });
+  });
+  it('ignores late events of the superseded setup', () => {
+    const r = reconcileEventRow({ ...setupRow, providerRef: 'pi_9', status: 'requires_capture', depositState: 'held', step: 'hold' }, ev('setup_succeeded', { ref: 'seti_1', metadata: { step: 'setup' } }));
+    expect(r.stale).toBe(true);
+  });
+  it('applies events for the tracked object', () => {
+    const r = reconcileEventRow(setupRow, ev('setup_succeeded', { ref: 'seti_1' }));
+    expect(r).toMatchObject({ adoptRef: false, stale: false, base: { step: 'setup' } });
+    expect(stepOfRef('pi_1', 'charge_refund')).toBe('charge');
   });
 });

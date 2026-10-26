@@ -27,6 +27,7 @@ import {
   type RefundResult,
   type ReleaseInput,
   type ReleaseResult,
+  type SetupInfo,
   type SetupInput,
   type SetupResult,
   type WebhookInput,
@@ -43,6 +44,7 @@ export type StripePaymentIntentLike = Pick<
 /** The SetupIntent fields this adapter reads. */
 export type StripeSetupIntentLike = Pick<Stripe.SetupIntent, 'id' | 'status' | 'client_secret'> & {
   payment_method: string | { id: string } | null;
+  customer?: string | { id: string } | null;
 };
 
 export type StripeRefundLike = Pick<Stripe.Refund, 'id' | 'status' | 'amount' | 'currency'> & {
@@ -72,6 +74,7 @@ export interface StripeClientLike {
   };
   setupIntents: {
     create(params?: Stripe.SetupIntentCreateParams, options?: Opts): Promise<StripeSetupIntentLike>;
+    retrieve(id: string, params?: Stripe.SetupIntentRetrieveParams, options?: Opts): Promise<StripeSetupIntentLike>;
   };
   paymentIntents: {
     create(params: Stripe.PaymentIntentCreateParams, options?: Opts): Promise<StripePaymentIntentLike>;
@@ -352,6 +355,15 @@ export class StripeProvider implements PaymentProvider {
   async retrieveIntent(ref: string): Promise<IntentResult> {
     try {
       return intentResult(await this.#client.paymentIntents.retrieve(ref));
+    } catch (e) {
+      throw mapStripeError(e);
+    }
+  }
+
+  async retrieveSetup(ref: string): Promise<SetupInfo> {
+    try {
+      const si = await this.#client.setupIntents.retrieve(ref);
+      return { ref: si.id, status: normalizeStatus(si.status), customerId: refOf(si.customer), paymentMethodId: refOf(si.payment_method) };
     } catch (e) {
       throw mapStripeError(e);
     }

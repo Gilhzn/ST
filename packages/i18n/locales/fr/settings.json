@@ -1,0 +1,96 @@
+{
+  "title": "Réglages",
+  "section": {
+    "account": "Compte",
+    "language": "Langue",
+    "theme": "Thème",
+    "notifications": "Notifications",
+    "privacy": "Confidentialité et sécurité",
+    "legal": "Informations légales",
+    "about": "À propos"
+  },
+  "account": {
+    "phone": "Numéro de téléphone",
+    "linkedLogins": "Connexions associées",
+    "signOut": "Se déconnecter",
+    "signOutConfirm": "Se déconnecter de Sport Talent sur cet appareil ?"
+  },
+  "language": {
+    "title": "Langue",
+    "useDevice": "Utiliser la langue de l’appareil",
+    "deviceNow": "Langue de l’appareil : {language}",
+    "current": "Langue actuelle",
+    "restart": {
+      "title": "Redémarrer pour passer à cette langue : {language} ?",
+      "body": "L’appli doit redémarrer pour changer le sens de lecture. Nous enregistrerons d’abord tes brouillons.",
+      "restartNow": "Redémarrer maintenant",
+      "later": "Plus tard",
+      "pending": "La nouvelle langue sera utilisée après le redémarrage."
+    }
+  },
+  "theme": {
+    "title": "Thème",
+    "system": "Système",
+    "light": "Clair",
+    "dark": "Sombre",
+    "preview": "Aperçu"
+  },
+  "notifications": {
+    "title": "Notifications",
+    "joinRequests": "Demandes de participation",
+    "approvals": "Validations",
+    "waitlist": "Places de la liste d’attente",
+    "reminders": "Rappels de parties",
+    "chat": "Messages de discussion",
+    "safety": "Compte et sécurité",
+    "safetyLocked": "Toujours activées. Nous sommes tenus de t’informer des décisions concernant ton compte.",
+    "osOff": "Les notifications sont désactivées dans les réglages de ton appareil.",
+    "osOffAction": "Ouvrir les réglages de l’appareil"
+  },
+  "privacy": {
+    "title": "Confidentialité et sécurité",
+    "profileVisibility": "Qui peut voir mon profil",
+    "visibilityEveryone": "Tout le monde",
+    "visibilityParticipants": "Les joueurs de mes parties",
+    "showReliability": "Afficher ma fiabilité",
+    "showReliabilityHelp": "Les organisateurs voient toujours ta fiabilité quand tu demandes à rejoindre leur partie.",
+    "location": {
+      "title": "Localisation",
+      "precise": "Position précise",
+      "approximate": "Position approximative",
+      "preciseHelp": "Utilisée uniquement quand l’appli est ouverte, pour faire ton check-in et afficher les parties près de toi."
+    },
+    "background": {
+      "title": "Check-in automatique",
+      "help": "Permet à Sport Talent d’utiliser ta position en arrière-plan pour détecter ton arrivée à une partie que tu as rejointe. L’appli ne cherche que près du lieu, autour de l’heure de la partie."
+    },
+    "blocked": {
+      "title": "Joueurs bloqués",
+      "empty": "Tu n’as bloqué personne.",
+      "unblockConfirm": "Débloquer {name} ?"
+    },
+    "data": {
+      "download": "Télécharger mes données",
+      "help": "Demande une copie de tes données. Nous te préviendrons quand elle sera prête."
+    }
+  },
+  "delete": {
+    "title": "Supprimer le compte",
+    "dangerZone": "Zone de danger",
+    "intro": "La suppression de ton compte est définitive. Tu ne pourras pas l’annuler.",
+    "deletedTitle": "Ce que nous supprimons",
+    "deleted": "Ton profil, ta photo, ton numéro de téléphone, tes messages de discussion et les parties que tu n’as pas encore jouées.",
+    "keptTitle": "Ce que nous conservons",
+    "kept": "Les enregistrements d’avertissements et de bannissements sont conservés sous une forme qui ne t’identifie pas, afin que les règles restent équitables pour tous. Nous ne les gardons que le temps permis par la loi.",
+    "confirmTyped": "Saisis {word} pour confirmer.",
+    "confirmOtp": "Ou confirme avec un code envoyé par SMS au {phone}.",
+    "button": "Supprimer mon compte",
+    "deleting": "Suppression de ton compte…",
+    "done": "Ton compte a été supprimé.",
+    "webLink": "Tu peux aussi supprimer ton compte sur le web : {url}"
+  },
+  "about": {
+    "version": "Version {version}",
+    "diagnosticsOn": "Diagnostic activé."
+  }
+}

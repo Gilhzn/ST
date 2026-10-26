@@ -1,0 +1,94 @@
+{
+  "title": "Discussion de la partie",
+  "infoChip": "Les messages disparaissent {hours, plural, one {# heure} many {# d’heures} other {# heures}} après la partie",
+  "infoDetail": "La discussion se ferme à la fin de la partie. Les messages sont supprimés {hours, plural, one {# heure} many {# d’heures} other {# heures}} plus tard, sauf les messages signalés, que nous conservons {days, plural, one {# jour} many {# de jours} other {# jours}} pour pouvoir les examiner.",
+  "empty": "Dis bonjour à tes coéquipiers. Les messages disparaissent {hours, plural, one {# heure} many {# d’heures} other {# heures}} après la partie.",
+  "expired": "Cette discussion est terminée.",
+  "composer": {
+    "placeholder": "Message",
+    "send": "Envoyer le message"
+  },
+  "message": {
+    "reply": "Répondre",
+    "copy": "Copier",
+    "translate": "Traduire",
+    "report": "Signaler le message",
+    "block": "Bloquer {name}",
+    "moreOptions": "Options du message",
+    "checking": "Vérification…",
+    "notSent": "Non envoyé. Appuie pour réessayer",
+    "queued": "En attente d’envoi"
+  },
+  "translate": {
+    "translatedFrom": "Traduit depuis : {language}",
+    "showOriginal": "Afficher l’original",
+    "showTranslation": "Afficher la traduction",
+    "autoTranslate": "Traduire automatiquement cette discussion",
+    "failed": "Impossible de traduire ce message. Réessaie."
+  },
+  "moderation": {
+    "nudge": {
+      "title": "Ce message risque d’être blessant.",
+      "body": "Pense à le reformuler pour que chacun se sente le bienvenu.",
+      "edit": "Modifier le message",
+      "sendAnyway": "Envoyer quand même",
+      "harassment": "Ce message risque d’être blessant ou de viser quelqu’un. Pense à le reformuler.",
+      "hate": "Ce message risque de blesser un groupe de personnes. Pense à le reformuler.",
+      "threat": "Ce message risque d’être perçu comme une menace. Pense à le reformuler.",
+      "violence": "Ce message évoque de la violence. Pense à le reformuler.",
+      "sexual": "Ce message ne convient peut-être pas à une discussion sportive. Pense à le reformuler.",
+      "sexual_minors": "Ce message ne peut pas être envoyé. Reformule-le, s’il te plaît.",
+      "self_harm": "Si tu traverses un moment difficile, tu n’es pas seul. Pense à en parler à une personne de confiance ou à un service d’aide local.",
+      "profanity": "Ce message contient un langage fort que d’autres pourraient ne pas apprécier. Pense à le reformuler.",
+      "spam": "Ce message ressemble à du spam ou à de la publicité. Pense à le reformuler.",
+      "personal_data": "Ce message semble contenir des informations personnelles, comme un numéro de téléphone ou une adresse. Ne les partage qu’avec des personnes de confiance.",
+      "other": "Ce message ne respecte peut-être pas les règles de notre communauté. Pense à le reformuler."
+    },
+    "block": {
+      "title": "Ce message enfreint les règles de notre communauté. Modifie-le pour pouvoir l’envoyer.",
+      "rulesLink": "Règles de la communauté",
+      "oneMoreWarning": "Encore un message de ce type et la discussion sera suspendue pendant {hours, plural, one {# heure} many {# d’heures} other {# heures}}.",
+      "harassment": "Ce message enfreint les règles de notre communauté (harcèlement). Modifie-le pour pouvoir l’envoyer.",
+      "hate": "Ce message enfreint les règles de notre communauté (haine). Modifie-le pour pouvoir l’envoyer.",
+      "threat": "Ce message enfreint les règles de notre communauté (menaces). Modifie-le pour pouvoir l’envoyer.",
+      "violence": "Ce message enfreint les règles de notre communauté (violence). Modifie-le pour pouvoir l’envoyer.",
+      "sexual": "Ce message enfreint les règles de notre communauté (contenu sexuel). Modifie-le pour pouvoir l’envoyer.",
+      "sexual_minors": "Ce message enfreint les règles de notre communauté et ne peut pas être envoyé.",
+      "self_harm": "Ce message ne peut pas être envoyé. Si tu traverses un moment difficile, parles-en à une personne de confiance ou à un service d’aide local.",
+      "profanity": "Ce message enfreint les règles de notre communauté (propos injurieux). Modifie-le pour pouvoir l’envoyer.",
+      "spam": "Ce message enfreint les règles de notre communauté (spam). Modifie-le pour pouvoir l’envoyer.",
+      "personal_data": "Ce message contient des informations personnelles qui ne peuvent pas être partagées dans la discussion. Modifie-le pour pouvoir l’envoyer.",
+      "other": "Ce message enfreint les règles de notre communauté. Modifie-le pour pouvoir l’envoyer."
+    },
+    "muted": "Discussion suspendue jusqu’à {time}",
+    "mutedWhy": "Pourquoi ?"
+  },
+  "report": {
+    "title": "Signaler le message",
+    "reasonsTitle": "Quel est le problème ?",
+    "category": {
+      "harassment": "Harcèlement",
+      "violence": "Violence ou menaces",
+      "unsportsmanlike": "Comportement antisportif",
+      "spam": "Spam",
+      "other": "Autre chose"
+    },
+    "detailsLabel": "Ajoute des précisions (facultatif)",
+    "submit": "Envoyer le signalement",
+    "thanks": "Merci, nous allons l’examiner. Le message est conservé {days, plural, one {# jour} many {# de jours} other {# jours}} pour examen.",
+    "blockOffer": "Bloquer aussi {name} ?"
+  },
+  "block": {
+    "title": "Bloquer {name} ?",
+    "body": "Tu ne verras plus ses messages, et il ou elle ne verra plus les tiens.",
+    "confirm": "Bloquer {name}",
+    "done": "{name} est bloqué."
+  },
+  "inbox": {
+    "title": "Messages",
+    "tabChats": "Discussions",
+    "tabNotifications": "Notifications",
+    "empty": "Pas encore de messages. Rejoins une partie pour commencer à discuter.",
+    "pinned": "Épinglé jusqu’à lecture"
+  }
+}

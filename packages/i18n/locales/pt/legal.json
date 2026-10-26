@@ -1,0 +1,82 @@
+{
+  "title": "Informações legais",
+  "lastUpdated": "Última atualização: {date}",
+  "placeholderNotice": "Este é um rascunho. Nossa equipe jurídica vai revisar o texto final antes do lançamento.",
+  "privacy": {
+    "title": "Política de Privacidade",
+    "intro": "Esta página explica quais informações o Sport Talent coleta, por que coleta e quais escolhas você tem. A política completa será publicada aqui antes do lançamento.",
+    "collect": {
+      "title": "O que coletamos",
+      "body": "Seu número de telefone, mês e ano de nascimento, nome de exibição, os jogos em que você entra, resultados de check-in e mensagens de chat. A localização precisa só é usada com o app aberto."
+    },
+    "use": {
+      "title": "Como usamos",
+      "body": "Para mostrar jogos perto de você, confirmar presença, manter a comunidade segura e enviar as notificações que você pedir."
+    },
+    "share": {
+      "title": "Com quem compartilhamos",
+      "body": "Outros jogadores veem seu nome de exibição e sua confiabilidade. Prestadores de serviço tratam dados por nós, sob contrato. Não vendemos seus dados pessoais."
+    },
+    "retention": {
+      "title": "Por quanto tempo guardamos",
+      "body": "As mensagens de chat são apagadas logo depois que o jogo termina. As mensagens denunciadas são guardadas por tempo limitado para análise. Você pode excluir sua conta a qualquer momento."
+    },
+    "rights": {
+      "title": "Seus direitos",
+      "body": "Você pode acessar, corrigir, baixar ou excluir seus dados e pode se opor a alguns usos. Fale com a gente para exercer esses direitos."
+    },
+    "age": {
+      "title": "Idade mínima",
+      "body": "O Sport Talent é para pessoas com 16 anos ou mais."
+    }
+  },
+  "terms": {
+    "title": "Termos de Serviço",
+    "intro": "Estes termos explicam como você pode usar o Sport Talent. Os termos completos serão publicados aqui antes do lançamento.",
+    "account": {
+      "title": "Sua conta",
+      "body": "Você precisa ter 16 anos ou mais. Mantenha seus dados de acesso seguros e forneça informações verdadeiras."
+    },
+    "conduct": {
+      "title": "Jogo limpo e conduta",
+      "body": "Trate os outros jogadores com respeito. Compareça aos jogos em que entrar ou cancele com antecedência. Não publique nada ilegal, de ódio ou ameaçador."
+    },
+    "games": {
+      "title": "Jogos e locais",
+      "body": "Os jogos são organizados por jogadores, não pelo Sport Talent. Você é responsável pela sua própria segurança e por seguir as regras de cada local."
+    },
+    "deposits": {
+      "title": "Depósitos",
+      "body": "Um organizador pode pedir um depósito reembolsável. Ele é liberado após o seu check-in e pode ser retido se você não aparecer e não cancelar a tempo."
+    },
+    "sanctions": {
+      "title": "Avisos e restrições",
+      "body": "Podemos advertir ou restringir contas que descumprirem estes termos. Explicamos cada decisão, e você pode recorrer."
+    },
+    "changes": {
+      "title": "Mudanças nestes termos",
+      "body": "Podemos atualizar estes termos. Avisaremos você sobre mudanças importantes."
+    }
+  },
+  "communityRules": {
+    "title": "Regras da comunidade",
+    "intro": "O Sport Talent funciona quando todos se sentem bem-vindos. Estas regras valem para chats, perfis e jogos.",
+    "respect": "Seja respeitoso. Sem assédio, ódio ou ameaças.",
+    "safety": "Mantenha a segurança. Sem violência e sem compartilhar dados pessoais de outras pessoas.",
+    "honesty": "Seja honesto. Use seus dados reais e adicione apenas locais reais.",
+    "reliability": "Compareça ou cancele com antecedência.",
+    "content": "Sem spam, propaganda ou conteúdo sexual."
+  },
+  "contact": {
+    "title": "Fale conosco",
+    "body": "Dúvidas, sugestões ou um pedido sobre seus dados? Entre em contato e responderemos assim que possível.",
+    "emailLabel": "E-mail",
+    "email": "support@sporttalent.example",
+    "addressLabel": "Endereço da empresa",
+    "address": "[Endereço da empresa a ser adicionado]"
+  },
+  "reportContent": {
+    "title": "Denunciar conteúdo ilegal",
+    "body": "Se você vir um conteúdo que considere ilegal, diga o que é e onde está, e vamos analisar."
+  }
+}

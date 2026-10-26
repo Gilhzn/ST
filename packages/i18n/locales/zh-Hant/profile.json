@@ -1,0 +1,58 @@
+{
+  "title": "個人檔案",
+  "edit": "編輯檔案",
+  "homeCity": "所在城市：{city}",
+  "memberSince": "{date}加入",
+  "sportsTitle": "運動項目",
+  "stats": {
+    "title": "數據",
+    "gamesPlayed": "參加比賽",
+    "gamesHosted": "主辦比賽",
+    "checkInRate": "報到率",
+    "favoriteVenue": "常去場地",
+    "none": "尚無"
+  },
+  "positions": {
+    "title": "位置",
+    "primary": "主要位置",
+    "secondary": "次要位置",
+    "none": "尚未設定位置"
+  },
+  "history": {
+    "title": "歷史紀錄",
+    "empty": "還沒有比賽。加入一場比賽，開始吧。",
+    "result": "比分：{score}",
+    "noResult": "尚無比分"
+  },
+  "reliabilityCard": {
+    "a11y": "可靠度卡片"
+  },
+  "other": {
+    "report": "檢舉球友",
+    "block": "封鎖球友",
+    "overflow": "更多選項",
+    "blocked": "你已封鎖這位球友。"
+  },
+  "report": {
+    "title": "檢舉{name}",
+    "category": {
+      "violence": "暴力或威脅",
+      "unsportsmanlike": "違反運動精神",
+      "harassment": "騷擾",
+      "spam": "垃圾訊息",
+      "other": "其他"
+    },
+    "noteLabel": "補充說明（選填）",
+    "submit": "送出檢舉",
+    "thanks": "謝謝你，我們會進行審核。"
+  },
+  "editForm": {
+    "title": "編輯檔案",
+    "displayNameLabel": "顯示名稱",
+    "bioLabel": "關於你",
+    "bioHint": "選填。說說你喜歡玩什麼。",
+    "changePhoto": "更換相片",
+    "removePhoto": "移除相片",
+    "saved": "檔案已儲存。"
+  }
+}

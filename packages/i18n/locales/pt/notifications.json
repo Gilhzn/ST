@@ -1,0 +1,70 @@
+{
+  "join_requested": {
+    "title": "Novo pedido para entrar",
+    "body": "{name} quer entrar em {gameTitle}. Aprove ou recuse o pedido."
+  },
+  "join_approved": {
+    "title": "Você está dentro",
+    "body": "O organizador aprovou você para {gameTitle} em {time}."
+  },
+  "join_rejected": {
+    "title": "Pedido não aceito",
+    "body": "O organizador não pôde aceitar seu pedido para {gameTitle}. Há outros jogos esperando por você no mapa."
+  },
+  "join_waitlisted": {
+    "title": "Você está na lista de espera",
+    "body": "{gameTitle} está lotado. Você é o nº {position} na lista de espera e avisaremos se uma vaga abrir."
+  },
+  "waitlist_promoted": {
+    "title": "Abriu uma vaga",
+    "body": "Agora você está em {gameTitle} em {time}."
+  },
+  "participant_removed": {
+    "title": "Você foi removido de um jogo",
+    "body": "O organizador removeu você de {gameTitle}. Abra o jogo para ver os detalhes."
+  },
+  "game_cancelled": {
+    "title": "Jogo cancelado",
+    "body": "O organizador cancelou {gameTitle} de {time}."
+  },
+  "game_reminder": {
+    "title": "Seu jogo está chegando",
+    "body": "{gameTitle} começa às {time}. O check-in abre {minutes, plural, one {# minuto} many {# de minutos} other {# minutos}} antes."
+  },
+  "checkin_open": {
+    "title": "O check-in está aberto",
+    "body": "Faça check-in em {gameTitle} quando chegar."
+  },
+  "result_requested": {
+    "title": "Como foi?",
+    "body": "Registre o resultado de {gameTitle}. Faltam {hours, plural, one {# hora} many {# de horas} other {# horas}}."
+  },
+  "sanction_issued": {
+    "title": "Novidade sobre a sua conta",
+    "body": "Tomamos uma decisão sobre a sua conta. Abra o app para ver o que aconteceu e como recorrer."
+  },
+  "sanction_decided": {
+    "title": "Decisão sobre a sua conta",
+    "body": "Um moderador analisou a sua conta. Abra o app para ler a decisão e os motivos."
+  },
+  "appeal_decided": {
+    "title": "Seu recurso foi decidido",
+    "body": "{outcome, select, overturned {Revertemos a decisão. Abra o app para ver os detalhes.} upheld {A decisão foi mantida. Abra o app para ler os motivos.} other {Abra o app para ler a decisão.}}"
+  },
+  "visibility_restricted": {
+    "title": "Seu perfil está menos visível",
+    "body": "Por {hours, plural, one {# hora} many {# de horas} other {# horas}}, outros jogadores verão menos o seu perfil. Abra o app para ver o motivo."
+  },
+  "chat_muted": {
+    "title": "Chat pausado",
+    "body": "Você não pode enviar mensagens até {time}. Abra o app para ver o motivo."
+  },
+  "venue_hidden": {
+    "title": "Um local está em análise",
+    "body": "{venueName} fica oculto enquanto analisamos as denúncias sobre ele."
+  },
+  "deposit_action_required": {
+    "title": "Ação necessária no seu depósito",
+    "body": "Precisamos que você confirme a reserva de {amount} do depósito de {gameTitle}. Abra o app para continuar."
+  }
+}

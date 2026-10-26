@@ -1,0 +1,87 @@
+{
+  "title": "報到",
+  "opensAt": "{time}開放報到。",
+  "closed": "這場比賽的報到已結束。",
+  "alreadyCheckedIn": "你已經報到了。",
+  "gps": {
+    "title": "正在確認你的位置",
+    "progress": "正在確認你的位置… {done}/{total}",
+    "accuracy": "精確度：{accuracy}",
+    "retry": "再試一次"
+  },
+  "success": {
+    "title": "報到成功",
+    "method": "{method, select, gps {已透過 GPS 確認} qr {已透過 QR 碼確認} peer {已由隊友確認} host {已由主辦人確認} other {已確認}}"
+  },
+  "unconfirmed": {
+    "title": "暫時無法確認你已到達場地",
+    "body": "請移動到空曠處，或換一種方式。"
+  },
+  "reject": {
+    "not_participant": "你不在這場比賽的球友名單中。",
+    "already_checked_in": "你已經報到了。",
+    "outside_window": "現在還不能報到，開始前{minutes, plural, other {# 分鐘}}開放。",
+    "insufficient_samples": "我們還需要幾筆位置資料。請留在原地，再試一次。",
+    "samples_too_close": "我們需要多一點時間確認你的位置。請稍等幾秒鐘再試一次。",
+    "low_accuracy": "你的位置精確度還不夠。請移動到空曠處，或換一種方式。",
+    "too_far": "暫時無法確認你已到達場地。請再靠近一些，或換一種方式。",
+    "spread_too_large": "幾筆位置資料相差太遠。請留在同一個位置，再試一次。",
+    "suspected_spoofing": "無法用這種方式確認你的位置。請換一種方式報到。",
+    "invalid_qr": "這個 QR 碼無法使用，請檢查後再試一次。",
+    "expired_qr": "這個 QR 碼已過期，請向主辦人索取最新的。",
+    "not_host": "只有主辦人可以執行這項操作。",
+    "insufficient_peers": "還需要更多隊友確認。請另一位已報到的球友幫你確認。",
+    "reciprocal_only": "你確認過的隊友不能是唯一確認你的人，請找其他人幫忙。",
+    "blocked_pair": "無法使用這次確認，請換另一位球友。"
+  },
+  "other": {
+    "title": "其他報到方式"
+  },
+  "qr": {
+    "scan": "掃描主辦人的 QR 碼",
+    "hint": "請將相機對準主辦人螢幕上的 QR 碼。",
+    "enterCode": "改為輸入驗證碼",
+    "codeLabel": "6 位數代碼",
+    "scanInstead": "改為掃描 QR 碼"
+  },
+  "peer": {
+    "ask": "請隊友確認",
+    "hint": "我們會請已報到的球友確認你已到場。",
+    "waiting": "等待{needed, plural, other {# 個確認}} · 已收到 {received} 個",
+    "sent": "已向你的隊友送出請求。"
+  },
+  "permission": {
+    "location": {
+      "title": "位置資訊有助於確認你已到場",
+      "body": "你在場地時，我們會檢查幾次你的位置，之後不會再追蹤。",
+      "allow": "允許存取位置",
+      "denied": "位置服務已關閉。請掃描主辦人的 QR 碼，或請隊友確認。"
+    },
+    "camera": {
+      "title": "相機權限",
+      "body": "我們只會使用相機掃描主辦人的 QR 碼。",
+      "allow": "允許使用相機",
+      "denied": "相機已關閉。請改為輸入 6 位數代碼。"
+    },
+    "background": {
+      "title": "自動報到",
+      "body": "開啟後，Sport Talent 會在背景使用你的位置，以便偵測你已抵達所加入的比賽現場。它只會在比賽時間前後、場地附近查看位置。你可以隨時在「設定」中關閉。",
+      "enable": "開啟",
+      "decline": "不用了"
+    }
+  },
+  "offline": {
+    "queued": "恢復連線後，我們會為你確認。"
+  },
+  "host": {
+    "title": "報到碼",
+    "instruction": "球友掃描此 QR 碼即可報到。QR 碼每{seconds, plural, other {# 秒}}更新一次。",
+    "fallbackCode": "或輸入這組代碼",
+    "counter": "已報到 {checkedIn}/{total}",
+    "markManually": "手動標記球友",
+    "manualTitle": "標記球友",
+    "markPresent": "將 {name} 標記為已到場",
+    "present": "已到場",
+    "notHere": "未到場"
+  }
+}

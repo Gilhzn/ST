@@ -143,3 +143,13 @@ describe('keys and deadlines', () => {
     expect(refundDueBy(iso(START))).toBe(iso(START + H));
   });
 });
+
+describe('deposit keys', () => {
+  it('parses keys and infers the row mode', async () => {
+    const { parseDepositKey, modeOfPaymentKey } = await import('../src/policy');
+    expect(parseDepositKey('deposit:g1:u1:setup:2')).toEqual({ gameId: 'g1', userId: 'u1', step: 'setup', attempt: 2 });
+    expect(parseDepositKey('other')).toBeNull();
+    expect(modeOfPaymentKey('deposit:g1:u1:charge')).toBe('charge_refund');
+    expect(modeOfPaymentKey('deposit:g1:u1:setup')).toBe('hold');
+  });
+});

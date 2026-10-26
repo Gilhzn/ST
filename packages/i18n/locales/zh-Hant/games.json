@@ -1,0 +1,279 @@
+{
+  "venue": {
+    "sportsHere": "可玩項目",
+    "directions": "路線",
+    "overflow": "更多選項",
+    "rating": {
+      "summary": "{rating} · {count, plural, other {# 則評分}}",
+      "none": "尚無評分",
+      "scoreOf5": "{score} 分（滿分 5 分）",
+      "title": "評分"
+    },
+    "attribute": {
+      "surface": "場地表面",
+      "lighting": "照明",
+      "goals_nets": "球門與球網",
+      "hoops": "籃框",
+      "nets": "球網",
+      "walls": "圍牆",
+      "water_access": "飲水便利度",
+      "net": "球網"
+    },
+    "attributeValue": {
+      "natural_grass": "天然草皮",
+      "artificial_turf": "人工草皮",
+      "hard": "硬地",
+      "indoor": "室內",
+      "outdoor_hard": "室外硬地",
+      "indoor_wood": "室內木地板",
+      "rubber": "橡膠",
+      "clay": "紅土",
+      "grass": "草地",
+      "carpet": "地毯",
+      "glass": "玻璃",
+      "masonry": "磚石",
+      "track": "跑道",
+      "road": "道路",
+      "trail": "越野小徑",
+      "mixed": "混合",
+      "sand": "沙地"
+    },
+    "upcoming": "這裡即將開始的比賽",
+    "noUpcoming": "這裡目前沒有比賽。",
+    "startGame": "在這裡發起比賽",
+    "underReview": "這個場地正在審核中。",
+    "rate": {
+      "cta": "為場地評分",
+      "onlyAfterPlaying": "在這裡打過球之後才能評分。",
+      "title": "為{venue}評分",
+      "overall": "整體評分",
+      "optionalHint": "不確定的項目可以略過。",
+      "submit": "送出評分",
+      "thanks": "感謝你為場地評分。"
+    },
+    "report": {
+      "cta": "這裡沒有場地？回報給我們。",
+      "title": "這個場地有什麼問題？",
+      "reason": {
+        "no_venue_here": "這裡沒有場地",
+        "wrong_location": "位置不正確",
+        "closed": "已關閉",
+        "duplicate": "重複收錄",
+        "unsafe": "不安全",
+        "other": "其他原因"
+      },
+      "submit": "送出檢舉",
+      "thanks": "謝謝你，我們會進行查證。當{count, plural, other {有 # 人}}檢舉某個場地後，該場地會在審核期間被隱藏。",
+      "done": "你已檢舉過這個場地"
+    }
+  },
+  "wizard": {
+    "title": "建立比賽",
+    "stepOf": "第 {current} 步，共 {total} 步",
+    "stepName": {
+      "sport": "運動",
+      "where": "地點",
+      "when": "時間",
+      "who": "人員",
+      "deposit": "保證金"
+    },
+    "sport": {
+      "title": "哪一項運動？",
+      "gameTitleLabel": "比賽名稱",
+      "gameTitleHint": "選填。例如「週日踢球」。",
+      "formatTitle": "賽制",
+      "formatVs": "{a} 對 {b}",
+      "singles": "單打",
+      "doubles": "雙打",
+      "teamCount": "隊伍數量"
+    },
+    "where": {
+      "title": "要在哪裡打？",
+      "search": "搜尋場地或地址",
+      "pickOnMap": "在地圖上選擇",
+      "dropPin": "放置圖釘",
+      "venueNameLabel": "場地名稱",
+      "venueNameHint": "幫這個地點取個名字，方便球友找到。",
+      "hideExactLabel": "在我核准球友之前隱藏確切位置",
+      "hideExactHelp": "球友會先看到大致區域。你核准後，再分享確切地點。"
+    },
+    "when": {
+      "title": "什麼時候？",
+      "date": "日期",
+      "start": "開始時間",
+      "duration": "時間長度",
+      "repeatWeekly": "每週重複",
+      "comingSoon": "即將推出"
+    },
+    "who": {
+      "title": "誰可以加入？",
+      "capacity": "球友人數",
+      "capacityRange": "{min} 到 {max} 位球友",
+      "visibility": "可見範圍",
+      "public": "公開",
+      "publicHelp": "附近的任何人都能找到這場比賽。",
+      "private": "私人",
+      "privateHelp": "只有拿到邀請連結的人才看得到這場比賽。",
+      "womenOnly": "僅限女性",
+      "womenOnlyHelp": "只有女性可以加入這場比賽。",
+      "minReliability": "最低可靠度",
+      "minAny": "不限",
+      "minCaution": "「留意」以上",
+      "minReliable": "僅限可靠球友",
+      "approval": "加入方式",
+      "approvalAuto": "自動核准球友",
+      "approvalManual": "我逐一核准"
+    },
+    "deposit": {
+      "title": "保證金（選填）",
+      "toggle": "收取保證金",
+      "amount": "保證金金額",
+      "explain": "球友會預先授權 {amount} 的可退還保證金。報到後釋放，若球友未到場則會扣留。",
+      "currencyNote": "幣別依場地所在的國家或地區而定。"
+    },
+    "review": {
+      "title": "確認比賽資訊",
+      "edit": "編輯",
+      "publish": "發布比賽",
+      "publishing": "正在發布…",
+      "offlineHint": "恢復連線後再發布。"
+    },
+    "published": {
+      "title": "你的比賽已發布",
+      "shareTitle": "分享你的比賽",
+      "whatsapp": "分享到 WhatsApp",
+      "copyLink": "複製連結",
+      "linkCopied": "已複製連結。",
+      "showQr": "顯示 QR 碼"
+    },
+    "discard": {
+      "title": "要捨棄草稿嗎？",
+      "body": "你目前填寫的內容將會遺失。",
+      "keep": "繼續編輯",
+      "discard": "捨棄草稿",
+      "saved": "草稿已儲存在這部裝置上。"
+    },
+    "validation": {
+      "sportRequired": "請選擇一項運動。",
+      "venueRequired": "請選擇場地或放置圖釘。",
+      "startInPast": "請選擇未來的開始時間。",
+      "capacityRange": "請選擇 {min} 到 {max} 位球友。",
+      "depositRange": "請輸入 {min} 到 {max} 之間的金額。"
+    },
+    "hostSuspended": {
+      "title": "你目前無法主辦比賽",
+      "body": "你的帳號已暫停主辦比賽。請查看原因與結束時間。",
+      "action": "查看詳情"
+    }
+  },
+  "details": {
+    "hiddenLocation": "主辦人核准你加入後，會分享確切地點",
+    "host": {
+      "approve": "核准",
+      "reject": "拒絕",
+      "rejectReasonLabel": "原因（選填）",
+      "rejectTemplate": {
+        "full": "比賽已額滿。",
+        "level": "這場比賽可能不太適合你。",
+        "unknown": "我還不太認識你，請先在群組裡打聲招呼。"
+      },
+      "pendingCount": "{count, plural, other {有 # 個申請等你處理}}",
+      "edit": "編輯比賽",
+      "cancelGame": "取消比賽",
+      "cancelReasonLabel": "原因",
+      "cancelHelp": "所有已加入的球友都會收到通知。",
+      "cancelConfirm": "取消這場比賽",
+      "showQr": "顯示報到 QR 碼",
+      "teams": "分隊",
+      "enterResult": "輸入比分"
+    },
+    "facts": {
+      "players": "{joined}/{capacity} 位球友",
+      "waitlist": "{count, plural, other {候補 # 人}}",
+      "deposit": "保證金 {amount}",
+      "womenOnly": "僅限女性",
+      "private": "私人比賽",
+      "format": "賽制：{format}"
+    },
+    "sections": {
+      "players": "球友",
+      "requests": "申請",
+      "waitlist": "候補名單"
+    },
+    "noPlayersYet": "還沒有球友，來當第一個加入的人吧。",
+    "action": {
+      "join": "加入比賽",
+      "request": "申請加入",
+      "joinWaitlist": "加入候補 · 第 {position} 位",
+      "cancelRequest": "取消申請",
+      "waitingForHost": "等待主辦人處理",
+      "checkIn": "報到",
+      "checkInOpens": "{time}開放報到",
+      "chat": "聊天",
+      "directions": "路線",
+      "cantMakeIt": "我無法參加",
+      "leaveWaitlist": "退出候補",
+      "waitlistPosition": "你目前排在候補第 {position} 位。"
+    },
+    "outcome": {
+      "joined": "你已加入，到時見。",
+      "requestSent": "已送出申請，主辦人很快會回覆。",
+      "waitlisted": "你已進入候補名單，有空位時我們會通知你。"
+    },
+    "cancel": {
+      "title": "要取消你的名額嗎？",
+      "lateWarning": "在開始前不到{hours, plural, other {# 小時}}取消，會視為臨時取消，並記一張黃牌。",
+      "freeUntil": "在 {time}前取消不會受到處罰。",
+      "confirm": "取消我的名額",
+      "keep": "保留我的名額"
+    },
+    "deposit": {
+      "disclosure": "預先授權 {amount} · 報到後釋放",
+      "sheetTitle": "保證金預先授權",
+      "body": "我們會在 {time}對你的信用卡預先授權 {amount}。你報到後就會釋放。如果你沒有到場，又沒有及時取消，這筆款項將被扣留。",
+      "continue": "繼續付款",
+      "status": {
+        "held": "已預先授權",
+        "released": "已釋放",
+        "forfeited": "已扣留",
+        "failed": "預先授權失敗"
+      }
+    },
+    "banner": {
+      "cancelled": "這場比賽已取消。原因：{reason}",
+      "cancelledNoReason": "這場比賽已取消。",
+      "ended": "這場比賽已結束。",
+      "rateHost": "為主辦人評分"
+    }
+  },
+  "invite": {
+    "title": "你收到了邀請",
+    "join": "加入",
+    "signUpToJoin": "註冊後加入",
+    "expired": "這個邀請已過期，請向主辦人索取新的連結。"
+  },
+  "teams": {
+    "title": "分隊",
+    "empty": "球友報到後就會顯示分隊。",
+    "teamName": "{letter} 隊",
+    "balance": "均衡 · 評分差 {diff}",
+    "coverage": "位置涵蓋：{summary}",
+    "reshuffle": "重新分隊",
+    "movePlayer": "調整球友",
+    "moveTo": "移到{team}",
+    "lock": "鎖定分隊",
+    "locked": "分隊已鎖定，已通知球友。"
+  },
+  "result": {
+    "title": "輸入比分",
+    "window": "你還可以在{duration}內輸入比分。",
+    "scoreFor": "{team}的得分",
+    "increase": "為{team}加 1 分",
+    "decrease": "為{team}減 1 分",
+    "mvpLabel": "最有價值球員（選填）",
+    "didntPlay": "我們沒有比賽",
+    "submit": "儲存比分",
+    "saved": "已儲存比分。球友可以在{hours, plural, other {# 小時}}內提出異議。",
+    "closed": "輸入比分的時間已於 {time}截止。"
+  }
+}

@@ -6,9 +6,10 @@
  * and takes every business rule from `@st/domain` (see ./mock/domain.ts), so
  * tests exercise the same rules as SQL and Edge Functions.
  *
- * Known gaps (documented, to be filled when the domain exports them): report
- * evaluation (visibility restriction), card escalation bans, server moderation
- * (a small local word list stands in for the providers) and squad balancing.
+ * Moderation: the domain blocklist + verdict combiner run with a local stand-in
+ * for the server providers (omni-moderation / LLM), which only exist server side.
+ * Not yet mirrored: report evaluation (visibility restriction) and card
+ * escalation bans, which run in SQL in production.
  */
 import {
   DEFAULT_TRUST_CONFIG,
@@ -94,10 +95,16 @@ import {
   canDispute,
   canSubmitResult,
   chatExpiresAt,
+  checkCreateGameEligibility,
+  checkJoinEligibility,
+  combineModerationVerdicts,
+  decideJoinOutcome,
+  evaluateChatBlocks,
   generateQrToken,
   haversineMeters,
   isChatOpen,
   isLateCancel,
+  matchBlocklist,
   materializeSanction,
   toEpochMs,
   toIso,
@@ -105,6 +112,7 @@ import {
   verifyHost,
   verifyPeer,
   verifyQr,
+  type ChatBlockRecord,
 } from './mock/domain';
 import { buildSeed, MOCK_OTP_CODES } from './mock/seed';
 import type { MockGame, MockState, MockUser } from './mock/state';
@@ -122,9 +130,8 @@ export interface InMemoryAdapterOptions {
 const E164 = /^\+[1-9]\d{6,14}$/;
 const ACTIVE_STATUSES = new Set(['requested', 'approved', 'waitlisted']);
 
-/** Mock moderation word lists (stand-in for omni-moderation + LLM; server decides in production). */
-const MOCK_BLOCK = [/\bkill you\b/i, /\bi will hurt\b/i, /\bhate (you|them) all\b/i];
-const MOCK_NUDGE = [/\bidiot\b/i, /\bstupid\b/i, /\bloser\b/i, /\bshut up\b/i];
+/** Stand-in for the server moderation providers: obvious threats are blocked. */
+const MOCK_PROVIDER_THREATS = [/\bkill you\b/i, /\bi will hurt\b/i, /\bbeat you up\b/i];
 
 function clone<T>(value: T): T {
   return value === undefined ? value : (JSON.parse(JSON.stringify(value)) as T);
@@ -140,8 +147,8 @@ export class InMemoryAdapter implements DataPort {
   private readonly authListeners = new Set<(user: AuthUser | null) => void>();
   private readonly chatListeners = new Map<GameId, Set<(event: ChatEvent) => void>>();
   private readonly otpSent = new Map<PhoneE164, EpochMs>();
-  /** Recent moderation blocks per sender (for the 3-blocks-in-7-days rule). */
-  private readonly chatBlocks = new Map<string, EpochMs[]>();
+  /** Blocked messages per sender (`moderation_retained` stand-in, for the 3-blocks-in-7-days rule). */
+  private readonly chatBlocks = new Map<UserId, ChatBlockRecord[]>();
   private readonly clock: () => EpochMs;
   private readonly latencyMs: number;
   private readonly config: TrustConfig;
@@ -357,7 +364,7 @@ export class InMemoryAdapter implements DataPort {
       next.status = 'approved';
       next.waitlistRank = null;
       next.decidedAt = this.nowIso();
-      this.notify(next.userId, 'waitlist_promoted', { gameTitle: g.title }, g.id);
+      this.notify(next.userId, 'waitlist_promoted', { gameTitle: g.title, time: g.startsAt }, g.id);
       this.rerankWaitlist(g.id);
     }
   }
@@ -373,11 +380,16 @@ export class InMemoryAdapter implements DataPort {
   }
 
   private issueSanction(args: Parameters<typeof buildSystemSanction>[0]): Sanction {
-    const existing = this.state.sanctions.find((s) => s.dedupeKey === args.dedupeKey);
+    return this.recordSanction(buildSystemSanction(args, this.now()));
+  }
+
+  /** Applies an `IssueSanction` effect: idempotent on `dedupeKey`, projects restrictions, notifies. */
+  private recordSanction(newSanction: Parameters<typeof materializeSanction>[0]): Sanction {
+    const existing = this.state.sanctions.find((x) => x.dedupeKey === newSanction.dedupeKey);
     if (existing) return existing;
-    const s = materializeSanction(buildSystemSanction(args, this.now()), this.now());
+    const s = materializeSanction(newSanction, this.now());
     this.state.sanctions.push(s);
-    this.notify(s.userId, 'sanction_issued', { kind: s.kind }, s.gameId, s.id);
+    this.notify(s.userId, 'sanction_issued', {}, s.gameId, s.id);
     const p = this.state.users.get(s.userId)?.profile;
     if (p && s.expiresAt) {
       if (s.kind === 'chat_mute') p.chatMutedUntil = s.expiresAt;
@@ -385,6 +397,18 @@ export class InMemoryAdapter implements DataPort {
       if (s.kind === 'yellow_card' && p.reliability.status === 'green') p.reliability.status = 'yellow';
     }
     return s;
+  }
+
+  private eligibilityUser(u: MockUser) {
+    const p = u.profile;
+    return {
+      id: u.id,
+      gender: u.privateData?.gender ?? 'undisclosed',
+      permanentlyBanned: p?.permanentlyBanned ?? false,
+      joinBannedUntil: p?.joinBannedUntil ?? null,
+      visibilityRestrictedUntil: p?.visibilityRestrictedUntil ?? null,
+      hostSuspendedUntil: p?.hostSuspendedUntil ?? null,
+    };
   }
 
   private withDerivedStatus(s: Sanction): Sanction {
@@ -745,10 +769,10 @@ export class InMemoryAdapter implements DataPort {
   createGame(input: GameCreateInput): Promise<GameDetail> {
     return this.run(() => {
       const me = this.me();
-      const profile = this.myProfile();
+      this.myProfile();
       const now = this.now();
-      if (profile.permanentlyBanned) fail('account_banned');
-      if (profile.hostSuspendedUntil && toEpochMs(profile.hostSuspendedUntil) > now) fail('host_suspended');
+      const eligible = checkCreateGameEligibility(this.eligibilityUser(this.meUser()), input, now);
+      if (!eligible.ok) fail(eligible.error);
       const title = input.title.trim();
       if (title.length < 1 || title.length > 80) fail('validation', 'title');
       if (!(SPORT_IDS as readonly string[]).includes(input.sport)) fail('validation', 'sport');
@@ -825,7 +849,7 @@ export class InMemoryAdapter implements DataPort {
       for (const p of this.participantsOf(g.id)) {
         if (!ACTIVE_STATUSES.has(p.status) || p.userId === me) continue;
         this.settleDeposit(g.id, p.userId, 'released');
-        this.notify(p.userId, 'game_cancelled', { gameTitle: g.title }, g.id);
+        this.notify(p.userId, 'game_cancelled', { gameTitle: g.title, time: g.startsAt }, g.id);
       }
       return this.detail(g, me);
     });
@@ -839,14 +863,18 @@ export class InMemoryAdapter implements DataPort {
       const raw = this.state.games.get(gameId);
       if (raw && options.inviteToken && options.inviteToken === raw.inviteToken) this.state.inviteAccess.add(`${gameId}|${me}`);
       const g = this.gameOr404(gameId, me);
-      if (profile.permanentlyBanned) fail('account_banned');
-      if (profile.joinBannedUntil && toEpochMs(profile.joinBannedUntil) > now) fail('join_banned');
-      if (g.status !== 'scheduled' || toEpochMs(g.endsAt) <= now) fail('game_not_open');
-      if (g.hostId === me) fail('conflict', 'host');
-      if (this.isBlocked(g.hostId, me)) fail('blocked');
-      if (g.womenOnly && this.meUser().privateData?.gender !== 'female') fail('women_only');
-      const existing = this.participant(gameId, me);
-      if (existing && existing.status !== 'cancelled') fail('conflict');
+      const existing = this.participant(gameId, me) ?? null;
+      const eligible = checkJoinEligibility(
+        {
+          game: g,
+          user: this.eligibilityUser(this.meUser()),
+          existing,
+          approvedUserIds: this.participantsOf(gameId).filter((p) => p.status === 'approved').map((p) => p.userId),
+          blocks: this.state.blocks,
+        },
+        now,
+      );
+      if (!eligible.ok) fail(eligible.error);
       const position = options.position ?? null;
       if (position && !(SPORT_POSITIONS[g.sport] as readonly string[]).includes(position)) fail('validation', 'position');
       const participant: Participant = {
@@ -908,14 +936,14 @@ export class InMemoryAdapter implements DataPort {
         this.notify(userId, 'join_rejected', { gameTitle: g.title }, g.id);
         return p;
       }
-      if (this.counts(gameId).approved < g.capacity) {
+      if (decideJoinOutcome(this.counts(gameId).approved, g.capacity) === 'approved') {
         p.status = 'approved';
-        this.notify(userId, 'join_approved', { gameTitle: g.title }, g.id);
+        this.notify(userId, 'join_approved', { gameTitle: g.title, time: g.startsAt }, g.id);
       } else {
         p.status = 'waitlisted';
         p.waitlistRank = this.counts(gameId).waitlist;
         this.rerankWaitlist(gameId);
-        this.notify(userId, 'join_waitlisted', { gameTitle: g.title, rank: p.waitlistRank ?? 1 }, g.id);
+        this.notify(userId, 'join_waitlisted', { gameTitle: g.title, position: p.waitlistRank ?? 1 }, g.id);
       }
       return p;
     });
@@ -959,7 +987,7 @@ export class InMemoryAdapter implements DataPort {
           kind: 'yellow_card',
           userId: me,
           reasonCode: 'late_cancel',
-          statementParams: { gameTitle: g.title, hours: this.config.lateCancelWindowHours },
+          statementParams: { date: g.startsAt, gameTitle: g.title, hours: this.config.lateCancelWindowHours },
           durationMs: this.config.yellowCardLifetimeDays * DAY_MS,
           disputeMs: this.config.disputeWindowHours * HOUR_MS,
           gameId: g.id,
@@ -1262,40 +1290,26 @@ export class InMemoryAdapter implements DataPort {
       const dup = this.state.messages.find((m) => m.gameId === gameId && m.senderId === me && m.clientMsgId === clientMsgId);
       if (dup) return { verdict: { decision: dup.moderation, categories: [], source: 'combined', reasonKey: null }, message: dup, mutedUntil: null };
 
-      let verdict: ModerationVerdict = { decision: 'allow', categories: [], source: 'combined', reasonKey: null };
-      if (MOCK_BLOCK.some((re) => re.test(text))) {
-        verdict = { decision: 'block', categories: ['threat'], source: 'combined', reasonKey: 'moderation.block.threat' };
-      } else if (MOCK_NUDGE.some((re) => re.test(text))) {
-        verdict = { decision: 'nudge', categories: ['harassment'], source: 'combined', reasonKey: 'moderation.nudge.harassment' };
-      }
+      // Providers (omni-moderation + LLM) run server side; the stand-in flags obvious threats.
+      const threat = MOCK_PROVIDER_THREATS.some((re) => re.test(text));
+      const provider: ModerationVerdict = threat
+        ? { decision: 'block', categories: ['threat'], source: 'omni', reasonKey: 'moderation.block.threat' }
+        : { decision: 'allow', categories: [], source: 'omni', reasonKey: null };
+      const verdict = combineModerationVerdicts({
+        blocklist: matchBlocklist(text, profile.locale),
+        omni: provider,
+        llm: { ...provider, source: 'llm' },
+      });
       if (verdict.decision === 'block') {
-        const key = `chat_blocks:${me}`;
-        const blocks = this.chatBlocks.get(key) ?? [];
-        const windowStart = now - this.config.chatBlocksWindowDays * DAY_MS;
-        const recent = [...blocks.filter((t) => t >= windowStart), now];
-        this.chatBlocks.set(key, recent);
+        const records = [...(this.chatBlocks.get(me) ?? []), { gameId, at: toIso(now) }];
+        this.chatBlocks.set(me, records);
+        const evaluation = evaluateChatBlocks(me, records, this.state.sanctions, now, this.config);
         let mutedUntil: IsoDateTime | null = null;
-        if (recent.length >= this.config.chatBlocksForCard) {
-          const dedupe = `chat_blocks:${me}:${Math.floor(now / DAY_MS)}`;
-          this.issueSanction({
-            kind: 'yellow_card',
-            userId: me,
-            reasonCode: 'chat_blocks',
-            durationMs: this.config.yellowCardLifetimeDays * DAY_MS,
-            disputeMs: this.config.disputeWindowHours * HOUR_MS,
-            gameId,
-            dedupeKey: `${dedupe}:card`,
-          });
-          const mute = this.issueSanction({
-            kind: 'chat_mute',
-            userId: me,
-            reasonCode: 'chat_blocks',
-            durationMs: this.config.chatMuteHours * HOUR_MS,
-            gameId,
-            dedupeKey: `${dedupe}:mute`,
-          });
-          mutedUntil = mute.expiresAt;
-          this.chatBlocks.set(key, []);
+        for (const effect of evaluation.effects) {
+          if (effect.type === 'IssueSanction') {
+            const issued = this.recordSanction(effect.sanction);
+            if (issued.kind === 'chat_mute') mutedUntil = issued.expiresAt;
+          }
         }
         return { verdict, message: null, mutedUntil };
       }

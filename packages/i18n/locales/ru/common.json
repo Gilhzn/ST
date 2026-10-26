@@ -1,0 +1,117 @@
+{
+  "app": {
+    "name": "Sport Talent",
+    "tagline": "Найди игру. Приходи. Играй."
+  },
+  "actions": {
+    "continue": "Продолжить",
+    "back": "Назад",
+    "next": "Далее",
+    "done": "Готово",
+    "cancel": "Отмена",
+    "close": "Закрыть",
+    "save": "Сохранить",
+    "edit": "Изменить",
+    "delete": "Удалить",
+    "retry": "Повторить",
+    "confirm": "Подтвердить",
+    "share": "Поделиться",
+    "copy": "Копировать",
+    "search": "Поиск",
+    "clear": "Очистить",
+    "apply": "Применить",
+    "skip": "Пропустить",
+    "notNow": "Не сейчас",
+    "learnMore": "Подробнее",
+    "viewAll": "Показать все",
+    "dismiss": "Скрыть",
+    "undo": "Отменить действие",
+    "report": "Пожаловаться",
+    "block": "Заблокировать",
+    "unblock": "Разблокировать",
+    "openSettings": "Открыть настройки",
+    "send": "Отправить",
+    "gotIt": "Понятно"
+  },
+  "status": {
+    "loading": "Загрузка…",
+    "saving": "Сохранение…",
+    "offlineBanner": "Нет подключения к интернету. Показаны сохранённые данные.",
+    "offlineHint": "Для этого действия нужно подключение к интернету.",
+    "savedAgo": "Сохранено {minutes, plural, one {# минуту} few {# минуты} many {# минут} other {# минуты}} назад",
+    "savedJustNow": "Только что сохранено"
+  },
+  "errorState": {
+    "title": "Не удалось загрузить",
+    "body": "Проверьте подключение и повторите попытку."
+  },
+  "a11y": {
+    "back": "Назад",
+    "close": "Закрыть",
+    "moreOptions": "Другие действия"
+  },
+  "validation": {
+    "required": "Это обязательное поле.",
+    "tooShort": "Введите не менее {min, plural, one {# символа} few {# символов} many {# символов} other {# символа}}.",
+    "tooLong": "Используйте не более {max, plural, one {# символа} few {# символов} many {# символов} other {# символа}}."
+  },
+  "players": {
+    "count": "{count, plural, one {# игрок} few {# игрока} many {# игроков} other {# игрока}}",
+    "spotsLeft": "{count, plural, =0 {Мест нет} one {Остаётся # место} few {Остаётся # места} many {Остаётся # мест} other {Остаётся # места}}"
+  },
+  "sports": {
+    "football": "Футбол",
+    "basketball": "Баскетбол",
+    "tennis": "Теннис",
+    "padel": "Падел",
+    "running": "Бег",
+    "volleyball": "Волейбол"
+  },
+  "positions": {
+    "goalkeeper": "Вратарь",
+    "defender": "Защитник",
+    "midfielder": "Полузащитник",
+    "forward": "Нападающий",
+    "point_guard": "Разыгрывающий",
+    "shooting_guard": "Атакующий защитник",
+    "small_forward": "Лёгкий форвард",
+    "power_forward": "Тяжёлый форвард",
+    "center": "Центровой",
+    "left_side": "Левая сторона",
+    "right_side": "Правая сторона",
+    "setter": "Связующий",
+    "outside_hitter": "Доигровщик",
+    "opposite": "Диагональный",
+    "middle_blocker": "Центральный блокирующий",
+    "libero": "Либеро"
+  },
+  "positionsShort": {
+    "goalkeeper": "ВРТ",
+    "defender": "ЗАЩ",
+    "midfielder": "ПЗ",
+    "forward": "НАП",
+    "point_guard": "РЗ",
+    "shooting_guard": "АЗ",
+    "small_forward": "ЛФ",
+    "power_forward": "ТФ",
+    "center": "Ц",
+    "left_side": "Л",
+    "right_side": "П",
+    "setter": "СВ",
+    "outside_hitter": "ДИ",
+    "opposite": "ДГ",
+    "middle_blocker": "ЦБ",
+    "libero": "ЛИБ"
+  },
+  "reliability": {
+    "status": {
+      "green": "Надёжный",
+      "yellow": "Осторожно",
+      "red": "Ограничен",
+      "new": "Новый игрок"
+    },
+    "withPercent": "{status} · {percent}",
+    "a11y": "Надёжность: {status}, {percent}",
+    "a11yNew": "Надёжность: новый игрок"
+  }
+}

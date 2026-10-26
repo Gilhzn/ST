@@ -459,7 +459,8 @@ begin
   select count(*), array_agg(s.id order by s.created_at, s.id) into n, cards
   from public.sanctions s
   where s.user_id = c.user_id and s.kind = 'yellow_card' and public.st_sanction_in_force(s, t)
-    and (s.status = 'upheld' or (s.status = 'active' and (s.dispute_until is null or s.dispute_until <= t)));
+    and s.escalated_at is not null  -- matured cards processed so far (incl. this one), in order
+    and s.status in ('active', 'upheld');
 
   if n >= cfg.join_ban_long_at_cards then
     perform public.st_issue_sanction(c.user_id, 'join_ban', 'escalation_three_cards',

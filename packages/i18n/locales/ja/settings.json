@@ -1,0 +1,96 @@
+{
+  "title": "設定",
+  "section": {
+    "account": "アカウント",
+    "language": "言語",
+    "theme": "テーマ",
+    "notifications": "通知",
+    "privacy": "プライバシーと安全",
+    "legal": "法的情報",
+    "about": "このアプリについて"
+  },
+  "account": {
+    "phone": "電話番号",
+    "linkedLogins": "連携中のログイン",
+    "signOut": "ログアウト",
+    "signOutConfirm": "この端末でSport Talentからログアウトしますか？"
+  },
+  "language": {
+    "title": "言語",
+    "useDevice": "端末の言語を使う",
+    "deviceNow": "端末の言語：{language}",
+    "current": "現在の言語",
+    "restart": {
+      "title": "{language}に切り替えるため再起動しますか？",
+      "body": "文字を読む向きを変えるため、アプリの再起動が必要です。再起動の前に下書きを保存します。",
+      "restartNow": "今すぐ再起動",
+      "later": "あとで",
+      "pending": "再起動すると新しい言語が使われます。"
+    }
+  },
+  "theme": {
+    "title": "テーマ",
+    "system": "システム設定に合わせる",
+    "light": "ライト",
+    "dark": "ダーク",
+    "preview": "プレビュー"
+  },
+  "notifications": {
+    "title": "通知",
+    "joinRequests": "参加リクエスト",
+    "approvals": "承認",
+    "waitlist": "キャンセル待ちの繰り上げ",
+    "reminders": "試合のリマインダー",
+    "chat": "チャットのメッセージ",
+    "safety": "アカウントと安全",
+    "safetyLocked": "常にオンです。アカウントに関する決定は、必ずお知らせする必要があります。",
+    "osOff": "端末の設定で通知がオフになっています。",
+    "osOffAction": "端末の設定を開く"
+  },
+  "privacy": {
+    "title": "プライバシーと安全",
+    "profileVisibility": "プロフィールを見られる人",
+    "visibilityEveryone": "全員",
+    "visibilityParticipants": "同じ試合のプレイヤー",
+    "showReliability": "信頼度を表示する",
+    "showReliabilityHelp": "試合への参加をリクエストしたとき、主催者には常に信頼度が表示されます。",
+    "location": {
+      "title": "位置情報",
+      "precise": "正確な位置情報",
+      "approximate": "おおよその位置情報",
+      "preciseHelp": "アプリを開いている間だけ、チェックインと近くの試合の表示に使います。"
+    },
+    "background": {
+      "title": "自動チェックイン",
+      "help": "参加する試合の会場に着いたことを検知するため、Sport Talentがバックグラウンドで位置情報を使えるようにします。会場の近くで、試合の時間帯だけ確認します。"
+    },
+    "blocked": {
+      "title": "ブロックしたプレイヤー",
+      "empty": "ブロックしているプレイヤーはいません。",
+      "unblockConfirm": "{name}のブロックを解除しますか？"
+    },
+    "data": {
+      "download": "データをダウンロード",
+      "help": "データのコピーをリクエストします。準備ができたらお知らせします。"
+    }
+  },
+  "delete": {
+    "title": "アカウントを削除",
+    "dangerZone": "危険な操作",
+    "intro": "アカウントの削除は取り消せません。",
+    "deletedTitle": "削除されるもの",
+    "deleted": "プロフィール、写真、電話番号、チャットのメッセージ、まだプレーしていない試合。",
+    "keptTitle": "保管されるもの",
+    "kept": "警告や利用停止の記録は、あなたを特定できない形で保管し、ルールがすべての人にとって公平であるようにします。保管するのは法律で認められる期間に限ります。",
+    "confirmTyped": "確認のため「{word}」と入力してください。",
+    "confirmOtp": "または、{phone}にSMSで送信するコードで確認してください。",
+    "button": "アカウントを削除する",
+    "deleting": "アカウントを削除しています…",
+    "done": "アカウントを削除しました。",
+    "webLink": "ウェブからもアカウントを削除できます：{url}"
+  },
+  "about": {
+    "version": "バージョン{version}",
+    "diagnosticsOn": "診断モードをオンにしました。"
+  }
+}

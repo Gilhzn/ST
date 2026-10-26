@@ -1,0 +1,70 @@
+{
+  "join_requested": {
+    "title": "新しい参加リクエスト",
+    "body": "{name}さんが「{gameTitle}」への参加を希望しています。承認または却下してください。"
+  },
+  "join_approved": {
+    "title": "参加が決まりました",
+    "body": "主催者が{time}の「{gameTitle}」への参加を承認しました。"
+  },
+  "join_rejected": {
+    "title": "リクエストは承認されませんでした",
+    "body": "主催者は「{gameTitle}」へのリクエストを承認できませんでした。地図にはほかの試合もあります。"
+  },
+  "join_waitlisted": {
+    "title": "キャンセル待ちに登録しました",
+    "body": "「{gameTitle}」は満員です。キャンセル待ちの{position}番目です。空きが出たらお知らせします。"
+  },
+  "waitlist_promoted": {
+    "title": "空きが出ました",
+    "body": "{time}の「{gameTitle}」に参加できるようになりました。"
+  },
+  "participant_removed": {
+    "title": "試合から外されました",
+    "body": "主催者があなたを「{gameTitle}」から外しました。詳細は試合ページをご確認ください。"
+  },
+  "game_cancelled": {
+    "title": "試合が中止されました",
+    "body": "主催者が{time}の「{gameTitle}」を中止しました。"
+  },
+  "game_reminder": {
+    "title": "まもなく試合です",
+    "body": "「{gameTitle}」は{time}に始まります。チェックインは開始の{minutes, plural, other {#分}}前からできます。"
+  },
+  "checkin_open": {
+    "title": "チェックインが始まりました",
+    "body": "会場に着いたら「{gameTitle}」にチェックインしてください。"
+  },
+  "result_requested": {
+    "title": "試合はどうでしたか？",
+    "body": "「{gameTitle}」の結果を入力してください。残り{hours, plural, other {#時間}}です。"
+  },
+  "sanction_issued": {
+    "title": "アカウントに関するお知らせ",
+    "body": "アカウントについての決定がありました。アプリを開いて、内容と異議の申し立て方法をご確認ください。"
+  },
+  "sanction_decided": {
+    "title": "アカウントに関する決定",
+    "body": "モデレーターがアカウントを確認しました。アプリを開いて、決定内容と理由をご確認ください。"
+  },
+  "appeal_decided": {
+    "title": "不服申し立ての結果が出ました",
+    "body": "{outcome, select, overturned {決定を取り消しました。詳細はアプリでご確認ください。} upheld {決定は維持されました。理由はアプリでご確認ください。} other {決定内容はアプリでご確認ください。}}"
+  },
+  "visibility_restricted": {
+    "title": "プロフィールの表示が制限されました",
+    "body": "今後{hours, plural, other {#時間}}の間、あなたのプロフィールはほかのプレイヤーに表示されにくくなります。理由はアプリでご確認ください。"
+  },
+  "chat_muted": {
+    "title": "チャットが一時停止されました",
+    "body": "{time}までメッセージを送信できません。理由はアプリでご確認ください。"
+  },
+  "venue_hidden": {
+    "title": "会場を確認中です",
+    "body": "{venueName}は、報告内容を確認する間、非表示になります。"
+  },
+  "deposit_action_required": {
+    "title": "デポジットの手続きが必要です",
+    "body": "「{gameTitle}」の{amount}のデポジットの仮押さえを確認してください。アプリを開いて続けてください。"
+  }
+}

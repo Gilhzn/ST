@@ -1,0 +1,82 @@
+{
+  "title": "Informations légales",
+  "lastUpdated": "Dernière mise à jour : {date}",
+  "placeholderNotice": "Ceci est un brouillon. Notre équipe juridique vérifiera le texte final avant le lancement.",
+  "privacy": {
+    "title": "Politique de confidentialité",
+    "intro": "Cette page explique quelles informations Sport Talent collecte, pourquoi, et les choix dont tu disposes. La politique complète sera publiée ici avant le lancement.",
+    "collect": {
+      "title": "Ce que nous collectons",
+      "body": "Ton numéro de téléphone, ton mois et ton année de naissance, ton nom affiché, les parties que tu rejoins, les résultats de check-in et les messages de discussion. La position précise n’est utilisée que lorsque l’appli est ouverte."
+    },
+    "use": {
+      "title": "Comment nous l’utilisons",
+      "body": "Pour afficher les parties près de toi, confirmer la présence, assurer la sécurité de la communauté et t’envoyer les notifications que tu demandes."
+    },
+    "share": {
+      "title": "Avec qui nous le partageons",
+      "body": "Les autres joueurs voient ton nom affiché et ta fiabilité. Des prestataires traitent des données pour notre compte dans le cadre d’un contrat. Nous ne vendons pas tes données personnelles."
+    },
+    "retention": {
+      "title": "Combien de temps nous le conservons",
+      "body": "Les messages de discussion sont supprimés peu après la fin d’une partie. Les messages signalés sont conservés pour une durée limitée afin d’être examinés. Tu peux supprimer ton compte à tout moment."
+    },
+    "rights": {
+      "title": "Tes droits",
+      "body": "Tu peux accéder à tes données, les corriger, les télécharger ou les supprimer, et t’opposer à certains usages. Contacte-nous pour exercer ces droits."
+    },
+    "age": {
+      "title": "Âge minimum",
+      "body": "Sport Talent est réservé aux personnes de 16 ans et plus."
+    }
+  },
+  "terms": {
+    "title": "Conditions d’utilisation",
+    "intro": "Ces conditions expliquent comment tu peux utiliser Sport Talent. Les conditions complètes seront publiées ici avant le lancement.",
+    "account": {
+      "title": "Ton compte",
+      "body": "Tu dois avoir 16 ans ou plus. Garde tes identifiants en sécurité et donne-nous des informations exactes."
+    },
+    "conduct": {
+      "title": "Fair-play et comportement",
+      "body": "Respecte les autres joueurs. Viens aux parties que tu rejoins, ou annule suffisamment tôt. Ne publie rien d’illégal, de haineux ou de menaçant."
+    },
+    "games": {
+      "title": "Parties et lieux",
+      "body": "Les parties sont organisées par des joueurs, pas par Sport Talent. Tu es responsable de ta propre sécurité et du respect des règles de chaque lieu."
+    },
+    "deposits": {
+      "title": "Cautions",
+      "body": "Un organisateur peut demander une caution remboursable. Elle est libérée après ton check-in et peut être conservée si tu ne viens pas et n’annules pas à temps."
+    },
+    "sanctions": {
+      "title": "Avertissements et restrictions",
+      "body": "Nous pouvons avertir ou restreindre les comptes qui enfreignent ces conditions. Nous expliquons chaque décision et tu peux faire appel."
+    },
+    "changes": {
+      "title": "Modifications de ces conditions",
+      "body": "Nous pouvons mettre à jour ces conditions. Nous te préviendrons des changements importants."
+    }
+  },
+  "communityRules": {
+    "title": "Règles de la communauté",
+    "intro": "Sport Talent fonctionne quand chacun se sent le bienvenu. Ces règles s’appliquent aux discussions, aux profils et aux parties.",
+    "respect": "Sois respectueux. Pas de harcèlement, de haine ni de menaces.",
+    "safety": "Reste prudent. Pas de violence, et ne partage pas les informations personnelles des autres.",
+    "honesty": "Sois honnête. Utilise tes vraies informations et n’ajoute que de vrais lieux.",
+    "reliability": "Viens, ou annule suffisamment tôt.",
+    "content": "Pas de spam, de publicité ni de contenu sexuel."
+  },
+  "contact": {
+    "title": "Nous contacter",
+    "body": "Une question, un commentaire ou une demande concernant tes données ? Écris-nous et nous répondrons dès que possible.",
+    "emailLabel": "E-mail",
+    "email": "support@sporttalent.example",
+    "addressLabel": "Adresse de l’entreprise",
+    "address": "[Adresse de l’entreprise à ajouter]"
+  },
+  "reportContent": {
+    "title": "Signaler un contenu illégal",
+    "body": "Si tu vois un contenu que tu juges illégal, dis-nous de quoi il s’agit et où il se trouve, et nous l’examinerons."
+  }
+}

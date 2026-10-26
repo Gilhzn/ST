@@ -1,0 +1,157 @@
+{
+  "reliability": {
+    "title": "可靠度",
+    "basedOn": "依據你最近{days, plural, other {# 天}}的紀錄：{games, plural, other {# 場比賽}}、{checkIns, plural, other {# 次報到}}、{lateCancels, plural, other {# 次臨時取消}}。",
+    "newPlayer": "新球友 · 參加{games, plural, other {# 場比賽}}後即可取得可靠度評分。",
+    "meter": {
+      "restrictedBelow": "低於 {percent} 為受限",
+      "reliableFrom": "{percent} 起為可靠",
+      "a11y": "你的可靠度為 {percent}。低於 {red} 為受限，{green} 起為可靠。"
+    },
+    "yellowCards": "{count, plural, other {# 張黃牌 · 最早的一張將於 {date}到期}}",
+    "howItWorks": "計算方式",
+    "how": {
+      "title": "可靠度如何計算",
+      "body": "評分反映你在最近{days, plural, other {# 天}}內，對已加入的比賽的到場情況。報到會加分；爽約會扣分，臨時取消則算半次爽約。你參加{games, plural, other {# 場比賽}}後才會顯示評分。",
+      "green": "可靠：{percent} 以上，且沒有生效中的黃牌。",
+      "yellow": "留意：低於可靠水準，或有生效中的黃牌。",
+      "red": "受限：低於 {percent}，或已暫停加入比賽。",
+      "new": "新球友：比賽場次還不夠，暫無評分。"
+    }
+  },
+  "sanctions": {
+    "title": "帳號狀態",
+    "kind": {
+      "yellow_card": {
+        "name": "黃牌",
+        "effect": "這是一次警告，不會限制你的操作。",
+        "stillAllowed": "你仍然可以加入比賽、主辦比賽和聊天。"
+      },
+      "join_ban": {
+        "name": "暫停加入比賽",
+        "effect": "你無法申請加入比賽。",
+        "stillAllowed": "你仍然可以在已加入的比賽中聊天。"
+      },
+      "chat_mute": {
+        "name": "暫停聊天",
+        "effect": "你無法在比賽聊天室中傳送訊息，但仍可閱讀。",
+        "stillAllowed": "你仍然可以加入比賽並參加比賽。"
+      },
+      "visibility_restriction": {
+        "name": "降低可見度",
+        "effect": "其他球友較難看到你的個人檔案。",
+        "stillAllowed": "你仍然可以加入比賽和聊天。"
+      },
+      "host_suspension": {
+        "name": "暫停主辦比賽",
+        "effect": "你無法建立新的比賽。",
+        "stillAllowed": "你仍然可以以球友身分加入比賽。"
+      },
+      "permanent_ban": {
+        "name": "帳號已關閉",
+        "effect": "你無法再使用這個帳號登入 Sport Talent。",
+        "stillAllowed": "你可以對這項決定提出申訴。"
+      }
+    },
+    "status": {
+      "active": "生效中",
+      "disputed": "已提出異議，裁定前仍然有效。",
+      "upheld": "維持原決定",
+      "overturned": "已撤銷決定",
+      "expired": "已結束"
+    },
+    "since": "自 {date}起",
+    "until": "{date}結束",
+    "endsIn": "{duration}後結束",
+    "ended": "已於 {date}結束。",
+    "noEndDate": "這項決定沒有結束日期，由審核員作出。",
+    "statement": {
+      "title": "原因說明",
+      "ruleLabel": "適用規則",
+      "automated": "這項決定是根據報到紀錄自動作出的。如果你提出申訴，將由真人複核。",
+      "human": "這項決定由審核員作出。",
+      "askPerson": "你可以要求由真人複核任何決定。",
+      "affectsTitle": "影響範圍",
+      "stillAllowedTitle": "你仍然可以做的事"
+    },
+    "rule": {
+      "late_cancel": "臨時取消規則",
+      "no_show": "到場規則",
+      "chat_blocks": "聊天規則",
+      "escalation_two_cards": "重複警告規則",
+      "escalation_three_cards": "重複警告規則",
+      "toxicity_reports": "尊重與安全規則",
+      "fake_venue": "場地真實性規則",
+      "low_host_rating": "主辦人品質規則",
+      "moderator_decision": "審核員複核"
+    },
+    "reason": {
+      "late_cancel": "{date}，你在「{gameTitle}」開始前不到{hours, plural, other {# 小時}}取消了參加。依據臨時取消規則，這會被記一張黃牌。",
+      "no_show": "你沒有在 {date}報到「{gameTitle}」，這會被視為爽約。依據到場規則，爽約會被記一張黃牌。",
+      "chat_blocks": "你在比賽聊天室中有{count, plural, other {# 則訊息}}因違反社群規範，在{days, plural, other {# 天}}內被攔截。依據聊天規則，反覆被攔截會被記一張黃牌，並暫停聊天一小段時間。",
+      "escalation_two_cards": "最近{days, plural, other {# 天}}內，你有{cards, plural, other {# 張黃牌}}仍在生效。依據重複警告規則，這會讓你在一段時間內無法申請加入比賽。",
+      "escalation_three_cards": "最近{days, plural, other {# 天}}內，你有{cards, plural, other {# 張黃牌}}仍在生效。依據重複警告規則，這會讓你在較長一段時間內無法申請加入比賽。",
+      "toxicity_reports": "最近{days, plural, other {# 天}}內，有{reporters, plural, other {# 位球友}}檢舉了你的行為，經我們查核，這些檢舉可信。依據尊重與安全規則，你的個人檔案在短時間內對其他球友的曝光會減少。",
+      "fake_venue": "其他球友檢舉了你新增的場地「{venueName}」，我們無法確認它是真實可用的運動場地。依據場地真實性規則，新增不存在的場地可能會導致帳號受到限制。",
+      "low_host_rating": "你擔任主辦人最近的{count, plural, other {# 則評分}}平均為 {average} 分（滿分 5 分），低於主辦比賽所需的水準。依據主辦人品質規則，在我們審核你的帳號期間，主辦比賽將暫停。",
+      "moderator_decision": "審核員複核了你的帳號並作出這項決定。備註：{reason}"
+    },
+    "fix": {
+      "title": "如何恢復",
+      "late_cancel": "下次請在比賽開始前{hours, plural, other {# 小時}}以上取消。你準時到場的比賽越多，可靠度恢復得越快。",
+      "no_show": "請在接下來的比賽中報到。如果無法參加，請盡早在 App 中取消。你準時到場的比賽越多，可靠度恢復得越快。",
+      "chat_blocks": "請修改違反規則的訊息；如果不確定，請閱讀社群規範。暫停結束後聊天室會重新開放。",
+      "escalation_two_cards": "暫停結束後，請準時參加接下來的{games, plural, other {# 場比賽}}，即可恢復為綠色。黃牌會在{days, plural, other {# 天}}後自動失效。",
+      "escalation_three_cards": "暫停結束後，請準時參加接下來的{games, plural, other {# 場比賽}}，即可恢復為綠色。黃牌會在{days, plural, other {# 天}}後自動失效。",
+      "toxicity_reports": "請在聊天室和比賽中保持友善。可見度降低會自行結束，你不需要做任何操作。",
+      "fake_venue": "請只新增真正可以運動的地點。如果我們判斷有誤，請提出申訴，並告訴我們如何找到這個場地。",
+      "low_host_rating": "請查看主辦人評分中的回饋。審核結束後，你就可以再次主辦比賽。",
+      "moderator_decision": "請閱讀上方的備註。如果你不同意，可以提出申訴。",
+      "expiresOn": "這張黃牌將於 {date}到期。",
+      "communityRules": "社群規範"
+    },
+    "dispute": {
+      "cta": "對這張黃牌提出異議",
+      "window": "你可以在 {date}前對這張黃牌提出異議。",
+      "windowClosed": "異議期已結束，但你仍然可以提出申訴。"
+    },
+    "appeal": {
+      "cta": "對這項決定提出申訴",
+      "title": "請告訴我們發生了什麼事",
+      "reasonLabel": "原因",
+      "reason": {
+        "was_present": "我當時在比賽現場",
+        "cancelled_in_time": "我已及時取消",
+        "technical_problem": "GPS 或 App 發生問題",
+        "not_my_message": "那不是我傳的",
+        "disagree": "我認為我沒有違反規則",
+        "other": "其他"
+      },
+      "messageLabel": "發生了什麼事？",
+      "messageHint": "請至少寫{min, plural, other {# 個字元}}。",
+      "counter": "{count} / {max}",
+      "evidenceLabel": "新增螢幕截圖（選填）",
+      "contactLanguage": "回覆使用的語言",
+      "submit": "送出申訴",
+      "received": "已收到你的申訴。將由真人審核，通常在{hours, plural, other {# 小時}}內完成。結果出來後我們會通知你。",
+      "draftSaved": "草稿已儲存，恢復連線前我們會一直保留。",
+      "timeline": {
+        "received": "已收到",
+        "inReview": "審核中",
+        "decided": "已裁定"
+      },
+      "outcome": {
+        "upheld": "維持原決定。",
+        "overturned": "決定已撤銷。"
+      },
+      "reviewerNote": "審核員備註"
+    }
+  },
+  "hostRestriction": {
+    "title": "你目前無法主辦比賽",
+    "body": "你的帳號在 {date}前暫停主辦比賽。",
+    "gamesStay": "你已經在主辦的比賽不受影響。",
+    "gamesCancelled": "你主辦且尚未開始的比賽已取消，並已通知球友。",
+    "seeDetails": "查看原因"
+  }
+}

@@ -26,6 +26,7 @@ import {
   type RefundResult,
   type ReleaseInput,
   type ReleaseResult,
+  type SetupInfo,
   type SetupInput,
   type SetupResult,
   type WebhookInput,
@@ -306,6 +307,12 @@ export class FakeProvider implements PaymentProvider {
     } catch (e) {
       return Promise.reject(e instanceof Error ? e : new Error(String(e)));
     }
+  }
+
+  retrieveSetup(ref: string): Promise<SetupInfo> {
+    const si = this.setups.get(ref);
+    if (!si) return Promise.reject(new StError('not_found', 'no such setup intent'));
+    return Promise.resolve({ ref, status: si.status, customerId: si.customerId, paymentMethodId: si.paymentMethodId });
   }
 
   detachPaymentMethods(customerId: string): Promise<number> {
