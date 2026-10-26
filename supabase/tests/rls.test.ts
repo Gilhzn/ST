@@ -6,7 +6,7 @@
  */
 import { afterAll, beforeAll, describe, expect, it } from "vitest";
 import { createHarness, type Harness, type Tx } from "./harness";
-import { addParticipant, at, iso, makeGame, makeModerator, makeUser, makeVenue } from "./fixtures";
+import { addParticipant, at, iso, makeGame, makeModerator, makeUser, makeVenue, first } from "./fixtures";
 
 let db: Harness;
 const ids: Record<string, string> = {};
@@ -27,9 +27,10 @@ const MATRIX: Record<string, [Exp, Exp, Exp, Exp, Exp, Exp]> = {
   venues: ["deny", 1, 2, 1, 2, 2],
   venue_ratings: ["deny", 0, 1, 1, 1, 1],
   venue_reports: ["deny", 0, 1, 0, 1, 1],
-  games: ["deny", 1, 1, 2, 2, 2],
-  game_participants: ["deny", 0, 2, 4, 4, 4],
+  games: ["deny", 2, 1, 2, 2, 2],
+  game_participants: ["deny", 1, 2, 5, 5, 5],
   game_invite_access: ["deny", 0, 0, 0, 0, 1],
+  waitlist_offers: ["deny", 1, 0, 1, 0, 1],
   checkins: ["deny", 0, 1, 1, 1, 1],
   peer_confirmations: ["deny", 0, 1, 1, 0, 1],
   game_results: ["deny", 1, 1, 1, 1, 1],
@@ -50,8 +51,8 @@ const MATRIX: Record<string, [Exp, Exp, Exp, Exp, Exp, Exp]> = {
 /** Views: [anon, stranger, owner, host, moderator, service]. */
 const VIEWS: Record<string, [Exp, Exp, Exp, Exp, Exp, Exp]> = {
   public_profiles: ["deny", 4, 4, 5, 5, 0],
-  game_views: ["deny", 1, 1, 2, 2, 0],
-  participant_views: ["deny", 0, 2, 4, 4, 0],
+  game_views: ["deny", 2, 1, 2, 2, 0],
+  participant_views: ["deny", 1, 2, 5, 5, 0],
   venue_views: ["deny", 1, 2, 1, 2, 2],
 };
 /** Tables where some client writes are granted (tested explicitly below). */
@@ -110,15 +111,18 @@ beforeAll(async () => {
     insert into push_tokens (user_id, token, platform) values ('${P}', 'ExponentPushToken[p1]', 'android');
     insert into blocks (blocker_id, blocked_id) values ('${P}', '${S}');
     insert into game_invite_access (game_id, user_id) values ('${G2}', '${R}');
+    insert into game_participants (game_id, user_id, status, waitlisted_at) values ('${G2}', '${S}', 'waitlisted', now());
+    insert into waitlist_offers (game_id, user_id, offered_at, accept_by, mode) values ('${G2}', '${S}', now(), now() + interval '1 hour', 'standard');
     insert into checkins (game_id, user_id, method, outcome) values ('${G}', '${P}', 'qr', 'verified');
     insert into peer_confirmations (game_id, confirmer_id, target_id) values ('${G}', '${P}', '${H}');
     insert into game_results (game_id, team_scores, submitted_by, submitted_at, game_ends_at)
       select id, '{1,0}', '${H}', ends_at, ends_at from games where id = '${G}';
     insert into host_ratings (game_id, rater_id, host_id, stars) values ('${G}', '${P}', '${H}', 5);
-    insert into sanctions (id, user_id, kind, reason_code, statement_key, starts_at, expires_at, dispute_until, dedupe_key)
-      values ('00000000-0000-4000-8000-0000000000c1', '${P}', 'yellow_card', 'no_show', 'sanctions.reason.no_show', now(),
+    insert into sanctions (user_id, kind, reason_code, statement_key, starts_at, expires_at, dispute_until, dedupe_key)
+      values ('${P}', 'yellow_card', 'no_show', 'sanctions.reason.no_show', now(),
               now() + interval '30 days', now() + interval '2 days', 'rls-card');
-    insert into appeals (sanction_id, user_id, text, is_dispute) values ('00000000-0000-4000-8000-0000000000c1', '${P}', 'x', true);
+    insert into appeals (sanction_id, user_id, text, is_dispute)
+      select id, '${P}', 'x', true from sanctions where dedupe_key = 'rls-card';
     insert into user_reports (reporter_id, target_user_id, category) values ('${P}', '${S}', 'spam');
     insert into review_queue (kind, subject_user_id, due_by, dedupe_key) values ('appeal', '${P}', now(), 'rls-rq');
     insert into audit_log (action) values ('rls.test');
@@ -198,9 +202,9 @@ describe("write matrix: clients cannot write outside the granted paths", () => {
     for (const role of ["anon", "owner", "host", "moderator"] as Role[]) {
       it(`${role} → ${table}`, async () => {
         const allowed = role === "anon" ? [] : (CLIENT_WRITABLE[table] ?? []);
-        const [{ col }] = await db.query<{ col: string }>(
+        const { col } = first(await db.query<{ col: string }>(
           `select a.attname col from pg_attribute a where a.attrelid = ('public.' || $1)::regclass and a.attnum > 0
-           and not a.attisdropped and a.attidentity = '' order by a.attnum limit 1`, [table]);
+           and not a.attisdropped and a.attidentity = '' order by a.attnum limit 1`, [table]));
         if (!allowed.includes("insert")) {
           await expect(run(role, (tx) => tx.query(`insert into public.${table} default values`))).rejects.toThrow(/permission denied|row-level security/);
         }
@@ -249,6 +253,15 @@ describe("write matrix: clients cannot write outside the granted paths", () => {
     const nr = await db.asUser(P, (tx) => tx.query(`update notifications set read_at = now()`), { rollback: true });
     expect(nr.affectedRows).toBe(1);
     await expect(db.asUser(P, (tx) => tx.query(`update notifications set kind = 'game_cancelled'`), { rollback: true })).rejects.toThrow(/permission denied/);
+  });
+
+  it("retracted chat messages are not readable", async () => {
+    const before = await db.asUser(ids.P!, (tx) => tx.query(`select 1 from chat_messages`));
+    expect(before.rows).toHaveLength(1);
+    await db.asService((tx) => tx.query(`update chat_messages set retracted_at = now()`));
+    const after = await db.asUser(ids.P!, (tx) => tx.query(`select 1 from chat_messages`));
+    expect(after.rows).toHaveLength(0);
+    await db.asService((tx) => tx.query(`update chat_messages set retracted_at = null`));
   });
 
   it("service role (Edge Functions) can write trust tables; the reported user never sees reporter identity", async () => {

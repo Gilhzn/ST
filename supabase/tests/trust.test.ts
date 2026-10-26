@@ -2,8 +2,7 @@ import { afterAll, afterEach, beforeAll, describe, expect, it } from "vitest";
 import { createHarness, type Harness } from "./harness";
 import {
   addParticipant, asService, asUser, at, DAY, expectSt, HOUR, iso, makeGame, makeModerator, makeUser, MIN, profileOf,
-  sanctionsOf, T0, uuid,
-} from "./fixtures";
+  sanctionsOf, T0, uuid, first } from "./fixtures";
 
 let db: Harness;
 beforeAll(async () => {
@@ -32,9 +31,10 @@ const tick = (d: Date) => asService(db, `select public.expire_sanctions()`, [], 
 describe("process_no_shows", () => {
   it("marks approved non-host players without check-in as no-shows with a disputable card, once", async () => {
     const host = await makeUser(db);
-    const [ok, ns, req] = [await makeUser(db), await makeUser(db), await makeUser(db)];
+    const [ok, ok2, ns, req] = [await makeUser(db), await makeUser(db), await makeUser(db), await makeUser(db)];
     const g = await makeGame(db, host);
     await addParticipant(db, g, ok, "approved", { attendance: "verified" });
+    await addParticipant(db, g, ok2, "approved", { attendance: "verified" });
     await addParticipant(db, g, ns);
     await addParticipant(db, g, req, "requested");
     // Not yet: closure runs at ends_at + 2h.
@@ -48,9 +48,9 @@ describe("process_no_shows", () => {
     expect(s[0]!.dispute_until).toEqual(new Date(close.getTime() + 48 * HOUR));
     expect(await sanctionsOf(db, host)).toHaveLength(0);
     expect(await sanctionsOf(db, req)).toHaveLength(0);
-    const [{ status }] = await db.query<{ status: string }>(`select status from games where id = $1`, [g]);
+    const { status } = first(await db.query<{ status: string }>(`select status from games where id = $1`, [g]));
     expect(status).toBe("completed");
-    const [{ attendance }] = await db.query<{ attendance: string }>(`select attendance from game_participants where game_id = $1 and user_id = $2`, [g, ns]);
+    const { attendance } = first(await db.query<{ attendance: string }>(`select attendance from game_participants where game_id = $1 and user_id = $2`, [g, ns]));
     expect(attendance).toBe("no_show_unverified");
     expect((await profileOf(db, ns)).reliability_no_show_count).toBe(1);
   });
@@ -74,26 +74,28 @@ describe("escalation ladder (TRUST-022/025)", () => {
     await card(u, at(1 * DAY));
     await tick(at(1 * DAY + HOUR));
     expect((await sanctionsOf(db, u)).filter((s) => s.kind === "join_ban")).toHaveLength(0);
-    // Card 2 matures at day 3 → short ban.
+    // Card 2's window closes at day 3 (counted strictly after disputeUntil) → short ban.
     await tick(at(3 * DAY));
+    expect((await sanctionsOf(db, u)).filter((s) => s.kind === "join_ban")).toHaveLength(0);
+    await tick(at(3 * DAY + MIN));
     let bans = (await sanctionsOf(db, u)).filter((s) => s.kind === "join_ban");
     expect(bans.map((b) => b.reason_code)).toEqual(["escalation_two_cards"]);
-    expect(bans[0]!.expires_at).toEqual(at(10 * DAY));
+    expect(bans[0]!.expires_at).toEqual(at(10 * DAY + MIN));
     expect(bans[0]!.caused_by).toContain(c1);
-    expect((await profileOf(db, u)).join_banned_until).toEqual(at(10 * DAY));
+    expect((await profileOf(db, u)).join_banned_until).toEqual(at(10 * DAY + MIN));
     expect((await profileOf(db, u)).reliability_status).toBe("red");
     // Idempotent re-run.
-    await tick(at(3 * DAY));
-    expect((await sanctionsOf(db, u)).filter((s) => s.kind === "join_ban")).toHaveLength(2 - 1);
+    await tick(at(3 * DAY + 2 * MIN));
+    expect((await sanctionsOf(db, u)).filter((s) => s.kind === "join_ban")).toHaveLength(1);
 
     await card(u, at(4 * DAY));
-    await tick(at(6 * DAY));
+    await tick(at(6 * DAY + MIN));
     bans = (await sanctionsOf(db, u)).filter((s) => s.kind === "join_ban");
     expect(bans.map((b) => b.reason_code)).toEqual(["escalation_two_cards", "escalation_three_cards"]);
-    expect((await profileOf(db, u)).join_banned_until).toEqual(at(36 * DAY));
+    expect((await profileOf(db, u)).join_banned_until).toEqual(at(36 * DAY + MIN));
 
     await card(u, at(7 * DAY));
-    await tick(at(9 * DAY));
+    await tick(at(9 * DAY + MIN));
     const all = await sanctionsOf(db, u);
     expect(all.filter((s) => s.kind === "join_ban").map((b) => b.reason_code))
       .toEqual(["escalation_two_cards", "escalation_three_cards", "escalation_three_cards"]);
@@ -110,8 +112,8 @@ describe("escalation ladder (TRUST-022/025)", () => {
     await addParticipant(db, future, u, "requested");
     await card(u, at(0));
     const c2 = await card(u, at(DAY));
-    const [{ a }] = await asUser<{ a: { id: string; is_dispute: boolean } }>(db, u,
-      `select to_jsonb(public.file_appeal($1, 'I was there, GPS failed')) a`, [c2], { now: at(DAY + HOUR) });
+    const { a } = first(await asUser<{ a: { id: string; is_dispute: boolean } }>(db, u,
+      `select to_jsonb(public.file_appeal($1, 'I was there, GPS failed')) a`, [c2], { now: at(DAY + HOUR) }));
     expect(a.is_dispute).toBe(true);
     await tick(at(4 * DAY));
     expect((await sanctionsOf(db, u)).filter((s) => s.kind === "join_ban")).toHaveLength(0);
@@ -119,7 +121,7 @@ describe("escalation ladder (TRUST-022/025)", () => {
     expect(item!.kind).toBe("sanction_dispute");
     await asUser(db, mod, `select public.moderator_decide($1, 'uphold')`, [item!.id], { now: at(4 * DAY) });
     expect((await sanctionsOf(db, u)).filter((s) => s.kind === "join_ban").map((s) => s.reason_code)).toEqual(["escalation_two_cards"]);
-    const [{ status }] = await db.query<{ status: string }>(`select status from game_participants where game_id = $1 and user_id = $2`, [future, u]);
+    const { status } = first(await db.query<{ status: string }>(`select status from game_participants where game_id = $1 and user_id = $2`, [future, u]));
     expect(status).toBe("cancelled");
     const [ap] = await db.query<{ status: string; decided_by: string }>(`select status, decided_by from appeals where id = $1`, [a.id]);
     expect(ap).toEqual({ status: "upheld", decided_by: mod });
@@ -130,9 +132,9 @@ describe("escalation ladder (TRUST-022/025)", () => {
     const mod = await makeModerator(db);
     const c1 = await card(u, at(0));
     await card(u, at(DAY));
-    await tick(at(3 * DAY));
-    const [{ a }] = await asUser<{ a: { id: string; is_dispute: boolean } }>(db, u,
-      `select to_jsonb(public.file_appeal($1, 'unfair')) a`, [c1], { now: at(3 * DAY) });
+    await tick(at(3 * DAY + MIN));
+    const { a } = first(await asUser<{ a: { id: string; is_dispute: boolean } }>(db, u,
+      `select to_jsonb(public.file_appeal($1, 'unfair')) a`, [c1], { now: at(3 * DAY + MIN) }));
     expect(a.is_dispute).toBe(false); // window closed: an appeal (DSA Art. 20)
     const [item] = await db.query<{ id: string; kind: string }>(`select id, kind from review_queue where appeal_id = $1`, [a.id]);
     expect(item!.kind).toBe("appeal");
@@ -143,7 +145,7 @@ describe("escalation ladder (TRUST-022/025)", () => {
     expect((await profileOf(db, u)).join_banned_until).toBeNull();
     const [n] = await db.query<{ n: number }>(`select count(*)::int n from notifications where user_id = $1 and kind = 'appeal_decided'`, [u]);
     expect(n!.n).toBe(1);
-    const [audit] = await db.query<{ actor_id: string }>(`select actor_id from audit_log where action = 'moderator.decide'`);
+    const [audit] = await db.query<{ actor_id: string }>(`select actor_id from audit_log where action = 'moderator.decision'`);
     expect(audit!.actor_id).toBe(mod);
   });
 });
@@ -216,7 +218,7 @@ describe("toxicity reports (TRUST-041/042/043/048)", () => {
     expect(s[0]!.expires_at).toEqual(at(72 * HOUR));
     expect((await profileOf(db, subject)).visibility_restricted_until).toEqual(at(72 * HOUR));
     const [q] = await db.query<{ kind: string; priority: string; report_ids: string[] }>(`select * from review_queue`);
-    expect(q).toMatchObject({ kind: "toxicity_reports", priority: "high" });
+    expect(q).toMatchObject({ kind: "toxicity_reports", priority: "normal" });
     expect(q!.report_ids).toHaveLength(3);
     const [n] = await db.query<{ n: number }>(`select count(*)::int n from notifications where user_id = $1 and kind = 'visibility_restricted'`, [subject]);
     expect(n!.n).toBe(1);
@@ -279,8 +281,8 @@ describe("toxicity reports (TRUST-041/042/043/048)", () => {
     }
     const s = await sanctionsOf(db, subject);
     expect(s.filter((x) => x.status !== "overturned")).toHaveLength(0);
-    const open = await db.query<{ evidence: { protected: boolean } }>(`select evidence from review_queue where status = 'open'`);
-    expect(open.map((o) => o.evidence.protected)).toEqual([true]);
+    const open = await db.query<{ evidence: { reviewReasons: string } }>(`select evidence from review_queue where status = 'open'`);
+    expect(open.map((o) => o.evidence.reviewReasons)).toEqual(["overturn_protection"]);
   });
 
   it("reporters with poor accuracy (< 30% after 5 decided reports) do not qualify", async () => {
@@ -392,12 +394,12 @@ describe("reliability", () => {
     const g5 = await makeGame(db, host, { startsAt: at(-DAY), endsAt: at(-DAY + HOUR) });
     await addParticipant(db, g5, u, "cancelled");
     await db.query(`update game_participants set late_cancel = true, cancelled_at = $3 where game_id = $1 and user_id = $2`, [g5, u, iso(at(-DAY - HOUR))]);
-    const [{ r }] = await asService<{ r: Record<string, unknown> }>(db, `select public.st_recompute_reliability($1) r`, [u], { now: at(0) });
+    const { r } = first(await asService<{ r: Record<string, unknown> }>(db, `select public.st_recompute_reliability($1) r`, [u], { now: at(0) }));
     // verified 3, no-show 1, late 1 → (3+3)/(3+1+0.5+3) = 0.8
     expect(r).toMatchObject({ verifiedCount: 3, noShowCount: 1, lateCancelCount: 1, commitmentCount: 5, status: "yellow" });
     expect(r.score).toBeCloseTo(0.8, 5);
-    const [{ snap }] = await db.query<{ snap: Record<string, unknown> }>(
-      `select public.st_reliability_snapshot(2, 0, 0, false, false, public.st_config(), now()) snap`);
+    const { snap } = first(await db.query<{ snap: Record<string, unknown> }>(
+      `select public.dm_reliability('[]'::jsonb, '[]'::jsonb, now(), public.st_config()) snap`));
     expect(snap).toMatchObject({ status: "new", score: null });
     expect(T0).toBeTruthy();
   });

@@ -1,0 +1,86 @@
+# Supabase CLI configuration (local stack / preview branches). https://supabase.com/docs/guides/local-development/cli/config
+project_id = "sport-talent"
+
+[api]
+enabled = true
+port = 54321
+# Only these schemas are exposed through PostgREST. Clients reach data through RLS-protected tables,
+# security-barrier views and SECURITY DEFINER RPCs in `public`.
+schemas = ["public"]
+extra_search_path = ["public", "extensions"]
+max_rows = 1000
+
+[db]
+port = 54322
+shadow_port = 54320
+major_version = 17
+
+[db.pooler]
+enabled = false
+
+[db.migrations]
+enabled = true
+schema_paths = []
+
+[db.seed]
+enabled = true
+sql_paths = ["./seed.sql"]
+
+[realtime]
+enabled = true
+
+[studio]
+enabled = true
+port = 54323
+
+[inbucket]
+enabled = true
+port = 54324
+
+[storage]
+enabled = true
+file_size_limit = "5MiB"
+
+[auth]
+enabled = true
+site_url = "http://localhost:8081"
+additional_redirect_urls = ["http://localhost:8081", "sporttalent://"]
+jwt_expiry = 3600
+enable_refresh_token_rotation = true
+refresh_token_reuse_interval = 10
+enable_signup = true
+enable_anonymous_sign_ins = false
+
+[auth.rate_limit]
+# Per hour. SMS OTP is the main variable cost (docs/architecture.md §12).
+sms_sent = 30
+token_verifications = 30
+
+[auth.email]
+enable_signup = false
+enable_confirmations = false
+
+[auth.sms]
+# Phone OTP is the only sign-in method in the MVP.
+enable_signup = true
+enable_confirmations = true
+template = "Your Sport Talent code is {{ .Code }}"
+max_frequency = "60s"
+
+[auth.sms.twilio]
+enabled = true
+account_sid = "env(SUPABASE_AUTH_SMS_TWILIO_ACCOUNT_SID)"
+message_service_sid = "env(SUPABASE_AUTH_SMS_TWILIO_MESSAGE_SERVICE_SID)"
+auth_token = "env(SUPABASE_AUTH_SMS_TWILIO_AUTH_TOKEN)"
+
+# Local development: fixed OTPs for test numbers (never in production).
+[auth.sms.test_otp]
+15550000001 = "123456"
+15550000002 = "123456"
+
+[edge_runtime]
+enabled = true
+policy = "oneshot"
+
+[analytics]
+enabled = false

@@ -1,7 +1,7 @@
 import { createHmac } from "node:crypto";
 import { afterAll, afterEach, beforeAll, describe, expect, it } from "vitest";
 import { createHarness, type Harness } from "./harness";
-import { addParticipant, asService, asUser, at, expectSt, HOUR, makeGame, makeUser, MIN, T0 } from "./fixtures";
+import { addParticipant, asService, asUser, at, expectSt, HOUR, makeGame, makeUser, MIN, T0, first } from "./fixtures";
 
 let db: Harness;
 beforeAll(async () => {
@@ -30,8 +30,8 @@ describe("QR check-in", () => {
     const g = await makeGame(db, host);
     await addParticipant(db, g, p);
     const now = at(5 * MIN + 7000);
-    const [{ t }] = await asUser<{ t: { token: string; step: number; expiresAt: string } }>(db, host,
-      `select public.get_qr_token($1) as t`, [g], { now });
+    const { t } = first(await asUser<{ t: { token: string; step: number; expiresAt: string } }>(db, host,
+      `select public.get_qr_token($1) as t`, [g], { now }));
     expect(t.step).toBe(stepOf(now));
     expect(t.token).toBe(qrToken(await secretOf(g), g, stepOf(now)));
     expect(new Date(t.expiresAt).getTime()).toBe((stepOf(now) + 1) * 30_000);
@@ -76,10 +76,10 @@ describe("QR check-in", () => {
     const secret = await secretOf(g);
     const now = at(0);
     const old = qrToken(secret, g, stepOf(new Date(now.getTime() - 3 * MIN)));
-    const [{ v: v1 }] = await asUser<{ v: Verdict }>(db, p, `select public.submit_checkin($1, 'qr', $2) as v`, [g, old], { now });
+    const { v: v1 } = first(await asUser<{ v: Verdict }>(db, p, `select public.submit_checkin($1, 'qr', $2) as v`, [g, old], { now }));
     expect(v1.reason).toBe("expired_qr");
-    const [{ v: v2 }] = await asUser<{ v: Verdict }>(db, p, `select public.submit_checkin($1, 'qr', $2) as v`,
-      [g, qrToken(secret, g, stepOf(now) + 1)], { now });
+    const { v: v2 } = first(await asUser<{ v: Verdict }>(db, p, `select public.submit_checkin($1, 'qr', $2) as v`,
+      [g, qrToken(secret, g, stepOf(now) + 1)], { now }));
     expect(v2.outcome).toBe("verified");
   });
 
@@ -106,9 +106,9 @@ describe("QR check-in", () => {
     const now = at(0);
     const oldToken = qrToken(await secretOf(g), g, stepOf(now));
     await expectSt(asUser(db, p, `select public.rotate_qr($1)`, [g], { now }), "forbidden");
-    const [{ t }] = await asUser<{ t: { token: string } }>(db, host, `select public.rotate_qr($1) as t`, [g], { now });
+    const { t } = first(await asUser<{ t: { token: string } }>(db, host, `select public.rotate_qr($1) as t`, [g], { now }));
     expect(t.token).not.toBe(oldToken);
-    const [{ v }] = await asUser<{ v: Verdict }>(db, p, `select public.submit_checkin($1, 'qr', $2) as v`, [g, oldToken], { now });
+    const { v } = first(await asUser<{ v: Verdict }>(db, p, `select public.submit_checkin($1, 'qr', $2) as v`, [g, oldToken], { now }));
     expect(v.reason).toBe("invalid_qr");
   });
 
@@ -128,24 +128,24 @@ describe("host and peer check-in", () => {
     await addParticipant(db, g, p);
     await addParticipant(db, g, q);
     const now = { now: at(5 * MIN) };
-    const [{ v: bad }] = await asUser<{ v: Verdict }>(db, q, `select public.submit_checkin($1, 'host', null, $2) as v`, [g, p], now);
+    const { v: bad } = first(await asUser<{ v: Verdict }>(db, q, `select public.submit_checkin($1, 'host', null, $2) as v`, [g, p], now));
     expect(bad).toMatchObject({ outcome: "rejected", reason: "not_host", fallbacks: [] });
     // The host cannot attest their own presence.
-    const [{ v: self }] = await asUser<{ v: Verdict }>(db, host, `select public.submit_checkin($1, 'host', null, $2) as v`, [g, host], now);
+    const { v: self } = first(await asUser<{ v: Verdict }>(db, host, `select public.submit_checkin($1, 'host', null, $2) as v`, [g, host], now));
     expect(self.reason).toBe("not_host");
-    const [{ v }] = await asUser<{ v: Verdict }>(db, host, `select public.submit_checkin($1, 'host', null, $2) as v`, [g, p], now);
+    const { v } = first(await asUser<{ v: Verdict }>(db, host, `select public.submit_checkin($1, 'host', null, $2) as v`, [g, p], now));
     expect(v).toMatchObject({ outcome: "verified", method: "host" });
     await expectSt(asUser(db, p, `select public.submit_checkin($1, 'gps')`, [g], now), "validation");
     // The host may still mark players until endsAt + 2h, not later.
     const r = await makeUser(db);
     await addParticipant(db, g, r);
-    const [{ v: late }] = await asUser<{ v: Verdict }>(db, host, `select public.submit_checkin($1, 'host', null, $2) as v`, [g, r],
-      { now: at(90 * MIN + 2 * HOUR) });
+    const { v: late } = first(await asUser<{ v: Verdict }>(db, host, `select public.submit_checkin($1, 'host', null, $2) as v`, [g, r],
+      { now: at(90 * MIN + 2 * HOUR) }));
     expect(late.outcome).toBe("verified");
     const q2 = await makeUser(db);
     await addParticipant(db, g, q2);
-    const [{ v: tooLate }] = await asUser<{ v: Verdict }>(db, host, `select public.submit_checkin($1, 'host', null, $2) as v`, [g, q2],
-      { now: at(90 * MIN + 2 * HOUR + 1000) });
+    const { v: tooLate } = first(await asUser<{ v: Verdict }>(db, host, `select public.submit_checkin($1, 'host', null, $2) as v`, [g, q2],
+      { now: at(90 * MIN + 2 * HOUR + 1000) }));
     expect(tooLate.reason).toBe("outside_window");
   });
 
@@ -165,8 +165,8 @@ describe("host and peer check-in", () => {
     expect(await confirm(a)).toMatchObject({ confirmations: 1, verdict: { outcome: "rejected", reason: "insufficient_peers" } });
     expect(await confirm(b)).toMatchObject({ verdict: { outcome: "rejected", reason: "blocked_pair" } });
     expect(await confirm(c)).toMatchObject({ confirmations: 2, verdict: { outcome: "verified", method: "peer" } });
-    const [{ r: late }] = await asUser<{ r: { verdict: Verdict } }>(db, a, `select public.peer_confirm($1, $2) as r`, [g, unverified],
-      { now: at(2 * HOUR) });
+    const { r: late } = first(await asUser<{ r: { verdict: Verdict } }>(db, a, `select public.peer_confirm($1, $2) as r`, [g, unverified],
+      { now: at(2 * HOUR) }));
     expect(late.verdict.reason).toBe("outside_window");
   });
 
@@ -180,7 +180,7 @@ describe("host and peer check-in", () => {
     await db.query(`insert into peer_confirmations (game_id, confirmer_id, target_id) values ($1, $2, $3), ($1, $2, $4)`, [g, t, a, b]);
     const now = { now: at(10 * MIN) };
     await asUser(db, a, `select public.peer_confirm($1, $2)`, [g, t], now);
-    const [{ r }] = await asUser<{ r: { verdict: Verdict } }>(db, b, `select public.peer_confirm($1, $2) as r`, [g, t], now);
+    const { r } = first(await asUser<{ r: { verdict: Verdict } }>(db, b, `select public.peer_confirm($1, $2) as r`, [g, t], now));
     expect(r.verdict.reason).toBe("reciprocal_only");
   });
 
@@ -191,12 +191,12 @@ describe("host and peer check-in", () => {
     await addParticipant(db, g, p);
     const verdict = JSON.stringify({ outcome: "verified", method: "gps", distanceM: 12.5, signals: [] });
     await expect(asUser(db, p, `select public.record_checkin_verdict($1, $2, $3::jsonb)`, [g, p, verdict])).rejects.toThrow(/permission denied/);
-    const [{ v }] = await asService<{ v: Verdict }>(db, `select public.record_checkin_verdict($1, $2, $3::jsonb) as v`, [g, p, verdict], { now: at(0) });
+    const { v } = first(await asService<{ v: Verdict }>(db, `select public.record_checkin_verdict($1, $2, $3::jsonb) as v`, [g, p, verdict], { now: at(0) }));
     expect(v.outcome).toBe("verified");
     const [c] = await db.query<{ distance_m: string; method: string }>(`select distance_m, method from checkins where user_id = $1`, [p]);
     expect(c).toEqual({ distance_m: "12.50", method: "gps" });
     const rej = JSON.stringify({ outcome: "rejected", method: "gps", reason: "too_far", fallbacks: ["qr"], signals: ["mock_location"] });
-    const [{ v: v2 }] = await asService<{ v: Verdict }>(db, `select public.record_checkin_verdict($1, $2, $3::jsonb) as v`, [g, p, rej], { now: at(0) });
+    const { v: v2 } = first(await asService<{ v: Verdict }>(db, `select public.record_checkin_verdict($1, $2, $3::jsonb) as v`, [g, p, rej], { now: at(0) }));
     expect(v2.reason).toBe("already_checked_in");
     // Spoofing signals never sanction.
     expect(await db.query(`select 1 from sanctions`)).toHaveLength(0);

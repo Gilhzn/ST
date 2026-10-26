@@ -1,8 +1,7 @@
 import { afterAll, afterEach, beforeAll, describe, expect, it } from "vitest";
 import { createHarness, type Harness } from "./harness";
 import {
-  addParticipant, asService, asUser, at, DAY, expectSt, HOUR, iso, makeGame, makeUser, makeVenue, MIN, profileOf, sanctionsOf,
-} from "./fixtures";
+  addParticipant, asService, asUser, at, DAY, expectSt, HOUR, iso, makeGame, makeUser, makeVenue, MIN, profileOf, sanctionsOf, first } from "./fixtures";
 
 let db: Harness;
 beforeAll(async () => {
@@ -28,7 +27,7 @@ describe("chat", () => {
     await addParticipant(db, g, req, "requested");
     await send(g, a, "hi from a");
     await send(g, b, "hi from b");
-    const [{ expires_at }] = await db.query<{ expires_at: Date }>(`select expires_at from chat_messages limit 1`);
+    const { expires_at } = first(await db.query<{ expires_at: Date }>(`select expires_at from chat_messages limit 1`));
     expect(expires_at).toEqual(at(90 * MIN + 3 * HOUR));
     const read = (u: string, now = at(HOUR)) => asUser<{ body: string }>(db, u, `select body from chat_messages order by body`, [], { now });
     expect((await read(host)).map((m) => m.body)).toEqual(["hi from a", "hi from b"]);
@@ -83,6 +82,7 @@ describe("deposits", () => {
     const p = await makeUser(db);
     const g = await makeGame(db, host, { depositMinor: 500 });
     await addParticipant(db, g, p);
+    for (let i = 0; i < 2; i++) await addParticipant(db, g, await makeUser(db), "approved", { attendance: "verified" });
     const [pm] = await db.query<{ id: string }>(
       `insert into payments (user_id, game_id, amount_minor, currency, status, deposit_state, idempotency_key)
        values ($1::uuid, $2::uuid, 500, 'EUR', 'succeeded', 'setup', 'deposit:' || $2::text || ':' || $1::text || ':setup') returning id`, [p, g]);
@@ -104,15 +104,15 @@ describe("deposits", () => {
     const close = at(90 * MIN + 2 * HOUR);
     await asService(db, `select public.process_no_shows()`, [], { now: close });
     const due = (d: Date) => asService<{ outcome: string }>(db, `select * from public.due_deposit_settlements()`, [], { now: d });
-    expect(await due(new Date(close.getTime() + 47 * HOUR))).toHaveLength(0);
-    expect((await due(new Date(close.getTime() + 48 * HOUR))).map((x) => x.outcome)).toEqual(["forfeit"]);
+    expect(await due(new Date(close.getTime() + 48 * HOUR))).toHaveLength(0);
+    expect((await due(new Date(close.getTime() + 48 * HOUR + 1))).map((x) => x.outcome)).toEqual(["forfeit"]);
     const [card] = await sanctionsOf(db, p);
     await asUser(db, p, `select public.file_appeal($1, 'was there')`, [card!.id], { now: new Date(close.getTime() + HOUR) });
-    expect(await due(new Date(close.getTime() + 48 * HOUR))).toHaveLength(0);
+    expect(await due(new Date(close.getTime() + 48 * HOUR + 1))).toHaveLength(0);
     await asService(db, `select public.expire_sanctions()`, [], { now: new Date(close.getTime() + 7 * DAY + 2 * HOUR) });
     expect((await due(new Date(close.getTime() + 7 * DAY + 2 * HOUR))).map((x) => x.outcome)).toEqual(["release"]);
     expect((await asService<{ n: number }>(db, `select public.settle_deposits() n`, [], { now: new Date(close.getTime() + 8 * DAY) }))[0]!.n).toBe(1);
-    const [{ settlement_requested }] = await db.query<{ settlement_requested: string }>(`select settlement_requested from payments where id = $1`, [pm]);
+    const { settlement_requested } = first(await db.query<{ settlement_requested: string }>(`select settlement_requested from payments where id = $1`, [pm]));
     expect(settlement_requested).toBe("release");
     expect(g).toBeTruthy();
   });
@@ -164,13 +164,13 @@ describe("delete_my_account", () => {
     expect(s.map((x) => x.dedupe_key)).toEqual(["ns-old"]);
     const [part] = await db.query<{ status: string; late_cancel: boolean }>(`select status, late_cancel from game_participants where game_id = $1 and user_id = $2`, [future, u]);
     expect(part).toEqual({ status: "cancelled", late_cancel: false });
-    const [{ offer }] = await db.query<{ offer: Date | null }>(`select offer_expires_at offer from game_participants where game_id = $1 and user_id = $2`, [future, other]);
+    const { offer } = first(await db.query<{ offer: Date | null }>(`select accept_by offer from waitlist_offers where game_id = $1 and user_id = $2`, [future, other]));
     expect(offer).not.toBeNull();
-    const [{ status }] = await db.query<{ status: string }>(`select status from games where id = $1`, [myGame]);
+    const { status } = first(await db.query<{ status: string }>(`select status from games where id = $1`, [myGame]));
     expect(status).toBe("cancelled");
     expect(await db.query(`select 1 from notifications where user_id = $1 and kind = 'game_cancelled'`, [other])).toHaveLength(1);
     expect(await asUser(db, other, `select id from public_profiles where id = $1`, [u])).toHaveLength(0);
-    const [{ created_by }] = await db.query<{ created_by: string | null }>(`select created_by from venues where id = $1`, [venue]);
+    const { created_by } = first(await db.query<{ created_by: string | null }>(`select created_by from venues where id = $1`, [venue]));
     expect(created_by).toBeNull();
     // A deleted account can no longer act.
     await expectSt(asUser(db, u, `select public.report_user($1, 'spam')`, [other]), "forbidden");
@@ -186,7 +186,7 @@ describe("retention purge (compliance §4)", () => {
     await db.query(`update profiles set deleted_at = $2 where id = $1`, [t, iso(at(-800 * DAY))]);
     await db.query(`insert into sanctions (user_id, kind, reason_code, statement_key, starts_at, expires_at, dedupe_key, status)
                     values ($1, 'join_ban', 'no_show', 'sanctions.reason.no_show', $2, $3, 'old', 'expired')`, [t, iso(at(-900 * DAY)), iso(at(-890 * DAY))]);
-    const [{ r: res }] = await asService<{ r: Record<string, number> }>(db, `select public.purge_retention() r`, [], { now: at(0) });
+    const { r: res } = first(await asService<{ r: Record<string, number> }>(db, `select public.purge_retention() r`, [], { now: at(0) }));
     expect(res).toMatchObject({ reportsPseudonymised: 1, auditDeleted: 1 });
     const [rep] = await db.query<{ reporter_id: string | null; note: string | null }>(`select reporter_id, note from user_reports`);
     expect(rep).toEqual({ reporter_id: null, note: null });

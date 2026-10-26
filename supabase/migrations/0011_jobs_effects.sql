@@ -233,7 +233,7 @@ as $$
   from public.payments pm
   join public.games g on g.id = pm.game_id
   join public.game_participants gp on gp.game_id = pm.game_id and gp.user_id = pm.user_id
-  where pm.deposit_state = 'setup' and pm.status = 'succeeded' and pm.settlement_requested is null
+  where pm.step = 'setup' and pm.deposit_state = 'setup' and pm.status = 'succeeded' and pm.settlement_requested is null
     and gp.status = 'approved' and g.status = 'scheduled'
     and public.st_now() >= g.starts_at - (public.st_config()).deposit_hold_lead_hours * interval '1 hour'
     and public.st_now() < g.ends_at

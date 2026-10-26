@@ -235,8 +235,6 @@ const iso = (d: Date | null) => (d ? d.toISOString() : null);
 
 async function checkEffects(c: GoldenCase, before: Snapshot): Promise<void> {
   const effects: any[] = c.expected.effects;
-  const [{ sid_for }] = await db.query<{ sid_for: string }>(`select 'x' sid_for`);
-  void sid_for;
   const derived = async (fn: string, key: string) =>
     (await db.query<{ id: string }>(`select public.${fn}($1)::text id`, [key]))[0]!.id;
 

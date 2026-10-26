@@ -196,3 +196,9 @@ export async function profileOf(db: Harness, userId: string) {
   const [p] = await db.query<Record<string, unknown>>(`select * from public.profiles where id = $1`, [userId]);
   return p!;
 }
+
+/** The first row, or a test failure when there is none. */
+export function first<T>(rows: readonly T[]): T {
+  if (rows.length === 0) throw new Error("expected at least one row");
+  return rows[0] as T;
+}

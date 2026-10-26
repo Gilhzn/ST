@@ -2,8 +2,7 @@ import { afterAll, afterEach, beforeAll, describe, expect, it } from "vitest";
 import { createHarness, type Harness } from "./harness";
 import {
   addParticipant, asService, asUser, at, DAY, expectSt, HOUR, iso, makeGame, makeUser, makeVenue, MIN, profileOf,
-  sanctionsOf, T0, TLV,
-} from "./fixtures";
+  sanctionsOf, T0, TLV, first } from "./fixtures";
 
 let db: Harness;
 beforeAll(async () => {
@@ -113,7 +112,7 @@ describe("request_join", () => {
     const priv = await makeGame(db, host, { visibility: "private" });
     await expectSt(join(p, priv), "not_found");
     await expectSt(join(p, priv, "wrong"), "not_found");
-    const [{ invite_token }] = await db.query<{ invite_token: string }>(`select invite_token from games where id = $1`, [priv]);
+    const { invite_token } = first(await db.query<{ invite_token: string }>(`select invite_token from games where id = $1`, [priv]));
     const [r2] = await join(p, priv, invite_token);
     expect(r2!.status).toBe("requested");
   });
@@ -143,6 +142,27 @@ describe("request_join", () => {
     await expectSt(asUser(db, host, `select public.decide_join($1, $2, 'approve')`, [g, p], before), "payment_required");
     // payments-webhook (service role) marks the SetupIntent succeeded.
     await asService(db, `update payments set status = 'succeeded' where game_id = $1 and user_id = $2`, [g, p]);
+    const [n] = await db.query<{ n: number }>(`select count(*)::int n from notifications where user_id = $1 and kind = 'join_requested'`, [host]);
+    expect(n!.n).toBe(1);
+    const [d] = await asUser<{ status: string }>(db, host, `select * from public.decide_join($1, $2, 'approve')`, [g, p], before);
+    expect(d!.status).toBe("approved");
+  });
+});
+
+describe("deposits: charge-and-refund methods (TRUST-062)", () => {
+  it("a charged deposit (step charge, held) makes the request visible to the host and notifies once", async () => {
+    const host = await makeUser(db);
+    const p = await makeUser(db);
+    const g = await makeGame(db, host, { depositMinor: 500 });
+    await asUser(db, p, `select public.request_join($1)`, [g], before);
+    await asService(db, `update payments set step = 'charge', provider_ref = 'pi_123', status = 'processing' where game_id = $1 and user_id = $2`, [g, p]);
+    expect(await asUser(db, host, `select 1 from participant_views where game_id = $1 and user_id = $2`, [g, p])).toHaveLength(0);
+    // The webhook moves status and deposit_state together.
+    await asService(db, `update payments set status = 'succeeded', deposit_state = 'held' where game_id = $1 and user_id = $2`, [g, p]);
+    const { payment_ready } = first(await db.query<{ payment_ready: boolean }>(
+      `select payment_ready from game_participants where game_id = $1 and user_id = $2`, [g, p]));
+    expect(payment_ready).toBe(true);
+    await asService(db, `update payments set updated_at = now() where game_id = $1 and user_id = $2`, [g, p]);
     const [n] = await db.query<{ n: number }>(`select count(*)::int n from notifications where user_id = $1 and kind = 'join_requested'`, [host]);
     expect(n!.n).toBe(1);
     const [d] = await asUser<{ status: string }>(db, host, `select * from public.decide_join($1, $2, 'approve')`, [g, p], before);
@@ -276,8 +296,8 @@ describe("cancel_participation", () => {
     expect(card).toMatchObject({ kind: "yellow_card", reason_code: "late_cancel", status: "active", dedupe_key: `late_cancel:${g}:${late}` });
     expect(card!.dispute_until).toEqual(new Date(close.getTime() + 48 * HOUR));
     expect(card!.expires_at).toEqual(new Date(close.getTime() + 30 * DAY));
-    const [{ statement_params }] = await db.query<{ statement_params: Record<string, unknown> }>(
-      `select statement_params from sanctions where id = $1`, [card!.id]);
+    const { statement_params } = first(await db.query<{ statement_params: Record<string, unknown> }>(
+      `select statement_params from sanctions where id = $1`, [card!.id]));
     expect(statement_params).toEqual({ windowHours: 2, minutesBeforeStart: 90, disputeHours: 48, appealPath: "dispute" });
     const [n] = await db.query<{ n: number }>(`select count(*)::int n from notifications where user_id = $1 and kind = 'sanction_issued'`, [late]);
     expect(n!.n).toBe(1);
@@ -338,11 +358,11 @@ describe("cancel_participation", () => {
     await addParticipant(db, g, b, "approved", { attendance: "verified" });
     await asService(db, `select public.process_no_shows()`, [], { now: at(4 * HOUR) });
     expect(await sanctionsOf(db, a)).toHaveLength(0);
-    const [{ attendance }] = await db.query<{ attendance: string }>(`select attendance from game_participants where game_id = $1 and user_id = $2`, [g, a]);
+    const { attendance } = first(await db.query<{ attendance: string }>(`select attendance from game_participants where game_id = $1 and user_id = $2`, [g, a]));
     expect(attendance).toBe("excused");
     const [q] = await db.query<{ kind: string; dedupe_key: string }>(`select kind, dedupe_key from review_queue`);
     expect(q).toEqual({ kind: "host_reliability", dedupe_key: `game_not_happened:${g}` });
-    const [{ happened }] = await db.query<{ happened: boolean }>(`select happened from games where id = $1`, [g]);
+    const { happened } = first(await db.query<{ happened: boolean }>(`select happened from games where id = $1`, [g]));
     expect(happened).toBe(false);
   });
 });

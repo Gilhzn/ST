@@ -1,6 +1,6 @@
 import { afterAll, afterEach, beforeAll, describe, expect, it } from "vitest";
 import { createHarness, type Harness } from "./harness";
-import { addParticipant, asUser, at, DAY, expectSt, makeGame, makeModerator, makeUser, makeVenue, T0, TLV } from "./fixtures";
+import { addParticipant, asUser, at, DAY, expectSt, makeGame, makeModerator, makeUser, makeVenue, T0, TLV, first } from "./fixtures";
 
 let db: Harness;
 beforeAll(async () => {
@@ -112,7 +112,7 @@ describe("nearby_games", () => {
     const g = await makeGame(db, host, { visibility: "private" });
     expect(await asUser(db, stranger, `select id from game_views where id = $1`, [g])).toHaveLength(0);
     expect(await asUser(db, stranger, `select id from games where id = $1`, [g])).toHaveLength(0);
-    const [{ invite_token }] = await db.query<{ invite_token: string }>(`select invite_token from games where id = $1`, [g]);
+    const { invite_token } = first(await db.query<{ invite_token: string }>(`select invite_token from games where id = $1`, [g]));
     const [r] = await asUser<{ id: string; invite_token: string | null }>(db, invited, `select * from public.resolve_invite($1)`, [invite_token]);
     expect(r).toMatchObject({ id: g, invite_token: null });
     expect(await asUser(db, invited, `select id from game_views where id = $1`, [g])).toHaveLength(1);
@@ -179,7 +179,7 @@ describe("venues: rating and reports", () => {
     const nobody = await makeUser(db);
     await expectSt(asUser(db, nobody, `select public.moderator_decide($1, 'remove_venue')`, [item!.id]), "forbidden");
     await asUser(db, mod, `select public.moderator_decide($1, 'remove_venue', 'confirmed fake')`, [item!.id]);
-    const [{ status }] = await db.query<{ status: string }>(`select status from venues where id = $1`, [v]);
+    const { status } = first(await db.query<{ status: string }>(`select status from venues where id = $1`, [v]));
     expect(status).toBe("removed");
     const s = await db.query<{ kind: string; reason_code: string }>(`select kind, reason_code from sanctions where user_id = $1`, [creator]);
     expect(s).toEqual([{ kind: "host_suspension", reason_code: "fake_venue" }]);

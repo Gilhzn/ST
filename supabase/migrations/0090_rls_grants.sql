@@ -171,7 +171,8 @@ create policy audit_log_read on public.audit_log for select to authenticated usi
 -- ---------------------------------------------------------------------------
 grant select on public.chat_messages to authenticated;
 create policy chat_messages_read on public.chat_messages for select to authenticated
-  using (public.st_my_chat(game_id) and expires_at > public.st_now() and not public.st_my_blocked(sender_id));
+  using (public.st_my_chat(game_id) and expires_at > public.st_now() and retracted_at is null
+         and not public.st_my_blocked(sender_id));
 
 grant select on public.message_translations to authenticated;
 create policy message_translations_read on public.message_translations for select to authenticated
