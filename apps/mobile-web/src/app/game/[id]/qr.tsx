@@ -7,5 +7,5 @@ import { useT } from '@/i18n';
 export default function GameSubScreen() {
   const { t } = useT();
   const { id } = useLocalSearchParams<{ id: string }>();
-  return <PlaceholderScreen title={t('checkin:qr.title')} testID="screen.game.qr" key={id} />;
+  return <PlaceholderScreen title={t('checkin:host.title')} testID="screen.game.qr" key={id} />;
 }

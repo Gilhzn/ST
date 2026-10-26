@@ -5,11 +5,11 @@
  */
 import { DEFAULT_TRUST_CONFIG, isStError, type NearbyGame, type NearbyVenue, type VenueReportReason } from '@st/domain';
 import { BidiText, Button, Divider, Row, SportDot, Stack, Text } from '@st/ui';
-import { ChoiceChip } from '@/components/ChoiceChip';
 import { router } from 'expo-router';
 import { useState } from 'react';
 import { Linking, Platform } from 'react-native';
 
+import { ChoiceChip } from '@/components/ChoiceChip';
 import { GameCard } from '@/components/GameCard';
 import { InlineError } from '@/components/States';
 import { useToast } from '@/components/Toast';

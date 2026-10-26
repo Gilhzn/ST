@@ -1,8 +1,8 @@
 /** Settings (design §13.14). Language/theme/sign-out now; full sections next wave. */
 import { Button, Divider, Row, Stack, Text, useTheme, type ThemePreference } from '@st/ui';
-import { ChoiceChip } from '@/components/ChoiceChip';
 import { router } from 'expo-router';
 
+import { ChoiceChip } from '@/components/ChoiceChip';
 import { Screen } from '@/components/Screen';
 import { LanguagePicker } from '@/features/settings/LanguagePicker';
 import { useT } from '@/i18n';

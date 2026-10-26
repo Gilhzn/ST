@@ -1,9 +1,9 @@
 /** Sport chips (max 3, checkbox semantics) and the radius segmented control (radio semantics). */
 import { MAX_SPORT_FILTERS, RADII_KM, SPORT_IDS, type RadiusKm, type SportId } from '@st/domain';
 import { spacing } from '@st/ui';
-import { ChoiceChip } from '@/components/ChoiceChip';
 import { Pressable, ScrollView } from 'react-native';
 
+import { ChoiceChip } from '@/components/ChoiceChip';
 import { useT } from '@/i18n';
 import { formatKm } from '@/lib/format';
 

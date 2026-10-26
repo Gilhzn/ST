@@ -1,0 +1,113 @@
+{
+  "common": {
+    "nav": {
+      "map": "Map",
+      "games": "Games",
+      "inbox": "Inbox",
+      "profile": "Profile",
+      "settings": "Settings"
+    },
+    "datetime": {
+      "dayTime": "{day}, {time}"
+    },
+    "notFound": {
+      "title": "We can’t find that page",
+      "body": "The link may be old or mistyped.",
+      "home": "Go to the map"
+    },
+    "placeholder": {
+      "title": "Coming soon",
+      "body": "This part of Sport Talent is on its way in the next update."
+    }
+  },
+  "auth": {
+    "profileSetup": {
+      "genderLabel": "Gender (optional)",
+      "genderHint": "Only used to let you join women-only games. Other players never see it.",
+      "gender": {
+        "female": "Woman",
+        "male": "Man",
+        "non_binary": "Non-binary",
+        "undisclosed": "Prefer not to say"
+      },
+      "positionsLabel": "Positions you like to play",
+      "skillLabel": "Your level",
+      "skill": {
+        "1": "Beginner",
+        "2": "Casual",
+        "3": "Intermediate",
+        "4": "Advanced",
+        "5": "Expert"
+      }
+    },
+    "permissions": {
+      "location": {
+        "disclosure": "Sport Talent uses your location to show nearby games and courts and to confirm your check-in when you tap Check in at a game. Location is used only while you use the app. You can search by city instead."
+      }
+    },
+    "demo": {
+      "hint": "Demo mode: use the code {code} to sign in."
+    }
+  },
+  "map": {
+    "sheet": {
+      "sortA11y": "Sort by: {sort}",
+      "expand": "Show more games",
+      "collapse": "Show less"
+    },
+    "empty": {
+      "allSports": "any sport"
+    },
+    "zoom": {
+      "in": "Zoom in",
+      "out": "Zoom out"
+    }
+  },
+  "games": {
+    "wizard": {
+      "where": {
+        "pinHere": "Use the current map area as the meeting point"
+      },
+      "who": {
+        "fewer": "Fewer players",
+        "more": "More players"
+      },
+      "review": {
+        "whenValue": "{start} · {duration}",
+        "whoValue": "{capacity, plural, one {# player} other {# players}} · {visibility}",
+        "noDeposit": "No deposit",
+        "editA11y": "Edit {section}"
+      },
+      "published": {
+        "viewGame": "View game"
+      },
+      "defaultTitle": "{sport} game"
+    },
+    "details": {
+      "host": {
+        "hostedBy": "Hosted by {name}",
+        "verified": "Verified host",
+        "badge": "Host",
+        "approved": "Player approved.",
+        "waitlisted": "The game is full, so the player is on the waitlist.",
+        "rejected": "Request declined."
+      },
+      "action": {
+        "requestHint": "Sends a request to the host"
+      },
+      "cancel": {
+        "done": "Your spot is cancelled.",
+        "cardIssued": "Your spot is cancelled. This late cancel gave you a yellow card."
+      },
+      "deposit": {
+        "saved": "Payment method saved. The hold is placed the day before the game."
+      },
+      "when": "{relative} · {absolute}",
+      "playersAfterJoin": "You’ll see who’s playing once the host approves you.",
+      "checkedIn": "Checked in"
+    },
+    "invite": {
+      "signedOutBody": "Sign in or create an account to see this game and join it."
+    }
+  }
+}

@@ -43,8 +43,9 @@ export default function ProfileScreen() {
               <Text variant="title3">{t('trust:reliability.title')}</Text>
               <Text variant="body" color="textSecondary">
                 {profile.reliability.status === 'new'
-                  ? t('trust:reliability.newBody', { games: 3 })
+                  ? t('trust:reliability.newPlayer', { games: 3 })
                   : t('trust:reliability.basedOn', {
+                      days: 90,
                       games: Math.round(profile.reliability.commitmentCount),
                       checkIns: profile.reliability.verifiedCount,
                       lateCancels: profile.reliability.lateCancelCount,

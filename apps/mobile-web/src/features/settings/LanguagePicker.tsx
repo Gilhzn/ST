@@ -4,22 +4,29 @@
  * restart when the reading direction changes (design §13.17).
  */
 import { LOCALES, type Locale } from '@st/domain';
+import { tFor } from '@st/i18n';
 import { BidiText, localeNativeNames, radius, Row, spacing, Stack, Text, useTheme } from '@st/ui';
 import { useState } from 'react';
 import { Pressable } from 'react-native';
 
 import { ConfirmDialog } from '@/components/ConfirmDialog';
 import { Icon } from '@/components/Icon';
+import { useData } from '@/data/DataProvider';
 import { useLanguage, useT } from '@/i18n';
+import { useSession } from '@/state/session';
 
 export function LanguagePicker() {
   const { t } = useT();
   const { colors } = useTheme();
   const lang = useLanguage();
+  const port = useData();
+  const { status } = useSession();
   const [pendingRestart, setPendingRestart] = useState<Locale | null>(null);
 
   const choose = async (next: Locale | null) => {
     const result = await lang.setLanguage(next);
+    // Server-originated text (push, statements of reasons) uses the profile locale.
+    if (status === 'ready') void port.updateProfile({ locale: result.locale }).catch(() => undefined);
     if (result.needsRestart) setPendingRestart(result.locale);
   };
 
@@ -69,7 +76,8 @@ export function LanguagePicker() {
       <ConfirmDialog
         testID="settings.language.restart"
         visible={!!pendingRestart}
-        title={t('settings:language.restart.title', { language: pendingRestart ? localeNativeNames[pendingRestart] : '' })}
+        // Shown in the target language (design §13.14), body in the current one.
+        title={pendingRestart ? tFor(pendingRestart)('settings:language.restart.title', { language: localeNativeNames[pendingRestart] }) : ''}
         body={t('settings:language.restart.body')}
         confirmLabel={t('settings:language.restart.restartNow')}
         cancelLabel={t('settings:language.restart.later')}

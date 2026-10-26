@@ -17,6 +17,8 @@ export const PrefKeys = {
   locationDisclosureSeen: 'locationDisclosureSeen',
   mapFilters: 'mapFilters',
   createGameDraft: 'createGameDraft',
+  /** Guards the one automatic reload that aligns native RTL with the saved language. */
+  rtlReloadAttempted: 'rtlReloadAttempted',
 } as const;
 
 export type PrefKey = (typeof PrefKeys)[keyof typeof PrefKeys];

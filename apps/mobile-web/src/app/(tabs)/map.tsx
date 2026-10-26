@@ -472,7 +472,6 @@ export default function MapScreen() {
         </View>
         <View style={{ flex: 1 }}>
           {map}
-          {fab}
           {disclosure}
         </View>
       </View>

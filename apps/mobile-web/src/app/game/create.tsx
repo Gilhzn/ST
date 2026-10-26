@@ -5,12 +5,12 @@
  */
 import { SPORT_IDS, type GameDetail, type LatLng, type NearbyVenue, type SportId } from '@st/domain';
 import { BidiText, Button, Card, EmptyState, isolate, radius, Row, spacing, Stack, Text, TextField, useTheme } from '@st/ui';
-import { ChoiceChip } from '@/components/ChoiceChip';
 import * as Clipboard from 'expo-clipboard';
 import { router, useLocalSearchParams } from 'expo-router';
 import { useEffect, useMemo, useRef, useState, type ReactNode } from 'react';
 import { AccessibilityInfo, Linking, Platform, Pressable, Switch, View } from 'react-native';
 
+import { ChoiceChip } from '@/components/ChoiceChip';
 import { ConfirmDialog } from '@/components/ConfirmDialog';
 import { Icon } from '@/components/Icon';
 import { goBack, Screen } from '@/components/Screen';
@@ -22,7 +22,8 @@ import { DEFAULT_CENTER } from '@/data/mock/seed';
 import { useAction, useAsync } from '@/hooks/useAsync';
 import { useT } from '@/i18n';
 import { currencyForCountry } from '@/lib/currency';
-import { currencyDigits, formatDate, formatDateTime, formatDistance, formatDuration, formatMoney, formatTime } from '@/lib/format';
+import { deviceRegion } from '@/lib/device';
+import { currencyDigits, formatDate, formatDateTime, formatDistance, formatDuration, formatMoney, formatTime, usesMiles } from '@/lib/format';
 import { getCurrentPosition, getLocationPermission } from '@/platform/location';
 import { getPref, PrefKeys, setPref } from '@/state/prefs';
 import { useSession } from '@/state/session';
@@ -108,6 +109,7 @@ export default function CreateGameScreen() {
   const [center, setCenter] = useState<LatLng>(DEFAULT_CENTER);
   const [published, setPublished] = useState<GameDetail | null>(null);
   const restored = useRef(false);
+  const miles = useMemo(() => usesMiles(deviceRegion()), []);
 
   // Restore an autosaved draft (unless opened for a specific venue) and the location.
   useEffect(() => {
@@ -365,7 +367,7 @@ export default function CreateGameScreen() {
                 selected={draft.venueId === v.id}
                 onPress={() => update({ venueId: v.id, usePin: false })}
                 title={v.name}
-                subtitle={formatDistance(v.distanceM, locale)}
+                subtitle={formatDistance(v.distanceM, locale, miles)}
               />
             ))}
             {preselected.data && !(venues.data ?? []).some((v) => v.id === preselected.data?.id) ? (

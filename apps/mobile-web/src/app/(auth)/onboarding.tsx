@@ -10,11 +10,11 @@ import {
   type UserSportInput,
 } from '@st/domain';
 import { BidiText, Button, Card, Row, Stack, Text, TextField } from '@st/ui';
-import { ChoiceChip } from '@/components/ChoiceChip';
 import { router } from 'expo-router';
 import { useEffect, useState } from 'react';
 import { View } from 'react-native';
 
+import { ChoiceChip } from '@/components/ChoiceChip';
 import { SportIcon } from '@/components/Icon';
 import { Screen } from '@/components/Screen';
 import { InlineError } from '@/components/States';
